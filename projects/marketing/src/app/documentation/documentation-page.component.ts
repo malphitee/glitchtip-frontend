@@ -20,7 +20,11 @@ export class DocumentationPageComponent implements OnInit {
     const locationPrefix = `/documentation/${this.route.snapshot.params.slug}`;
 
     this.markdownService.renderer.heading = (text: string, level: number) => {
-      const escapedText = text.toLowerCase().replace(/[^\w]+/g, "-");
+      const escapedText = text.toLowerCase()
+      // replace non-letter characters with hyphens
+      .replace(/[^\w]+/g, "-")
+      //trim hyphens at end of string
+      .replace(/\-$/, '');
       return (
         `<h${level}>` +
         `<a id="${escapedText}" class="anchor" href="${locationPrefix}#${escapedText}">` +
