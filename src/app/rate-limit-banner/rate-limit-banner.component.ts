@@ -22,8 +22,8 @@ import { RouterLink } from "@angular/router";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RateLimitBannerComponent {
-  isAcceptingEvents$ = this.organizationsService.activeOrganization$.pipe(
-    map((activeOrganization) => activeOrganization?.isAcceptingEvents)
+  eventThrottleRate$ = this.organizationsService.activeOrganization$.pipe(
+    map((activeOrganization) => activeOrganization?.eventThrottleRate)
   );
   activeOrgSlug$ = this.organizationsService.activeOrganizationSlug$;
   bannerVisible = true;

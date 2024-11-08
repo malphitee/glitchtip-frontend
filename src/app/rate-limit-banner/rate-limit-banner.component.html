@@ -1,4 +1,5 @@
-@if ((isAcceptingEvents$ | async) === false && bannerVisible) {
+@if ((eventThrottleRate$ | async); as eventThrottleRate) {
+  @if (eventThrottleRate > 0 && bannerVisible) {
   <mat-card>
     <mat-card-header>
       <mat-card-title> Missing some errors? </mat-card-title>
@@ -7,12 +8,12 @@
       You've reached the maximum number of events that your plan allows for this
       billing period. You can
       <a [routerLink]="[activeOrgSlug$ | async, 'settings', 'subscription']">
-        change your subscription</a
-        >
-        if you'd like to get things moving again.
-        <button mat-icon-button (click)="hideBanner()">
-          <mat-icon>close</mat-icon>
-        </button>
-      </mat-card-content>
-    </mat-card>
+        change your subscription</a>
+      if you'd like to get things moving again.
+      <button mat-icon-button (click)="hideBanner()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-card-content>
+  </mat-card>
   }
+}
