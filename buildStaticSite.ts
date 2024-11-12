@@ -4,8 +4,12 @@ import * as path from "path";
 import { format } from "date-fns";
 
 const blogDir = path.join(__dirname, "projects/marketing/public/blog");
-const documentationDir = path.join(__dirname, "projects/marketing/public/documentation");
+const documentationDir = path.join(
+  __dirname,
+  "projects/marketing/public/documentation",
+);
 const legalDir = path.join(__dirname, "projects/marketing/public/legal");
+const sdkDir = path.join(__dirname, "src/sdk-docs");
 const routesFile = path.join(__dirname, "projects/marketing/routes.txt");
 const blogIndexFile = path.join(blogDir, "blogIndex.json");
 const rssFeedFile = path.join(blogDir, "rss.xml");
@@ -47,13 +51,17 @@ function extractDateFromFilename(filename: string): Date | null {
 }
 
 // Helper function to generate route paths from a directory
-function generateRoutesFromDirectory(baseDir: string, routePrefix: string): string[] {
+function generateRoutesFromDirectory(
+  baseDir: string,
+  routePrefix: string,
+): string[] {
   const files: string[] = glob.sync(`${baseDir}/**/*.md`);
-  return files.map((file) =>
-    file
-      .replace(baseDir, routePrefix) // Replace base directory path with the route prefix
-      .replace(/\.md$/, "")
-      .replace(/\\/g, "/") // Normalize Windows paths
+  return files.map(
+    (file) =>
+      file
+        .replace(baseDir, routePrefix) // Replace base directory path with the route prefix
+        .replace(/\.md$/, "")
+        .replace(/\\/g, "/"), // Normalize Windows paths
   );
 }
 
@@ -104,9 +112,13 @@ function generateRoutesIndexAndRSS(): void {
   });
 
   // Add documentation and legal routes
-  const documentationRoutes = generateRoutesFromDirectory(documentationDir, "/documentation");
+  const documentationRoutes = generateRoutesFromDirectory(
+    documentationDir,
+    "/documentation",
+  );
   const legalRoutes = generateRoutesFromDirectory(legalDir, "/legal");
-  routes.push(...documentationRoutes, ...legalRoutes);
+  const sdkRoutes = generateRoutesFromDirectory(sdkDir, "/sdkdocs");
+  routes.push(...documentationRoutes, ...legalRoutes, ...sdkRoutes);
 
   // Write the routes.txt file
   fs.writeFileSync(routesFile, routes.join("\n"), "utf-8");
@@ -135,4 +147,3 @@ function generateRoutesIndexAndRSS(): void {
 
 // Run the function to generate the files
 generateRoutesIndexAndRSS();
-

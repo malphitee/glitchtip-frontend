@@ -3,7 +3,7 @@ export interface Comment {
   data: {
     text: string;
   };
-  user: CommentUser;
+  user: CommentUser | null;
   dateCreated: string;
   type: string;
 }
