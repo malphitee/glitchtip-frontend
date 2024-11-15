@@ -26,6 +26,7 @@ export const organizationList: Organization[] = [
     isEarlyAdopter: false,
     require2FA: false,
     isAcceptingEvents: true,
+    eventThrottleRate: 0,
   },
   {
     id: 1,
@@ -43,6 +44,7 @@ export const organizationList: Organization[] = [
     isEarlyAdopter: false,
     require2FA: false,
     isAcceptingEvents: true,
+    eventThrottleRate: 0,
   },
 ];
 
@@ -62,6 +64,7 @@ export const testOrgDetail: APIOrganizationDetail = {
   isEarlyAdopter: false,
   require2FA: false,
   isAcceptingEvents: true,
+  eventThrottleRate: 0,
   projects: [
     {
       avatar: {

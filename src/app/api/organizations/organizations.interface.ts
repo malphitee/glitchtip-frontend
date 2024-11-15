@@ -15,6 +15,7 @@ export interface Organization extends OrganizationNew {
   isEarlyAdopter: boolean;
   require2FA: boolean;
   isAcceptingEvents: boolean;
+  eventThrottleRate: number;
   slug: string;
 }
 

@@ -8,7 +8,16 @@ import {
   ActivatedRouteSnapshot,
 } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { combineLatest, lastValueFrom, Observable, EMPTY } from "rxjs";
+import {
+  combineLatest,
+  delay,
+  expand,
+  lastValueFrom,
+  Observable,
+  takeUntil,
+  timer,
+  EMPTY,
+} from "rxjs";
 import {
   map,
   withLatestFrom,
@@ -395,6 +404,37 @@ export class OrganizationsService extends StatefulService<OrganizationsState> {
       first(),
       filter((orgSlug) => !!orgSlug),
       mergeMap((orgSlug) => this.getOrganizationDetail(orgSlug!))
+    );
+  }
+
+  /**
+   * Silently attempt to refresh active org details every 2 seconds
+   * until event rate throttle is 0 or 12 seconds passes.
+   */
+  repeatRefreshOrgDetail() {
+    lastValueFrom(
+      this.activeOrganizationSlug$.pipe(
+        filter((orgSlug) => !!orgSlug),
+        mergeMap((orgSlug) =>
+          this.organizationAPIService.retrieve(orgSlug!).pipe(
+            expand((orgDetail) => {
+              if (orgDetail.eventThrottleRate > 0) {
+                return this.organizationAPIService
+                  .retrieve(orgSlug!)
+                  .pipe(delay(2000));
+              } else {
+                this.setActiveOrganization(orgDetail);
+                return EMPTY;
+              }
+            }),
+            catchError(() => {
+              return EMPTY;
+            }),
+            takeUntil(timer(12000)),
+          ),
+        ),
+      ),
+      { defaultValue: null },
     );
   }
 

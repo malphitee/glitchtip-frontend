@@ -104,7 +104,9 @@ export class SubscriptionComponent implements OnDestroy {
         map(([params, queryParams]) => {
           const slug = params["org-slug"] as string;
           const sessionId = queryParams["session_id"];
-          return { slug, sessionId };
+          const redirectFromBillingPortal =
+            queryParams["billing_portal_redirect"];
+          return { slug, sessionId, redirectFromBillingPortal };
         }),
         filter((routerData) => !!routerData.slug),
         take(1),
@@ -114,6 +116,9 @@ export class SubscriptionComponent implements OnDestroy {
           this.service.retrieveUntilSubscriptionOrTimeout(routerData.slug);
         } else {
           this.service.retrieveSubscription(routerData.slug);
+        }
+        if (routerData.redirectFromBillingPortal){
+          this.orgService.repeatRefreshOrgDetail()
         }
         this.service.retrieveSubscriptionEventCount(routerData.slug);
       });
