@@ -26,22 +26,21 @@ import { mapFormErrors } from "../shared/forms/form.utils";
 import { StatefulComponent } from "../shared/stateful-service/signal-state.component";
 
 @Component({
-  selector: "gt-register",
-  templateUrl: "./register.component.html",
-  styleUrls: ["./register.component.scss"],
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatCardModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    FormErrorComponent,
-    InputMatcherDirective,
-    MatButtonModule,
-    AuthSvgComponent,
-    RouterLink,
-  ],
+    selector: "gt-register",
+    templateUrl: "./register.component.html",
+    styleUrls: ["./register.component.scss"],
+    imports: [
+        CommonModule,
+        MatCardModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        FormErrorComponent,
+        InputMatcherDirective,
+        MatButtonModule,
+        AuthSvgComponent,
+        RouterLink,
+    ]
 })
 export class RegisterComponent
   extends StatefulComponent<RegisterState, RegisterService>

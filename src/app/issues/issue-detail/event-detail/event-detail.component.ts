@@ -16,28 +16,27 @@ import { MatButtonModule } from "@angular/material/button";
 import { AsyncPipe, JsonPipe, DatePipe, KeyValuePipe } from "@angular/common";
 
 @Component({
-  selector: "gt-event-detail",
-  templateUrl: "./event-detail.component.html",
-  styleUrls: ["./event-detail.component.scss"],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [
-    MatButtonModule,
-    RouterLink,
-    MatIconModule,
-    MatDividerModule,
-    ContextsComponent,
-    EntryMessageComponent,
-    EntryExceptionComponent,
-    EntryCSPComponent,
-    EntryBreadcrumbsComponent,
-    EntryRequestComponent,
-    EntryDataComponent,
-    AsyncPipe,
-    JsonPipe,
-    DatePipe,
-    KeyValuePipe
-],
+    selector: "gt-event-detail",
+    templateUrl: "./event-detail.component.html",
+    styleUrls: ["./event-detail.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        MatButtonModule,
+        RouterLink,
+        MatIconModule,
+        MatDividerModule,
+        ContextsComponent,
+        EntryMessageComponent,
+        EntryExceptionComponent,
+        EntryCSPComponent,
+        EntryBreadcrumbsComponent,
+        EntryRequestComponent,
+        EntryDataComponent,
+        AsyncPipe,
+        JsonPipe,
+        DatePipe,
+        KeyValuePipe
+    ]
 })
 export class EventDetailComponent implements OnInit {
   event$ = this.issueService.event$;

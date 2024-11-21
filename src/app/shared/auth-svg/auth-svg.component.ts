@@ -13,12 +13,11 @@ const knownSocialProviders = [
 ];
 
 @Component({
-  standalone: true,
-  selector: "gt-auth-svg",
-  imports: [MatProgressSpinnerModule],
-  templateUrl: "./auth-svg.component.html",
-  styleUrls: ["./auth-svg.component.scss"],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: "gt-auth-svg",
+    imports: [MatProgressSpinnerModule],
+    templateUrl: "./auth-svg.component.html",
+    styleUrls: ["./auth-svg.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AuthSvgComponent {
   @Input() text = "";

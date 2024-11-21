@@ -8,20 +8,19 @@ import { MatInputModule } from "@angular/material/input";
 import { MatSelectChange, MatSelectModule } from "@angular/material/select";
 
 @Component({
-  standalone: true,
-  selector: "gt-data-filter-bar",
-  imports: [
-    CommonModule,
-    MatButtonModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatInputModule,
-    ReactiveFormsModule,
-    MatOptionModule,
-    MatSelectModule,
-  ],
-  templateUrl: "./data-filter-bar.component.html",
-  styleUrls: ["./data-filter-bar.component.scss"],
+    selector: "gt-data-filter-bar",
+    imports: [
+        CommonModule,
+        MatButtonModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        MatInputModule,
+        ReactiveFormsModule,
+        MatOptionModule,
+        MatSelectModule,
+    ],
+    templateUrl: "./data-filter-bar.component.html",
+    styleUrls: ["./data-filter-bar.component.scss"]
 })
 export class DataFilterBarComponent {
   @Input() dateForm?: FormGroup;

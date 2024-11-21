@@ -53,25 +53,24 @@ const portUrlValidators = [
 ];
 
 @Component({
-  standalone: true,
-  selector: "gt-monitor-form",
-  templateUrl: "./monitor-form.component.html",
-  styleUrls: ["./monitor-form.component.scss"],
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    RouterModule,
-    EventInfoComponent,
-    LoadingButtonComponent,
-    MatButtonModule,
-    MatCardModule,
-    MatDialogModule,
-    MatOptionModule,
-    MatIconModule,
-    MatSelectModule,
-    MatDividerModule,
-    MatInputModule,
-  ],
+    selector: "gt-monitor-form",
+    templateUrl: "./monitor-form.component.html",
+    styleUrls: ["./monitor-form.component.scss"],
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        RouterModule,
+        EventInfoComponent,
+        LoadingButtonComponent,
+        MatButtonModule,
+        MatCardModule,
+        MatDialogModule,
+        MatOptionModule,
+        MatIconModule,
+        MatSelectModule,
+        MatDividerModule,
+        MatInputModule,
+    ]
 })
 export class MonitorFormComponent implements OnInit {
   @Input() monitorSettings?: MonitorDetail;

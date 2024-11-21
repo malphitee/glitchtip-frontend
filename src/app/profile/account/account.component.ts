@@ -13,21 +13,20 @@ import { PreferencesComponent } from "../preferences/preferences.component";
 import { AuthService } from "src/app/auth.service";
 
 @Component({
-  selector: "gt-account",
-  templateUrl: "./account.component.html",
-  styleUrls: ["./account.component.scss"],
-  standalone: true,
-  imports: [
-    PreferencesComponent,
-    ChangePasswordComponent,
-    SocialAuthComponent,
-    ManageEmailsComponent,
-    MatCardModule,
-    MatDividerModule,
-    MatFormFieldModule,
-    LoadingButtonComponent,
-    AsyncPipe,
-  ],
+    selector: "gt-account",
+    templateUrl: "./account.component.html",
+    styleUrls: ["./account.component.scss"],
+    imports: [
+        PreferencesComponent,
+        ChangePasswordComponent,
+        SocialAuthComponent,
+        ManageEmailsComponent,
+        MatCardModule,
+        MatDividerModule,
+        MatFormFieldModule,
+        LoadingButtonComponent,
+        AsyncPipe,
+    ]
 })
 export class AccountComponent implements OnDestroy {
   userDeleteLoading$ = this.userService.userDeleteLoading$;

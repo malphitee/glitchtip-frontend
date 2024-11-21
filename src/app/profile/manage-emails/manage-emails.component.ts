@@ -21,23 +21,22 @@ import { MatDividerModule } from "@angular/material/divider";
 import { MatCardModule } from "@angular/material/card";
 
 @Component({
-  selector: "gt-manage-emails",
-  templateUrl: "./manage-emails.component.html",
-  styleUrls: ["./manage-emails.component.scss"],
-  standalone: true,
-  imports: [
-    MatCardModule,
-    MatDividerModule,
-    MatChipsModule,
-    LoadingButtonComponent,
-    MatProgressSpinnerModule,
-    MatButtonModule,
-    MatIconModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    AsyncPipe,
-  ],
+    selector: "gt-manage-emails",
+    templateUrl: "./manage-emails.component.html",
+    styleUrls: ["./manage-emails.component.scss"],
+    imports: [
+        MatCardModule,
+        MatDividerModule,
+        MatChipsModule,
+        LoadingButtonComponent,
+        MatProgressSpinnerModule,
+        MatButtonModule,
+        MatIconModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        AsyncPipe,
+    ]
 })
 export class ManageEmailsComponent implements OnInit {
   emailAddresses$ = this.emailService.emailAddressesSorted$;

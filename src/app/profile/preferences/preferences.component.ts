@@ -32,24 +32,23 @@ function autocompleteStringValidator(validOptions: Array<string>): ValidatorFn {
 }
 
 @Component({
-  selector: "gt-preferences",
-  templateUrl: "./preferences.component.html",
-  styleUrls: ["./preferences.component.scss"],
-  standalone: true,
-  imports: [
-    MatCardModule,
-    MatDividerModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatAutocompleteModule,
-    MatButtonModule,
-    MatButtonToggleModule,
-    MatIconModule,
-    MatOptionModule,
-    LoadingButtonComponent,
-    AsyncPipe
-],
+    selector: "gt-preferences",
+    templateUrl: "./preferences.component.html",
+    styleUrls: ["./preferences.component.scss"],
+    imports: [
+        MatCardModule,
+        MatDividerModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatAutocompleteModule,
+        MatButtonModule,
+        MatButtonToggleModule,
+        MatIconModule,
+        MatOptionModule,
+        LoadingButtonComponent,
+        AsyncPipe
+    ]
 })
 export class PreferencesComponent implements OnInit {
   defaultTimeZone: string = "Default";

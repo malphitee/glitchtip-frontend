@@ -12,19 +12,18 @@ import { MatCardModule } from "@angular/material/card";
 import { AsyncPipe } from "@angular/common";
 
 @Component({
-  selector: "gt-organization",
-  templateUrl: "./organization.component.html",
-  styleUrls: ["./organization.component.scss"],
-  standalone: true,
-  imports: [
-    MatCardModule,
-    MatDividerModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    LoadingButtonComponent,
-    AsyncPipe,
-  ],
+    selector: "gt-organization",
+    templateUrl: "./organization.component.html",
+    styleUrls: ["./organization.component.scss"],
+    imports: [
+        MatCardModule,
+        MatDividerModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        LoadingButtonComponent,
+        AsyncPipe,
+    ]
 })
 export class OrganizationComponent implements OnInit {
   activeOrganizationDetail$ =

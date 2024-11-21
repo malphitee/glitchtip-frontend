@@ -12,10 +12,9 @@ import { setTheme } from "./shared/shared.utils";
 import { AuthService } from "./auth.service";
 
 @Component({
-  selector: "gt-root",
-  templateUrl: "./app.component.html",
-  standalone: true,
-  imports: [RouterOutlet],
+    selector: "gt-root",
+    templateUrl: "./app.component.html",
+    imports: [RouterOutlet]
 })
 export class AppComponent implements OnInit {
   constructor(

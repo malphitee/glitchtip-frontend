@@ -24,19 +24,18 @@ import { reasonTextConversions } from "../uptime.utils";
 import { MonitorChecksService } from "./monitor-checks.service";
 
 @Component({
-  standalone: true,
-  selector: "gt-monitor-checks",
-  templateUrl: "./monitor-checks.component.html",
-  styleUrls: ["./monitor-checks.component.scss"],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    CommonModule,
-    ListFooterComponent,
-    HumanizeDurationPipe,
-    MatTableModule,
-    MatButtonModule,
-    RouterModule,
-  ],
+    selector: "gt-monitor-checks",
+    templateUrl: "./monitor-checks.component.html",
+    styleUrls: ["./monitor-checks.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        CommonModule,
+        ListFooterComponent,
+        HumanizeDurationPipe,
+        MatTableModule,
+        MatButtonModule,
+        RouterModule,
+    ]
 })
 export class MonitorChecksComponent implements OnDestroy {
   @Input({ required: true }) monitor!: MonitorDetail;

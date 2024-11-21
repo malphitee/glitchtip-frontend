@@ -24,23 +24,22 @@ interface Percentages {
 }
 
 @Component({
-  selector: "gt-subscription",
-  templateUrl: "./subscription.component.html",
-  styleUrls: ["./subscription.component.scss"],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [
-    MatCardModule,
-    MatDialogModule,
-    RouterLink,
-    MatFormFieldModule,
-    MatButtonModule,
-    PaymentComponent,
-    MatProgressSpinnerModule,
-    AsyncPipe,
-    CurrencyPipe,
-    DatePipe
-],
+    selector: "gt-subscription",
+    templateUrl: "./subscription.component.html",
+    styleUrls: ["./subscription.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        MatCardModule,
+        MatDialogModule,
+        RouterLink,
+        MatFormFieldModule,
+        MatButtonModule,
+        PaymentComponent,
+        MatProgressSpinnerModule,
+        AsyncPipe,
+        CurrencyPipe,
+        DatePipe
+    ]
 })
 export class SubscriptionComponent implements OnDestroy {
   fromStripe$ = this.service.fromStripe$;

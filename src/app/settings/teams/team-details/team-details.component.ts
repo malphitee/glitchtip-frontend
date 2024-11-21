@@ -13,20 +13,19 @@ import { MatButtonModule } from "@angular/material/button";
 import { DetailHeaderComponent } from "src/app/shared/detail/header/header.component";
 
 @Component({
-  selector: "gt-team-details",
-  templateUrl: "./team-details.component.html",
-  styleUrls: ["./team-details.component.scss"],
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatButtonModule,
-    RouterLink,
-    MatIconModule,
-    MatTabsModule,
-    RouterLinkActive,
-    RouterOutlet,
-    DetailHeaderComponent,
-  ],
+    selector: "gt-team-details",
+    templateUrl: "./team-details.component.html",
+    styleUrls: ["./team-details.component.scss"],
+    imports: [
+        CommonModule,
+        MatButtonModule,
+        RouterLink,
+        MatIconModule,
+        MatTabsModule,
+        RouterLinkActive,
+        RouterOutlet,
+        DetailHeaderComponent,
+    ]
 })
 export class TeamDetailsComponent {
   teamSlug$ = this.route.paramMap.pipe(

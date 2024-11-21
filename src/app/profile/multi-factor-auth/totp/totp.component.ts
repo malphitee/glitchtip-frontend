@@ -28,22 +28,21 @@ import { mapFormErrors } from "src/app/shared/forms/form.utils";
 import { lastValueFrom } from "rxjs";
 
 @Component({
-  selector: "gt-totp",
-  templateUrl: "./totp.component.html",
-  styleUrls: ["./totp.component.scss"],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [
-    MatCardModule,
-    MatDividerModule,
-    MatButtonModule,
-    BackupCodesComponent,
-    ToDoItemComponent,
-    ReactiveFormsModule,
-    FormErrorComponent,
-    MatFormFieldModule,
-    MatInputModule,
-  ],
+    selector: "gt-totp",
+    templateUrl: "./totp.component.html",
+    styleUrls: ["./totp.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        MatCardModule,
+        MatDividerModule,
+        MatButtonModule,
+        BackupCodesComponent,
+        ToDoItemComponent,
+        ReactiveFormsModule,
+        FormErrorComponent,
+        MatFormFieldModule,
+        MatInputModule,
+    ]
 })
 export class TOTPComponent implements OnInit, OnDestroy {
   @ViewChild("canvas", { static: false }) canvas: ElementRef | undefined;

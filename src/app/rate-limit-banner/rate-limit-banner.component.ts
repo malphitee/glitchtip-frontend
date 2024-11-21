@@ -8,18 +8,17 @@ import { AsyncPipe } from "@angular/common";
 import { RouterLink } from "@angular/router";
 
 @Component({
-  standalone: true,
-  selector: "gt-rate-limit-banner",
-  imports: [
-    AsyncPipe,
-    MatButtonModule,
-    MatCardModule,
-    MatIconModule,
-    RouterLink
-],
-  templateUrl: "./rate-limit-banner.component.html",
-  styleUrls: ["./rate-limit-banner.component.scss"],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: "gt-rate-limit-banner",
+    imports: [
+        AsyncPipe,
+        MatButtonModule,
+        MatCardModule,
+        MatIconModule,
+        RouterLink
+    ],
+    templateUrl: "./rate-limit-banner.component.html",
+    styleUrls: ["./rate-limit-banner.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RateLimitBannerComponent {
   eventThrottleRate$ = this.organizationsService.activeOrganization$.pipe(

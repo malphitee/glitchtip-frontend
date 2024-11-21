@@ -11,10 +11,9 @@ import { LoginComponent } from "./login.component";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 
 @Component({
-  selector: "gt-form-error",
-  template: "",
-  standalone: true,
-  imports: [ReactiveFormsModule, RouterTestingModule, HttpClientTestingModule],
+    selector: "gt-form-error",
+    template: "",
+    imports: [ReactiveFormsModule, RouterTestingModule, HttpClientTestingModule]
 })
 class FormErrorStubComponent {
   @Input() error: any;

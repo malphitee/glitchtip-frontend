@@ -27,24 +27,23 @@ import { AuthSvgComponent } from "../shared/auth-svg/auth-svg.component";
 import { MatSnackBar } from "@angular/material/snack-bar";
 
 @Component({
-  selector: "gt-login",
-  templateUrl: "./login.component.html",
-  styleUrls: ["./login.component.scss"],
-  standalone: true,
-  imports: [
-    AsyncPipe,
-    MatCardModule,
-    LoginTotpComponent,
-    LoginWebAuthnComponent,
-    LoadingButtonComponent,
-    ReactiveFormsModule,
-    FormErrorComponent,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    AuthSvgComponent,
-    RouterLink,
-  ],
+    selector: "gt-login",
+    templateUrl: "./login.component.html",
+    styleUrls: ["./login.component.scss"],
+    imports: [
+        AsyncPipe,
+        MatCardModule,
+        LoginTotpComponent,
+        LoginWebAuthnComponent,
+        LoadingButtonComponent,
+        ReactiveFormsModule,
+        FormErrorComponent,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        AuthSvgComponent,
+        RouterLink,
+    ]
 })
 export class LoginComponent
   extends StatefulComponent<LoginState, LoginService>

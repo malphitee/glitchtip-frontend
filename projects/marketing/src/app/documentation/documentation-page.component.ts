@@ -4,10 +4,9 @@ import { ActivatedRoute, RouterLink } from "@angular/router";
 import { MarkdownComponent, MarkdownService } from "ngx-markdown";
 
 @Component({
-  standalone: true,
-  imports: [MatCard, MatCardContent, RouterLink, MarkdownComponent],
-  templateUrl: "./documentation-page.component.html",
-  styleUrls: ["./documentation-page.component.scss"],
+    imports: [MatCard, MatCardContent, RouterLink, MarkdownComponent],
+    templateUrl: "./documentation-page.component.html",
+    styleUrls: ["./documentation-page.component.scss"]
 })
 export class DocumentationPageComponent implements OnInit {
   slug: string | null = null;

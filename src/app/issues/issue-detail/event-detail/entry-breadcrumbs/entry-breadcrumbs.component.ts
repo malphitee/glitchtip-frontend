@@ -13,21 +13,20 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatDividerModule } from "@angular/material/divider";
 
 @Component({
-  selector: "gt-entry-breadcrumbs",
-  templateUrl: "./entry-breadcrumbs.component.html",
-  styleUrls: ["./entry-breadcrumbs.component.scss"],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [
-    MatDividerModule,
-    NgClass,
-    MatButtonModule,
-    MatIconModule,
-    AsyncPipe,
-    JsonPipe,
-    DatePipe,
-    KeyValuePipe
-],
+    selector: "gt-entry-breadcrumbs",
+    templateUrl: "./entry-breadcrumbs.component.html",
+    styleUrls: ["./entry-breadcrumbs.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        MatDividerModule,
+        NgClass,
+        MatButtonModule,
+        MatIconModule,
+        AsyncPipe,
+        JsonPipe,
+        DatePipe,
+        KeyValuePipe
+    ]
 })
 export class EntryBreadcrumbsComponent implements AfterViewInit {
   @ViewChild("breadBox") breadBox?: ElementRef;

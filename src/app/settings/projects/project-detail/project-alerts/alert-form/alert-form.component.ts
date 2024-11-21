@@ -41,19 +41,18 @@ export const selectionRequiredValidator: ValidatorFn = (
 };
 
 @Component({
-  selector: "gt-alert-form",
-  templateUrl: "./alert-form.component.html",
-  styleUrls: ["./alert-form.component.scss"],
-  standalone: true,
-  imports: [
-    I18nPluralPipe,
-    ReactiveFormsModule,
-    MatCheckboxModule,
-    MatTooltipModule,
-    MatFormFieldModule,
-    MatInputModule,
-    LoadingButtonComponent,
-  ],
+    selector: "gt-alert-form",
+    templateUrl: "./alert-form.component.html",
+    styleUrls: ["./alert-form.component.scss"],
+    imports: [
+        I18nPluralPipe,
+        ReactiveFormsModule,
+        MatCheckboxModule,
+        MatTooltipModule,
+        MatFormFieldModule,
+        MatInputModule,
+        LoadingButtonComponent,
+    ]
 })
 export class AlertFormComponent implements OnInit {
   @Input() loading: boolean | null = false;

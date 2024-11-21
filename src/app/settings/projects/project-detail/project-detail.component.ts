@@ -27,26 +27,25 @@ import { CommonModule } from "@angular/common";
 import { DetailHeaderComponent } from "src/app/shared/detail/header/header.component";
 
 @Component({
-  selector: "gt-project-detail",
-  templateUrl: "./project-detail.component.html",
-  styleUrls: ["./project-detail.component.scss"],
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatCardModule,
-    MatDividerModule,
-    MatFormFieldModule,
-    ReactiveFormsModule,
-    MatInputModule,
-    LoadingButtonComponent,
-    PlatformPickerComponent,
-    CopyInputComponent,
-    ProjectEnvironmentsComponent,
-    ProjectAlertsComponent,
-    MatButtonModule,
-    RouterLink,
-    DetailHeaderComponent,
-  ],
+    selector: "gt-project-detail",
+    templateUrl: "./project-detail.component.html",
+    styleUrls: ["./project-detail.component.scss"],
+    imports: [
+        CommonModule,
+        MatCardModule,
+        MatDividerModule,
+        MatFormFieldModule,
+        ReactiveFormsModule,
+        MatInputModule,
+        LoadingButtonComponent,
+        PlatformPickerComponent,
+        CopyInputComponent,
+        ProjectEnvironmentsComponent,
+        ProjectAlertsComponent,
+        MatButtonModule,
+        RouterLink,
+        DetailHeaderComponent,
+    ]
 })
 export class ProjectDetailComponent implements OnInit, OnDestroy {
   @ViewChild(FormGroupDirective) formDirective: FormGroupDirective | undefined;

@@ -12,20 +12,19 @@ import { IssueDetailService } from "../issue-detail/issue-detail.service";
 import { UserReportsService } from "src/app/api/user-reports/user-reports.service";
 
 @Component({
-  selector: "gt-user-reports-issue",
-  templateUrl: "./user-reports-issue.component.html",
-  styleUrls: ["./user-reports-issue.component.scss"],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatCardModule,
-    MatDividerModule,
-    MatButtonModule,
-    RouterLink,
-    MatIconModule,
-    MatProgressSpinnerModule,
-  ],
+    selector: "gt-user-reports-issue",
+    templateUrl: "./user-reports-issue.component.html",
+    styleUrls: ["./user-reports-issue.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        CommonModule,
+        MatCardModule,
+        MatDividerModule,
+        MatButtonModule,
+        RouterLink,
+        MatIconModule,
+        MatProgressSpinnerModule,
+    ]
 })
 export class UserReportsIssueComponent implements OnDestroy {
   paginator$ = this.userReportService.paginator$;

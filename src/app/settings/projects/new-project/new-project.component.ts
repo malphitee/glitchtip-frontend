@@ -27,25 +27,24 @@ import { AsyncPipe } from "@angular/common";
 import { MatCardModule } from "@angular/material/card";
 
 @Component({
-  selector: "gt-new-project",
-  templateUrl: "./new-project.component.html",
-  styleUrls: ["./new-project.component.scss"],
-  standalone: true,
-  imports: [
-    MatCardModule,
-    MatDialogModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    PlatformPickerComponent,
-    MatInputModule,
-    MatSelectModule,
-    MatOptionModule,
-    MatButtonModule,
-    MatTooltipModule,
-    MatIconModule,
-    LoadingButtonComponent,
-    AsyncPipe
-],
+    selector: "gt-new-project",
+    templateUrl: "./new-project.component.html",
+    styleUrls: ["./new-project.component.scss"],
+    imports: [
+        MatCardModule,
+        MatDialogModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        PlatformPickerComponent,
+        MatInputModule,
+        MatSelectModule,
+        MatOptionModule,
+        MatButtonModule,
+        MatTooltipModule,
+        MatIconModule,
+        LoadingButtonComponent,
+        AsyncPipe
+    ]
 })
 export class NewProjectComponent implements OnInit {
   teams$ = this.teamsService.teams$;

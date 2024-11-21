@@ -17,19 +17,18 @@ import { AuthService } from "src/app/auth.service";
 import { toObservable } from "@angular/core/rxjs-interop";
 
 @Component({
-  selector: "gt-settings",
-  templateUrl: "./settings.component.html",
-  styleUrls: ["./settings.component.scss"],
-  standalone: true,
-  imports: [
-    MatSidenavModule,
-    MatListModule,
-    RouterLink,
-    RouterLinkActive,
-    MobileNavToolbarComponent,
-    RouterOutlet,
-    AsyncPipe
-],
+    selector: "gt-settings",
+    templateUrl: "./settings.component.html",
+    styleUrls: ["./settings.component.scss"],
+    imports: [
+        MatSidenavModule,
+        MatListModule,
+        RouterLink,
+        RouterLinkActive,
+        MobileNavToolbarComponent,
+        RouterOutlet,
+        AsyncPipe
+    ]
 })
 export class SettingsComponent {
   billingEnabled$ = this.service.billingEnabled$;

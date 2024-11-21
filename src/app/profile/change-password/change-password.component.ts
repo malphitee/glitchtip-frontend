@@ -24,22 +24,21 @@ import { mapFormErrors } from "src/app/shared/forms/form.utils";
 import { StatefulComponent } from "src/app/shared/stateful-service/signal-state.component";
 
 @Component({
-  selector: "gt-change-password",
-  templateUrl: "./change-password.component.html",
-  styleUrls: ["./change-password.component.scss"],
-  standalone: true,
-  imports: [
-    MatCardModule,
-    MatDividerModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    InputMatcherDirective,
-    LoadingButtonComponent,
-    MatIconModule,
-    AsyncPipe,
-    FormErrorComponent
-],
+    selector: "gt-change-password",
+    templateUrl: "./change-password.component.html",
+    styleUrls: ["./change-password.component.scss"],
+    imports: [
+        MatCardModule,
+        MatDividerModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        InputMatcherDirective,
+        LoadingButtonComponent,
+        MatIconModule,
+        AsyncPipe,
+        FormErrorComponent
+    ]
 })
 export class ChangePasswordComponent
   extends StatefulComponent<PasswordState, PasswordService>

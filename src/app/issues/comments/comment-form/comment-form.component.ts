@@ -14,17 +14,16 @@ import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
 
 @Component({
-  selector: "gt-comment-form",
-  templateUrl: "./comment-form.component.html",
-  styleUrls: ["./comment-form.component.scss"],
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    LoadingButtonComponent,
-    MatButtonModule
-],
+    selector: "gt-comment-form",
+    templateUrl: "./comment-form.component.html",
+    styleUrls: ["./comment-form.component.scss"],
+    imports: [
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        LoadingButtonComponent,
+        MatButtonModule
+    ]
 })
 export class CommentFormComponent implements OnInit {
   @Input() comment?: Comment;

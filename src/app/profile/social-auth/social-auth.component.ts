@@ -19,22 +19,21 @@ import { UNHANDLED_ERROR } from "src/app/constants";
 import { User } from "src/app/api/user/user.interfaces";
 
 @Component({
-  selector: "gt-social-auth",
-  templateUrl: "./social-auth.component.html",
-  styleUrls: ["./social-auth.component.scss"],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [
-    MatCardModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    ReactiveFormsModule,
-    MatOptionModule,
-    AuthSvgComponent,
-    MatDividerModule,
-    MatButtonModule,
-    AsyncPipe
-],
+    selector: "gt-social-auth",
+    templateUrl: "./social-auth.component.html",
+    styleUrls: ["./social-auth.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        MatCardModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        ReactiveFormsModule,
+        MatOptionModule,
+        AuthSvgComponent,
+        MatDividerModule,
+        MatButtonModule,
+        AsyncPipe
+    ]
 })
 export class SocialAuthComponent
   extends StatefulComponent<SocialAuthState, SocialAuthService>

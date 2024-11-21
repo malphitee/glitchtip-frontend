@@ -7,12 +7,11 @@ import { PRISM_ALL_SUPPORTED_GRAMMAR } from "src/app/prismjs/constants";
 import { PrismDirective } from "src/app/prismjs/prism.directive";
 
 @Component({
-  selector: "gt-frame-expanded",
-  templateUrl: "./frame-expanded.component.html",
-  styleUrls: ["./frame-expanded.component.scss"],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [PrismDirective, MatDividerModule, KeyValuePipe],
+    selector: "gt-frame-expanded",
+    templateUrl: "./frame-expanded.component.html",
+    styleUrls: ["./frame-expanded.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [PrismDirective, MatDividerModule, KeyValuePipe]
 })
 export class FrameExpandedComponent {
   @Input() lineNo?: string | number | null;

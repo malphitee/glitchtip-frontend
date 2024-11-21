@@ -25,20 +25,19 @@ import { FormErrorComponent } from "../../shared/forms/form-error/form-error.com
 import { lastValueFrom, tap } from "rxjs";
 
 @Component({
-  selector: "gt-login-totp",
-  templateUrl: "./login-totp.component.html",
-  styleUrls: ["./login-totp.component.scss"],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    FormErrorComponent,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatCheckboxModule,
-    RouterLink,
-  ],
+    selector: "gt-login-totp",
+    templateUrl: "./login-totp.component.html",
+    styleUrls: ["./login-totp.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        ReactiveFormsModule,
+        FormErrorComponent,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        MatCheckboxModule,
+        RouterLink,
+    ]
 })
 export class LoginTotpComponent
   extends StatefulComponent<LoginState, LoginService>

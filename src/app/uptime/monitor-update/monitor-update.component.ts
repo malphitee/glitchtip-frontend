@@ -15,21 +15,20 @@ import { StatefulBaseComponent } from "src/app/shared/stateful-service/stateful-
 import { DetailHeaderComponent } from "src/app/shared/detail/header/header.component";
 
 @Component({
-  standalone: true,
-  selector: "gt-monitor-update",
-  templateUrl: "./monitor-update.component.html",
-  styleUrls: ["./monitor-update.component.scss"],
-  imports: [
-    CommonModule,
-    RouterModule,
-    LoadingButtonComponent,
-    MatButtonModule,
-    MatCardModule,
-    MatDividerModule,
-    MatIconModule,
-    MonitorFormComponent,
-    DetailHeaderComponent,
-  ],
+    selector: "gt-monitor-update",
+    templateUrl: "./monitor-update.component.html",
+    styleUrls: ["./monitor-update.component.scss"],
+    imports: [
+        CommonModule,
+        RouterModule,
+        LoadingButtonComponent,
+        MatButtonModule,
+        MatCardModule,
+        MatDividerModule,
+        MatIconModule,
+        MonitorFormComponent,
+        DetailHeaderComponent,
+    ]
 })
 export class MonitorUpdateComponent
   extends StatefulBaseComponent<MonitorState, MonitorService>

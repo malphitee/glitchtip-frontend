@@ -23,26 +23,25 @@ import { LoadingButtonComponent } from "../../../shared/loading-button/loading-b
 import { DetailHeaderComponent } from "src/app/shared/detail/header/header.component";
 
 @Component({
-  selector: "gt-member-detail",
-  templateUrl: "./member-detail.component.html",
-  styleUrls: ["./member-detail.component.scss"],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatButtonModule,
-    RouterLink,
-    MatIconModule,
-    MatCardModule,
-    MatDividerModule,
-    MatChipsModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatRadioModule,
-    LoadingButtonComponent,
-    MatListModule,
-    DetailHeaderComponent,
-  ],
+    selector: "gt-member-detail",
+    templateUrl: "./member-detail.component.html",
+    styleUrls: ["./member-detail.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        CommonModule,
+        MatButtonModule,
+        RouterLink,
+        MatIconModule,
+        MatCardModule,
+        MatDividerModule,
+        MatChipsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatRadioModule,
+        LoadingButtonComponent,
+        MatListModule,
+        DetailHeaderComponent,
+    ]
 })
 export class MemberDetailComponent implements OnInit, OnDestroy {
   member$ = this.memberDetailService.member$;

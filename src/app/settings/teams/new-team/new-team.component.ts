@@ -22,19 +22,18 @@ import { SlugifyDirective } from "./slugify.directive";
 import { slugRegex } from "src/app/shared/validators";
 
 @Component({
-  selector: "gt-new-team",
-  templateUrl: "./new-team.component.html",
-  styleUrls: ["./new-team.component.scss"],
-  standalone: true,
-  imports: [
-    MatDialogModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    SlugifyDirective,
-    LoadingButtonComponent,
-    MatButtonModule
-],
+    selector: "gt-new-team",
+    templateUrl: "./new-team.component.html",
+    styleUrls: ["./new-team.component.scss"],
+    imports: [
+        MatDialogModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        SlugifyDirective,
+        LoadingButtonComponent,
+        MatButtonModule
+    ]
 })
 export class NewTeamComponent {
   loading = false;

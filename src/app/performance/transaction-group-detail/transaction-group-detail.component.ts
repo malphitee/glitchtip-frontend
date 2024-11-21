@@ -11,18 +11,17 @@ import { TransactionGroupDetailService } from "./transaction-group-detail.servic
 import { HumanizeDurationPipe } from "../../shared/seconds-or-ms.pipe";
 
 @Component({
-  selector: "gt-transaction-group-detail",
-  templateUrl: "./transaction-group-detail.component.html",
-  styleUrls: ["./transaction-group-detail.component.scss"],
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatCardModule,
-    RouterLink,
-    MatIconModule,
-    HumanizeDurationPipe,
-    DetailHeaderComponent,
-  ],
+    selector: "gt-transaction-group-detail",
+    templateUrl: "./transaction-group-detail.component.html",
+    styleUrls: ["./transaction-group-detail.component.scss"],
+    imports: [
+        CommonModule,
+        MatCardModule,
+        RouterLink,
+        MatIconModule,
+        HumanizeDurationPipe,
+        DetailHeaderComponent,
+    ]
 })
 export class TransactionGroupDetailComponent implements OnInit, OnDestroy {
   activeOrganizationSlug$ = this.organizationsService.activeOrganizationSlug$;

@@ -8,12 +8,11 @@ import { MatCardModule } from "@angular/material/card";
 import { NgStyle, AsyncPipe } from "@angular/common";
 
 @Component({
-  selector: "gt-issue-detail-tags",
-  templateUrl: "./issue-detail-tags.component.html",
-  styleUrls: ["./issue-detail-tags.component.scss"],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [MatCardModule, NgStyle, MatTooltipModule, AsyncPipe],
+    selector: "gt-issue-detail-tags",
+    templateUrl: "./issue-detail-tags.component.html",
+    styleUrls: ["./issue-detail-tags.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [MatCardModule, NgStyle, MatTooltipModule, AsyncPipe]
 })
 export class IssueDetailTagsComponent implements OnInit {
   tags$ = this.issueService.tags$;

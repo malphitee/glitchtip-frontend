@@ -4,12 +4,11 @@ import { IssueDetailService } from "../../../issue-detail.service";
 import { AsyncPipe } from "@angular/common";
 
 @Component({
-  selector: "gt-raw-stacktrace",
-  templateUrl: "./raw-stacktrace.component.html",
-  styleUrls: ["./raw-stacktrace.component.scss"],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [AsyncPipe],
+    selector: "gt-raw-stacktrace",
+    templateUrl: "./raw-stacktrace.component.html",
+    styleUrls: ["./raw-stacktrace.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [AsyncPipe]
 })
 export class RawStacktraceComponent {
   @Input() eventPlatform: string | null | undefined;

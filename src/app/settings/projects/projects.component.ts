@@ -15,17 +15,16 @@ import { MatButtonModule } from "@angular/material/button";
 import { AsyncPipe, DatePipe } from "@angular/common";
 
 @Component({
-  templateUrl: "./projects.component.html",
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [
-    MatButtonModule,
-    RouterLink,
-    EmptyProjectsComponent,
-    ProjectCardComponent,
-    AsyncPipe,
-    DatePipe
-],
+    templateUrl: "./projects.component.html",
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        MatButtonModule,
+        RouterLink,
+        EmptyProjectsComponent,
+        ProjectCardComponent,
+        AsyncPipe,
+        DatePipe
+    ]
 })
 export class ProjectsComponent implements OnInit, OnDestroy {
   subscription?: Subscription;

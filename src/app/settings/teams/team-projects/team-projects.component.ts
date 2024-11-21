@@ -14,21 +14,20 @@ import { MatCardModule } from "@angular/material/card";
 import { AsyncPipe } from "@angular/common";
 
 @Component({
-  selector: "gt-team-projects",
-  templateUrl: "./team-projects.component.html",
-  styleUrls: ["./team-projects.component.scss"],
-  standalone: true,
-  imports: [
-    MatCardModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    ReactiveFormsModule,
-    MatOptionModule,
-    MatDividerModule,
-    RouterLink,
-    LoadingButtonComponent,
-    AsyncPipe,
-  ],
+    selector: "gt-team-projects",
+    templateUrl: "./team-projects.component.html",
+    styleUrls: ["./team-projects.component.scss"],
+    imports: [
+        MatCardModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        ReactiveFormsModule,
+        MatOptionModule,
+        MatDividerModule,
+        RouterLink,
+        LoadingButtonComponent,
+        AsyncPipe,
+    ]
 })
 export class TeamProjectsComponent implements OnInit {
   userTeamRole$ = this.teamsService.userTeamRole$;

@@ -14,23 +14,22 @@ import { MonitorListService } from "./monitor-list.service";
 import { combineLatest } from "rxjs";
 
 @Component({
-  standalone: true,
-  selector: "gt-monitor-list",
-  templateUrl: "./monitor-list.component.html",
-  styleUrls: ["./monitor-list.component.scss"],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    CommonModule,
-    RouterModule,
-    ListFooterComponent,
-    TimeForPipe,
-    MonitorChartComponent,
-    MatButtonModule,
-    MatTooltipModule,
-    MatTableModule,
-    MatIconModule,
-    ListTitleComponent,
-  ],
+    selector: "gt-monitor-list",
+    templateUrl: "./monitor-list.component.html",
+    styleUrls: ["./monitor-list.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        CommonModule,
+        RouterModule,
+        ListFooterComponent,
+        TimeForPipe,
+        MonitorChartComponent,
+        MatButtonModule,
+        MatTooltipModule,
+        MatTableModule,
+        MatIconModule,
+        ListTitleComponent,
+    ]
 })
 export class MonitorListComponent implements OnDestroy {
   tooltipDisabled = false;

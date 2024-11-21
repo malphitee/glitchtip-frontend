@@ -9,12 +9,11 @@ import { MatButtonModule } from "@angular/material/button";
  * Action buttons may be added as child elements
  */
 @Component({
-  selector: "gt-detail-header",
-  standalone: true,
-  imports: [RouterLink, MatIconModule, MatButtonModule],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: "./header.component.html",
-  styleUrls: ["./header.component.scss"],
+    selector: "gt-detail-header",
+    imports: [RouterLink, MatIconModule, MatButtonModule],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    templateUrl: "./header.component.html",
+    styleUrls: ["./header.component.scss"]
 })
 export class DetailHeaderComponent {
   @Input() backLinkParams: { [key: string]: string | number } = {};

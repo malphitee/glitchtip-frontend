@@ -37,11 +37,12 @@
       },
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser-esbuild",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/glitchtip-frontend",
+            "outputPath": {
+              "base": "dist/glitchtip-frontend"
+            },
             "index": "src/index.html",
-            "main": "src/main.ts",
             "polyfills": ["src/polyfills.ts", "@angular/localize/init"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
@@ -70,9 +71,14 @@
             ],
             "styles": ["src/styles.scss"],
             "stylePreprocessorOptions": {
-              "includePaths": ["./src/assets/styles", ""]
+              "includePaths": [
+                "./src/assets/styles",
+                "",
+                "."
+              ]
             },
-            "scripts": []
+            "scripts": [],
+            "browser": "src/main.ts"
           },
           "configurations": {
             "prod-no-static": {
@@ -127,7 +133,6 @@
               ]
             },
             "development": {
-              "buildOptimizer": false,
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true,

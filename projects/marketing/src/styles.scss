@@ -18,7 +18,8 @@ $font-path: "../../../src/assets/fonts";
 //  If you don't need the default component typographies but still want the hierarchy styles,
 //  you can delete this line and instead use:
 //    `@include mat.legacy-typography-hierarchy($custom-typography);`
-@include mat.core();
+@include mat.elevation-classes();
+@include mat.app-background();
 @include mat.all-component-typographies($custom-typography);
 @include mat.card-typography($custom-card-typography);
 

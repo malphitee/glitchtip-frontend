@@ -19,27 +19,26 @@ import { lastValueFrom } from "rxjs";
 import { DetailHeaderComponent } from "src/app/shared/detail/header/header.component";
 
 @Component({
-  standalone: true,
-  selector: "gt-monitor-detail",
-  templateUrl: "./monitor-detail.component.html",
-  styleUrls: ["./monitor-detail.component.scss"],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    CommonModule,
-    RouterModule,
-    MonitorChecksComponent,
-    CopyInputComponent,
-    MonitorResponseChartComponent,
-    HumanizeDurationPipe,
-    TimeForPipe,
-    MatButtonModule,
-    MonitorChartComponent,
-    MatCardModule,
-    MatDividerModule,
-    MatProgressSpinnerModule,
-    MatIconModule,
-    DetailHeaderComponent,
-  ],
+    selector: "gt-monitor-detail",
+    templateUrl: "./monitor-detail.component.html",
+    styleUrls: ["./monitor-detail.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        CommonModule,
+        RouterModule,
+        MonitorChecksComponent,
+        CopyInputComponent,
+        MonitorResponseChartComponent,
+        HumanizeDurationPipe,
+        TimeForPipe,
+        MatButtonModule,
+        MonitorChartComponent,
+        MatCardModule,
+        MatDividerModule,
+        MatProgressSpinnerModule,
+        MatIconModule,
+        DetailHeaderComponent,
+    ]
 })
 export class MonitorDetailComponent
   extends StatefulBaseComponent<MonitorState, MonitorService>

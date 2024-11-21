@@ -13,22 +13,21 @@ import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
 
 @Component({
-  selector: "marketing-home",
-  standalone: true,
-  imports: [
-    MatButtonModule,
-    MatCard,
-    MatCardContent,
-    MatLabel,
-    MatInputModule,
-    MatFormFieldModule,
-    MatFormField,
-    RouterLink,
-    PaymentComponent,
-    ResponsiveImageComponent,
-  ],
-  templateUrl: "./home.component.html",
-  styleUrls: ["./home.component.scss"],
+    selector: "marketing-home",
+    imports: [
+        MatButtonModule,
+        MatCard,
+        MatCardContent,
+        MatLabel,
+        MatInputModule,
+        MatFormFieldModule,
+        MatFormField,
+        RouterLink,
+        PaymentComponent,
+        ResponsiveImageComponent,
+    ],
+    templateUrl: "./home.component.html",
+    styleUrls: ["./home.component.scss"]
 })
 export class HomeComponent {
   registerLink = this.links.registerLink;

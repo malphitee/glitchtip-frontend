@@ -35,26 +35,25 @@ import { ProjectFilterBarComponent } from "../../list-elements/project-filter-ba
 import { ListTitleComponent } from "../../list-elements/list-title/list-title.component";
 
 @Component({
-  selector: "gt-issues-page",
-  templateUrl: "./issues-page.component.html",
-  styleUrls: ["./issues-page.component.scss"],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [
-    CommonModule,
-    ListTitleComponent,
-    ProjectFilterBarComponent,
-    MatTableModule,
-    DataFilterBarComponent,
-    MatCheckboxModule,
-    MatButtonModule,
-    MatIconModule,
-    RouterLink,
-    ListFooterComponent,
-    IssueZeroStatesComponent,
-    DaysAgoPipe,
-    DaysOldPipe,
-  ],
+    selector: "gt-issues-page",
+    templateUrl: "./issues-page.component.html",
+    styleUrls: ["./issues-page.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        CommonModule,
+        ListTitleComponent,
+        ProjectFilterBarComponent,
+        MatTableModule,
+        DataFilterBarComponent,
+        MatCheckboxModule,
+        MatButtonModule,
+        MatIconModule,
+        RouterLink,
+        ListFooterComponent,
+        IssueZeroStatesComponent,
+        DaysAgoPipe,
+        DaysOldPipe,
+    ]
 })
 export class IssuesPageComponent implements OnInit, OnDestroy {
   displayedColumns: string[] = ["select", "title", "events"];

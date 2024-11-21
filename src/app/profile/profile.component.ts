@@ -17,19 +17,18 @@ import { UserService } from "../api/user/user.service";
 import { MainNavService } from "../main-nav/main-nav.service";
 
 @Component({
-  selector: "gt-profile",
-  templateUrl: "./profile.component.html",
-  styleUrls: ["./profile.component.scss"],
-  standalone: true,
-  imports: [
-    MatSidenavModule,
-    MatListModule,
-    RouterLink,
-    RouterLinkActive,
-    MobileNavToolbarComponent,
-    RouterOutlet,
-    AsyncPipe
-],
+    selector: "gt-profile",
+    templateUrl: "./profile.component.html",
+    styleUrls: ["./profile.component.scss"],
+    imports: [
+        MatSidenavModule,
+        MatListModule,
+        RouterLink,
+        RouterLinkActive,
+        MobileNavToolbarComponent,
+        RouterOutlet,
+        AsyncPipe
+    ]
 })
 export class ProfileComponent {
   user$ = this.userService.userDetails$;

@@ -16,19 +16,18 @@ import { ProjectCardComponent } from "../project-card/project-card.component";
 import { EmptyProjectsComponent } from "../project-card/empty-projects/empty-projects.component";
 
 @Component({
-  standalone: true,
-  selector: "gt-project-list",
-  imports: [
-    CommonModule,
-    RouterModule,
-    MatButtonModule,
-    MatCardModule,
-    ProjectCardComponent,
-    EmptyProjectsComponent,
-  ],
-  templateUrl: "./project-list.component.html",
-  styleUrls: ["./project-list.component.scss"],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: "gt-project-list",
+    imports: [
+        CommonModule,
+        RouterModule,
+        MatButtonModule,
+        MatCardModule,
+        ProjectCardComponent,
+        EmptyProjectsComponent,
+    ],
+    templateUrl: "./project-list.component.html",
+    styleUrls: ["./project-list.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProjectListComponent implements OnInit {
   @Input() activeOrgOnly = false;

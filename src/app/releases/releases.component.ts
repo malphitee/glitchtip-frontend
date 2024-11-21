@@ -10,17 +10,16 @@ import { ReleasesService } from "./releases.service";
 import { combineLatest, map } from "rxjs";
 
 @Component({
-  templateUrl: "./releases.component.html",
-  styleUrls: ["./releases.component.scss"],
-  standalone: true,
-  imports: [
-    CommonModule,
-    ListTitleComponent,
-    MatTableModule,
-    RouterLink,
-    MatTooltipModule,
-    ListFooterComponent,
-  ],
+    templateUrl: "./releases.component.html",
+    styleUrls: ["./releases.component.scss"],
+    imports: [
+        CommonModule,
+        ListTitleComponent,
+        MatTableModule,
+        RouterLink,
+        MatTooltipModule,
+        ListFooterComponent,
+    ]
 })
 export class ReleasesComponent implements OnDestroy {
   paginator$ = this.service.paginator$;

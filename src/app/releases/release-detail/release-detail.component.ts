@@ -10,16 +10,15 @@ import { CommonModule } from "@angular/common";
 import { DetailHeaderComponent } from "src/app/shared/detail/header/header.component";
 
 @Component({
-  templateUrl: "./release-detail.component.html",
-  styleUrls: ["./release-detail.component.scss"],
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatTableModule,
-    MatTooltipModule,
-    ListFooterComponent,
-    DetailHeaderComponent,
-  ],
+    templateUrl: "./release-detail.component.html",
+    styleUrls: ["./release-detail.component.scss"],
+    imports: [
+        CommonModule,
+        MatTableModule,
+        MatTooltipModule,
+        ListFooterComponent,
+        DetailHeaderComponent,
+    ]
 })
 export class ReleaseDetailComponent implements OnDestroy {
   tooltipDisabled = false;

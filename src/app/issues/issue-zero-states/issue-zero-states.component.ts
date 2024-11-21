@@ -15,12 +15,11 @@ import { flattenedPlatforms } from "src/app/settings/projects/platform-picker/pl
 import { CopyInputComponent } from "../../shared/copy-input/copy-input.component";
 
 @Component({
-  selector: "gt-issue-zero-states",
-  templateUrl: "./issue-zero-states.component.html",
-  styleUrls: ["./issue-zero-states.component.scss"],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [CommonModule, RouterLink, CopyInputComponent, MarkdownModule],
+    selector: "gt-issue-zero-states",
+    templateUrl: "./issue-zero-states.component.html",
+    styleUrls: ["./issue-zero-states.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [CommonModule, RouterLink, CopyInputComponent, MarkdownModule]
 })
 export class IssueZeroStatesComponent implements OnInit {
   loading$ = combineLatest([

@@ -26,21 +26,20 @@ import { ProjectFilterBarComponent } from "../../list-elements/project-filter-ba
 import { ListTitleComponent } from "../../list-elements/list-title/list-title.component";
 
 @Component({
-  selector: "gt-transaction-groups",
-  templateUrl: "./transaction-groups.component.html",
-  styleUrls: ["./transaction-groups.component.scss"],
-  standalone: true,
-  imports: [
-    CommonModule,
-    ListTitleComponent,
-    ProjectFilterBarComponent,
-    MatTableModule,
-    DataFilterBarComponent,
-    MatTooltipModule,
-    RouterLink,
-    ListFooterComponent,
-    HumanizeDurationPipe,
-  ],
+    selector: "gt-transaction-groups",
+    templateUrl: "./transaction-groups.component.html",
+    styleUrls: ["./transaction-groups.component.scss"],
+    imports: [
+        CommonModule,
+        ListTitleComponent,
+        ProjectFilterBarComponent,
+        MatTableModule,
+        DataFilterBarComponent,
+        MatTooltipModule,
+        RouterLink,
+        ListFooterComponent,
+        HumanizeDurationPipe,
+    ]
 })
 export class TransactionGroupsComponent implements OnInit, OnDestroy {
   paginator$ = this.service.paginator$;

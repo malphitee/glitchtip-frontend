@@ -8,18 +8,17 @@ import { FormErrorComponent } from "../../shared/forms/form-error/form-error.com
 import { LoginService } from "../login.service";
 
 @Component({
-  selector: "gt-login-webauthn",
-  templateUrl: "./login-webauthn.component.html",
-  styleUrls: ["./login-webauthn.component.scss"],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [
-    MatProgressBarModule,
-    FormErrorComponent,
-    MatButtonModule,
-    MatCheckboxModule,
-    RouterLink,
-  ],
+    selector: "gt-login-webauthn",
+    templateUrl: "./login-webauthn.component.html",
+    styleUrls: ["./login-webauthn.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        MatProgressBarModule,
+        FormErrorComponent,
+        MatButtonModule,
+        MatCheckboxModule,
+        RouterLink,
+    ]
 })
 export class LoginWebAuthnComponent implements OnInit {
   useTOTP = false; //this.loginService.useTOTP;

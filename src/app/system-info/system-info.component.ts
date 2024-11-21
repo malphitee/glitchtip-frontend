@@ -13,22 +13,21 @@ import { map, combineLatest } from "rxjs";
 import { EntryDataComponent } from "../shared/entry-data/entry-data.component";
 
 @Component({
-  selector: "gt-system-info",
-  standalone: true,
-  imports: [
-    AsyncPipe,
-    MatCard,
-    MatCardHeader,
-    MatCardTitle,
-    MatCardContent,
-    MatDivider,
-    MatHint,
-    EntryDataComponent,
-    KeyValuePipe
-],
-  templateUrl: "./system-info.component.html",
-  styleUrls: ["./system-info.component.scss"],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: "gt-system-info",
+    imports: [
+        AsyncPipe,
+        MatCard,
+        MatCardHeader,
+        MatCardTitle,
+        MatCardContent,
+        MatDivider,
+        MatHint,
+        EntryDataComponent,
+        KeyValuePipe
+    ],
+    templateUrl: "./system-info.component.html",
+    styleUrls: ["./system-info.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SystemInfoComponent {
   backendConfiguration$ = combineLatest([
