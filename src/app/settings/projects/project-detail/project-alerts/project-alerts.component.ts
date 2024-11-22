@@ -18,21 +18,21 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
 
 @Component({
-    selector: "gt-project-alerts",
-    templateUrl: "./project-alerts.component.html",
-    styleUrls: ["./project-alerts.component.scss"],
-    imports: [
-        MatCardModule,
-        MatButtonModule,
-        MatDialogModule,
-        MatDividerModule,
-        AlertFormComponent,
-        MatIconModule,
-        MatTooltipModule,
-        LoadingButtonComponent,
-        MatProgressSpinnerModule,
-        AsyncPipe,
-    ]
+  selector: "gt-project-alerts",
+  templateUrl: "./project-alerts.component.html",
+  styleUrls: ["./project-alerts.component.scss"],
+  imports: [
+    MatCardModule,
+    MatButtonModule,
+    MatDialogModule,
+    MatDividerModule,
+    AlertFormComponent,
+    MatIconModule,
+    MatTooltipModule,
+    LoadingButtonComponent,
+    MatProgressSpinnerModule,
+    AsyncPipe,
+  ],
 })
 export class ProjectAlertsComponent implements OnInit, OnDestroy {
   @ViewChild("newAlert") newAlertRef?: AlertFormComponent;

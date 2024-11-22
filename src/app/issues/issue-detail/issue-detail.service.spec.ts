@@ -51,11 +51,11 @@ describe("IssueDetailService", () => {
     const testApiData = sampleApiIssueDetail;
     service.retrieveIssue(testApiData.id).toPromise();
     const req = httpTestingController.expectOne(
-      `/api/0/issues/${testApiData.id}/`
+      `/api/0/issues/${testApiData.id}/`,
     );
     req.flush(testApiData);
     service.issue$.subscribe((issue) =>
-      expect(issue).toEqual(sampleIssueDetail)
+      expect(issue).toEqual(sampleIssueDetail),
     );
   });
 
@@ -270,7 +270,7 @@ describe("IssueDetailService", () => {
     service.setEvent(testData);
     service.breadcrumbs$.subscribe((breadcrumb: any) => {
       expect(breadcrumb.values[0].timestamp).toEqual(
-        "2020-12-18T18:09:47.841276Z"
+        "2020-12-18T18:09:47.841276Z",
       );
     });
   });

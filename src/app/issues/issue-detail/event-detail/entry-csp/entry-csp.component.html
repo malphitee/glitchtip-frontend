@@ -8,7 +8,7 @@
           [checked]="true"
           value="report-csp"
           aria-label="full csp report data"
-          >
+        >
           Report
         </mat-button-toggle>
         <mat-button-toggle value="raw-csp" aria-label="raw csp report data">
@@ -16,17 +16,20 @@
         </mat-button-toggle>
       </mat-button-toggle-group>
     </div>
-    @if (group.value === 'report-csp') {
+    @if (group.value === "report-csp") {
       <div>
         <h4>{{ csp?.effective_directive }}</h4>
         @for (data of csp | keyvalue; track data) {
           <dl>
-            <gt-entry-data [key]="data.key" [value]="data.value"></gt-entry-data>
+            <gt-entry-data
+              [key]="data.key"
+              [value]="data.value"
+            ></gt-entry-data>
           </dl>
         }
       </div>
     }
-    @if (group.value === 'raw-csp') {
+    @if (group.value === "raw-csp") {
       <div>
         <pre>
           &#123;<span class="csp__code">"csp-report": {{ csp | json }}</span>&#125;

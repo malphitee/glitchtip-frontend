@@ -6,14 +6,14 @@ import { OrganizationsService } from "./api/organizations/organizations.service"
 import { UserService } from "./api/user/user.service";
 
 @Component({
-    selector: "gt-logged-in",
-    templateUrl: "./logged-in.component.html",
-    imports: [MainNavComponent, RouterOutlet, RateLimitBannerComponent]
+  selector: "gt-logged-in",
+  templateUrl: "./logged-in.component.html",
+  imports: [MainNavComponent, RouterOutlet, RateLimitBannerComponent],
 })
 export class LoggedInComponent implements OnInit {
   constructor(
     private userService: UserService,
-    private organizationService: OrganizationsService
+    private organizationService: OrganizationsService,
   ) {}
 
   ngOnInit() {

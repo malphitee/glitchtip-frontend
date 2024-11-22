@@ -57,18 +57,18 @@ export class ProjectSettingsService extends PaginationStatefulService<ProjectSet
   readonly projects$ = this.getState$.pipe(map((data) => data.projects));
 
   readonly activeProject$ = this.getState$.pipe(
-    map((data) => data.projectDetail)
+    map((data) => data.projectDetail),
   );
   readonly activeProjectSlug$ = this.activeProject$.pipe(
-    map((data) => data?.slug)
+    map((data) => data?.slug),
   );
   readonly projectKeys$ = this.getState$.pipe(map((data) => data.projectKeys));
 
   readonly projectsOnTeam$ = this.getState$.pipe(
-    map((data) => data.projectsOnTeam)
+    map((data) => data.projectsOnTeam),
   );
   readonly projectsNotOnTeam$ = this.getState$.pipe(
-    map((data) => data.projectsNotOnTeam)
+    map((data) => data.projectsNotOnTeam),
   );
   readonly addRemoveLoading$ = this.getState$.pipe(map((data) => data.loading));
   readonly errors$ = this.getState$.pipe(map((data) => data.errors));
@@ -78,7 +78,7 @@ export class ProjectSettingsService extends PaginationStatefulService<ProjectSet
     private projectsAPIService: ProjectsAPIService,
     private projectTeamsAPIService: ProjectTeamsAPIService,
     private orgProjectsAPIService: OrganizationProjectsAPIService,
-    private projectKeysAPIService: ProjectKeysAPIService
+    private projectKeysAPIService: ProjectKeysAPIService,
   ) {
     super(initialState);
   }
@@ -107,13 +107,13 @@ export class ProjectSettingsService extends PaginationStatefulService<ProjectSet
   getProjectDetails(
     project: number[] | null,
     activeOrgProjects: OrganizationProject[] | null,
-    orgSlug: string
+    orgSlug: string,
   ) {
     if (activeOrgProjects) {
       let matchingProject: OrganizationProject | null = null;
       if (project && project.length === 1) {
         const match = activeOrgProjects.find(
-          (activeOrgProject) => activeOrgProject.id === project[0]
+          (activeOrgProject) => activeOrgProject.id === project[0],
         );
         if (match) matchingProject = match;
       } else if (activeOrgProjects.length === 1) {
@@ -138,7 +138,7 @@ export class ProjectSettingsService extends PaginationStatefulService<ProjectSet
         catchError((error: HttpErrorResponse) => {
           this.setAddProjectToTeamError(error);
           return EMPTY;
-        })
+        }),
       )
       .subscribe();
   }
@@ -146,7 +146,7 @@ export class ProjectSettingsService extends PaginationStatefulService<ProjectSet
   removeProjectFromTeam(
     orgSlug: string,
     teamSlug: string,
-    projectSlug: string
+    projectSlug: string,
   ) {
     this.setRemoveProjectFromTeamLoading(projectSlug);
     return this.projectTeamsAPIService
@@ -159,7 +159,7 @@ export class ProjectSettingsService extends PaginationStatefulService<ProjectSet
         catchError((error: HttpErrorResponse) => {
           this.setRemoveProjectFromTeamLoadingError(error);
           return EMPTY;
-        })
+        }),
       )
       .subscribe();
   }
@@ -197,7 +197,7 @@ export class ProjectSettingsService extends PaginationStatefulService<ProjectSet
             .list(organizationSlug, project!.slug)
             .pipe(tap((projectKeys) => this.setKeys(projectKeys)))
             .subscribe();
-        })
+        }),
       )
       .subscribe();
   }
@@ -213,7 +213,7 @@ export class ProjectSettingsService extends PaginationStatefulService<ProjectSet
     orgSlug: string,
     projectSlug: string,
     projectPlatform: string,
-    projectName: string
+    projectName: string,
   ) {
     const data = { name: projectName, platform: projectPlatform };
     return this.projectsAPIService
@@ -308,7 +308,7 @@ export class ProjectSettingsService extends PaginationStatefulService<ProjectSet
     const filteredTeams = this.state
       .getValue()
       .projectsOnTeam.filter(
-        (currentProject) => currentProject.slug !== project.slug
+        (currentProject) => currentProject.slug !== project.slug,
       );
     const notOnTeam = this.state
       .getValue()
@@ -327,7 +327,7 @@ export class ProjectSettingsService extends PaginationStatefulService<ProjectSet
     const notOnTeam = this.state
       .getValue()
       .projectsNotOnTeam.filter(
-        (currentProject) => currentProject.slug !== project.slug
+        (currentProject) => currentProject.slug !== project.slug,
       );
     const onTeam = this.state.getValue().projectsOnTeam?.concat([project]);
     this.setState({

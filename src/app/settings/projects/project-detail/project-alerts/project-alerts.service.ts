@@ -85,7 +85,7 @@ const initialState: ProjectAlertState = {
 export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
   readonly initialLoad$ = this.getState$.pipe(map((data) => data.initialLoad));
   readonly initialLoadError$ = this.getState$.pipe(
-    map((data) => data.initialLoadError)
+    map((data) => data.initialLoadError),
   );
   readonly projectAlerts$ = this.getState$.pipe(
     map((data) => data.projectAlerts),
@@ -96,33 +96,33 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
           ...alert,
           errorAlert: !alert.timespanMinutes && !alert.quantity ? false : true,
         };
-      })
-    )
+      }),
+    ),
   );
 
   /** New Alert */
   readonly newAlertOpen$ = this.getState$.pipe(
-    map((data) => data.newAlertState.newAlertOpen)
+    map((data) => data.newAlertState.newAlertOpen),
   );
   readonly newProjectAlertRecipients$ = this.getState$.pipe(
-    map((data) => data.newAlertState.newProjectAlertRecipients)
+    map((data) => data.newAlertState.newProjectAlertRecipients),
   );
   readonly newAlertLoading$ = this.getState$.pipe(
-    map((data) => data.newAlertState.newAlertLoading)
+    map((data) => data.newAlertState.newAlertLoading),
   );
   readonly newAlertError$ = this.getState$.pipe(
-    map((data) => data.newAlertState.newAlertError)
+    map((data) => data.newAlertState.newAlertError),
   );
 
   /** Recipient Dialog */
   readonly recipientError$ = this.getState$.pipe(
-    map((data) => data.recipientDialogState.recipientError)
+    map((data) => data.recipientDialogState.recipientError),
   );
   readonly recipientDialogOpen$ = this.getState$.pipe(
-    map((data) => data.recipientDialogState.recipientDialogOpen)
+    map((data) => data.recipientDialogState.recipientDialogOpen),
   );
   readonly activeAlert$ = this.getState$.pipe(
-    map((data) => data.recipientDialogState.activeAlert)
+    map((data) => data.recipientDialogState.activeAlert),
   );
   readonly emailSelected$ = combineLatest([
     this.newProjectAlertRecipients$,
@@ -131,40 +131,40 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
     map(([newRecipients, activeAlert]) => {
       if (activeAlert?.id) {
         return activeAlert.alertRecipients.some(
-          (data) => data.recipientType === "email"
+          (data) => data.recipientType === "email",
         );
       } else if (newRecipients !== null) {
         return newRecipients.some((data) => data.recipientType === "email");
       }
       return;
-    })
+    }),
   );
 
   /** Current Alerts */
   readonly removeAlertLoading$ = this.getState$.pipe(
-    map((data) => data.removeAlertLoading)
+    map((data) => data.removeAlertLoading),
   );
   readonly removeAlertError$ = this.getState$.pipe(
-    map((data) => data.removeAlertError)
+    map((data) => data.removeAlertError),
   );
   readonly updatePropertiesLoading$ = this.getState$.pipe(
-    map((data) => data.updatePropertiesLoading)
+    map((data) => data.updatePropertiesLoading),
   );
   readonly updatePropertiesError$ = this.getState$.pipe(
-    map((data) => data.updatePropertiesError)
+    map((data) => data.updatePropertiesError),
   );
   readonly deleteRecipientLoading$ = this.getState$.pipe(
-    map((data) => data.deleteRecipientLoading)
+    map((data) => data.deleteRecipientLoading),
   );
   readonly deleteRecipientError$ = this.getState$.pipe(
-    map((data) => data.deleteRecipientError)
+    map((data) => data.deleteRecipientError),
   );
 
   constructor(
     private organizationsService: OrganizationsService,
     private projectSettingsService: ProjectSettingsService,
     private projectAlertsAPIService: ProjectAlertsAPIService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
   ) {
     super(initialState);
   }
@@ -186,11 +186,11 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
               catchError((err: HttpErrorResponse) => {
                 this.setProjectAlertsListError(err);
                 return EMPTY;
-              })
+              }),
             );
           }
           return EMPTY;
-        })
+        }),
       )
       .subscribe();
   }
@@ -219,7 +219,7 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
             this.updateAlertRecipient(event);
           }
           return EMPTY;
-        })
+        }),
       )
       .subscribe();
   }
@@ -255,7 +255,7 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
                 tap((resp) => {
                   this.setCreateAlert(resp);
                   this.snackBar.open(`Success! Your new alert has been added.`);
-                })
+                }),
               );
           }
           return EMPTY;
@@ -263,7 +263,7 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
         catchError((err: HttpErrorResponse) => {
           this.setCreateAlertError(err);
           return EMPTY;
-        })
+        }),
       )
       .subscribe();
   }
@@ -285,7 +285,7 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
                 tap((_) => {
                   this.setDeleteProjectAlert(id);
                   this.snackBar.open(`Success: Your alert has been deleted`);
-                })
+                }),
               );
           }
           return EMPTY;
@@ -293,7 +293,7 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
         catchError((err: HttpErrorResponse) => {
           this.setDeleteAlertError(err, id);
           return EMPTY;
-        })
+        }),
       )
       .subscribe();
   }
@@ -303,7 +303,7 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
     newQuantity: number,
     uptime: boolean,
     id: number,
-    recipients: AlertRecipient[]
+    recipients: AlertRecipient[],
   ) {
     this.setUpdatePropertiesLoading(id);
     const data: PartialProjectAlert = {
@@ -311,7 +311,7 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
       timespanMinutes: newTimespan,
       quantity: newQuantity,
       uptime,
-      alertRecipients: recipients
+      alertRecipients: recipients,
     };
     combineLatest([
       this.organizationsService.activeOrganizationSlug$,
@@ -327,7 +327,7 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
                 tap((resp) => {
                   this.setUpdateAlertProperties(resp);
                   this.snackBar.open(`Success: Your alert has been updated`);
-                })
+                }),
               );
           }
           return EMPTY;
@@ -335,7 +335,7 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
         catchError((err: HttpErrorResponse) => {
           this.setUpdatePropertiesError(err, id);
           return EMPTY;
-        })
+        }),
       )
       .subscribe();
   }
@@ -373,7 +373,7 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
                 tap((resp) => {
                   this.setUpdateAlertRecipients(resp.alertRecipients, resp.id);
                   this.snackBar.open(`Success: Your alert has been updated`);
-                })
+                }),
               );
           }
           return EMPTY;
@@ -381,7 +381,7 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
         catchError((err: HttpErrorResponse) => {
           this.setUpdateAlertRecipientsError(err, activeErrorId);
           return EMPTY;
-        })
+        }),
       )
       .subscribe();
   }
@@ -391,7 +391,7 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
     const data = {
       ...alert,
       alertRecipients: alert.alertRecipients.filter(
-        (currentRecipient) => currentRecipient.id !== recipientToRemove.id
+        (currentRecipient) => currentRecipient.id !== recipientToRemove.id,
       ),
     };
     combineLatest([
@@ -408,9 +408,9 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
                 tap((resp) => {
                   this.setUpdateAlertRecipients(resp.alertRecipients, resp.id);
                   this.snackBar.open(
-                    `Success: Your recipient has been deleted`
+                    `Success: Your recipient has been deleted`,
                   );
-                })
+                }),
               );
           }
           return EMPTY;
@@ -418,7 +418,7 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
         catchError((err: HttpErrorResponse) => {
           this.setDeleteRecipientError(err);
           return EMPTY;
-        })
+        }),
       )
       .subscribe();
   }
@@ -500,7 +500,7 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
         ...newAlertState,
         newProjectAlertRecipients:
           newAlertState.newProjectAlertRecipients?.filter(
-            (recipient) => recipient.url !== url
+            (recipient) => recipient.url !== url,
           ) ?? null,
       },
     });
@@ -608,7 +608,7 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
     this.setState({
       projectAlerts: this.findAndReplaceAlert(
         state.projectAlerts,
-        updatedAlert
+        updatedAlert,
       ),
       updatePropertiesLoading: null,
       updatePropertiesError: null,
@@ -649,7 +649,7 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
     const recipientDialogState = this.state.getValue().recipientDialogState;
     this.setState({
       projectAlerts: state.projectAlerts?.map((alert) =>
-        alert.id === id ? { ...alert, alertRecipients: recipients } : alert
+        alert.id === id ? { ...alert, alertRecipients: recipients } : alert,
       ),
       recipientDialogState: {
         ...recipientDialogState,
@@ -688,7 +688,7 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
 
   findAndReplaceAlert(
     currentAlerts: ProjectAlert[] | null,
-    newAlert: ProjectAlert
+    newAlert: ProjectAlert,
   ): ProjectAlert[] | null {
     const updatedAlert = currentAlerts?.map((alert) => {
       if (alert.id === newAlert.id) {

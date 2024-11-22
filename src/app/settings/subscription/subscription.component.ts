@@ -24,22 +24,22 @@ interface Percentages {
 }
 
 @Component({
-    selector: "gt-subscription",
-    templateUrl: "./subscription.component.html",
-    styleUrls: ["./subscription.component.scss"],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        MatCardModule,
-        MatDialogModule,
-        RouterLink,
-        MatFormFieldModule,
-        MatButtonModule,
-        PaymentComponent,
-        MatProgressSpinnerModule,
-        AsyncPipe,
-        CurrencyPipe,
-        DatePipe
-    ]
+  selector: "gt-subscription",
+  templateUrl: "./subscription.component.html",
+  styleUrls: ["./subscription.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatCardModule,
+    MatDialogModule,
+    RouterLink,
+    MatFormFieldModule,
+    MatButtonModule,
+    PaymentComponent,
+    MatProgressSpinnerModule,
+    AsyncPipe,
+    CurrencyPipe,
+    DatePipe,
+  ],
 })
 export class SubscriptionComponent implements OnDestroy {
   fromStripe$ = this.service.fromStripe$;
@@ -116,8 +116,8 @@ export class SubscriptionComponent implements OnDestroy {
         } else {
           this.service.retrieveSubscription(routerData.slug);
         }
-        if (routerData.redirectFromBillingPortal){
-          this.orgService.repeatRefreshOrgDetail()
+        if (routerData.redirectFromBillingPortal) {
+          this.orgService.repeatRefreshOrgDetail();
         }
         this.service.retrieveSubscriptionEventCount(routerData.slug);
       });

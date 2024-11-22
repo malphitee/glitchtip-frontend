@@ -21,22 +21,22 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
 
 @Component({
-    selector: "gt-new-token",
-    templateUrl: "./new-token.component.html",
-    styleUrls: ["./new-token.component.scss"],
-    imports: [
-        MatCardModule,
-        MatButtonModule,
-        RouterLink,
-        MatIconModule,
-        MatDividerModule,
-        MatFormFieldModule,
-        ReactiveFormsModule,
-        MatInputModule,
-        MatCheckboxModule,
-        LoadingButtonComponent,
-        AsyncPipe,
-    ]
+  selector: "gt-new-token",
+  templateUrl: "./new-token.component.html",
+  styleUrls: ["./new-token.component.scss"],
+  imports: [
+    MatCardModule,
+    MatButtonModule,
+    RouterLink,
+    MatIconModule,
+    MatDividerModule,
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    MatInputModule,
+    MatCheckboxModule,
+    LoadingButtonComponent,
+    AsyncPipe,
+  ],
 })
 export class NewTokenComponent
   extends StatefulBaseComponent<AuthTokensState, AuthTokensService>

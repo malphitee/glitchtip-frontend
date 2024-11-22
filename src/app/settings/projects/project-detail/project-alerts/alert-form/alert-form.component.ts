@@ -1,4 +1,4 @@
-import { I18nPluralPipe } from '@angular/common';
+import { I18nPluralPipe } from "@angular/common";
 import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
 import {
   FormGroup,
@@ -41,18 +41,18 @@ export const selectionRequiredValidator: ValidatorFn = (
 };
 
 @Component({
-    selector: "gt-alert-form",
-    templateUrl: "./alert-form.component.html",
-    styleUrls: ["./alert-form.component.scss"],
-    imports: [
-        I18nPluralPipe,
-        ReactiveFormsModule,
-        MatCheckboxModule,
-        MatTooltipModule,
-        MatFormFieldModule,
-        MatInputModule,
-        LoadingButtonComponent,
-    ]
+  selector: "gt-alert-form",
+  templateUrl: "./alert-form.component.html",
+  styleUrls: ["./alert-form.component.scss"],
+  imports: [
+    I18nPluralPipe,
+    ReactiveFormsModule,
+    MatCheckboxModule,
+    MatTooltipModule,
+    MatFormFieldModule,
+    MatInputModule,
+    LoadingButtonComponent,
+  ],
 })
 export class AlertFormComponent implements OnInit {
   @Input() loading: boolean | null = false;
@@ -68,14 +68,14 @@ export class AlertFormComponent implements OnInit {
   @Input() newAlert: boolean | undefined = false;
 
   timesI18nMapping = {
-    '=1': $localize `time`,
-    'other': $localize `times`
+    "=1": $localize`time`,
+    other: $localize`times`,
   };
 
   minutesI18nMapping = {
-    '=1': $localize `minute`,
-    'other': $localize `minutes`
-  }
+    "=1": $localize`minute`,
+    other: $localize`minutes`,
+  };
 
   intervalValidators = [
     Validators.min(0),

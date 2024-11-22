@@ -1,13 +1,12 @@
-
 import { Component, Optional } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatDialogModule, MatDialogRef } from "@angular/material/dialog";
 
 @Component({
-    selector: "gt-event-info",
-    imports: [MatDialogModule, MatButtonModule],
-    templateUrl: "./event-info.component.html",
-    styleUrls: ["./event-info.component.scss"]
+  selector: "gt-event-info",
+  imports: [MatDialogModule, MatButtonModule],
+  templateUrl: "./event-info.component.html",
+  styleUrls: ["./event-info.component.scss"],
 })
 export class EventInfoComponent {
   dialog = false;

@@ -42,9 +42,12 @@
   @include collect-themes.generate-dark-rules(themes.$candy-app-theme-dark);
 }
 
-.light, .dark {
+.light,
+.dark {
   @include meta.load-css("prismjs/plugins/line-numbers/prism-line-numbers.css");
-  @include meta.load-css("prismjs/plugins/line-highlight/prism-line-highlight.css");
+  @include meta.load-css(
+    "prismjs/plugins/line-highlight/prism-line-highlight.css"
+  );
 }
 
 // Responsive type maybe?

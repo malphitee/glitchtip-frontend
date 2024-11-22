@@ -14,42 +14,42 @@ export class ProjectTeamsAPIService {
   addProjectToTeam(
     organizationSlug: string,
     teamSlug: string,
-    projectSlug: string
+    projectSlug: string,
   ) {
     return this.http
       .post<ProjectDetail>(
         this.projectTeamsURL(organizationSlug, teamSlug, projectSlug),
-        null
+        null,
       )
       .pipe(
         map((projectDetail) => {
           projectDetail.id = normalizeID(projectDetail.id);
           return projectDetail;
-        })
+        }),
       );
   }
 
   removeProjectFromTeam(
     organizationSlug: string,
     teamSlug: string,
-    projectSlug: string
+    projectSlug: string,
   ) {
     return this.http
       .delete<ProjectDetail>(
-        this.projectTeamsURL(organizationSlug, teamSlug, projectSlug)
+        this.projectTeamsURL(organizationSlug, teamSlug, projectSlug),
       )
       .pipe(
         map((projectDetail) => {
           projectDetail.id = normalizeID(projectDetail.id);
           return projectDetail;
-        })
+        }),
       );
   }
 
   private projectTeamsURL(
     organizationSlug: string,
     teamSlug: string,
-    projectSlug: string
+    projectSlug: string,
   ) {
     return `${baseUrl}/projects/${organizationSlug}/${projectSlug}/teams/${teamSlug}/`;
   }

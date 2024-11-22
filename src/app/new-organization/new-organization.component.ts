@@ -18,17 +18,17 @@ import { MatCardModule } from "@angular/material/card";
 import { AsyncPipe } from "@angular/common";
 
 @Component({
-    selector: "gt-new-organizations",
-    templateUrl: "./new-organization.component.html",
-    styleUrls: ["./new-organization.component.scss"],
-    imports: [
-        MatCardModule,
-        ReactiveFormsModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatButtonModule,
-        AsyncPipe,
-    ]
+  selector: "gt-new-organizations",
+  templateUrl: "./new-organization.component.html",
+  styleUrls: ["./new-organization.component.scss"],
+  imports: [
+    MatCardModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    AsyncPipe,
+  ],
 })
 export class NewOrganizationsComponent implements OnDestroy {
   organizationCount$ = this.organizationsService.organizationCount$;

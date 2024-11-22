@@ -6,10 +6,10 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { CommonModule } from "@angular/common";
 
 @Component({
-    selector: "gt-monitor-chart",
-    templateUrl: "./monitor-chart.component.html",
-    styleUrls: ["./monitor-chart.component.scss"],
-    imports: [CommonModule, MatTooltipModule]
+  selector: "gt-monitor-chart",
+  templateUrl: "./monitor-chart.component.html",
+  styleUrls: ["./monitor-chart.component.scss"],
+  imports: [CommonModule, MatTooltipModule],
 })
 export class MonitorChartComponent {
   @Input() data: MonitorCheck[] = [];

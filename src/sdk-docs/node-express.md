@@ -76,7 +76,7 @@ app.use(
   Sentry.Handlers.requestHandler({
     serverName: false,
     user: ["email"],
-  })
+  }),
 );
 ```
 
@@ -92,6 +92,6 @@ app.use(
       }
       return false;
     },
-  })
+  }),
 );
 ```

@@ -11,17 +11,17 @@ import { TransactionGroupDetailService } from "./transaction-group-detail.servic
 import { HumanizeDurationPipe } from "../../shared/seconds-or-ms.pipe";
 
 @Component({
-    selector: "gt-transaction-group-detail",
-    templateUrl: "./transaction-group-detail.component.html",
-    styleUrls: ["./transaction-group-detail.component.scss"],
-    imports: [
-        CommonModule,
-        MatCardModule,
-        RouterLink,
-        MatIconModule,
-        HumanizeDurationPipe,
-        DetailHeaderComponent,
-    ]
+  selector: "gt-transaction-group-detail",
+  templateUrl: "./transaction-group-detail.component.html",
+  styleUrls: ["./transaction-group-detail.component.scss"],
+  imports: [
+    CommonModule,
+    MatCardModule,
+    RouterLink,
+    MatIconModule,
+    HumanizeDurationPipe,
+    DetailHeaderComponent,
+  ],
 })
 export class TransactionGroupDetailComponent implements OnInit, OnDestroy {
   activeOrganizationSlug$ = this.organizationsService.activeOrganizationSlug$;
@@ -30,14 +30,14 @@ export class TransactionGroupDetailComponent implements OnInit, OnDestroy {
     this.transactionGroupDetailService.transactionGroupInitialLoadComplete$;
   transactionGroup$ = this.transactionGroupDetailService.transactionGroup$;
   transactionGroupIdParam$ = this.route.paramMap.pipe(
-    map((params) => params.get("transaction-group-id"))
+    map((params) => params.get("transaction-group-id")),
   );
   retrieveDetailsSubscription?: Subscription;
 
   constructor(
     private route: ActivatedRoute,
     private organizationsService: OrganizationsService,
-    private transactionGroupDetailService: TransactionGroupDetailService
+    private transactionGroupDetailService: TransactionGroupDetailService,
   ) {}
 
   ngOnInit() {
@@ -53,11 +53,11 @@ export class TransactionGroupDetailComponent implements OnInit, OnDestroy {
           if (orgSlug && groupId) {
             return this.transactionGroupDetailService.retrieveTransactionGroup(
               orgSlug,
-              parseInt(groupId)
+              parseInt(groupId),
             );
           }
           return EMPTY;
-        })
+        }),
       )
       .subscribe();
   }

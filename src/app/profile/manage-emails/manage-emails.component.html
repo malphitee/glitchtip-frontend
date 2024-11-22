@@ -10,15 +10,9 @@
           <div class="email-info">
             <span>{{ email.email }}</span>
             @if (email.isPrimary || !email.isVerified) {
-              <mat-chip-set
-                role="list"
-                >
+              <mat-chip-set role="list">
                 @if (email.isPrimary) {
-                  <mat-chip
-                    color="primary"
-                    highlighted="true"
-                    role="listitem"
-                    >
+                  <mat-chip color="primary" highlighted="true" role="listitem">
                     Primary
                   </mat-chip>
                 }
@@ -44,15 +38,15 @@
             @if (!email.isPrimary && email.isVerified) {
               <gt-loading-button
                 buttonText="Make primary"
-                [loading]="(loadingStates$ | async)?.makePrimary === email.email"
+                [loading]="
+                  (loadingStates$ | async)?.makePrimary === email.email
+                "
                 (buttonClick)="makePrimary(email.email)"
                 buttonStyle="stroked"
               ></gt-loading-button>
             }
             @if ((loadingStates$ | async)?.delete === email.email) {
-              <div
-                class="delete-spinner-container"
-                >
+              <div class="delete-spinner-container">
                 <mat-progress-spinner
                   [diameter]="24"
                   color="primary"
@@ -63,14 +57,14 @@
             @if (
               !email.isPrimary &&
               (loadingStates$ | async)?.delete !== email.email
-              ) {
+            ) {
               <button
                 data-cy="delete-button"
                 class="medium-icon-button"
                 mat-icon-button
                 aria-label="Remove email address"
                 (click)="deleteEmail(email.email)"
-                >
+              >
                 <mat-icon>delete</mat-icon>
               </button>
             }
@@ -83,7 +77,7 @@
       (ngSubmit)="onSubmit()"
       id="add-email-form"
       class="add-email-form"
-      >
+    >
       <div class="add-email-form-ui">
         <mat-form-field appearance="outline">
           <mat-label>Email Address</mat-label>
@@ -91,16 +85,11 @@
           <mat-error>
             @if (
               email_address?.errors?.required || email_address?.errors?.email
-              ) {
-              <span
-                >
-                Please enter a valid email address.
-              </span>
+            ) {
+              <span> Please enter a valid email address. </span>
             }
             @if (email_address?.errors?.matchesExistingValidator) {
-              <span>
-                This email address is already on the list.
-              </span>
+              <span> This email address is already on the list. </span>
             }
             @if (email_address?.errors?.serverError) {
               <span>
@@ -114,7 +103,7 @@
           [loading]="(loadingStates$ | async)?.add"
         ></gt-loading-button>
       </div>
-      @if ((addEmailError$ | async) !== '') {
+      @if ((addEmailError$ | async) !== "") {
         <mat-error class="server-error">
           {{ addEmailError$ | async }}
         </mat-error>

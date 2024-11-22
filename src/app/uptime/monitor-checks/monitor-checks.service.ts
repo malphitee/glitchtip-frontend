@@ -31,7 +31,7 @@ export class MonitorChecksService extends PaginationStatefulService<MonitorCheck
     orgSlug: string,
     monitorId: string,
     isChange: boolean,
-    cursor: string | null
+    cursor: string | null,
   ) {
     this.setRetrieveMonitorChecksStart();
     return this.monitorChecksAPIService
@@ -42,9 +42,9 @@ export class MonitorChecksService extends PaginationStatefulService<MonitorCheck
             {
               monitorChecks: res.body!,
             },
-            res
+            res,
           );
-        })
+        }),
       );
   }
 

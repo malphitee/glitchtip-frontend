@@ -84,7 +84,7 @@ describe("ProjectAlertsService", () => {
     ];
     const updatedAlerts = service.findAndReplaceAlert(
       currentAlerts,
-      updatedAlertResp
+      updatedAlertResp,
     );
     expect(updatedAlerts).toEqual(newAlerts);
   });

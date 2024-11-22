@@ -1,11 +1,7 @@
 @if ((initialLoadComplete$ | async) && (transactionGroup$ | async) === null) {
-  <section
-    class="l-body l-body--full-width"
-    >
+  <section class="l-body l-body--full-width">
     @if (organization$ | async; as organization) {
-      <mat-card
-        class="auth-form transaction-group-404"
-        >
+      <mat-card class="auth-form transaction-group-404">
         <mat-card-content>
           <h1 class="mat-headline-4">Transaction group not found</h1>
           <p class="mat-body-1">
@@ -13,15 +9,15 @@
             doesn't exist or was deleted.
           </p>
           <p class="mat-body-1">
-            It's also possible that this transaction group was reported to a project
-            that you are not able to access.
+            It's also possible that this transaction group was reported to a
+            project that you are not able to access.
           </p>
           <a
             mat-flat-button
             color="primary"
             class="transaction-groups-link"
             [routerLink]="['..']"
-            >
+          >
             View all transaction groups in {{ organization.name }}
           </a>
         </mat-card-content>
@@ -30,13 +26,11 @@
   </section>
 }
 @if (transactionGroup$ | async; as group) {
-  <section
-    class="l-body l-body--full-width"
-    >
+  <section class="l-body l-body--full-width">
     <gt-detail-header
       [title]="[group.transaction, null]"
       backLinkText="View all transaction groups"
-      />
+    />
     <div class="row">
       <aside class="right">
         <mat-card>

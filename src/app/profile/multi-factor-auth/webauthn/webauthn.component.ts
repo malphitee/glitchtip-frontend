@@ -20,22 +20,22 @@ import { MultiFactorAuthService } from "../multi-factor-auth.service";
 import { checkForOverflow } from "src/app/shared/shared.utils";
 
 @Component({
-    selector: "gt-webauthn",
-    templateUrl: "./webauthn.component.html",
-    styleUrls: ["./webauthn.component.scss"],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        MatCardModule,
-        MatDividerModule,
-        FormErrorComponent,
-        LoadingButtonComponent,
-        ReactiveFormsModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatButtonModule,
-        MatTooltipModule,
-        MatIconModule,
-    ]
+  selector: "gt-webauthn",
+  templateUrl: "./webauthn.component.html",
+  styleUrls: ["./webauthn.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatCardModule,
+    MatDividerModule,
+    FormErrorComponent,
+    LoadingButtonComponent,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+  ],
 })
 export class WebAuthnComponent {
   stage = this.service.webAuthnState;

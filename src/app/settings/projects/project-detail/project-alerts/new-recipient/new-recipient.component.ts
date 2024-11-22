@@ -18,21 +18,21 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatFormFieldModule } from "@angular/material/form-field";
 
 @Component({
-    selector: "gt-new-recipient",
-    templateUrl: "./new-recipient.component.html",
-    styleUrls: ["./new-recipient.component.scss"],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        CommonModule,
-        MatDialogModule,
-        ReactiveFormsModule,
-        MatFormFieldModule,
-        MatSelectModule,
-        MatOptionModule,
-        MatInputModule,
-        LoadingButtonComponent,
-        MatButtonModule,
-    ]
+  selector: "gt-new-recipient",
+  templateUrl: "./new-recipient.component.html",
+  styleUrls: ["./new-recipient.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    CommonModule,
+    MatDialogModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatOptionModule,
+    MatInputModule,
+    LoadingButtonComponent,
+    MatButtonModule,
+  ],
 })
 export class NewRecipientComponent implements OnInit {
   recipientDialogOpen$ = this.alertsService.recipientDialogOpen$;

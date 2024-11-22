@@ -14,19 +14,19 @@ import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { AsyncPipe, DatePipe } from "@angular/common";
 
 @Component({
-    selector: "gt-comments",
-    templateUrl: "./comments.component.html",
-    styleUrls: ["./comments.component.scss"],
-    imports: [
-        MatProgressSpinnerModule,
-        CommentFormComponent,
-        MatDividerModule,
-        MatButtonModule,
-        MatIconModule,
-        MarkdownModule,
-        AsyncPipe,
-        DatePipe
-    ]
+  selector: "gt-comments",
+  templateUrl: "./comments.component.html",
+  styleUrls: ["./comments.component.scss"],
+  imports: [
+    MatProgressSpinnerModule,
+    CommentFormComponent,
+    MatDividerModule,
+    MatButtonModule,
+    MatIconModule,
+    MarkdownModule,
+    AsyncPipe,
+    DatePipe,
+  ],
 })
 export class CommentsComponent
   extends StatefulBaseComponent<CommentsState, CommentsService>
@@ -38,13 +38,13 @@ export class CommentsComponent
   commentUpdateLoading$ = this.commentsService.commentUpdateLoading$;
   user$ = this.userService.userDetails$;
   displayCommentCreation$ = this.comments$.pipe(
-    map((comments) => comments.length < 50)
+    map((comments) => comments.length < 50),
   );
 
   constructor(
     private commentsService: CommentsService,
     private userService: UserService,
-    protected route: ActivatedRoute
+    protected route: ActivatedRoute,
   ) {
     super(commentsService);
   }
@@ -65,13 +65,13 @@ export class CommentsComponent
             this.commentsService.updateComment(
               +params["issue-id"],
               data.id,
-              data.text
+              data.text,
             );
           } else {
             this.commentsService.createComment(+params["issue-id"], data.text);
           }
-        })
-      )
+        }),
+      ),
     );
   }
 
@@ -89,8 +89,8 @@ export class CommentsComponent
         this.route.params.pipe(
           tap((params) => {
             this.commentsService.deleteComment(+params["issue-id"], commentId);
-          })
-        )
+          }),
+        ),
       );
   }
 }

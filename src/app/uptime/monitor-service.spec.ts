@@ -36,11 +36,11 @@ describe("MonitorService", () => {
     const testData = monitorDetail;
     (service as any).retrieveMonitorDetails("uptime-chart-testing", "1");
     const req = httpTestingController.expectOne(
-      "/api/0/organizations/uptime-chart-testing/monitors/1/"
+      "/api/0/organizations/uptime-chart-testing/monitors/1/",
     );
     req.flush(testData, { headers: { Link: "link header info" } });
     service.activeMonitorRecentChecksSeries$.subscribe((series) =>
-      expect(series).toEqual(convertedSeries)
+      expect(series).toEqual(convertedSeries),
     );
   });
 });

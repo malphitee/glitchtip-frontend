@@ -28,27 +28,27 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { AsyncPipe } from "@angular/common";
 
 @Component({
-    selector: "gt-platform-picker",
-    templateUrl: "./platform-picker.component.html",
-    styleUrls: ["./platform-picker.component.scss"],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [
-        {
-            provide: NG_VALUE_ACCESSOR,
-            useExisting: forwardRef(() => PlatformPickerComponent),
-            multi: true,
-        },
-    ],
-    imports: [
-        MatFormFieldModule,
-        MatInputModule,
-        ReactiveFormsModule,
-        MatTabsModule,
-        MatButtonModule,
-        MatExpansionModule,
-        MatListModule,
-        AsyncPipe,
-    ]
+  selector: "gt-platform-picker",
+  templateUrl: "./platform-picker.component.html",
+  styleUrls: ["./platform-picker.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => PlatformPickerComponent),
+      multi: true,
+    },
+  ],
+  imports: [
+    MatFormFieldModule,
+    MatInputModule,
+    ReactiveFormsModule,
+    MatTabsModule,
+    MatButtonModule,
+    MatExpansionModule,
+    MatListModule,
+    AsyncPipe,
+  ],
 })
 export class PlatformPickerComponent implements ControlValueAccessor {
   @Input() template: "buttons" | "dropdown" = "buttons";

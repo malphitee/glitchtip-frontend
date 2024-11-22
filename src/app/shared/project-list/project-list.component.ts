@@ -16,18 +16,18 @@ import { ProjectCardComponent } from "../project-card/project-card.component";
 import { EmptyProjectsComponent } from "../project-card/empty-projects/empty-projects.component";
 
 @Component({
-    selector: "gt-project-list",
-    imports: [
-        CommonModule,
-        RouterModule,
-        MatButtonModule,
-        MatCardModule,
-        ProjectCardComponent,
-        EmptyProjectsComponent,
-    ],
-    templateUrl: "./project-list.component.html",
-    styleUrls: ["./project-list.component.scss"],
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: "gt-project-list",
+  imports: [
+    CommonModule,
+    RouterModule,
+    MatButtonModule,
+    MatCardModule,
+    ProjectCardComponent,
+    EmptyProjectsComponent,
+  ],
+  templateUrl: "./project-list.component.html",
+  styleUrls: ["./project-list.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProjectListComponent implements OnInit {
   @Input() activeOrgOnly = false;
@@ -42,16 +42,16 @@ export class ProjectListComponent implements OnInit {
         ...organization,
         projects: projects
           ? projects.filter(
-              (project) => project.organization.id === organization.id
+              (project) => project.organization.id === organization.id,
             )
           : [],
-      }))
-    )
+      })),
+    ),
   );
 
   constructor(
     private organizationsService: OrganizationsService,
-    private projectsService: ProjectsService
+    private projectsService: ProjectsService,
   ) {}
 
   ngOnInit() {

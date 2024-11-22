@@ -4,12 +4,11 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 
-
 @Component({
-    selector: "gt-frame-title",
-    templateUrl: "./frame-title.component.html",
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [MatTooltipModule, MatButtonModule, MatIconModule]
+  selector: "gt-frame-title",
+  templateUrl: "./frame-title.component.html",
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatTooltipModule, MatButtonModule, MatIconModule],
 })
 export class FrameTitleComponent {
   @Input() frame: Frame | undefined;
@@ -19,7 +18,7 @@ export class FrameTitleComponent {
   showToolTip(
     absPath: string | null,
     filename: string | null,
-    module: string | null
+    module: string | null,
   ): string {
     if ((absPath && absPath !== filename) || (absPath && absPath !== module)) {
       return absPath;
@@ -33,7 +32,7 @@ export class FrameTitleComponent {
   displayFilenameOrModule(
     platform: string | null,
     filename: string | null,
-    module: string | null
+    module: string | null,
   ): string | undefined {
     switch (this.eventPlatform || platform) {
       case "java":

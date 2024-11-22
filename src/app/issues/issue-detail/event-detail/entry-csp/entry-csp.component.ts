@@ -6,18 +6,18 @@ import { MatDividerModule } from "@angular/material/divider";
 import { AsyncPipe, JsonPipe, KeyValuePipe } from "@angular/common";
 
 @Component({
-    selector: "gt-entry-csp",
-    templateUrl: "./entry-csp.component.html",
-    styleUrls: ["./entry-csp.component.scss"],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        MatDividerModule,
-        MatButtonToggleModule,
-        EntryDataComponent,
-        AsyncPipe,
-        JsonPipe,
-        KeyValuePipe
-    ]
+  selector: "gt-entry-csp",
+  templateUrl: "./entry-csp.component.html",
+  styleUrls: ["./entry-csp.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatDividerModule,
+    MatButtonToggleModule,
+    EntryDataComponent,
+    AsyncPipe,
+    JsonPipe,
+    KeyValuePipe,
+  ],
 })
 export class EntryCSPComponent {
   eventEntryCSP$ = this.issueService.eventEntryCSP$;

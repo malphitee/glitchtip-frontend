@@ -62,7 +62,7 @@ describe("NewRecipientComponent", () => {
     expect(component.url.errors).toBeFalsy();
 
     component.url.setValue(
-      "https://XXXXXXX.webhook.office.com/webhookb2/1f3c20aa-88db-428c-8033-8b1c71fd87c7@57d0d75c-1369-4dd3-a130-72e62ec186e4/IncomingWebhook/9d645ab454dc4e6c922ab8a95cce525f/fda473a8-4c45-458f-a19c-2bdaacf561db"
+      "https://XXXXXXX.webhook.office.com/webhookb2/1f3c20aa-88db-428c-8033-8b1c71fd87c7@57d0d75c-1369-4dd3-a130-72e62ec186e4/IncomingWebhook/9d645ab454dc4e6c922ab8a95cce525f/fda473a8-4c45-458f-a19c-2bdaacf561db",
     );
     fixture.detectChanges();
     expect(component.url.errors).toBeFalsy();

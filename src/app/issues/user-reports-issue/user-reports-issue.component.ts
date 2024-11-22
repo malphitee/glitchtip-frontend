@@ -12,19 +12,19 @@ import { IssueDetailService } from "../issue-detail/issue-detail.service";
 import { UserReportsService } from "src/app/api/user-reports/user-reports.service";
 
 @Component({
-    selector: "gt-user-reports-issue",
-    templateUrl: "./user-reports-issue.component.html",
-    styleUrls: ["./user-reports-issue.component.scss"],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        CommonModule,
-        MatCardModule,
-        MatDividerModule,
-        MatButtonModule,
-        RouterLink,
-        MatIconModule,
-        MatProgressSpinnerModule,
-    ]
+  selector: "gt-user-reports-issue",
+  templateUrl: "./user-reports-issue.component.html",
+  styleUrls: ["./user-reports-issue.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatDividerModule,
+    MatButtonModule,
+    RouterLink,
+    MatIconModule,
+    MatProgressSpinnerModule,
+  ],
 })
 export class UserReportsIssueComponent implements OnDestroy {
   paginator$ = this.userReportService.paginator$;
@@ -35,17 +35,17 @@ export class UserReportsIssueComponent implements OnDestroy {
   constructor(
     private issueService: IssueDetailService,
     private userReportService: UserReportsService,
-    protected route: ActivatedRoute
+    protected route: ActivatedRoute,
   ) {
     combineLatest([this.route.queryParamMap, this.issueId$]).subscribe(
       ([queryParams, issueId]) => {
         if (issueId) {
           this.userReportService.getReportsForIssue(
             issueId,
-            queryParams.get("cursor")
+            queryParams.get("cursor"),
           );
         }
-      }
+      },
     );
   }
 

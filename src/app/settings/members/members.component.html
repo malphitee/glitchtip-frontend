@@ -23,15 +23,12 @@
                   class="mat-caption"
                   color="primary"
                   highlighted="true"
-                  >
+                >
                   Account Owner
                 </mat-chip>
               }
               @if (member.pending) {
-                <mat-chip
-                  class="mat-caption"
-                  color="primary"
-                  >
+                <mat-chip class="mat-caption" color="primary">
                   Invite Pending
                 </mat-chip>
               }
@@ -44,11 +41,13 @@
                       class="resend-invite"
                       [loading]="member.loadingResendInvite"
                       [buttonText]="
-                        member.sentResendInvite ? 'Invite Resent' : 'Resend Invite'
+                        member.sentResendInvite
+                          ? 'Invite Resent'
+                          : 'Resend Invite'
                       "
                       [disabled]="member.sentResendInvite"
                       (buttonClick)="resendInvite(member)"
-                      >
+                    >
                     </gt-loading-button>
                   }
                 </div>

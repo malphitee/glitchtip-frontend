@@ -26,7 +26,7 @@ export class ProjectsAPIService extends APIBaseService {
         map((projects) => {
           projects.map((project) => (project.id = normalizeID(project.id)));
           return projects;
-        })
+        }),
       );
   }
 
@@ -37,14 +37,14 @@ export class ProjectsAPIService extends APIBaseService {
         map((projectDetail) => {
           projectDetail.id = normalizeID(projectDetail.id);
           return projectDetail;
-        })
+        }),
       );
   }
 
   update(
     organizationSlug: string,
     projectSlug: string,
-    data: Partial<Project>
+    data: Partial<Project>,
   ) {
     return this.http
       .put<ProjectDetail>(this.detailURL(organizationSlug, projectSlug), data)
@@ -52,7 +52,7 @@ export class ProjectsAPIService extends APIBaseService {
         map((projectDetail) => {
           projectDetail.id = normalizeID(projectDetail.id);
           return projectDetail;
-        })
+        }),
       );
   }
 
@@ -62,7 +62,7 @@ export class ProjectsAPIService extends APIBaseService {
       map((projectDetail) => {
         projectDetail.id = normalizeID(projectDetail.id);
         return projectDetail;
-      })
+      }),
     );
   }
 

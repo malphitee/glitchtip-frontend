@@ -30,7 +30,7 @@ export class IssuesAPIService extends APIBaseService {
     start?: string | null,
     end?: string | null,
     sort?: string | null,
-    environment?: string | null
+    environment?: string | null,
   ) {
     const url = organizationSlug
       ? this.orgIssuesUrl(organizationSlug)
@@ -67,10 +67,10 @@ export class IssuesAPIService extends APIBaseService {
       .pipe(
         map((response) => {
           response.body!.map(
-            (issue) => (issue.project.id = normalizeID(issue.project.id))
+            (issue) => (issue.project.id = normalizeID(issue.project.id)),
           );
           return response;
-        })
+        }),
       );
   }
 
@@ -79,7 +79,7 @@ export class IssuesAPIService extends APIBaseService {
       map((issueDetail) => {
         issueDetail.project.id = normalizeID(issueDetail.project.id);
         return issueDetail;
-      })
+      }),
     );
   }
 
@@ -97,7 +97,7 @@ export class IssuesAPIService extends APIBaseService {
     query?: string | null,
     start?: string | null,
     end?: string | null,
-    environment?: string | null
+    environment?: string | null,
   ) {
     let url = this.orgIssuesUrl(orgSlug);
     let params = new HttpParams();

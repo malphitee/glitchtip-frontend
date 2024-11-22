@@ -11,16 +11,16 @@ import { take } from "rxjs/operators";
  * A read-only input that allows the user to copy it's value
  */
 @Component({
-    selector: "gt-copy-input",
-    templateUrl: "./copy-input.component.html",
-    imports: [
-        CommonModule,
-        ClipboardModule,
-        MatIconModule,
-        MatInputModule,
-        MatButtonModule,
-    ],
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: "gt-copy-input",
+  templateUrl: "./copy-input.component.html",
+  imports: [
+    CommonModule,
+    ClipboardModule,
+    MatIconModule,
+    MatInputModule,
+    MatButtonModule,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CopyInputComponent {
   @Input() value = "";
@@ -34,7 +34,7 @@ export class CopyInputComponent {
     timer(0, 4000)
       .pipe(take(2))
       .subscribe((i) =>
-        i === 0 ? this.copied$.next(true) : this.copied$.next(false)
+        i === 0 ? this.copied$.next(true) : this.copied$.next(false),
       );
   }
 }

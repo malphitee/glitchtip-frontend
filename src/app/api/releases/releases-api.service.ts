@@ -31,7 +31,7 @@ export class ReleasesAPIService extends APIBaseService {
   listReleaseFiles(
     organizationSlug: string,
     version: string,
-    cursor?: string | null
+    cursor?: string | null,
   ) {
     let httpParams = new HttpParams();
     if (cursor) {
@@ -42,7 +42,7 @@ export class ReleasesAPIService extends APIBaseService {
       {
         observe: "response",
         params: httpParams,
-      }
+      },
     );
   }
 

@@ -27,25 +27,25 @@ import { CommonModule } from "@angular/common";
 import { DetailHeaderComponent } from "src/app/shared/detail/header/header.component";
 
 @Component({
-    selector: "gt-project-detail",
-    templateUrl: "./project-detail.component.html",
-    styleUrls: ["./project-detail.component.scss"],
-    imports: [
-        CommonModule,
-        MatCardModule,
-        MatDividerModule,
-        MatFormFieldModule,
-        ReactiveFormsModule,
-        MatInputModule,
-        LoadingButtonComponent,
-        PlatformPickerComponent,
-        CopyInputComponent,
-        ProjectEnvironmentsComponent,
-        ProjectAlertsComponent,
-        MatButtonModule,
-        RouterLink,
-        DetailHeaderComponent,
-    ]
+  selector: "gt-project-detail",
+  templateUrl: "./project-detail.component.html",
+  styleUrls: ["./project-detail.component.scss"],
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatDividerModule,
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    MatInputModule,
+    LoadingButtonComponent,
+    PlatformPickerComponent,
+    CopyInputComponent,
+    ProjectEnvironmentsComponent,
+    ProjectAlertsComponent,
+    MatButtonModule,
+    RouterLink,
+    DetailHeaderComponent,
+  ],
 })
 export class ProjectDetailComponent implements OnInit, OnDestroy {
   @ViewChild(FormGroupDirective) formDirective: FormGroupDirective | undefined;
@@ -76,7 +76,7 @@ export class ProjectDetailComponent implements OnInit, OnDestroy {
     private router: Router,
     private projectsService: ProjectSettingsService,
     private snackBar: MatSnackBar,
-    private orgService: OrganizationsService
+    private orgService: OrganizationsService,
   ) {}
 
   ngOnDestroy() {
@@ -103,7 +103,7 @@ export class ProjectDetailComponent implements OnInit, OnDestroy {
           this.orgSlug = orgSlug;
           this.projectSlug = projectSlug;
           return { orgSlug, projectSlug };
-        })
+        }),
       )
       .subscribe(({ orgSlug, projectSlug }) => {
         if (orgSlug && projectSlug) {
@@ -122,7 +122,7 @@ export class ProjectDetailComponent implements OnInit, OnDestroy {
           this.platformForm.patchValue({
             platform: data!.platform,
           });
-        })
+        }),
       )
       .subscribe();
   }
@@ -146,7 +146,7 @@ export class ProjectDetailComponent implements OnInit, OnDestroy {
           (err) => {
             this.deleteLoading = false;
             this.deleteError = `${err.statusText}: ${err.status}`;
-          }
+          },
         );
     }
   }
@@ -158,7 +158,7 @@ export class ProjectDetailComponent implements OnInit, OnDestroy {
         .updateProjectName(
           this.orgSlug,
           this.projectSlug,
-          this.nameForm.value.name!
+          this.nameForm.value.name!,
         )
         .subscribe(
           (resp: ProjectDetail) => {
@@ -167,12 +167,12 @@ export class ProjectDetailComponent implements OnInit, OnDestroy {
               this.updateNameError = "";
             }
             this.snackBar.open(
-              `The name of your project has been updated to ${resp.name}`
+              `The name of your project has been updated to ${resp.name}`,
             );
           },
           (err) => {
             this.updateNameError = `${err.statusText}: ${err.status}`;
-          }
+          },
         );
     }
   }
@@ -185,7 +185,7 @@ export class ProjectDetailComponent implements OnInit, OnDestroy {
           this.orgSlug,
           this.projectSlug,
           this.platformForm.value.platform ?? "",
-          projectName
+          projectName,
         )
         .subscribe(
           (resp: ProjectDetail) => {
@@ -195,14 +195,14 @@ export class ProjectDetailComponent implements OnInit, OnDestroy {
             }
             this.snackBar.open(
               `Your project platform has been updated to ${this.getPlatformName(
-                resp.platform
-              )}.`
+                resp.platform,
+              )}.`,
             );
             this.platformForm.setValue({ platform: resp.platform });
           },
           (err) => {
             this.updatePlatformError = `${err.statusText}: ${err.status}`;
-          }
+          },
         );
     }
   }

@@ -70,11 +70,11 @@ const bootstrap = () =>
         withRouterConfig({
           onSameUrlNavigation: "reload",
           paramsInheritanceStrategy: "always",
-        })
+        }),
       ),
       importProvidersFrom(
         MatSnackBarModule,
-        MicroSentryModule.forRoot({ ignoreErrors: [serverErrorsRegex] })
+        MicroSentryModule.forRoot({ ignoreErrors: [serverErrorsRegex] }),
       ),
       {
         provide: MAT_SNACK_BAR_DEFAULT_OPTIONS,
@@ -92,7 +92,7 @@ const bootstrap = () =>
           cookieName: "csrftoken",
           headerName: "X-CSRFTOKEN",
         }),
-        withInterceptors([tokenInterceptor])
+        withInterceptors([tokenInterceptor]),
       ),
     ],
   }).catch((err) => console.error(err));

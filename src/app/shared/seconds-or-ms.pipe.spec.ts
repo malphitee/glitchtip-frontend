@@ -13,7 +13,7 @@ describe("SecondsOrMSPipe", () => {
 
     expect(humanizeDurationPipe.transform(msDuration)).toBe("64ms");
     expect(humanizeDurationPipe.transform(secondsDuration)).toBe(
-      "1.06 seconds"
+      "1.06 seconds",
     );
   });
 

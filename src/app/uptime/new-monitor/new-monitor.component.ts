@@ -9,17 +9,17 @@ import { MonitorService } from "../monitor.service";
 import { DetailHeaderComponent } from "src/app/shared/detail/header/header.component";
 
 @Component({
-    selector: "gt-new-monitor",
-    templateUrl: "./new-monitor.component.html",
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        AsyncPipe,
-        RouterModule,
-        MonitorFormComponent,
-        MatButtonModule,
-        MatIconModule,
-        DetailHeaderComponent,
-    ]
+  selector: "gt-new-monitor",
+  templateUrl: "./new-monitor.component.html",
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    AsyncPipe,
+    RouterModule,
+    MonitorFormComponent,
+    MatButtonModule,
+    MatIconModule,
+    DetailHeaderComponent,
+  ],
 })
 export class NewMonitorComponent {
   error$ = this.monitorService.error$;

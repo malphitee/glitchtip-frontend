@@ -4,16 +4,16 @@
       @if (datapoint.isUp) {
         <div
           class="up-check"
-          matTooltip="Up at {{ datapoint.startCheck | date : 'short' }}"
+          matTooltip="Up at {{ datapoint.startCheck | date: 'short' }}"
           matTooltipPosition="above"
         ></div>
       }
       @if (datapoint.isUp === false) {
         <div
           class="down-check"
-        matTooltip="{{
-          datapoint.reason ? convertReasonText(datapoint.reason) : 'Down'
-        }} at {{ datapoint.startCheck | date : 'short' }}"
+          matTooltip="{{
+            datapoint.reason ? convertReasonText(datapoint.reason) : 'Down'
+          }} at {{ datapoint.startCheck | date: 'short' }}"
           matTooltipPosition="above"
         ></div>
       }

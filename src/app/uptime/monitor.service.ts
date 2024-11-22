@@ -47,13 +47,13 @@ export class MonitorService extends StatefulService<MonitorState> {
   deleteLoading$ = this.getState$.pipe(map((state) => state.deleteLoading));
   error$ = this.getState$.pipe(map((state) => state.error));
   uptimeAlertCount$ = this.getState$.pipe(
-    map((state) => state.uptimeAlertCount)
+    map((state) => state.uptimeAlertCount),
   );
   readonly alertCountLoading$ = this.getState$.pipe(
-    map((data) => data.alertCountLoading)
+    map((data) => data.alertCountLoading),
   );
   readonly activeMonitor$ = this.getState$.pipe(
-    map((data) => data.monitorDetails)
+    map((data) => data.monitorDetails),
   );
   associatedProjectSlug$ = combineLatest([
     this.organizationsService.activeOrganizationProjects$,
@@ -61,13 +61,15 @@ export class MonitorService extends StatefulService<MonitorState> {
   ]).pipe(
     map(
       ([projects, monitor]) =>
-        projects?.find((project) => project.id === monitor?.project)?.slug
-    )
+        projects?.find((project) => project.id === monitor?.project)?.slug,
+    ),
   );
   activeMonitorRecentChecksSeries$ = this.activeMonitor$.pipe(
     map((monitor) =>
-      monitor?.checks.length ? this.convertChecksToSeries(monitor.checks) : null
-    )
+      monitor?.checks.length
+        ? this.convertChecksToSeries(monitor.checks)
+        : null,
+    ),
   );
 
   constructor(
@@ -77,7 +79,7 @@ export class MonitorService extends StatefulService<MonitorState> {
     private settingsService: SettingsService,
     private subscriptionsService: SubscriptionsService,
     private snackBar: MatSnackBar,
-    private router: Router
+    private router: Router,
   ) {
     super(initialState);
   }
@@ -100,12 +102,12 @@ export class MonitorService extends StatefulService<MonitorState> {
                     newMonitor.id,
                   ]);
                 }),
-                catchError((err) => this.processError(err))
-              )
+                catchError((err) => this.processError(err)),
+              ),
             );
           }
-        })
-      )
+        }),
+      ),
     );
   }
 
@@ -122,12 +124,12 @@ export class MonitorService extends StatefulService<MonitorState> {
                   if (slug) {
                     this.subscriptionsService.retrieveSubscription(slug);
                   }
-                })
-              )
+                }),
+              ),
             );
           }
-        })
-      )
+        }),
+      ),
     );
   }
 
@@ -167,11 +169,11 @@ export class MonitorService extends StatefulService<MonitorState> {
                   updatedMonitor.id,
                 ]);
               }),
-              catchError((err) => this.processError(err))
-            )
+              catchError((err) => this.processError(err)),
+            ),
           );
-        })
-      )
+        }),
+      ),
     );
   }
 
@@ -185,11 +187,11 @@ export class MonitorService extends StatefulService<MonitorState> {
         catchError(() => {
           this.setRetrieveMonitorDetailsError();
           this.snackBar.open(
-            `There was an error retrieving your monitor details. Please try again.`
+            `There was an error retrieving your monitor details. Please try again.`,
           );
           return EMPTY;
-        })
-      )
+        }),
+      ),
     );
   }
 
@@ -213,14 +215,14 @@ export class MonitorService extends StatefulService<MonitorState> {
               catchError(() => {
                 this.setDeleteMonitorError();
                 this.snackBar.open(
-                  `There was an error deleting this issue. Please try again.`
+                  `There was an error deleting this issue. Please try again.`,
                 );
                 return EMPTY;
-              })
-            )
+              }),
+            ),
           );
-        })
-      )
+        }),
+      ),
     );
   }
 
@@ -237,19 +239,19 @@ export class MonitorService extends StatefulService<MonitorState> {
                 this.projectAlertsService.list(orgSlug, projectSlug).pipe(
                   tap((projectAlerts) => {
                     let alertCount = projectAlerts.filter(
-                      (alert) => alert.uptime === true
+                      (alert) => alert.uptime === true,
                     ).length;
                     this.setCountUptimeAlertsEnd(alertCount);
                   }),
                   catchError(() => {
                     this.setCountUptimeAlertsError();
                     return EMPTY;
-                  })
-                )
+                  }),
+                ),
               );
             }
-          })
-        )
+          }),
+        ),
       );
     }
   }
@@ -284,7 +286,7 @@ export class MonitorService extends StatefulService<MonitorState> {
           name: input[0].isUp ? "Up" : "Down",
           series: [],
         },
-      ] as ResponseTimeSeries[]
+      ] as ResponseTimeSeries[],
     );
   }
 

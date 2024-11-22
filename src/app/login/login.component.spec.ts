@@ -11,9 +11,9 @@ import { LoginComponent } from "./login.component";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 
 @Component({
-    selector: "gt-form-error",
-    template: "",
-    imports: [ReactiveFormsModule, RouterTestingModule, HttpClientTestingModule]
+  selector: "gt-form-error",
+  template: "",
+  imports: [ReactiveFormsModule, RouterTestingModule, HttpClientTestingModule],
 })
 class FormErrorStubComponent {
   @Input() error: any;
@@ -23,7 +23,7 @@ class FormErrorStubComponent {
 const authServiceSpy = (jasmine as any).createSpyObj(
   "LoginService",
   ["login"],
-  { error$: EMPTY }
+  { error$: EMPTY },
 );
 
 describe("LoginComponent", () => {

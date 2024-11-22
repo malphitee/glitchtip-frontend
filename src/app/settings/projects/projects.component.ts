@@ -15,16 +15,16 @@ import { MatButtonModule } from "@angular/material/button";
 import { AsyncPipe, DatePipe } from "@angular/common";
 
 @Component({
-    templateUrl: "./projects.component.html",
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        MatButtonModule,
-        RouterLink,
-        EmptyProjectsComponent,
-        ProjectCardComponent,
-        AsyncPipe,
-        DatePipe
-    ]
+  templateUrl: "./projects.component.html",
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatButtonModule,
+    RouterLink,
+    EmptyProjectsComponent,
+    ProjectCardComponent,
+    AsyncPipe,
+    DatePipe,
+  ],
 })
 export class ProjectsComponent implements OnInit, OnDestroy {
   subscription?: Subscription;
@@ -34,7 +34,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
   constructor(
     private organizationsService: OrganizationsService,
-    private projectSettingsService: ProjectSettingsService
+    private projectSettingsService: ProjectSettingsService,
   ) {}
 
   ngOnInit() {
@@ -42,7 +42,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
       .pipe(
         distinct(),
         filter((slug) => !!slug),
-        tap((slug) => this.projectSettingsService.retrieveProjects(slug!))
+        tap((slug) => this.projectSettingsService.retrieveProjects(slug!)),
       )
       .subscribe();
   }

@@ -19,7 +19,6 @@
 @use "src/app/list-elements/project-filter-bar/project-filter-bar-theme.component";
 @use "src/app/profile/notifications/_notifications-theme.component.scss";
 
-
 @mixin generate-rules($theme) {
   @include global-theme.theme($theme);
   @include nav-lists-theme.theme($theme);
@@ -44,9 +43,9 @@
 }
 
 @mixin generate-light-rules($light-theme) {
-  @include generate-rules($light-theme) 
+  @include generate-rules($light-theme);
 }
 
 @mixin generate-dark-rules($dark-theme) {
- @include generate-rules($dark-theme) 
+  @include generate-rules($dark-theme);
 }

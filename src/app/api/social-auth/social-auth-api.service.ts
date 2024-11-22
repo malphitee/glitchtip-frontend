@@ -11,7 +11,7 @@ export class SocialAuthAPIService {
     return this.http.request(
       "delete",
       "/_allauth/browser/v1/account/providers",
-      { body: { account, provider } }
+      { body: { account, provider } },
     );
   }
 }

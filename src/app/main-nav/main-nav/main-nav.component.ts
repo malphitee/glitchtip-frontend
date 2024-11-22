@@ -19,23 +19,23 @@ import { AuthService } from "src/app/auth.service";
 import { toObservable } from "@angular/core/rxjs-interop";
 
 @Component({
-    selector: "gt-main-nav",
-    templateUrl: "./main-nav.component.html",
-    styleUrls: ["./main-nav.component.scss"],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        MatSidenavModule,
-        MatToolbarModule,
-        RouterLink,
-        MatButtonModule,
-        MatMenuModule,
-        MatDividerModule,
-        MatListModule,
-        RouterLinkActive,
-        MatCardModule,
-        MobileNavToolbarComponent,
-        AsyncPipe,
-    ]
+  selector: "gt-main-nav",
+  templateUrl: "./main-nav.component.html",
+  styleUrls: ["./main-nav.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatSidenavModule,
+    MatToolbarModule,
+    RouterLink,
+    MatButtonModule,
+    MatMenuModule,
+    MatDividerModule,
+    MatListModule,
+    RouterLinkActive,
+    MatCardModule,
+    MobileNavToolbarComponent,
+    AsyncPipe,
+  ],
 })
 export class MainNavComponent {
   activeOrganizationLoaded = false;

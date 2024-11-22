@@ -14,27 +14,27 @@
             @for (topValue of tag.topValues; track topValue) {
               <span
                 class="bar"
-            [ngStyle]="{
-              'width.%': topValue.percentRounded
-            }"
-            matTooltip="
+                [ngStyle]="{
+                  'width.%': topValue.percentRounded,
+                }"
+                matTooltip="
             {{ topValue.value }} - {{ topValue.percentRounded }}%
           "
                 matTooltipPosition="left"
-                ></span
-                >
-                }<span
-                class="bar"
-            [ngStyle]="{
-              'width.%': tag.other
-            }"
-            matTooltip="
+              ></span>
+            }
+            <span
+              class="bar"
+              [ngStyle]="{
+                'width.%': tag.other,
+              }"
+              matTooltip="
           Other - {{ tag.other }}%
         "
-                matTooltipPosition="left"
-              ></span> </div></div
-              >
-            }
-          </mat-card-content>
-        </mat-card>
+              matTooltipPosition="left"
+            ></span> </div
+        ></div>
       }
+    </mat-card-content>
+  </mat-card>
+}

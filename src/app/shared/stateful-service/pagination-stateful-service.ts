@@ -63,7 +63,7 @@ export interface PaginationStatefulServiceState {
  * If working with a CRUD view that is paginated, use this as the base class
  */
 export abstract class PaginationStatefulService<
-  TState extends PaginationStatefulServiceState
+  TState extends PaginationStatefulServiceState,
 > extends StatefulService<TState> {
   pagination$ = this.getState$.pipe(map((state) => state.pagination));
   paginator$ = this.pagination$.pipe(
@@ -77,10 +77,10 @@ export abstract class PaginationStatefulService<
         pagination.hits && pagination.hits === pagination.maxHits
           ? pagination.hits.toString() + "+"
           : pagination.hits?.toString(),
-    }))
+    })),
   );
   initialLoadComplete$ = this.pagination$.pipe(
-    map((pagination) => pagination.initialLoadComplete)
+    map((pagination) => pagination.initialLoadComplete),
   );
   loading$ = this.pagination$.pipe(map((pagination) => pagination.loading));
   constructor(initialState: TState) {

@@ -25,20 +25,20 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { StatefulComponent } from "src/app/shared/stateful-service/signal-state.component";
 
 @Component({
-    selector: "gt-set-new-password",
-    templateUrl: "./set-new-password.component.html",
-    styleUrls: ["./set-new-password.component.scss"],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        MatCardModule,
-        ReactiveFormsModule,
-        FormErrorComponent,
-        MatFormFieldModule,
-        MatInputModule,
-        InputMatcherDirective,
-        LoadingButtonComponent,
-        RouterLink
-    ]
+  selector: "gt-set-new-password",
+  templateUrl: "./set-new-password.component.html",
+  styleUrls: ["./set-new-password.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatCardModule,
+    ReactiveFormsModule,
+    FormErrorComponent,
+    MatFormFieldModule,
+    MatInputModule,
+    InputMatcherDirective,
+    LoadingButtonComponent,
+    RouterLink,
+  ],
 })
 export class SetNewPasswordComponent extends StatefulComponent<
   ResetPasswordState,

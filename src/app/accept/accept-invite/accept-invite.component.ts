@@ -9,11 +9,11 @@ import { AcceptInviteService } from "src/app/api/accept/accept-invite.service";
 import { AuthService } from "src/app/auth.service";
 
 @Component({
-    selector: "gt-accept-invite",
-    templateUrl: "./accept-invite.component.html",
-    styleUrls: ["./accept-invite.component.scss"],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [MatCardModule, MatButtonModule, RouterLink, AsyncPipe]
+  selector: "gt-accept-invite",
+  templateUrl: "./accept-invite.component.html",
+  styleUrls: ["./accept-invite.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatCardModule, MatButtonModule, RouterLink, AsyncPipe],
 })
 export class AcceptInviteComponent implements OnInit {
   isLoggedIn$ = toObservable(this.authService.isAuthenticated);

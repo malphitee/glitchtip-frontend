@@ -23,25 +23,25 @@ import { LoadingButtonComponent } from "../../../shared/loading-button/loading-b
 import { DetailHeaderComponent } from "src/app/shared/detail/header/header.component";
 
 @Component({
-    selector: "gt-member-detail",
-    templateUrl: "./member-detail.component.html",
-    styleUrls: ["./member-detail.component.scss"],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        CommonModule,
-        MatButtonModule,
-        RouterLink,
-        MatIconModule,
-        MatCardModule,
-        MatDividerModule,
-        MatChipsModule,
-        ReactiveFormsModule,
-        MatFormFieldModule,
-        MatRadioModule,
-        LoadingButtonComponent,
-        MatListModule,
-        DetailHeaderComponent,
-    ]
+  selector: "gt-member-detail",
+  templateUrl: "./member-detail.component.html",
+  styleUrls: ["./member-detail.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    CommonModule,
+    MatButtonModule,
+    RouterLink,
+    MatIconModule,
+    MatCardModule,
+    MatDividerModule,
+    MatChipsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatRadioModule,
+    LoadingButtonComponent,
+    MatListModule,
+    DetailHeaderComponent,
+  ],
 })
 export class MemberDetailComponent implements OnInit, OnDestroy {
   member$ = this.memberDetailService.member$;
@@ -55,7 +55,7 @@ export class MemberDetailComponent implements OnInit, OnDestroy {
     this.memberDetailService.transferOrgOwnershipLoading$;
   orgSlug$ = this.route.paramMap.pipe(map((params) => params.get("org-slug")));
   memberIdParam$ = this.route.paramMap.pipe(
-    map((params) => params.get("member-id"))
+    map((params) => params.get("member-id")),
   );
   routeParams$ = combineLatest([this.orgSlug$, this.memberIdParam$]);
   form = new FormGroup({
@@ -71,12 +71,12 @@ export class MemberDetailComponent implements OnInit, OnDestroy {
       return availableRoles!
         .find((roleDetails) => roleDetails.id === this.formRole.value)
         ?.scopes.join(", ");
-    })
+    }),
   );
 
   constructor(
     public route: ActivatedRoute,
-    private memberDetailService: MemberDetailService
+    private memberDetailService: MemberDetailService,
   ) {}
 
   ngOnInit(): void {
@@ -86,10 +86,10 @@ export class MemberDetailComponent implements OnInit, OnDestroy {
           if (organizationSlug && memberIdParam) {
             this.memberDetailService.retrieveMemberDetail(
               organizationSlug,
-              +memberIdParam
+              +memberIdParam,
             );
           }
-        })
+        }),
       )
       .subscribe();
 

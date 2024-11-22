@@ -27,24 +27,24 @@ import { AsyncPipe } from "@angular/common";
 import { MatCardModule } from "@angular/material/card";
 
 @Component({
-    selector: "gt-new-project",
-    templateUrl: "./new-project.component.html",
-    styleUrls: ["./new-project.component.scss"],
-    imports: [
-        MatCardModule,
-        MatDialogModule,
-        ReactiveFormsModule,
-        MatFormFieldModule,
-        PlatformPickerComponent,
-        MatInputModule,
-        MatSelectModule,
-        MatOptionModule,
-        MatButtonModule,
-        MatTooltipModule,
-        MatIconModule,
-        LoadingButtonComponent,
-        AsyncPipe
-    ]
+  selector: "gt-new-project",
+  templateUrl: "./new-project.component.html",
+  styleUrls: ["./new-project.component.scss"],
+  imports: [
+    MatCardModule,
+    MatDialogModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    PlatformPickerComponent,
+    MatInputModule,
+    MatSelectModule,
+    MatOptionModule,
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    LoadingButtonComponent,
+    AsyncPipe,
+  ],
 })
 export class NewProjectComponent implements OnInit {
   teams$ = this.teamsService.teams$;
@@ -64,7 +64,7 @@ export class NewProjectComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     public dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
   ) {
     this.teams$.subscribe((data) => {
       if (data && data[0]) {
@@ -88,7 +88,7 @@ export class NewProjectComponent implements OnInit {
       .pipe(
         map((params) => params["org-slug"] as string),
         filter((slug) => !!slug),
-        tap((slug) => (this.orgSlug = slug))
+        tap((slug) => (this.orgSlug = slug)),
       )
       .subscribe((slug) => {
         this.teamsService.retrieveTeamsByOrg(slug).toPromise();
@@ -114,7 +114,7 @@ export class NewProjectComponent implements OnInit {
             platform: this.form.value.platform ?? "",
           },
           this.form.value.team!,
-          this.orgSlug
+          this.orgSlug,
         )
         .pipe(
           tap(() => (this.loading = false)),
@@ -125,14 +125,14 @@ export class NewProjectComponent implements OnInit {
                 this.router.navigate([organization.slug, "issues"], {
                   queryParams: { project: project.id },
                 });
-              })
-            )
+              }),
+            ),
           ),
           catchError((err) => {
             this.loading = false;
             this.error = `${err.statusText}: ${err.status}`;
             return EMPTY;
-          })
+          }),
         )
         .toPromise();
     }

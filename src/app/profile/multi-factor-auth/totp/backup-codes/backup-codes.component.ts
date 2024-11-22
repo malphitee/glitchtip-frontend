@@ -16,17 +16,17 @@ import { lastValueFrom } from "rxjs";
 import { toObservable } from "@angular/core/rxjs-interop";
 
 @Component({
-    selector: "gt-backup-codes",
-    templateUrl: "./backup-codes.component.html",
-    styleUrls: ["./backup-codes.component.scss"],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        MatButtonModule,
-        ReactiveFormsModule,
-        FormErrorComponent,
-        MatFormFieldModule,
-        MatInputModule,
-    ]
+  selector: "gt-backup-codes",
+  templateUrl: "./backup-codes.component.html",
+  styleUrls: ["./backup-codes.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatButtonModule,
+    ReactiveFormsModule,
+    FormErrorComponent,
+    MatFormFieldModule,
+    MatInputModule,
+  ],
 })
 export class BackupCodesComponent {
   TOTPAuthenticator = this.service.TOTPAuthenticator;

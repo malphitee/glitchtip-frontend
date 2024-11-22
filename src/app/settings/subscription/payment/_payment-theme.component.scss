@@ -10,11 +10,12 @@
     .plans {
       .mat-mdc-card {
         @media (min-width: $large) {
-          border-right: 1px solid if(
-            $is-dark-theme,
-            mat.m2-get-color-from-palette(mat.$m2-gray-palette, 800),
-            mat.m2-get-color-from-palette(mat.$m2-gray-palette, 300)
-          );
+          border-right: 1px solid
+            if(
+              $is-dark-theme,
+              mat.m2-get-color-from-palette(mat.$m2-gray-palette, 800),
+              mat.m2-get-color-from-palette(mat.$m2-gray-palette, 300)
+            );
         }
       }
     }

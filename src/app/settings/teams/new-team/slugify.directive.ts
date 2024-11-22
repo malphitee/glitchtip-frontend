@@ -23,7 +23,7 @@ export class SlugifyDirective {
     setTimeout(() => {
       this.el.nativeElement.value = this.el.nativeElement.value.replaceAll(
         " ",
-        "-"
+        "-",
       );
     });
   }

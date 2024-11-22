@@ -39,9 +39,7 @@ export class ResetPasswordService extends StatefulService<ResetPasswordState> {
     reduceParamErrors(this.state().errors.filter((err) => err.param)),
   );
 
-  constructor(
-    private authenticationService: AuthenticationService,
-  ) {
+  constructor(private authenticationService: AuthenticationService) {
     super(initialState);
   }
 

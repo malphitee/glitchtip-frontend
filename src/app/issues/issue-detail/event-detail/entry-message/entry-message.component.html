@@ -9,10 +9,7 @@
       @if (message?.params) {
         <dl>
           @for (param of message?.params | keyvalue; track param) {
-            <gt-entry-data
-              [key]="param.key"
-              [value]="param.value"
-              >
+            <gt-entry-data [key]="param.key" [value]="param.value">
             </gt-entry-data>
           }
         </dl>

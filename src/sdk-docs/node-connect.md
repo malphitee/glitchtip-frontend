@@ -38,7 +38,7 @@ connect(
   Sentry.handlers.errorHandler(),
 
   // Optional fallthrough error handler
-  onError
+  onError,
 ).listen(3000);
 ```
 
@@ -71,7 +71,7 @@ app.use(
   Sentry.handlers.requestHandler({
     serverName: false,
     user: ["email"],
-  })
+  }),
 );
 ```
 
@@ -87,6 +87,6 @@ app.use(
       }
       return false;
     },
-  })
+  }),
 );
 ```

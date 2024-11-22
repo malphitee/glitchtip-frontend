@@ -5,14 +5,14 @@
         class="date-form"
         [formGroup]="dateForm"
         (ngSubmit)="onDateFormSubmit()"
-        >
+      >
         <mat-form-field appearance="outline">
           <mat-label>Start Date</mat-label>
           <input
             matInput
             [matDatepicker]="startPicker"
             formControlName="startDate"
-            />
+          />
           <mat-datepicker-toggle
             matSuffix
             [for]="startPicker"
@@ -25,7 +25,7 @@
             matInput
             [matDatepicker]="endPicker"
             formControlName="endDate"
-            />
+          />
           <mat-datepicker-toggle
             matSuffix
             [for]="endPicker"
@@ -40,7 +40,7 @@
             !(dateForm.value.startDate || dateForm.value.endDate) ||
             dateForm.pristine
           "
-          >
+        >
           Filter
         </button>
         <button
@@ -49,7 +49,7 @@
           mat-stroked-button
           color="primary"
           [disabled]="!dateForm.value.startDate && !dateForm.value.endDate"
-          >
+        >
           Clear
         </button>
       </form>
@@ -59,7 +59,7 @@
           <mat-select
             (selectionChange)="sortByChanged.emit($event)"
             formControlName="sort"
-            >
+          >
             @for (sort of sorts; track sort) {
               <mat-option [value]="sort.param">
                 {{ sort.display }}
@@ -75,12 +75,13 @@
             <mat-select
               (selectionChange)="filterByEnvironment.emit($event)"
               formControlName="environment"
-              >
+            >
               <mat-option [value]="null">All Environments</mat-option>
-              @for (environment of organizationEnvironments; track environment) {
-                <mat-option
-                  [value]="environment"
-                  >
+              @for (
+                environment of organizationEnvironments;
+                track environment
+              ) {
+                <mat-option [value]="environment">
                   {{ environment }}
                 </mat-option>
               }
@@ -93,7 +94,7 @@
           [formGroup]="searchForm"
           (ngSubmit)="searchSubmit.emit()"
           class="search-form"
-          >
+        >
           <mat-form-field appearance="outline">
             <mat-label>Search</mat-label>
             <input matInput type="search" formControlName="query" />

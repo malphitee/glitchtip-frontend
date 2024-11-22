@@ -17,19 +17,19 @@ import { CommonModule } from "@angular/common";
 import { MatDividerModule } from "@angular/material/divider";
 
 @Component({
-    selector: "gt-project-card",
-    imports: [
-        CommonModule,
-        MatCardModule,
-        MatIconModule,
-        RouterModule,
-        MatTooltipModule,
-        MatButtonModule,
-        MatDividerModule,
-    ],
-    templateUrl: "./project-card.component.html",
-    styleUrls: ["./project-card.component.scss"],
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: "gt-project-card",
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatIconModule,
+    RouterModule,
+    MatTooltipModule,
+    MatButtonModule,
+    MatDividerModule,
+  ],
+  templateUrl: "./project-card.component.html",
+  styleUrls: ["./project-card.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProjectCardComponent {
   @Input() cardLink?: string | unknown[];

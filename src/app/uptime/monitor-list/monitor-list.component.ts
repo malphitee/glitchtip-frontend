@@ -14,22 +14,22 @@ import { MonitorListService } from "./monitor-list.service";
 import { combineLatest } from "rxjs";
 
 @Component({
-    selector: "gt-monitor-list",
-    templateUrl: "./monitor-list.component.html",
-    styleUrls: ["./monitor-list.component.scss"],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        CommonModule,
-        RouterModule,
-        ListFooterComponent,
-        TimeForPipe,
-        MonitorChartComponent,
-        MatButtonModule,
-        MatTooltipModule,
-        MatTableModule,
-        MatIconModule,
-        ListTitleComponent,
-    ]
+  selector: "gt-monitor-list",
+  templateUrl: "./monitor-list.component.html",
+  styleUrls: ["./monitor-list.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    CommonModule,
+    RouterModule,
+    ListFooterComponent,
+    TimeForPipe,
+    MonitorChartComponent,
+    MatButtonModule,
+    MatTooltipModule,
+    MatTableModule,
+    MatIconModule,
+    ListTitleComponent,
+  ],
 })
 export class MonitorListComponent implements OnDestroy {
   tooltipDisabled = false;
@@ -44,7 +44,7 @@ export class MonitorListComponent implements OnDestroy {
 
   constructor(
     protected route: ActivatedRoute,
-    public service: MonitorListService
+    public service: MonitorListService,
   ) {
     combineLatest([this.route.paramMap, this.route.queryParamMap]).subscribe(
       ([params, queryParams]) => {
@@ -52,7 +52,7 @@ export class MonitorListComponent implements OnDestroy {
         if (orgSlug) {
           this.service.getMonitors(orgSlug, queryParams.get("cursor"));
         }
-      }
+      },
     );
   }
 

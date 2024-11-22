@@ -13,27 +13,27 @@ import { MatButtonModule } from "@angular/material/button";
 import { CommonModule } from "@angular/common";
 
 @Component({
-    selector: "gt-teams",
-    templateUrl: "./teams.component.html",
-    styleUrls: ["./teams.component.scss"],
-    imports: [
-        CommonModule,
-        MatButtonModule,
-        MatCardModule,
-        MatDialogModule,
-        RouterLink,
-        MatDividerModule,
-        MatFormFieldModule,
-        LoadingButtonComponent,
-    ]
+  selector: "gt-teams",
+  templateUrl: "./teams.component.html",
+  styleUrls: ["./teams.component.scss"],
+  imports: [
+    CommonModule,
+    MatButtonModule,
+    MatCardModule,
+    MatDialogModule,
+    RouterLink,
+    MatDividerModule,
+    MatFormFieldModule,
+    LoadingButtonComponent,
+  ],
 })
 export class TeamsComponent implements OnInit {
   activeOrganization$ = this.organizationsService.activeOrganization$;
   yourTeams$ = this.activeOrganization$.pipe(
-    map((orgDetails) => orgDetails?.teams?.filter((team) => team.isMember))
+    map((orgDetails) => orgDetails?.teams?.filter((team) => team.isMember)),
   );
   otherTeams$ = this.activeOrganization$.pipe(
-    map((orgDetails) => orgDetails?.teams?.filter((team) => !team.isMember))
+    map((orgDetails) => orgDetails?.teams?.filter((team) => !team.isMember)),
   );
   errors$ = this.organizationsService.errors$;
   loading$ = this.organizationsService.loading$;
@@ -48,7 +48,7 @@ export class TeamsComponent implements OnInit {
     private teamsService: TeamsService,
     private organizationsService: OrganizationsService,
     private route: ActivatedRoute,
-    public dialog: MatDialog
+    public dialog: MatDialog,
   ) {}
 
   ngOnInit() {
@@ -56,7 +56,7 @@ export class TeamsComponent implements OnInit {
       .pipe(
         map((params) => params["org-slug"] as string),
         filter((slug) => !!slug),
-        tap((slug) => (this.orgSlug = slug))
+        tap((slug) => (this.orgSlug = slug)),
       )
       .subscribe((slug) => {
         this.teamsService.retrieveTeamsByOrg(slug).toPromise();

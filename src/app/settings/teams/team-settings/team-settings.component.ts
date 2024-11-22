@@ -17,19 +17,19 @@ import { MatCardModule } from "@angular/material/card";
 import { AsyncPipe } from "@angular/common";
 
 @Component({
-    selector: "gt-team-settings",
-    templateUrl: "./team-settings.component.html",
-    styleUrls: ["./team-settings.component.scss"],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        MatCardModule,
-        MatDividerModule,
-        MatFormFieldModule,
-        ReactiveFormsModule,
-        MatInputModule,
-        LoadingButtonComponent,
-        AsyncPipe,
-    ]
+  selector: "gt-team-settings",
+  templateUrl: "./team-settings.component.html",
+  styleUrls: ["./team-settings.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatCardModule,
+    MatDividerModule,
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    MatInputModule,
+    LoadingButtonComponent,
+    AsyncPipe,
+  ],
 })
 export class TeamSettingsComponent implements OnInit {
   team$ = this.teamsService.team$;

@@ -8,17 +8,17 @@ import { MatDividerModule } from "@angular/material/divider";
 import { MatCardModule } from "@angular/material/card";
 
 @Component({
-    selector: "gt-project-environments",
-    templateUrl: "./project-environments.component.html",
-    styleUrls: ["./project-environments.component.scss"],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        MatCardModule,
-        MatDividerModule,
-        MatListModule,
-        LoadingButtonComponent,
-        AsyncPipe
-    ]
+  selector: "gt-project-environments",
+  templateUrl: "./project-environments.component.html",
+  styleUrls: ["./project-environments.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatCardModule,
+    MatDividerModule,
+    MatListModule,
+    LoadingButtonComponent,
+    AsyncPipe,
+  ],
 })
 export class ProjectEnvironmentsComponent implements OnDestroy {
   initialLoad$ = this.environmentsService.initialLoad$;

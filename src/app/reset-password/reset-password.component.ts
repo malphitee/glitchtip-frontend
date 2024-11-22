@@ -24,21 +24,21 @@ import { FormErrorComponent } from "../shared/forms/form-error/form-error.compon
 import { StatefulComponent } from "../shared/stateful-service/signal-state.component";
 
 @Component({
-    selector: "gt-reset-password",
-    templateUrl: "./reset-password.component.html",
-    styleUrls: ["./reset-password.component.scss"],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        MatCardModule,
-        ReactiveFormsModule,
-        MatFormFieldModule,
-        MatInputModule,
-        FormErrorComponent,
-        LoadingButtonComponent,
-        MatButtonModule,
-        RouterLink,
-        AsyncPipe
-    ]
+  selector: "gt-reset-password",
+  templateUrl: "./reset-password.component.html",
+  styleUrls: ["./reset-password.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatCardModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    FormErrorComponent,
+    LoadingButtonComponent,
+    MatButtonModule,
+    RouterLink,
+    AsyncPipe,
+  ],
 })
 export class ResetPasswordComponent extends StatefulComponent<
   ResetPasswordState,

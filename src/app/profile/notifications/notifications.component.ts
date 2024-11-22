@@ -12,22 +12,22 @@ import { MatDividerModule } from "@angular/material/divider";
 import { MatCardModule } from "@angular/material/card";
 
 @Component({
-    selector: "gt-notifications",
-    templateUrl: "./notifications.component.html",
-    styleUrls: ["./notifications.component.scss"],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        MatCardModule,
-        MatDividerModule,
-        MatProgressSpinnerModule,
-        MatButtonToggleModule,
-        MatFormFieldModule,
-        MatButtonModule,
-        MatIconModule,
-        RouterLink,
-        AsyncPipe,
-        KeyValuePipe
-    ]
+  selector: "gt-notifications",
+  templateUrl: "./notifications.component.html",
+  styleUrls: ["./notifications.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatCardModule,
+    MatDividerModule,
+    MatProgressSpinnerModule,
+    MatButtonToggleModule,
+    MatFormFieldModule,
+    MatButtonModule,
+    MatIconModule,
+    RouterLink,
+    AsyncPipe,
+    KeyValuePipe,
+  ],
 })
 export class NotificationsComponent implements OnInit {
   subscribeByDefault$ = this.notificationsService.subscribeByDefault$;

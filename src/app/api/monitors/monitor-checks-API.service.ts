@@ -13,7 +13,7 @@ export class MonitorChecksAPIService {
     organizationSlug: string,
     monitorId: string,
     cursor?: string | null,
-    isChange = true
+    isChange = true,
   ) {
     let httpParams = new HttpParams();
     const url = `${baseUrl}/organizations/${organizationSlug}/monitors/${monitorId}/checks/`;

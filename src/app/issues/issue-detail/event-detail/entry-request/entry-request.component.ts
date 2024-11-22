@@ -6,17 +6,17 @@ import { MatDividerModule } from "@angular/material/divider";
 import { AsyncPipe, KeyValuePipe } from "@angular/common";
 
 @Component({
-    selector: "gt-entry-request",
-    templateUrl: "./entry-request.component.html",
-    styleUrls: ["./entry-request.component.scss"],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        MatDividerModule,
-        MatTooltipModule,
-        EntryDataComponent,
-        AsyncPipe,
-        KeyValuePipe
-    ]
+  selector: "gt-entry-request",
+  templateUrl: "./entry-request.component.html",
+  styleUrls: ["./entry-request.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatDividerModule,
+    MatTooltipModule,
+    EntryDataComponent,
+    AsyncPipe,
+    KeyValuePipe,
+  ],
 })
 export class EntryRequestComponent {
   eventEntryRequest$ = this.issueService.eventEntryRequest$;

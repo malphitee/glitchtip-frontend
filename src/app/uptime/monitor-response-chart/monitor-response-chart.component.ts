@@ -15,10 +15,10 @@ import { CommonModule } from "@angular/common";
 import { NgxChartsModule } from "@swimlane/ngx-charts";
 
 @Component({
-    selector: "gt-monitor-response-chart",
-    templateUrl: "./monitor-response-chart.component.html",
-    styleUrls: ["./monitor-response-chart.component.scss"],
-    imports: [CommonModule, NgxChartsModule]
+  selector: "gt-monitor-response-chart",
+  templateUrl: "./monitor-response-chart.component.html",
+  styleUrls: ["./monitor-response-chart.component.scss"],
+  imports: [CommonModule, NgxChartsModule],
 })
 export class MonitorResponseChartComponent
   implements AfterViewInit, OnInit, OnDestroy

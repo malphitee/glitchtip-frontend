@@ -4,7 +4,7 @@
     class="back-link"
     [routerLink]="['..']"
     [queryParams]="backLinkParams"
-    >
+  >
     <mat-icon>keyboard_arrow_left</mat-icon>
     {{ backLinkText }}
   </a>
@@ -12,9 +12,7 @@
     <h1>
       <span class="mat-h1">{{ getTitle() }}</span>
       @if (getTitleSuffix(); as suffix) {
-        <span class="mat-h3">{{
-          suffix
-        }}</span>
+        <span class="mat-h3">{{ suffix }}</span>
       }
       <p class="mat-subtitle-2">{{ subtitle }}</p>
     </h1>

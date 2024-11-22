@@ -10,16 +10,16 @@ import { ReleasesService } from "./releases.service";
 import { combineLatest, map } from "rxjs";
 
 @Component({
-    templateUrl: "./releases.component.html",
-    styleUrls: ["./releases.component.scss"],
-    imports: [
-        CommonModule,
-        ListTitleComponent,
-        MatTableModule,
-        RouterLink,
-        MatTooltipModule,
-        ListFooterComponent,
-    ]
+  templateUrl: "./releases.component.html",
+  styleUrls: ["./releases.component.scss"],
+  imports: [
+    CommonModule,
+    ListTitleComponent,
+    MatTableModule,
+    RouterLink,
+    MatTooltipModule,
+    ListFooterComponent,
+  ],
 })
 export class ReleasesComponent implements OnDestroy {
   paginator$ = this.service.paginator$;
@@ -32,7 +32,7 @@ export class ReleasesComponent implements OnDestroy {
 
   constructor(
     protected service: ReleasesService,
-    protected route: ActivatedRoute
+    protected route: ActivatedRoute,
   ) {
     combineLatest([
       this.route.paramMap.pipe(map((params) => params.get("org-slug"))),

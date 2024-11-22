@@ -10,15 +10,15 @@ import { CommonModule } from "@angular/common";
 import { DetailHeaderComponent } from "src/app/shared/detail/header/header.component";
 
 @Component({
-    templateUrl: "./release-detail.component.html",
-    styleUrls: ["./release-detail.component.scss"],
-    imports: [
-        CommonModule,
-        MatTableModule,
-        MatTooltipModule,
-        ListFooterComponent,
-        DetailHeaderComponent,
-    ]
+  templateUrl: "./release-detail.component.html",
+  styleUrls: ["./release-detail.component.scss"],
+  imports: [
+    CommonModule,
+    MatTableModule,
+    MatTooltipModule,
+    ListFooterComponent,
+    DetailHeaderComponent,
+  ],
 })
 export class ReleaseDetailComponent implements OnDestroy {
   tooltipDisabled = false;
@@ -33,7 +33,7 @@ export class ReleaseDetailComponent implements OnDestroy {
 
   constructor(
     protected service: ReleaseDetailService,
-    protected route: ActivatedRoute
+    protected route: ActivatedRoute,
   ) {
     combineLatest([this.route.paramMap, this.route.queryParamMap]).subscribe(
       ([params, queryParams]) => {
@@ -42,7 +42,7 @@ export class ReleaseDetailComponent implements OnDestroy {
         if (orgSlug && version) {
           this.service.getRelease(orgSlug, version, queryParams.get("cursor"));
         }
-      }
+      },
     );
   }
 

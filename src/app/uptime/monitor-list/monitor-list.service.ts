@@ -27,7 +27,7 @@ export class MonitorListService extends PaginationStatefulService<MonitorListSta
 
   constructor(
     private monitorsAPIService: MonitorsAPIService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
   ) {
     super(initialState);
   }
@@ -42,11 +42,11 @@ export class MonitorListService extends PaginationStatefulService<MonitorListSta
         catchError(() => {
           this.setGetMonitorsError();
           this.snackBar.open(
-            "There was an error retrieving your uptime monitors. Please try again."
+            "There was an error retrieving your uptime monitors. Please try again.",
           );
           return EMPTY;
-        })
-      )
+        }),
+      ),
     );
   }
 

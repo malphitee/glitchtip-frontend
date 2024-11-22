@@ -8,9 +8,9 @@ import { totpUserKey } from "./test-data";
 import { TOTPComponent } from "./totp.component";
 
 @Component({
-    selector: "gt-backup-codes",
-    template: "",
-    imports: [HttpClientTestingModule, MatSnackBarModule, NoopAnimationsModule]
+  selector: "gt-backup-codes",
+  template: "",
+  imports: [HttpClientTestingModule, MatSnackBarModule, NoopAnimationsModule],
 })
 class BackupCodesStubComponent {
   @Input() error: any;

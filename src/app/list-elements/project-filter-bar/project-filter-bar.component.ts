@@ -26,22 +26,22 @@ import { MatExpansionPanel } from "@angular/material/expansion";
 import { normalizeProjectParams } from "src/app/shared/shared.utils";
 
 @Component({
-    selector: "gt-project-filter-bar",
-    imports: [
-        CommonModule,
-        MatButtonModule,
-        MatDatepickerModule,
-        MatExpansionModule,
-        ReactiveFormsModule,
-        RouterModule,
-        MatIconModule,
-        MatInputModule,
-        MatCheckboxModule,
-        MatFormFieldModule,
-    ],
-    templateUrl: "./project-filter-bar.component.html",
-    styleUrls: ["./project-filter-bar.component.scss"],
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: "gt-project-filter-bar",
+  imports: [
+    CommonModule,
+    MatButtonModule,
+    MatDatepickerModule,
+    MatExpansionModule,
+    ReactiveFormsModule,
+    RouterModule,
+    MatIconModule,
+    MatInputModule,
+    MatCheckboxModule,
+    MatFormFieldModule,
+  ],
+  templateUrl: "./project-filter-bar.component.html",
+  styleUrls: ["./project-filter-bar.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProjectFilterBarComponent implements OnInit {
   orgSlug$ = this.organizationsService.activeOrganizationSlug$;

@@ -5,16 +5,11 @@ import { MatDividerModule } from "@angular/material/divider";
 import { AsyncPipe, KeyValuePipe } from "@angular/common";
 
 @Component({
-    selector: "gt-entry-message",
-    templateUrl: "./entry-message.component.html",
-    styleUrls: ["./entry-message.component.scss"],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        MatDividerModule,
-        EntryDataComponent,
-        AsyncPipe,
-        KeyValuePipe
-    ]
+  selector: "gt-entry-message",
+  templateUrl: "./entry-message.component.html",
+  styleUrls: ["./entry-message.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatDividerModule, EntryDataComponent, AsyncPipe, KeyValuePipe],
 })
 export class EntryMessageComponent {
   eventEntryMessage$ = this.issueService.eventEntryMessage$;

@@ -32,7 +32,7 @@ describe("FrameExpandedComponent", () => {
   it("should stringify all data that isn't already a string or null", () => {
     expect(typeof component.checkType(934)).toBe("string");
     expect(typeof component.checkType({ first: "one", second: "two" })).toBe(
-      "string"
+      "string",
     );
     expect(typeof component.checkType(null)).toBe("string");
     expect(typeof component.checkType([1, 2, 3, 4])).toBe("string");
