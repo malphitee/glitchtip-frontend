@@ -21,23 +21,21 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { StatefulComponent } from "src/app/shared/stateful-service/signal-state.component";
 import { mapFormErrors } from "src/app/shared/forms/form.utils";
 import { LoginState, LoginService } from "../login.service";
-import { FormErrorComponent } from "../../shared/forms/form-error/form-error.component";
 import { lastValueFrom, tap } from "rxjs";
 
 @Component({
-    selector: "gt-login-totp",
-    templateUrl: "./login-totp.component.html",
-    styleUrls: ["./login-totp.component.scss"],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        ReactiveFormsModule,
-        FormErrorComponent,
-        MatFormFieldModule,
-        MatInputModule,
-        MatButtonModule,
-        MatCheckboxModule,
-        RouterLink,
-    ]
+  selector: "gt-login-totp",
+  templateUrl: "./login-totp.component.html",
+  styleUrls: ["./login-totp.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatCheckboxModule,
+    RouterLink,
+  ],
 })
 export class LoginTotpComponent
   extends StatefulComponent<LoginState, LoginService>

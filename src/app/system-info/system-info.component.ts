@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from "@angular/core";
-import { AsyncPipe, KeyValuePipe } from "@angular/common";
+import { AsyncPipe } from "@angular/common";
 import {
   MatCard,
   MatCardContent,
@@ -10,24 +10,21 @@ import { SettingsService } from "../api/settings.service";
 import { MatDivider } from "@angular/material/divider";
 import { MatHint } from "@angular/material/form-field";
 import { map, combineLatest } from "rxjs";
-import { EntryDataComponent } from "../shared/entry-data/entry-data.component";
 
 @Component({
-    selector: "gt-system-info",
-    imports: [
-        AsyncPipe,
-        MatCard,
-        MatCardHeader,
-        MatCardTitle,
-        MatCardContent,
-        MatDivider,
-        MatHint,
-        EntryDataComponent,
-        KeyValuePipe
-    ],
-    templateUrl: "./system-info.component.html",
-    styleUrls: ["./system-info.component.scss"],
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: "gt-system-info",
+  imports: [
+    AsyncPipe,
+    MatCard,
+    MatCardHeader,
+    MatCardTitle,
+    MatCardContent,
+    MatDivider,
+    MatHint,
+  ],
+  templateUrl: "./system-info.component.html",
+  styleUrls: ["./system-info.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SystemInfoComponent {
   backendConfiguration$ = combineLatest([

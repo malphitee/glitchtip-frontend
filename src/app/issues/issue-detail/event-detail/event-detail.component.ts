@@ -13,30 +13,29 @@ import { ContextsComponent } from "./context/contexts.component";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
-import { AsyncPipe, JsonPipe, DatePipe, KeyValuePipe } from "@angular/common";
+import { AsyncPipe, DatePipe, KeyValuePipe } from "@angular/common";
 
 @Component({
-    selector: "gt-event-detail",
-    templateUrl: "./event-detail.component.html",
-    styleUrls: ["./event-detail.component.scss"],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        MatButtonModule,
-        RouterLink,
-        MatIconModule,
-        MatDividerModule,
-        ContextsComponent,
-        EntryMessageComponent,
-        EntryExceptionComponent,
-        EntryCSPComponent,
-        EntryBreadcrumbsComponent,
-        EntryRequestComponent,
-        EntryDataComponent,
-        AsyncPipe,
-        JsonPipe,
-        DatePipe,
-        KeyValuePipe
-    ]
+  selector: "gt-event-detail",
+  templateUrl: "./event-detail.component.html",
+  styleUrls: ["./event-detail.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatButtonModule,
+    RouterLink,
+    MatIconModule,
+    MatDividerModule,
+    ContextsComponent,
+    EntryMessageComponent,
+    EntryExceptionComponent,
+    EntryCSPComponent,
+    EntryBreadcrumbsComponent,
+    EntryRequestComponent,
+    EntryDataComponent,
+    AsyncPipe,
+    DatePipe,
+    KeyValuePipe,
+  ],
 })
 export class EventDetailComponent implements OnInit {
   event$ = this.issueService.event$;
@@ -46,13 +45,13 @@ export class EventDetailComponent implements OnInit {
   nextEventUrl$ = this.issueService.nextEventUrl$;
   previousEventUrl$ = this.issueService.previousEventUrl$;
   eventIDParam$ = this.route.paramMap.pipe(
-    map((params) => params.get("event-id"))
+    map((params) => params.get("event-id")),
   );
   orgSlug$ = this.route.paramMap.pipe(map((params) => params.get("org-slug")));
 
   constructor(
     private issueService: IssueDetailService,
-    public route: ActivatedRoute
+    public route: ActivatedRoute,
   ) {}
 
   ngOnInit() {
@@ -63,7 +62,7 @@ export class EventDetailComponent implements OnInit {
             return this.issueService.getEventByID(eventID);
           }
           return this.issueService.getLatestEvent();
-        })
+        }),
       )
       .subscribe();
   }
