@@ -32,7 +32,6 @@ import { lastValueFrom } from "rxjs";
   templateUrl: "./totp.component.html",
   styleUrls: ["./totp.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCardModule,
     MatDividerModule,

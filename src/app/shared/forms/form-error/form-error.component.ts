@@ -8,7 +8,6 @@ import {
 import { MatInputModule } from "@angular/material/input";
 
 @Component({
-  standalone: true,
   selector: "gt-form-error",
   imports: [MatInputModule],
   templateUrl: "./form-error.component.html",

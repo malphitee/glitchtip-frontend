@@ -10,7 +10,6 @@ import { WebAuthnComponent } from "./webauthn/webauthn.component";
   templateUrl: "./multi-factor-auth.component.html",
   styleUrls: ["./multi-factor-auth.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [TOTPComponent, WebAuthnComponent],
 })
 export class MultiFactorAuthComponent implements OnInit {

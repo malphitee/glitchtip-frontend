@@ -49,10 +49,10 @@ export class UserReportsService extends PaginationStatefulService<UserReportsSta
         catchError((error) => {
           this.setLoadingReports(false);
           this.setErrorsReports(
-            "Something went wrong. Try reloading the page."
+            "Something went wrong. Try reloading the page.",
           );
           return EMPTY;
-        })
+        }),
       )
       .subscribe();
   }
@@ -64,7 +64,7 @@ export class UserReportsService extends PaginationStatefulService<UserReportsSta
     }
     return this.http.get<UserReport[]>(
       `${this.issuePageUrl}${issueId}/user-reports/`,
-      { observe: "response", params: httpParams }
+      { observe: "response", params: httpParams },
     );
   }
 

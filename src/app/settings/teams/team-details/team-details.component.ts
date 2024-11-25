@@ -16,7 +16,6 @@ import { DetailHeaderComponent } from "src/app/shared/detail/header/header.compo
   selector: "gt-team-details",
   templateUrl: "./team-details.component.html",
   styleUrls: ["./team-details.component.scss"],
-  standalone: true,
   imports: [
     CommonModule,
     MatButtonModule,
@@ -30,7 +29,7 @@ import { DetailHeaderComponent } from "src/app/shared/detail/header/header.compo
 })
 export class TeamDetailsComponent {
   teamSlug$ = this.route.paramMap.pipe(
-    map((params) => params.get("team-slug"))
+    map((params) => params.get("team-slug")),
   );
   orgSlug$ = this.route.paramMap.pipe(map((params) => params.get("org-slug")));
   navLinks = [

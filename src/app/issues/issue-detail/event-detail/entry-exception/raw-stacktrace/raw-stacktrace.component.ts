@@ -8,7 +8,6 @@ import { AsyncPipe } from "@angular/common";
   templateUrl: "./raw-stacktrace.component.html",
   styleUrls: ["./raw-stacktrace.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [AsyncPipe],
 })
 export class RawStacktraceComponent {

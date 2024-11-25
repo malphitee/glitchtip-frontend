@@ -24,7 +24,6 @@ import { checkForOverflow } from "src/app/shared/shared.utils";
   templateUrl: "./webauthn.component.html",
   styleUrls: ["./webauthn.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCardModule,
     MatDividerModule,

@@ -14,8 +14,8 @@ export class ConfirmEmailService {
   constructor(
     private http: HttpClient,
     private router: Router,
-    private snackBar: MatSnackBar
-  ) { }
+    private snackBar: MatSnackBar,
+  ) {}
 
   confirmEmail(key: string) {
     this.postConfirmEmailKey(key)
@@ -35,7 +35,7 @@ export class ConfirmEmailService {
           }
           this.router.navigate(["profile"]);
           return EMPTY;
-        })
+        }),
       )
       .subscribe();
   }

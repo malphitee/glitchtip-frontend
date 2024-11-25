@@ -21,7 +21,6 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { StatefulComponent } from "src/app/shared/stateful-service/signal-state.component";
 import { mapFormErrors } from "src/app/shared/forms/form.utils";
 import { LoginState, LoginService } from "../login.service";
-import { FormErrorComponent } from "../../shared/forms/form-error/form-error.component";
 import { lastValueFrom, tap } from "rxjs";
 
 @Component({
@@ -29,10 +28,8 @@ import { lastValueFrom, tap } from "rxjs";
   templateUrl: "./login-totp.component.html",
   styleUrls: ["./login-totp.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
-    FormErrorComponent,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,

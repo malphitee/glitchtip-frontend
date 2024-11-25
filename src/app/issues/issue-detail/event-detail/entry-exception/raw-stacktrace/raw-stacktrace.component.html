@@ -1,10 +1,10 @@
 @for (value of rawStacktraceValues$ | async; track value) {
   <div class="wrapper">
     <p>
-      @if (eventPlatform === 'java') {
+      @if (eventPlatform === "java") {
         @if (value.module) {
           {{ value.module }}.<ng-container
-          >{{ value.type }}&#58; {{ value.value }}</ng-container
+            >{{ value.type }}&#58; {{ value.value }}</ng-container
           >
         }
       } @else {
@@ -13,11 +13,9 @@
     </p>
     @if (checkStacktraceInterface(value.stacktrace)) {
       @for (frame of value.stacktrace.frames; track frame; let i = $index) {
-        <div
-          class="indent"
-          >
+        <div class="indent">
           @switch (frame.platform || eventPlatform) {
-            @case ('javascript') {
+            @case ("javascript") {
               @if (frame.function) {
                 &ensp;at {{ frame.function }} &#40;
               } @else {
@@ -27,115 +25,117 @@
                 {{ frame.filename }}
               }
               @if (!frame.filename && frame.module) {
-                {{
-                frame.module
-                }}
+                {{ frame.module }}
               }
               @if (frame.lineNo && frame.lineNo > 0) {
                 &#58;{{ frame.lineNo }}
               }
               @if (frame.colNo && frame.colNo > 0) {
                 &#58;{{ frame.colNo }}
-                }&#41;
               }
-              @case ('ruby') {
-                &ensp;from
-                @if (frame.filename) {
-                  {{
-                  frame.filename
-                  }}
-                } @else {
-                  @if (frame.module) {
-                    &#40;{{ frame.module }}&#41;
-                  } @else {
-                    ?
-                  }
-                }
-                @if (frame.lineNo && frame.lineNo > 0) {
-                  &#58;{{ frame.lineNo }}
-                }
-                @if (frame.colNo && frame.colNo > 0) {
-                  &#58;{{ frame.colNo }}
-                }
-                @if (frame.function) {
-                  &#58;in &#96;{{ frame.function }}&apos;
-                }
-              }
-              @case ('php') {
-                &#96;{{ i }} {{ frame.filename || frame.module }}&#40;{{
-                frame.lineNo
-                }}&#41;&#58;
-                {{ frame.function ? frame.function : "&#123;main&#125;" }}
-              }
-              @case ('java') {
-                &nbsp;&nbsp;&nbsp;&nbsp;at
+              &#41;
+            }
+            @case ("ruby") {
+              &ensp;from
+              @if (frame.filename) {
+                {{ frame.filename }}
+              } @else {
                 @if (frame.module) {
-                  {{ frame.module }}.
-                }
-                @if (frame.function) {
-                  {{ frame.function }}
-                }
-                @if (frame.filename) {
-                  &#40;{{ frame.filename
-                  }}@if (frame.lineNo && frame.lineNo > 0) {
-                  &#58;{{ frame.lineNo }}
-                  }&#41;
-                }
-              }
-              @case ('objc' || 'cocoa') {
-                <!-- fallthrough -->
-              }
-              <!--TODO: Add ljust and trim logic https://gitlab.com/glitchtip/sentry-open-source/sentry/-/blob/master/src/sentry/static/sentry/app/components/events/interfaces/rawStacktraceContent.jsx#L105 -->
-              @case ('native') {
-                &ensp;
-                @if (frame.package) {
-                  {{ frame.package }}
-                }
-                @if (frame.instructionAddr) {
-                  {{ frame.instructionAddr }}
-                }
-                <ng-container> {{ frame.function || frame.symbolAddr }}</ng-container>
-                @if (frame.filename) {
-                  &#40;{{ frame.filename
-                  }}@if (frame.lineNo && frame.lineNo > 0) {
-                  &#58;{{ frame.lineNo }}
-                  }&#41;
-                }
-              }
-              @default {
-                @if (frame.filename) {
-                  File "{{ frame.filename }}"
+                  &#40;{{ frame.module }}&#41;
                 } @else {
-                  @if (frame.module) {
-                    Module "{{ frame.module }}"
-                  } @else {
-                    ?
-                  }
+                  ?
                 }
+              }
+              @if (frame.lineNo && frame.lineNo > 0) {
+                &#58;{{ frame.lineNo }}
+              }
+              @if (frame.colNo && frame.colNo > 0) {
+                &#58;{{ frame.colNo }}
+              }
+              @if (frame.function) {
+                &#58;in &#96;{{ frame.function }}&apos;
+              }
+            }
+            @case ("php") {
+              &#96;{{ i }} {{ frame.filename || frame.module }}&#40;{{
+                frame.lineNo
+              }}&#41;&#58;
+              {{ frame.function ? frame.function : "&#123;main&#125;" }}
+            }
+            @case ("java") {
+              &nbsp;&nbsp;&nbsp;&nbsp;at
+              @if (frame.module) {
+                {{ frame.module }}.
+              }
+              @if (frame.function) {
+                {{ frame.function }}
+              }
+              @if (frame.filename) {
+                &#40;{{ frame.filename }}
                 @if (frame.lineNo && frame.lineNo > 0) {
-                  , line {{ frame.lineNo }}
+                  &#58;{{ frame.lineNo }}
                 }
-                @if (frame.colNo && frame.colNo > 0) {
-                  , col {{ frame.colNo }}
+                &#41;
+              }
+            }
+            @case ("objc") {
+              <!-- fallthrough -->
+            }
+            @case ("cocoa") {
+              <!-- fallthrough -->
+            }
+            <!--TODO: Add ljust and trim logic https://gitlab.com/glitchtip/sentry-open-source/sentry/-/blob/master/src/sentry/static/sentry/app/components/events/interfaces/rawStacktraceContent.jsx#L105 -->
+            @case ("native") {
+              &ensp;
+              @if (frame.package) {
+                {{ frame.package }}
+              }
+              @if (frame.instructionAddr) {
+                {{ frame.instructionAddr }}
+              }
+              <ng-container>
+                {{ frame.function || frame.symbolAddr }}</ng-container
+              >
+              @if (frame.filename) {
+                &#40;{{ frame.filename }}
+                @if (frame.lineNo && frame.lineNo > 0) {
+                  &#58;{{ frame.lineNo }}
                 }
-                @if (frame.function) {
-                  , in {{ frame.function }}
+                &#41;
+              }
+            }
+            @default {
+              @if (frame.filename) {
+                File "{{ frame.filename }}"
+              } @else {
+                @if (frame.module) {
+                  Module "{{ frame.module }}"
+                } @else {
+                  ?
                 }
-                @if (frame.context) {
-                  @for (context of frame.context; track context) {
-                    @if (context[0] === frame.lineNo) {
-                      @if (context[1]) {
-                        <div>
-                          &nbsp;&nbsp;&nbsp;&nbsp;{{ context[1] }}
-                        </div>
-                      }
+              }
+              @if (frame.lineNo && frame.lineNo > 0) {
+                , line {{ frame.lineNo }}
+              }
+              @if (frame.colNo && frame.colNo > 0) {
+                , col {{ frame.colNo }}
+              }
+              @if (frame.function) {
+                , in {{ frame.function }}
+              }
+              @if (frame.context) {
+                @for (context of frame.context; track context) {
+                  @if (context[0] === frame.lineNo) {
+                    @if (context[1]) {
+                      <div> &nbsp;&nbsp;&nbsp;&nbsp;{{ context[1] }} </div>
                     }
                   }
                 }
               }
             }
-          </div>
-        }
+          }
+        </div>
       }
-    </div>
-  }
+    }
+  </div>
+}

@@ -25,7 +25,6 @@ import { slugRegex } from "src/app/shared/validators";
   selector: "gt-new-team",
   templateUrl: "./new-team.component.html",
   styleUrls: ["./new-team.component.scss"],
-  standalone: true,
   imports: [
     MatDialogModule,
     ReactiveFormsModule,
@@ -33,14 +32,17 @@ import { slugRegex } from "src/app/shared/validators";
     MatInputModule,
     SlugifyDirective,
     LoadingButtonComponent,
-    MatButtonModule
-],
+    MatButtonModule,
+  ],
 })
 export class NewTeamComponent {
   loading = false;
   errors: string[] = [];
   form = new FormGroup({
-    slug: new FormControl("", [Validators.required, Validators.pattern(slugRegex)]),
+    slug: new FormControl("", [
+      Validators.required,
+      Validators.pattern(slugRegex),
+    ]),
   });
   orgSlug?: string;
 
@@ -48,7 +50,7 @@ export class NewTeamComponent {
     private organizationsService: OrganizationsService,
     private snackBar: MatSnackBar,
     public dialogRef: MatDialogRef<NewTeamComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { orgSlug: string }
+    @Inject(MAT_DIALOG_DATA) public data: { orgSlug: string },
   ) {}
 
   get slug() {
@@ -77,7 +79,7 @@ export class NewTeamComponent {
             } else {
               this.errors = [`${err.statusText}: ${err.status}`];
             }
-          }
+          },
         );
     }
   }

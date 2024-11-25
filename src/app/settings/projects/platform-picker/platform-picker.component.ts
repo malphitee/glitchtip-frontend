@@ -39,7 +39,6 @@ import { AsyncPipe } from "@angular/common";
       multi: true,
     },
   ],
-  standalone: true,
   imports: [
     MatFormFieldModule,
     MatInputModule,

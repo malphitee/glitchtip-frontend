@@ -9,65 +9,68 @@
           color="primary"
           i18n
           >Create New Token</a
-          >
-        </mat-card-header>
-        <mat-divider></mat-divider>
-        <mat-card-content class="content">
-          <p i18n
-            >Authentication tokens give you access to the GlitchTip API. You can
-        create these tokens as authentication to gain specific access around the
-        app.</p
-            >
-          </mat-card-content>
-        </mat-card>
-        <mat-card>
-          <mat-card-header>
-            <mat-card-title i18n>Your Tokens</mat-card-title>
-          </mat-card-header>
-          <mat-divider></mat-divider>
-          <mat-card-content>
-            @if ((authTokens$ | async)?.length) {
-              @for (authToken of authTokens$ | async; track authToken; let i = $index) {
-                <div
-                  class="content-wrapper"
-                  >
-                  <h3 class="label">{{ authToken.label }}</h3>
-                  <div class="loading-wrapper">
-                    <gt-copy-input
-                      class="token"
-                      placeholder="Token"
-                      [value]="authToken.token"
-                    ></gt-copy-input>
-                    <gt-loading-button
-                      (buttonClick)="deleteAuthToken(authToken.id)"
-                      [loading]="authToken.id === (deleteLoading$ | async)"
-                      buttonText="Delete"
-                      buttonStyle="stroked"
-                      >
-                    </gt-loading-button>
-                  </div>
-                  <p class="scopes">
-                    <span class="mat-body-strong">Scopes</span>
-                    <span class="scopes__list-wrapper">
-                      @for (scope of authToken.scopes; track scope; let i = $index) {
-                        <span>{{
-                          scope
-                        }}</span>
-                        }</span
-                        >
-                      </p>
-                      @if ((authTokens$ | async)?.length !== i + 1) {
-                        <mat-divider
-                        ></mat-divider>
-                      }
-                    </div>
+        >
+      </mat-card-header>
+      <mat-divider></mat-divider>
+      <mat-card-content class="content">
+        <p i18n
+          >Authentication tokens give you access to the GlitchTip API. You can
+          create these tokens as authentication to gain specific access around
+          the app.</p
+        >
+      </mat-card-content>
+    </mat-card>
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title i18n>Your Tokens</mat-card-title>
+      </mat-card-header>
+      <mat-divider></mat-divider>
+      <mat-card-content>
+        @if ((authTokens$ | async)?.length) {
+          @for (
+            authToken of authTokens$ | async;
+            track authToken;
+            let i = $index
+          ) {
+            <div class="content-wrapper">
+              <h3 class="label">{{ authToken.label }}</h3>
+              <div class="loading-wrapper">
+                <gt-copy-input
+                  class="token"
+                  placeholder="Token"
+                  [value]="authToken.token"
+                ></gt-copy-input>
+                <gt-loading-button
+                  (buttonClick)="deleteAuthToken(authToken.id)"
+                  [loading]="authToken.id === (deleteLoading$ | async)"
+                  buttonText="Delete"
+                  buttonStyle="stroked"
+                >
+                </gt-loading-button>
+              </div>
+              <p class="scopes">
+                <span class="mat-body-strong">Scopes</span>
+                <span class="scopes__list-wrapper">
+                  @for (
+                    scope of authToken.scopes;
+                    track scope;
+                    let i = $index
+                  ) {
+                    <span>{{ scope }}</span>
                   }
-                } @else {
-                  <p class="empty-state" i18n
-                    >Once you create a token, it will show up here.</p
-                    >
-                  }
-                </mat-card-content>
-              </mat-card>
-            </ng-container>
+                </span>
+              </p>
+              @if ((authTokens$ | async)?.length !== i + 1) {
+                <mat-divider></mat-divider>
+              }
+            </div>
           }
+        } @else {
+          <p class="empty-state" i18n
+            >Once you create a token, it will show up here.</p
+          >
+        }
+      </mat-card-content>
+    </mat-card>
+  </ng-container>
+}

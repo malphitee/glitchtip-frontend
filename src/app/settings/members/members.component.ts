@@ -3,7 +3,10 @@ import { ActivatedRoute, RouterLink } from "@angular/router";
 import { map, filter } from "rxjs/operators";
 import { OrganizationsService } from "src/app/api/organizations/organizations.service";
 import { MembersService } from "src/app/api/organizations/members.service";
-import { Member, MemberSelector } from "src/app/api/organizations/organizations.interface";
+import {
+  Member,
+  MemberSelector,
+} from "src/app/api/organizations/organizations.interface";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { LoadingButtonComponent } from "../../shared/loading-button/loading-button.component";
 import { MatChipsModule } from "@angular/material/chips";
@@ -17,7 +20,6 @@ import { MatButtonModule } from "@angular/material/button";
   templateUrl: "./members.component.html",
   styleUrls: ["./members.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatButtonModule,
     RouterLink,
@@ -26,8 +28,8 @@ import { MatButtonModule } from "@angular/material/button";
     MatChipsModule,
     LoadingButtonComponent,
     MatTooltipModule,
-    AsyncPipe
-],
+    AsyncPipe,
+  ],
 })
 export class MembersComponent implements OnInit {
   activeOrganizationDetail$ =
@@ -37,14 +39,14 @@ export class MembersComponent implements OnInit {
   constructor(
     private organizationsService: OrganizationsService,
     private membersService: MembersService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {
     this.route.params
       .pipe(
         map((params) => params["org-slug"] as string),
-        filter((slug) => !!slug)
+        filter((slug) => !!slug),
       )
       .subscribe((slug) => {
         this.organizationsService.retrieveOrganizationMembers(slug).toPromise();

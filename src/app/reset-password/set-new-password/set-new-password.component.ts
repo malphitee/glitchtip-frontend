@@ -29,7 +29,6 @@ import { StatefulComponent } from "src/app/shared/stateful-service/signal-state.
   templateUrl: "./set-new-password.component.html",
   styleUrls: ["./set-new-password.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCardModule,
     ReactiveFormsModule,
@@ -38,8 +37,8 @@ import { StatefulComponent } from "src/app/shared/stateful-service/signal-state.
     MatInputModule,
     InputMatcherDirective,
     LoadingButtonComponent,
-    RouterLink
-],
+    RouterLink,
+  ],
 })
 export class SetNewPasswordComponent extends StatefulComponent<
   ResetPasswordState,

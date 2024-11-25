@@ -50,7 +50,7 @@ describe("OrganizationsService", () => {
     req.flush(testData);
     service.organizations$.subscribe((orgs) => expect(orgs).toEqual(testData));
     service.activeOrganizationId$.subscribe((active) =>
-      expect(active).toEqual(testData[0].id)
+      expect(active).toEqual(testData[0].id),
     );
   });
 
@@ -58,7 +58,7 @@ describe("OrganizationsService", () => {
     const testData = organizationList[1];
     service.changeActiveOrganization(1);
     service.activeOrganizationId$.subscribe((org) =>
-      expect(org).toBe(testData.id)
+      expect(org).toBe(testData.id),
     );
   });
 });

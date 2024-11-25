@@ -8,12 +8,17 @@
       @if ((initialLoad$ | async) === false) {
         <div class="loading"></div>
       } @else {
-        @if (
-          sortedEnvironments$ | async; as sortedEnvironments) {
-          @for (sortedEnvironment of sortedEnvironments; track sortedEnvironment) {
+        @if (sortedEnvironments$ | async; as sortedEnvironments) {
+          @for (
+            sortedEnvironment of sortedEnvironments;
+            track sortedEnvironment
+          ) {
             <h2>{{ sortedEnvironment.heading }}</h2>
             <mat-list>
-              @for (environment of sortedEnvironment.environments; track environment) {
+              @for (
+                environment of sortedEnvironment.environments;
+                track environment
+              ) {
                 <mat-list-item>
                   <div class="environment-list-item">
                     <span class="mat-body-1">
@@ -35,9 +40,9 @@
         } @else {
           <p class="mat-body-1">
             If you initialize an open-source Sentry SDK with an environment, it
-            will tag events with that environment and GlitchTip will keep a record
-            of them. The environments persist even if the event that reported it
-            is deleted, which is why hiding is an option.
+            will tag events with that environment and GlitchTip will keep a
+            record of them. The environments persist even if the event that
+            reported it is deleted, which is why hiding is an option.
           </p>
         }
       }

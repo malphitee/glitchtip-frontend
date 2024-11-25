@@ -5,33 +5,33 @@
       [attr.data-start]="firstLineNumber"
       [attr.data-line-offset]="firstLineNumber"
       [attr.data-line]="highlightLine"
-      ><code gtPrism [language]="eventPlatform" class="line-numbers">{{ codeBlock }}</code></pre>
-    </div>
-  } @else {
-    <div class="simple-code-container">
-      @for (contextLine of context; track contextLine) {
-        <div>
-          <pre
-        [class.highlight]="
-          contextLine[0] === lineNo && context && context.length > 1
-        "
-            class="context padding"
-            >{{ contextLine[0] }}. {{ contextLine[1] }}</pre
-            >
-          </div>
-        }
+    ><code gtPrism [language]="eventPlatform" class="line-numbers">{{ codeBlock }}</code></pre>
+  </div>
+} @else {
+  <div class="simple-code-container">
+    @for (contextLine of context; track contextLine) {
+      <div>
+        <pre
+          [class.highlight]="
+            contextLine[0] === lineNo && context && context.length > 1
+          "
+          class="context padding"
+          >{{ contextLine[0] }}. {{ contextLine[1] }}</pre
+        >
       </div>
     }
-    @if (vars) {
-      <div class="var-wrapper">
-        @for (varList of vars | keyvalue; track varList) {
-          <mat-divider></mat-divider>
-          <div class="vars padding">
-            <dt class="mat-body-strong">{{ varList.key }}:</dt>
-            <dd>
-              <pre>{{ checkType(varList.value) }}</pre>
-            </dd>
-          </div>
-        }
+  </div>
+}
+@if (vars) {
+  <div class="var-wrapper">
+    @for (varList of vars | keyvalue; track varList) {
+      <mat-divider></mat-divider>
+      <div class="vars padding">
+        <dt class="mat-body-strong">{{ varList.key }}:</dt>
+        <dd>
+          <pre>{{ checkType(varList.value) }}</pre>
+        </dd>
       </div>
     }
+  </div>
+}

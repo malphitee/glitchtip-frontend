@@ -30,7 +30,7 @@ export class OrganizationAPIService extends APIBaseService {
           project.id = normalizeID(project.id);
         });
         return orgDetail;
-      })
+      }),
     );
   }
 

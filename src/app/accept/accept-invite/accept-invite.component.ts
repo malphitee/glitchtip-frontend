@@ -13,7 +13,6 @@ import { AuthService } from "src/app/auth.service";
   templateUrl: "./accept-invite.component.html",
   styleUrls: ["./accept-invite.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [MatCardModule, MatButtonModule, RouterLink, AsyncPipe],
 })
 export class AcceptInviteComponent implements OnInit {

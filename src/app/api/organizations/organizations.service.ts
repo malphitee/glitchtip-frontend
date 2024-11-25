@@ -91,33 +91,33 @@ export class OrganizationsService extends StatefulService<OrganizationsState> {
   orgSlug: string | null = null;
   initialLoad$ = this.getState$.pipe(
     map((data) => data.initialLoad),
-    distinct()
+    distinct(),
   );
 
   readonly organizations$ = this.getState$.pipe(
     map((data) => data.organizations),
-    distinct()
+    distinct(),
   );
   readonly organizationCount$ = this.organizations$.pipe(
-    map((organizations) => organizations.length)
+    map((organizations) => organizations.length),
   );
   readonly activeOrganizationId$ = this.getState$.pipe(
-    map((data) => data.activeOrganizationId)
+    map((data) => data.activeOrganizationId),
   );
   readonly activeOrganization$ = this.getState$.pipe(
-    map((data) => data.activeOrganization)
+    map((data) => data.activeOrganization),
   );
   readonly activeOrganizationLoaded$ = this.getState$.pipe(
-    map((data) => !!data.activeOrganization)
+    map((data) => !!data.activeOrganization),
   );
   readonly organizationMembers$ = this.getState$.pipe(
-    map((data) => data.organizationMembers)
+    map((data) => data.organizationMembers),
   );
   readonly activeOrganizationProjects$ = this.activeOrganization$.pipe(
-    map((data) => (data ? data.projects : null))
+    map((data) => (data ? data.projects : null)),
   );
   readonly orgHasAProject$ = this.activeOrganizationProjects$.pipe(
-    map((projects) => !!projects && projects.length > 0)
+    map((projects) => !!projects && projects.length > 0),
   );
   readonly projectsCount$ = this.activeOrganizationProjects$.pipe(
     map((projects) => {
@@ -125,7 +125,7 @@ export class OrganizationsService extends StatefulService<OrganizationsState> {
         return 0;
       }
       return projects.length;
-    })
+    }),
   );
   readonly activeOrganizationDetail$ = combineLatest([
     this.organizations$,
@@ -133,9 +133,9 @@ export class OrganizationsService extends StatefulService<OrganizationsState> {
   ]).pipe(
     map(([organizations, activeOrganization]) =>
       organizations.find(
-        (organization) => organization.id === activeOrganization
-      )
-    )
+        (organization) => organization.id === activeOrganization,
+      ),
+    ),
   );
   readonly activeOrganizationSlug$ = combineLatest([
     this.organizations$,
@@ -148,7 +148,7 @@ export class OrganizationsService extends StatefulService<OrganizationsState> {
       }
       return null;
     }),
-    distinct()
+    distinct(),
   );
 
   readonly filteredAddTeamMembers$ = combineLatest([
@@ -158,24 +158,24 @@ export class OrganizationsService extends StatefulService<OrganizationsState> {
     map(([organizationMembers, teamMembers]) => {
       return organizationMembers.filter(
         (orgMembers) =>
-          !teamMembers.find((teamMems) => orgMembers.id === teamMems.id)
+          !teamMembers.find((teamMems) => orgMembers.id === teamMems.id),
       );
-    })
+    }),
   );
   readonly organizationTeams$ = this.getState$.pipe(
-    map((data) => data.organizationTeams)
+    map((data) => data.organizationTeams),
   );
   readonly selectedOrganizationTeams$ = this.organizationTeams$.pipe(
-    map((data) => data)
+    map((data) => data),
   );
 
   readonly filteredOrganizationTeams$ = this.organizationTeams$.pipe(
     withLatestFrom(this.selectedOrganizationTeams$),
-    filter(([orgTeams, selectedOrgTeams]) => orgTeams === selectedOrgTeams)
+    filter(([orgTeams, selectedOrgTeams]) => orgTeams === selectedOrgTeams),
   );
 
   readonly organizationEnvironments$ = this.getState$.pipe(
-    map((data) => data.organizationEnvironments)
+    map((data) => data.organizationEnvironments),
   );
 
   readonly organizationEnvironmentsProcessed$ =
@@ -188,9 +188,9 @@ export class OrganizationsService extends StatefulService<OrganizationsState> {
               ? [environment.name]
               : []),
           ],
-          [] as string[]
-        )
-      )
+          [] as string[],
+        ),
+      ),
     );
 
   readonly errors$ = this.getState$.pipe(map((data) => data.errors));
@@ -200,7 +200,7 @@ export class OrganizationsService extends StatefulService<OrganizationsState> {
    * and TypeScript-friendly way.
    */
   readonly navigationStart$ = this.router.events.pipe(
-    filter((event) => event instanceof NavigationStart)
+    filter((event) => event instanceof NavigationStart),
   ) as Observable<NavigationStart>;
 
   /**
@@ -208,7 +208,7 @@ export class OrganizationsService extends StatefulService<OrganizationsState> {
    * and TypeScript-friendly way.
    */
   readonly routesRecognized$ = this.router.events.pipe(
-    filter((event) => event instanceof RoutesRecognized)
+    filter((event) => event instanceof RoutesRecognized),
   ) as Observable<RoutesRecognized>;
 
   constructor(
@@ -221,7 +221,7 @@ export class OrganizationsService extends StatefulService<OrganizationsState> {
     private settingsService: SettingsService,
     private subscriptionsService: SubscriptionsService,
     private teamsAPIService: TeamsAPIService,
-    private teamsService: TeamsService
+    private teamsService: TeamsService,
   ) {
     super(initialState);
 
@@ -233,14 +233,14 @@ export class OrganizationsService extends StatefulService<OrganizationsState> {
       .pipe(
         filter(
           ([billingEnabled, activeOrganization]) =>
-            billingEnabled && !!activeOrganization
+            billingEnabled && !!activeOrganization,
         ),
         distinctUntilChanged((a, b) => a[1]?.id === b[1]?.id),
         tap(([_, activeOrganization]) => {
           this.subscriptionsService.checkIfUserHasSubscription(
-            activeOrganization!.slug
+            activeOrganization!.slug,
           );
-        })
+        }),
       )
       .subscribe();
 
@@ -252,7 +252,7 @@ export class OrganizationsService extends StatefulService<OrganizationsState> {
         map(([id, orgs]) => orgs.find((org) => org.id === id)),
         filter((org) => org !== undefined),
         map((org) => org!.slug),
-        tap((slug) => this.getOrganizationDetail(slug).toPromise())
+        tap((slug) => this.getOrganizationDetail(slug).toPromise()),
       )
       .subscribe();
   }
@@ -275,10 +275,10 @@ export class OrganizationsService extends StatefulService<OrganizationsState> {
           this.retrieveOrganizations().pipe(
             tap(() => {
               this.setActiveOrganizationId(organization.id);
-            })
-          )
+            }),
+          ),
         );
-      })
+      }),
     );
   }
 
@@ -299,7 +299,7 @@ export class OrganizationsService extends StatefulService<OrganizationsState> {
             this.changeActiveOrganization(organizations[0].id);
           }
         }
-      })
+      }),
     );
   }
 
@@ -324,7 +324,7 @@ export class OrganizationsService extends StatefulService<OrganizationsState> {
         tap((slug) => {
           const oldSlug =
             this.route.snapshot.firstChild?.firstChild?.paramMap.get(
-              "org-slug"
+              "org-slug",
             );
           const firstChild = this.route.snapshot.firstChild?.firstChild;
           if (oldSlug && slug !== oldSlug && firstChild) {
@@ -337,7 +337,7 @@ export class OrganizationsService extends StatefulService<OrganizationsState> {
               this.router.navigate([slug]);
             }
           }
-        })
+        }),
       )
       .toPromise();
   }
@@ -358,12 +358,12 @@ export class OrganizationsService extends StatefulService<OrganizationsState> {
         takeWhile(([_, initialLoad]) => initialLoad === false, true),
         filter(([_, initialLoad]) => initialLoad),
         map(([organizations, _]) =>
-          organizations.find((organization) => organization.slug === slug)
+          organizations.find((organization) => organization.slug === slug),
         ),
         filter((organization) => organization !== undefined),
         tap((organization) => {
           this.setActiveOrganizationId(organization!.id);
-        })
+        }),
       )
       .subscribe();
   }
@@ -376,7 +376,7 @@ export class OrganizationsService extends StatefulService<OrganizationsState> {
         tap((resp) => {
           this.setActiveOrganizationId(resp.id);
           this.updateOrgName(resp);
-        })
+        }),
       );
     }
     return EMPTY;
@@ -394,7 +394,7 @@ export class OrganizationsService extends StatefulService<OrganizationsState> {
           }
           this.router.navigate([""]);
         }
-      })
+      }),
     );
   }
 
@@ -403,7 +403,7 @@ export class OrganizationsService extends StatefulService<OrganizationsState> {
     return this.activeOrganizationSlug$.pipe(
       first(),
       filter((orgSlug) => !!orgSlug),
-      mergeMap((orgSlug) => this.getOrganizationDetail(orgSlug!))
+      mergeMap((orgSlug) => this.getOrganizationDetail(orgSlug!)),
     );
   }
 
@@ -442,7 +442,7 @@ export class OrganizationsService extends StatefulService<OrganizationsState> {
     return this.membersAPIService.list(orgSlug).pipe(
       tap((members) => {
         this.setActiveOrganizationMembers(members);
-      })
+      }),
     );
   }
 
@@ -450,7 +450,7 @@ export class OrganizationsService extends StatefulService<OrganizationsState> {
   inviteOrganizationMembers(
     emailInput: string,
     teamsInput: string[],
-    roleInput: MemberRole
+    roleInput: MemberRole,
   ) {
     const data = {
       email: emailInput,
@@ -465,29 +465,29 @@ export class OrganizationsService extends StatefulService<OrganizationsState> {
         mergeMap((orgSlug) =>
           this.membersAPIService
             .inviteUser(orgSlug!, data)
-            .pipe(map((response) => ({ response, orgSlug })))
+            .pipe(map((response) => ({ response, orgSlug }))),
         ),
         tap(({ response, orgSlug }) => {
           this.setAddMemberLoading(false);
           this.snackBar.open(
-            `An email invite has been sent to ${response.email}`
+            `An email invite has been sent to ${response.email}`,
           );
           this.router.navigate([orgSlug, "settings", "members"]);
         }),
         catchError((error: HttpErrorResponse) => {
           if (error.status === 403) {
             this.setAddMemberError(
-              "Only organization members with a role of manager or owner can invite new members."
+              "Only organization members with a role of manager or owner can invite new members.",
             );
           } else if (error.error?.detail) {
             this.setAddMemberError(error.error?.detail);
           } else {
             this.setAddMemberError(
-              "There was an error processing this request."
+              "There was an error processing this request.",
             );
           }
           return EMPTY;
-        })
+        }),
       )
       .toPromise();
   }
@@ -497,8 +497,8 @@ export class OrganizationsService extends StatefulService<OrganizationsState> {
       this.teamsAPIService.list(orgSlug).pipe(
         tap((resp) => {
           this.setOrganizationTeams(resp);
-        })
-      )
+        }),
+      ),
     );
   }
 
@@ -507,7 +507,7 @@ export class OrganizationsService extends StatefulService<OrganizationsState> {
       tap((team) => {
         this.refreshOrganizationDetail().subscribe();
         this.teamsService.addTeam(team);
-      })
+      }),
     );
   }
 
@@ -515,10 +515,10 @@ export class OrganizationsService extends StatefulService<OrganizationsState> {
     return this.teamsAPIService.addTeamMember(member, orgSlug, teamSlug).pipe(
       tap((team: Team) => {
         lastValueFrom(
-          this.teamsService.retrieveTeamMembers(orgSlug, team.slug)
+          this.teamsService.retrieveTeamMembers(orgSlug, team.slug),
         );
         lastValueFrom(this.retrieveOrganizationMembers(orgSlug));
-      })
+      }),
     );
   }
 
@@ -530,7 +530,7 @@ export class OrganizationsService extends StatefulService<OrganizationsState> {
         .pipe(
           tap(() => {
             this.teamsService.removeMember(memberId);
-          })
+          }),
         );
     } else {
       return EMPTY;
@@ -549,8 +549,8 @@ export class OrganizationsService extends StatefulService<OrganizationsState> {
         catchError((error: HttpErrorResponse) => {
           this.setLeaveTeamError(error);
           return EMPTY;
-        })
-      )
+        }),
+      ),
     );
   }
 
@@ -566,8 +566,8 @@ export class OrganizationsService extends StatefulService<OrganizationsState> {
         catchError((error: HttpErrorResponse) => {
           this.setJoinTeamError(error);
           return EMPTY;
-        })
-      )
+        }),
+      ),
     );
   }
 
@@ -587,7 +587,7 @@ export class OrganizationsService extends StatefulService<OrganizationsState> {
     return this.environmentsAPIService.list(orgSlug).pipe(
       tap((environments) => {
         this.setOrganizationEnvironments(environments);
-      })
+      }),
     );
   }
 
@@ -697,7 +697,7 @@ export class OrganizationsService extends StatefulService<OrganizationsState> {
         organizations: state.organizations.map((organization) =>
           orgName.id === organization.id
             ? { ...organization, name: orgName.name }
-            : organization
+            : organization,
         ),
       });
     }
@@ -747,7 +747,7 @@ export class OrganizationsService extends StatefulService<OrganizationsState> {
           teams: state.activeOrganization?.teams.map((team) =>
             team.slug === teamSlug
               ? { ...team, isMember: member, memberCount: members }
-              : team
+              : team,
           ),
         },
         loading: {
@@ -766,7 +766,7 @@ export class OrganizationsService extends StatefulService<OrganizationsState> {
         activeOrganization: {
           ...state.activeOrganization,
           teams: state.activeOrganization?.teams.filter(
-            (team) => team.slug !== slug
+            (team) => team.slug !== slug,
           ),
         },
       });
@@ -780,7 +780,7 @@ export class OrganizationsService extends StatefulService<OrganizationsState> {
         activeOrganization: {
           ...state.activeOrganization,
           teams: state.activeOrganization?.teams.map((team) =>
-            team.id === id ? { ...team, slug: newSlug } : team
+            team.id === id ? { ...team, slug: newSlug } : team,
           ),
         },
       });

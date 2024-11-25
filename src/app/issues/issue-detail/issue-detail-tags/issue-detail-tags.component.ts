@@ -12,20 +12,19 @@ import { NgStyle, AsyncPipe } from "@angular/common";
   templateUrl: "./issue-detail-tags.component.html",
   styleUrls: ["./issue-detail-tags.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [MatCardModule, NgStyle, MatTooltipModule, AsyncPipe],
 })
 export class IssueDetailTagsComponent implements OnInit {
   tags$ = this.issueService.tags$;
 
   issueIdParam$ = this.route.paramMap.pipe(
-    map((params) => params.get("issue-id"))
+    map((params) => params.get("issue-id")),
   );
   percent = 10;
 
   constructor(
     private issueService: IssueDetailService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
   ) {}
 
   ngOnInit() {
@@ -36,7 +35,7 @@ export class IssueDetailTagsComponent implements OnInit {
             return this.issueService.retrieveTags(+issueId);
           }
           return EMPTY;
-        })
+        }),
       )
       .subscribe();
   }

@@ -8,13 +8,12 @@ import { UserService } from "./api/user/user.service";
 @Component({
   selector: "gt-logged-in",
   templateUrl: "./logged-in.component.html",
-  standalone: true,
   imports: [MainNavComponent, RouterOutlet, RateLimitBannerComponent],
 })
 export class LoggedInComponent implements OnInit {
   constructor(
     private userService: UserService,
-    private organizationService: OrganizationsService
+    private organizationService: OrganizationsService,
   ) {}
 
   ngOnInit() {

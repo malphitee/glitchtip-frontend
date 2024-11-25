@@ -10,14 +10,13 @@ import { AsyncPipe, KeyValuePipe } from "@angular/common";
   templateUrl: "./entry-request.component.html",
   styleUrls: ["./entry-request.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDividerModule,
     MatTooltipModule,
     EntryDataComponent,
     AsyncPipe,
-    KeyValuePipe
-],
+    KeyValuePipe,
+  ],
 })
 export class EntryRequestComponent {
   eventEntryRequest$ = this.issueService.eventEntryRequest$;

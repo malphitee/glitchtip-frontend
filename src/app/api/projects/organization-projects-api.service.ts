@@ -23,7 +23,7 @@ export class OrganizationProjectsAPIService {
       map((orgProjects) => {
         orgProjects.map((project) => (project.id = normalizeID(project.id)));
         return orgProjects;
-      })
+      }),
     );
   }
 

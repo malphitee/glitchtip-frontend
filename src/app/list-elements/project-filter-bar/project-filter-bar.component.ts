@@ -26,7 +26,6 @@ import { MatExpansionPanel } from "@angular/material/expansion";
 import { normalizeProjectParams } from "src/app/shared/shared.utils";
 
 @Component({
-  standalone: true,
   selector: "gt-project-filter-bar",
   imports: [
     CommonModule,

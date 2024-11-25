@@ -24,7 +24,6 @@ import { reasonTextConversions } from "../uptime.utils";
 import { MonitorChecksService } from "./monitor-checks.service";
 
 @Component({
-  standalone: true,
   selector: "gt-monitor-checks",
   templateUrl: "./monitor-checks.component.html",
   styleUrls: ["./monitor-checks.component.scss"],
@@ -42,7 +41,7 @@ export class MonitorChecksComponent implements OnDestroy {
   @Input({ required: true }) monitor!: MonitorDetail;
   monitorChecks$ = this.service.monitorChecks$;
   isChange$ = this.route.queryParamMap.pipe(
-    map((params) => (params.get("isChange") === "false" ? false : true))
+    map((params) => (params.get("isChange") === "false" ? false : true)),
   );
   paginator$ = this.service.paginator$;
   displayedColumns$ = this.isChange$.pipe(
@@ -52,14 +51,14 @@ export class MonitorChecksComponent implements OnDestroy {
         "reason",
         isChanged ? undefined : "responseTime",
         "startCheck",
-      ].filter((column) => !!column)
-    )
+      ].filter((column) => !!column),
+    ),
   );
 
   constructor(
     protected service: MonitorChecksService,
     protected router: Router,
-    protected route: ActivatedRoute
+    protected route: ActivatedRoute,
   ) {
     combineLatest([this.route.paramMap, this.route.queryParamMap])
       .pipe(
@@ -72,12 +71,12 @@ export class MonitorChecksComponent implements OnDestroy {
               orgSlug,
               monitorId,
               isChange,
-              queryParams.get("cursor")
+              queryParams.get("cursor"),
             );
           }
           return EMPTY;
         }),
-        takeUntilDestroyed()
+        takeUntilDestroyed(),
       )
       .subscribe();
   }

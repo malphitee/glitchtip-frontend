@@ -11,7 +11,6 @@ import { PrismDirective } from "src/app/prismjs/prism.directive";
   templateUrl: "./frame-expanded.component.html",
   styleUrls: ["./frame-expanded.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [PrismDirective, MatDividerModule, KeyValuePipe],
 })
 export class FrameExpandedComponent {
@@ -60,7 +59,7 @@ export class FrameExpandedComponent {
     return this.context?.length
       ? this.context
           .map((tuple) =>
-            tuple[1] ? tuple[1].toString().replace(trailingNewLine, "") : ""
+            tuple[1] ? tuple[1].toString().replace(trailingNewLine, "") : "",
           )
           .join("\r\n")
       : null;

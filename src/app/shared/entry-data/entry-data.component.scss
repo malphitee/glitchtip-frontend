@@ -33,7 +33,11 @@ dd {
   padding: 8px;
   font-family: $font-mono;
   background-color: mat.m2-get-color-from-palette(mat.$m2-gray-palette, 100);
-  background-color: color-mix(in srgb, var(--mat-expansion-container-background-color) 92%, gray);
+  background-color: color-mix(
+    in srgb,
+    var(--mat-expansion-container-background-color) 92%,
+    gray
+  );
   border-radius: 3px;
 
   @media screen and (max-width: $small - 1) {

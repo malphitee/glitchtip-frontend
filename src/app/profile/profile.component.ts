@@ -20,7 +20,6 @@ import { MainNavService } from "../main-nav/main-nav.service";
   selector: "gt-profile",
   templateUrl: "./profile.component.html",
   styleUrls: ["./profile.component.scss"],
-  standalone: true,
   imports: [
     MatSidenavModule,
     MatListModule,
@@ -28,8 +27,8 @@ import { MainNavService } from "../main-nav/main-nav.service";
     RouterLinkActive,
     MobileNavToolbarComponent,
     RouterOutlet,
-    AsyncPipe
-],
+    AsyncPipe,
+  ],
 })
 export class ProfileComponent {
   user$ = this.userService.userDetails$;

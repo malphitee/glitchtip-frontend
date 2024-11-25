@@ -15,7 +15,6 @@ import { AsyncPipe } from "@angular/common";
   templateUrl: "./entry-exception.component.html",
   styleUrls: ["./entry-exception.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatButtonModule,
     MatButtonToggleModule,
@@ -24,8 +23,8 @@ import { AsyncPipe } from "@angular/common";
     FrameTitleComponent,
     FrameExpandedComponent,
     RawStacktraceComponent,
-    AsyncPipe
-],
+    AsyncPipe,
+  ],
 })
 export class EntryExceptionComponent {
   @Input() eventTitle: string | undefined;

@@ -4,7 +4,6 @@ import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatButtonModule } from "@angular/material/button";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { lastValueFrom } from "rxjs";
-import { FormErrorComponent } from "../../shared/forms/form-error/form-error.component";
 import { LoginService } from "../login.service";
 
 @Component({
@@ -12,10 +11,8 @@ import { LoginService } from "../login.service";
   templateUrl: "./login-webauthn.component.html",
   styleUrls: ["./login-webauthn.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatProgressBarModule,
-    FormErrorComponent,
     MatButtonModule,
     MatCheckboxModule,
     RouterLink,

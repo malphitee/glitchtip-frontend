@@ -7,14 +7,14 @@
       class="wrapper"
       [ngClass]="(showShowMore$ | async) ? 'bread-box' : 'bread-box--expanded'"
       [class.bread-box--expanded]="(showShowMore$ | async) === false"
-      >
+    >
       @if (showShowMore$ | async) {
         <button
           class="expand-button"
           mat-button
           color="primary"
           (click)="expandBreadcrumbs()"
-          >
+        >
           <mat-icon>more_horiz</mat-icon> Show All
           {{ breadcrumbs?.values?.length }} Breadcrumbs
         </button>
@@ -26,19 +26,22 @@
               @if (i !== 0) {
                 <mat-divider></mat-divider>
               }
-              <div class="table-wrapper" [class.error]="value.level === 'error'">
+              <div
+                class="table-wrapper"
+                [class.error]="value.level === 'error'"
+              >
                 <table cdk-table>
                   <ng-container>
                     <tr>
                       <td class="column-one">
-                        @if (value.level === 'error') {
+                        @if (value.level === "error") {
                           <mat-icon class="error">warning</mat-icon>
                         } @else {
                           @switch (value.category) {
-                            @case ('ui.click') {
+                            @case ("ui.click") {
                               <mat-icon class="ui">person</mat-icon>
                             }
-                            @case ('xhr') {
+                            @case ("xhr") {
                               <mat-icon class="xhr">cached</mat-icon>
                             }
                             @default {
@@ -52,11 +55,14 @@
                       </td>
                       <td class="column-three">{{ value.message }}</td>
                       <td class="column-four">
-                        {{ value.timestamp | date : "HH:mm:ss.SSS" }}
+                        {{ value.timestamp | date: "HH:mm:ss.SSS" }}
                       </td>
                     </tr>
                     <ng-container>
-                      @for (data of value.data | keyvalue : keepOrder; track data) {
+                      @for (
+                        data of value.data | keyvalue: keepOrder;
+                        track data
+                      ) {
                         <tr>
                           <td class="column-one"></td>
                           <td class="column-two">{{ data.key }}</td>
@@ -64,15 +70,15 @@
                             {{ data.value | json }}
                           </td>
                         </tr>
-                        }</ng-container
-                        >
-                      </ng-container>
-                    </table>
-                  </div></ng-container
-                  >
-                </li>
-              }
-            </ul>
-          </div>
-        </section>
-      }
+                      }
+                    </ng-container>
+                  </ng-container>
+                </table>
+              </div></ng-container
+            >
+          </li>
+        }
+      </ul>
+    </div>
+  </section>
+}

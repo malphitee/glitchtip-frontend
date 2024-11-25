@@ -9,13 +9,7 @@ import { AsyncPipe, KeyValuePipe } from "@angular/common";
   templateUrl: "./entry-message.component.html",
   styleUrls: ["./entry-message.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [
-    MatDividerModule,
-    EntryDataComponent,
-    AsyncPipe,
-    KeyValuePipe
-],
+  imports: [MatDividerModule, EntryDataComponent, AsyncPipe, KeyValuePipe],
 })
 export class EntryMessageComponent {
   eventEntryMessage$ = this.issueService.eventEntryMessage$;

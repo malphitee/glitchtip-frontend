@@ -17,7 +17,6 @@ import { CommonModule } from "@angular/common";
 import { MatDividerModule } from "@angular/material/divider";
 
 @Component({
-  standalone: true,
   selector: "gt-project-card",
   imports: [
     CommonModule,

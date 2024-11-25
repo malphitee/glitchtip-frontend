@@ -12,7 +12,6 @@ import { DetailHeaderComponent } from "src/app/shared/detail/header/header.compo
 @Component({
   templateUrl: "./release-detail.component.html",
   styleUrls: ["./release-detail.component.scss"],
-  standalone: true,
   imports: [
     CommonModule,
     MatTableModule,
@@ -34,7 +33,7 @@ export class ReleaseDetailComponent implements OnDestroy {
 
   constructor(
     protected service: ReleaseDetailService,
-    protected route: ActivatedRoute
+    protected route: ActivatedRoute,
   ) {
     combineLatest([this.route.paramMap, this.route.queryParamMap]).subscribe(
       ([params, queryParams]) => {
@@ -43,7 +42,7 @@ export class ReleaseDetailComponent implements OnDestroy {
         if (orgSlug && version) {
           this.service.getRelease(orgSlug, version, queryParams.get("cursor"));
         }
-      }
+      },
     );
   }
 

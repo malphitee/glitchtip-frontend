@@ -22,7 +22,7 @@ export class TransactionGroupsAPIService extends APIBaseService {
     end?: string | null,
     sort?: string | null,
     environment?: string | null,
-    query?: string | null
+    query?: string | null,
   ) {
     const url = this.listURL(organizationSlug);
     let httpParams = new HttpParams();
@@ -57,7 +57,7 @@ export class TransactionGroupsAPIService extends APIBaseService {
 
   retrieve(id: number, organizationSlug: string) {
     return this.http.get<TransactionGroup>(
-      this.detailURL(id, organizationSlug)
+      this.detailURL(id, organizationSlug),
     );
   }
 

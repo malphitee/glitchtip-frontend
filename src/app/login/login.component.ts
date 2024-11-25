@@ -30,7 +30,6 @@ import { MatSnackBar } from "@angular/material/snack-bar";
   selector: "gt-login",
   templateUrl: "./login.component.html",
   styleUrls: ["./login.component.scss"],
-  standalone: true,
   imports: [
     AsyncPipe,
     MatCardModule,

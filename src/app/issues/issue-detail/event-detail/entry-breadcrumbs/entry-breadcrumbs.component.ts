@@ -1,4 +1,11 @@
-import { KeyValue, NgClass, AsyncPipe, JsonPipe, DatePipe, KeyValuePipe } from "@angular/common";
+import {
+  KeyValue,
+  NgClass,
+  AsyncPipe,
+  JsonPipe,
+  DatePipe,
+  KeyValuePipe,
+} from "@angular/common";
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -17,7 +24,6 @@ import { MatDividerModule } from "@angular/material/divider";
   templateUrl: "./entry-breadcrumbs.component.html",
   styleUrls: ["./entry-breadcrumbs.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDividerModule,
     NgClass,
@@ -26,8 +32,8 @@ import { MatDividerModule } from "@angular/material/divider";
     AsyncPipe,
     JsonPipe,
     DatePipe,
-    KeyValuePipe
-],
+    KeyValuePipe,
+  ],
 })
 export class EntryBreadcrumbsComponent implements AfterViewInit {
   @ViewChild("breadBox") breadBox?: ElementRef;
@@ -49,7 +55,7 @@ export class EntryBreadcrumbsComponent implements AfterViewInit {
 
   keepOrder = (
     a: KeyValue<string, Json>,
-    b: KeyValue<string, Json>
+    b: KeyValue<string, Json>,
   ): number => {
     return 0;
   };

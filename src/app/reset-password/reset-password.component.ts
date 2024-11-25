@@ -28,7 +28,6 @@ import { StatefulComponent } from "../shared/stateful-service/signal-state.compo
   templateUrl: "./reset-password.component.html",
   styleUrls: ["./reset-password.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCardModule,
     ReactiveFormsModule,
@@ -38,8 +37,8 @@ import { StatefulComponent } from "../shared/stateful-service/signal-state.compo
     LoadingButtonComponent,
     MatButtonModule,
     RouterLink,
-    AsyncPipe
-],
+    AsyncPipe,
+  ],
 })
 export class ResetPasswordComponent extends StatefulComponent<
   ResetPasswordState,

@@ -27,7 +27,6 @@ import { StatefulComponent } from "src/app/shared/stateful-service/signal-state.
   selector: "gt-change-password",
   templateUrl: "./change-password.component.html",
   styleUrls: ["./change-password.component.scss"],
-  standalone: true,
   imports: [
     MatCardModule,
     MatDividerModule,
@@ -38,8 +37,8 @@ import { StatefulComponent } from "src/app/shared/stateful-service/signal-state.
     LoadingButtonComponent,
     MatIconModule,
     AsyncPipe,
-    FormErrorComponent
-],
+    FormErrorComponent,
+  ],
 })
 export class ChangePasswordComponent
   extends StatefulComponent<PasswordState, PasswordService>

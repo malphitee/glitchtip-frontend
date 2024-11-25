@@ -20,7 +20,6 @@ import { toObservable } from "@angular/core/rxjs-interop";
   selector: "gt-settings",
   templateUrl: "./settings.component.html",
   styleUrls: ["./settings.component.scss"],
-  standalone: true,
   imports: [
     MatSidenavModule,
     MatListModule,
@@ -28,8 +27,8 @@ import { toObservable } from "@angular/core/rxjs-interop";
     RouterLinkActive,
     MobileNavToolbarComponent,
     RouterOutlet,
-    AsyncPipe
-],
+    AsyncPipe,
+  ],
 })
 export class SettingsComponent {
   billingEnabled$ = this.service.billingEnabled$;

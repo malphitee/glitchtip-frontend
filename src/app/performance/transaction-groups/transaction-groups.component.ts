@@ -29,7 +29,6 @@ import { ListTitleComponent } from "../../list-elements/list-title/list-title.co
   selector: "gt-transaction-groups",
   templateUrl: "./transaction-groups.component.html",
   styleUrls: ["./transaction-groups.component.scss"],
-  standalone: true,
   imports: [
     CommonModule,
     ListTitleComponent,

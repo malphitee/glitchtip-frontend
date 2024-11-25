@@ -21,7 +21,6 @@ import { MatCardModule } from "@angular/material/card";
   selector: "gt-project-alerts",
   templateUrl: "./project-alerts.component.html",
   styleUrls: ["./project-alerts.component.scss"],
-  standalone: true,
   imports: [
     MatCardModule,
     MatButtonModule,

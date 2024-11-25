@@ -75,7 +75,10 @@ mat-card-header {
 .tooltip {
   text-decoration: underline;
   text-decoration-style: dotted;
-  text-decoration-color: mat.m2-get-color-from-palette(mat.$m2-gray-palette, 500);
+  text-decoration-color: mat.m2-get-color-from-palette(
+    mat.$m2-gray-palette,
+    500
+  );
   cursor: help;
 }
 
@@ -88,7 +91,11 @@ mat-card-header {
 .no-recipients {
   width: 50%;
   padding: 8px 16px;
-  background-color: color-mix(in srgb, var(--mat-expansion-container-background-color) 92%, gray);
+  background-color: color-mix(
+    in srgb,
+    var(--mat-expansion-container-background-color) 92%,
+    gray
+  );
 }
 
 .no-recipients-new {

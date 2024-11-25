@@ -7,14 +7,14 @@
           routerLink="./"
           routerLinkActive="active-route"
           [routerLinkActiveOptions]="{ exact: true }"
-          >
+        >
           General Settings
         </a>
         <a
           mat-list-item
           routerLink="./projects"
           routerLinkActive="active-route"
-          >
+        >
           Projects
         </a>
         @if (billingEnabled$ | async) {
@@ -22,7 +22,7 @@
             mat-list-item
             routerLink="./subscription"
             routerLinkActive="active-route"
-            >
+          >
             Subscription
           </a>
         }

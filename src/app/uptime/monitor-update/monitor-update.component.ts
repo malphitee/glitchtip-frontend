@@ -3,7 +3,6 @@ import { CommonModule } from "@angular/common";
 import { ActivatedRoute, RouterModule } from "@angular/router";
 import { tap, filter, take } from "rxjs/operators";
 import { lastValueFrom } from "rxjs";
-import { LoadingButtonComponent } from "src/app/shared/loading-button/loading-button.component";
 import { MatCardModule } from "@angular/material/card";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatButtonModule } from "@angular/material/button";
@@ -15,14 +14,12 @@ import { StatefulBaseComponent } from "src/app/shared/stateful-service/stateful-
 import { DetailHeaderComponent } from "src/app/shared/detail/header/header.component";
 
 @Component({
-  standalone: true,
   selector: "gt-monitor-update",
   templateUrl: "./monitor-update.component.html",
   styleUrls: ["./monitor-update.component.scss"],
   imports: [
     CommonModule,
     RouterModule,
-    LoadingButtonComponent,
     MatButtonModule,
     MatCardModule,
     MatDividerModule,
@@ -42,7 +39,7 @@ export class MonitorUpdateComponent
 
   constructor(
     protected service: MonitorService,
-    protected route: ActivatedRoute
+    protected route: ActivatedRoute,
   ) {
     super(service);
   }
@@ -58,8 +55,8 @@ export class MonitorUpdateComponent
           if (orgSlug && monitorId) {
             this.service.retrieveMonitorDetails(orgSlug, monitorId);
           }
-        })
-      )
+        }),
+      ),
     );
   }
 
@@ -70,7 +67,7 @@ export class MonitorUpdateComponent
   delete() {
     if (
       window.confirm(
-        `Are you sure you want delete this monitor? You will permanently lose all associated uptime data.`
+        `Are you sure you want delete this monitor? You will permanently lose all associated uptime data.`,
       )
     ) {
       this.service.deleteMonitor();

@@ -14,7 +14,6 @@ import { MonitorListService } from "./monitor-list.service";
 import { combineLatest } from "rxjs";
 
 @Component({
-  standalone: true,
   selector: "gt-monitor-list",
   templateUrl: "./monitor-list.component.html",
   styleUrls: ["./monitor-list.component.scss"],
@@ -45,7 +44,7 @@ export class MonitorListComponent implements OnDestroy {
 
   constructor(
     protected route: ActivatedRoute,
-    public service: MonitorListService
+    public service: MonitorListService,
   ) {
     combineLatest([this.route.paramMap, this.route.queryParamMap]).subscribe(
       ([params, queryParams]) => {
@@ -53,7 +52,7 @@ export class MonitorListComponent implements OnDestroy {
         if (orgSlug) {
           this.service.getMonitors(orgSlug, queryParams.get("cursor"));
         }
-      }
+      },
     );
   }
 

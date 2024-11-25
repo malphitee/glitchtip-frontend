@@ -23,7 +23,6 @@ import { toObservable } from "@angular/core/rxjs-interop";
   templateUrl: "./main-nav.component.html",
   styleUrls: ["./main-nav.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatSidenavModule,
     MatToolbarModule,

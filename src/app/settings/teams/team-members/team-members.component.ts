@@ -19,7 +19,6 @@ import { MatCardModule } from "@angular/material/card";
   selector: "gt-team-members",
   templateUrl: "./team-members.component.html",
   styleUrls: ["./team-members.component.scss"],
-  standalone: true,
   imports: [
     MatCardModule,
     MatFormFieldModule,

@@ -136,7 +136,7 @@ export const IconPaths = () => {
         src="${generateIconPath(icon)}"
       />
     </div>
-  `
+  `,
   );
 
   return {

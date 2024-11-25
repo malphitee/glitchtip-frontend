@@ -17,7 +17,6 @@ import { AsyncPipe, DatePipe } from "@angular/common";
   selector: "gt-comments",
   templateUrl: "./comments.component.html",
   styleUrls: ["./comments.component.scss"],
-  standalone: true,
   imports: [
     MatProgressSpinnerModule,
     CommentFormComponent,
@@ -26,8 +25,8 @@ import { AsyncPipe, DatePipe } from "@angular/common";
     MatIconModule,
     MarkdownModule,
     AsyncPipe,
-    DatePipe
-],
+    DatePipe,
+  ],
 })
 export class CommentsComponent
   extends StatefulBaseComponent<CommentsState, CommentsService>
@@ -39,13 +38,13 @@ export class CommentsComponent
   commentUpdateLoading$ = this.commentsService.commentUpdateLoading$;
   user$ = this.userService.userDetails$;
   displayCommentCreation$ = this.comments$.pipe(
-    map((comments) => comments.length < 50)
+    map((comments) => comments.length < 50),
   );
 
   constructor(
     private commentsService: CommentsService,
     private userService: UserService,
-    protected route: ActivatedRoute
+    protected route: ActivatedRoute,
   ) {
     super(commentsService);
   }
@@ -66,13 +65,13 @@ export class CommentsComponent
             this.commentsService.updateComment(
               +params["issue-id"],
               data.id,
-              data.text
+              data.text,
             );
           } else {
             this.commentsService.createComment(+params["issue-id"], data.text);
           }
-        })
-      )
+        }),
+      ),
     );
   }
 
@@ -90,8 +89,8 @@ export class CommentsComponent
         this.route.params.pipe(
           tap((params) => {
             this.commentsService.deleteComment(+params["issue-id"], commentId);
-          })
-        )
+          }),
+        ),
       );
   }
 }

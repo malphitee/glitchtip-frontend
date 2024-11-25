@@ -39,35 +39,35 @@ const initialState: NotificationsState = {
 })
 export class NotificationsService {
   private readonly notificationsState = new BehaviorSubject<NotificationsState>(
-    initialState
+    initialState,
   );
   private readonly getState$ = this.notificationsState.asObservable();
   private readonly url = `${baseUrl}/users/me/notifications/`;
   readonly subscribeByDefault$ = this.getState$.pipe(
-    map((data) => data.subscribeByDefault)
+    map((data) => data.subscribeByDefault),
   );
   readonly projectViewExpanded$ = this.getState$.pipe(
-    map((data) => data.projectViewExpanded)
+    map((data) => data.projectViewExpanded),
   );
   readonly subscribeByDefaultLoading$ = this.getState$.pipe(
-    map((data) => data.subscribeByDefaultLoading)
+    map((data) => data.subscribeByDefaultLoading),
   );
   readonly subscribeByDefaultError$ = this.getState$.pipe(
-    map((data) => data.subscribeByDefaultError)
+    map((data) => data.subscribeByDefaultError),
   );
   readonly groupedProjects$ = this.getState$.pipe(
-    map((data) => data.groupedProjects)
+    map((data) => data.groupedProjects),
   );
   readonly projectAlertLoading$ = this.getState$.pipe(
-    map((data) => data.projectAlertLoading)
+    map((data) => data.projectAlertLoading),
   );
   readonly projectAlertsError$ = this.getState$.pipe(
-    map((data) => data.projectAlertError)
+    map((data) => data.projectAlertError),
   );
 
   constructor(
     private projectsService: ProjectsService,
-    private http: HttpClient
+    private http: HttpClient,
   ) {}
 
   subscribeToEndpoints() {
@@ -94,7 +94,7 @@ export class NotificationsService {
           if (projects) {
             const projectsWithAlerts = projects.map((project) => {
               const matchingId = Object.keys(projectAlerts).find(
-                (element) => parseInt(element, 10) === project.id
+                (element) => parseInt(element, 10) === project.id,
               );
               return {
                 ...project,
@@ -103,7 +103,7 @@ export class NotificationsService {
             });
             this.groupProjectsByOrg(projectsWithAlerts);
           }
-        })
+        }),
       )
       .subscribe();
   }
@@ -114,7 +114,7 @@ export class NotificationsService {
         r[a.organization.id] = [...(r[a.organization.id] || []), a];
         return r;
       },
-      {}
+      {},
     );
     this.setGroupedProjects(groupedProjects);
   }
@@ -137,7 +137,7 @@ export class NotificationsService {
             this.setProjectAlertError(this.error(error), projectId);
           }
           return EMPTY;
-        })
+        }),
       )
       .toPromise();
   }
@@ -158,7 +158,7 @@ export class NotificationsService {
             this.setSubscribeByDefaultError(this.error(error));
           }
           return EMPTY;
-        })
+        }),
       )
       .subscribe();
   }

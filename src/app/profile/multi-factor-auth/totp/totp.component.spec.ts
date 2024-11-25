@@ -10,7 +10,6 @@ import { TOTPComponent } from "./totp.component";
 @Component({
   selector: "gt-backup-codes",
   template: "",
-  standalone: true,
   imports: [HttpClientTestingModule, MatSnackBarModule, NoopAnimationsModule],
 })
 class BackupCodesStubComponent {

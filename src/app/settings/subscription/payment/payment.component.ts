@@ -17,7 +17,6 @@ import { AsyncPipe, DecimalPipe } from "@angular/common";
   templateUrl: "./payment.component.html",
   styleUrls: ["./payment.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCardModule,
     MatIconModule,
@@ -25,8 +24,8 @@ import { AsyncPipe, DecimalPipe } from "@angular/common";
     MatDividerModule,
     EventInfoComponent,
     AsyncPipe,
-    DecimalPipe
-],
+    DecimalPipe,
+  ],
 })
 export class PaymentComponent implements OnInit {
   productOptions$ = this.subscriptionService.formattedProductOptions;
@@ -36,7 +35,7 @@ export class PaymentComponent implements OnInit {
 
   constructor(
     private subscriptionService: SubscriptionsService,
-    private organizationService: OrganizationsService
+    private organizationService: OrganizationsService,
   ) {}
 
   ngOnInit() {
@@ -52,10 +51,10 @@ export class PaymentComponent implements OnInit {
         tap((activeOrganization) =>
           this.subscriptionService.dispatchSubscriptionCreation(
             activeOrganization!,
-            price
-          )
-        )
-      )
+            price,
+          ),
+        ),
+      ),
     );
   }
 }

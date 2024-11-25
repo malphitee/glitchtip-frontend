@@ -1,8 +1,4 @@
-import {
-  Meta,
-  StoryObj,
-  applicationConfig,
-} from "@storybook/angular";
+import { Meta, StoryObj, applicationConfig } from "@storybook/angular";
 import { provideRouter } from "@angular/router";
 import { DetailHeaderComponent } from "./header.component";
 

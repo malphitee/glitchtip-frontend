@@ -17,7 +17,6 @@ import { AsyncPipe } from "@angular/common";
   selector: "gt-team-projects",
   templateUrl: "./team-projects.component.html",
   styleUrls: ["./team-projects.component.scss"],
-  standalone: true,
   imports: [
     MatCardModule,
     MatFormFieldModule,

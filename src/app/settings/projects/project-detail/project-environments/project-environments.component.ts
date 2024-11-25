@@ -12,14 +12,13 @@ import { MatCardModule } from "@angular/material/card";
   templateUrl: "./project-environments.component.html",
   styleUrls: ["./project-environments.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCardModule,
     MatDividerModule,
     MatListModule,
     LoadingButtonComponent,
-    AsyncPipe
-],
+    AsyncPipe,
+  ],
 })
 export class ProjectEnvironmentsComponent implements OnDestroy {
   initialLoad$ = this.environmentsService.initialLoad$;

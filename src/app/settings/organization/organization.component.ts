@@ -15,7 +15,6 @@ import { AsyncPipe } from "@angular/common";
   selector: "gt-organization",
   templateUrl: "./organization.component.html",
   styleUrls: ["./organization.component.scss"],
-  standalone: true,
   imports: [
     MatCardModule,
     MatDividerModule,

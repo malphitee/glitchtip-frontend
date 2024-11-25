@@ -9,7 +9,6 @@ import { MatToolbarModule } from "@angular/material/toolbar";
   selector: "gt-mobile-nav-toolbar",
   templateUrl: "./mobile-nav-toolbar.component.html",
   styleUrls: ["./mobile-nav-toolbar.component.scss"],
-  standalone: true,
   imports: [MatToolbarModule, MatButtonModule, MatIconModule],
 })
 export class MobileNavToolbarComponent {

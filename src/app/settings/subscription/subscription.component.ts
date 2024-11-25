@@ -28,7 +28,6 @@ interface Percentages {
   templateUrl: "./subscription.component.html",
   styleUrls: ["./subscription.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCardModule,
     MatDialogModule,
@@ -39,8 +38,8 @@ interface Percentages {
     MatProgressSpinnerModule,
     AsyncPipe,
     CurrencyPipe,
-    DatePipe
-],
+    DatePipe,
+  ],
 })
 export class SubscriptionComponent implements OnDestroy {
   fromStripe$ = this.service.fromStripe$;
@@ -117,8 +116,8 @@ export class SubscriptionComponent implements OnDestroy {
         } else {
           this.service.retrieveSubscription(routerData.slug);
         }
-        if (routerData.redirectFromBillingPortal){
-          this.orgService.repeatRefreshOrgDetail()
+        if (routerData.redirectFromBillingPortal) {
+          this.orgService.repeatRefreshOrgDetail();
         }
         this.service.retrieveSubscriptionEventCount(routerData.slug);
       });

@@ -20,7 +20,6 @@ import { MatButtonModule } from "@angular/material/button";
   templateUrl: "./issue-detail.component.html",
   styleUrls: ["./issue-detail.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     CommonModule,
     MatCardModule,
@@ -52,12 +51,14 @@ export class IssueDetailComponent implements OnInit {
           return [metadata.function!, culprit];
         case "csp":
           return [metadata.directive || "", metadata.uri || null];
-        case "expectct" || "expectstaple" || "hpkp":
+        case "expectct":
+        case "expectstaple":
+        case "hpkp":
           return [metadata.message || "", metadata.origin || null];
         default:
           return [metadata.title!, null];
       }
-    })
+    }),
   );
   issueSubtitle$ = this.issue$.pipe(
     map((issue) => {
@@ -70,19 +71,21 @@ export class IssueDetailComponent implements OnInit {
           return metadata.value;
         case "csp":
           return metadata.message;
-        case "expectct" || "expectstaple" || "hpkp":
+        case "expectct":
+        case "expectstaple":
+        case "hpkp":
           return "";
         default:
           return issue.culprit;
       }
-    })
+    }),
   );
   initialLoadComplete$ = this.issueService.issueInitialLoadComplete$;
   form = new FormGroup({
     assignee: new FormControl(""),
   });
   issueIdParam$ = this.route.paramMap.pipe(
-    map((params) => params.get("issue-id"))
+    map((params) => params.get("issue-id")),
   );
   organization$ = this.organizationsService.activeOrganization$;
   participantCountPluralMapping: { [k: string]: string } = {
@@ -94,7 +97,7 @@ export class IssueDetailComponent implements OnInit {
   constructor(
     private issueService: IssueDetailService,
     private organizationsService: OrganizationsService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
   ) {}
 
   ngOnInit() {
@@ -106,7 +109,7 @@ export class IssueDetailComponent implements OnInit {
             return this.issueService.retrieveIssue(+issueId);
           }
           return EMPTY;
-        })
+        }),
       )
       .subscribe();
   }
@@ -130,12 +133,12 @@ export class IssueDetailComponent implements OnInit {
           if (
             id &&
             window.confirm(
-              `Are you sure you want delete this issue? You will permanently lose this issue and all associated events.`
+              `Are you sure you want delete this issue? You will permanently lose this issue and all associated events.`,
             )
           ) {
             this.issueService.deleteIssue(id.toString());
           }
-        })
+        }),
       )
       .subscribe();
   }

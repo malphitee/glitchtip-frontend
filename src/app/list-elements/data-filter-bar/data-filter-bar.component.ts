@@ -8,7 +8,6 @@ import { MatInputModule } from "@angular/material/input";
 import { MatSelectChange, MatSelectModule } from "@angular/material/select";
 
 @Component({
-  standalone: true,
   selector: "gt-data-filter-bar",
   imports: [
     CommonModule,

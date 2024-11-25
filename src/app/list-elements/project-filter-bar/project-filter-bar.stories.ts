@@ -2,7 +2,6 @@ import { of } from "rxjs";
 
 import { ProjectFilterBarComponent } from "./project-filter-bar.component";
 
-
 export default {
   title: "List elements/Project Filter Bar",
   component: ProjectFilterBarComponent,

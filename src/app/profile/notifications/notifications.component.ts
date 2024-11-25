@@ -16,7 +16,6 @@ import { MatCardModule } from "@angular/material/card";
   templateUrl: "./notifications.component.html",
   styleUrls: ["./notifications.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCardModule,
     MatDividerModule,
@@ -27,8 +26,8 @@ import { MatCardModule } from "@angular/material/card";
     MatIconModule,
     RouterLink,
     AsyncPipe,
-    KeyValuePipe
-],
+    KeyValuePipe,
+  ],
 })
 export class NotificationsComponent implements OnInit {
   subscribeByDefault$ = this.notificationsService.subscribeByDefault$;

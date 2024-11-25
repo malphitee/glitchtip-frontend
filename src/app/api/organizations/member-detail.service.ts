@@ -38,25 +38,25 @@ export class MemberDetailService extends StatefulService<MemberDetailState> {
   readonly member$ = this.getState$.pipe(map((data) => data.member));
   readonly memberTeams$ = this.getState$.pipe(map((data) => data.memberTeams));
   readonly availableRoles$ = this.getState$.pipe(
-    map((data) => data.availableRoles)
+    map((data) => data.availableRoles),
   );
   readonly updateMemberRoleError$ = this.getState$.pipe(
-    map((state) => state.updateMemberRoleError)
+    map((state) => state.updateMemberRoleError),
   );
   readonly updateMemberRoleLoading$ = this.getState$.pipe(
-    map((state) => state.updateMemberRoleLoading)
+    map((state) => state.updateMemberRoleLoading),
   );
   readonly transferOrgOwnershipError$ = this.getState$.pipe(
-    map((state) => state.transferOrgOwnershipError)
+    map((state) => state.transferOrgOwnershipError),
   );
   readonly transferOrgOwnershipLoading$ = this.getState$.pipe(
-    map((state) => state.transferOrgOwnershipLoading)
+    map((state) => state.transferOrgOwnershipLoading),
   );
 
   constructor(
     private membersAPIService: MembersAPIService,
     private organizationsService: OrganizationsService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
   ) {
     super(initialState);
   }
@@ -73,7 +73,7 @@ export class MemberDetailService extends StatefulService<MemberDetailState> {
         exhaustMap(([orgSlug, memberDetail]) => {
           const data = {
             orgRole: updatedRole,
-            teamRoles: []
+            teamRoles: [],
           };
           return this.membersAPIService
             .update(orgSlug!, memberDetail!.id, data)
@@ -81,19 +81,19 @@ export class MemberDetailService extends StatefulService<MemberDetailState> {
               tap((resp) => {
                 this.setUpdateMemberRole(resp);
                 this.snackBar.open(
-                  `Successfully updated ${resp.email}'s role to ${resp.roleName}`
+                  `Successfully updated ${resp.email}'s role to ${resp.roleName}`,
                 );
               }),
               catchError((error: HttpErrorResponse) => {
                 this.setUpdateMemberRoleError(
-                  `${error.statusText}: ${error.status}`
+                  `${error.statusText}: ${error.status}`,
                 );
                 return EMPTY;
-              })
+              }),
             );
-        })
+        }),
       ),
-      { defaultValue: null }
+      { defaultValue: null },
     );
   }
 
@@ -110,7 +110,7 @@ export class MemberDetailService extends StatefulService<MemberDetailState> {
           return this.membersAPIService.makeOrgOwner(orgSlug!, member!.id).pipe(
             tap((resp) => {
               this.snackBar.open(
-                `Successfully transferred organization account ownership to ${resp.email}.`
+                `Successfully transferred organization account ownership to ${resp.email}.`,
               );
               this.setTransferOrgOwnership(resp);
             }),
@@ -122,16 +122,16 @@ export class MemberDetailService extends StatefulService<MemberDetailState> {
                   this.setTransferOrgOwnershipError(err.error?.message);
                 } else {
                   this.setTransferOrgOwnershipError(
-                    "Unable to transfer account ownership."
+                    "Unable to transfer account ownership.",
                   );
                 }
               }
               return EMPTY;
-            })
+            }),
           );
-        })
+        }),
       ),
-      { defaultValue: null }
+      { defaultValue: null },
     );
   }
 
@@ -139,7 +139,7 @@ export class MemberDetailService extends StatefulService<MemberDetailState> {
     return lastValueFrom(
       this.membersAPIService
         .retrieve(orgSlug, memberId)
-        .pipe(tap((memberDetail) => this.setMemberDetails(memberDetail)))
+        .pipe(tap((memberDetail) => this.setMemberDetails(memberDetail))),
     );
   }
 

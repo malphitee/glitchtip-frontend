@@ -29,7 +29,6 @@ import { StatefulComponent } from "../shared/stateful-service/signal-state.compo
   selector: "gt-register",
   templateUrl: "./register.component.html",
   styleUrls: ["./register.component.scss"],
-  standalone: true,
   imports: [
     CommonModule,
     MatCardModule,

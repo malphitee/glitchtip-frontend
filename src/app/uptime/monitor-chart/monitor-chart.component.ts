@@ -6,7 +6,6 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { CommonModule } from "@angular/common";
 
 @Component({
-  standalone: true,
   selector: "gt-monitor-chart",
   templateUrl: "./monitor-chart.component.html",
   styleUrls: ["./monitor-chart.component.scss"],

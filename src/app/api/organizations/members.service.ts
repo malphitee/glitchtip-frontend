@@ -36,10 +36,10 @@ export class MembersService {
   private readonly state = new BehaviorSubject<MembersState>(initialState);
   private readonly getState$ = this.state.asObservable();
   readonly loadingResendInvite$ = this.getState$.pipe(
-    map((state) => state.loadingResendInvite)
+    map((state) => state.loadingResendInvite),
   );
   readonly sentResendInvite$ = this.getState$.pipe(
-    map((state) => state.sentResendInvite)
+    map((state) => state.sentResendInvite),
   );
   /** Organization members with computed loading/success data */
   readonly members$: Observable<MemberSelector[]> = combineLatest([
@@ -57,14 +57,14 @@ export class MembersService {
           isMe: member.email === activeUserEmail ? true : false,
         };
       });
-    })
+    }),
   );
 
   constructor(
     private membersAPIService: MembersAPIService,
     private organizationsService: OrganizationsService,
     private userService: UserService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
   ) {}
 
   /** Send another invite to already invited org member */
@@ -75,19 +75,19 @@ export class MembersService {
       orgRole: member.role,
       teamRoles: [],
       reinvite: true,
-    }
+    };
     lastValueFrom(
       this.organizationsService.activeOrganizationSlug$.pipe(
         take(1),
         mergeMap((orgSlug) =>
-          this.membersAPIService.inviteUser(orgSlug!, data)
+          this.membersAPIService.inviteUser(orgSlug!, data),
         ),
         tap(() => this.setResendInviteSuccess(member.id)),
         catchError(() => {
           this.clearLoadingResendInvite();
           return EMPTY;
-        })
-      )
+        }),
+      ),
     );
   }
 
@@ -100,11 +100,11 @@ export class MembersService {
           return this.membersAPIService.destroy(orgSlug!, member.id).pipe(
             exhaustMap(() => {
               this.snackBar.open(
-                `Successfully removed ${member.email} from organization`
+                `Successfully removed ${member.email} from organization`,
               );
               if (orgSlug) {
                 return this.organizationsService.retrieveOrganizationMembers(
-                  orgSlug
+                  orgSlug,
                 );
               }
               return EMPTY;
@@ -120,11 +120,11 @@ export class MembersService {
               }
               this.snackBar.open(message);
               return EMPTY;
-            })
+            }),
           );
-        })
+        }),
       ),
-      { defaultValue: null }
+      { defaultValue: null },
     );
   }
 

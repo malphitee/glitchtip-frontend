@@ -12,11 +12,10 @@ interface BlogItem {
 }
 
 @Component({
-  selector: "app-blog-index",
-  standalone: true,
-  imports: [RouterLink, MatCard, MatCardContent, DatePipe],
-  templateUrl: "./blog-index.component.html",
-  styleUrl: "./blog-index.component.scss",
+    selector: "app-blog-index",
+    imports: [RouterLink, MatCard, MatCardContent, DatePipe],
+    templateUrl: "./blog-index.component.html",
+    styleUrl: "./blog-index.component.scss"
 })
 export class BlogIndexComponent implements OnInit {
   posts: BlogItem[] | null = null;

@@ -6,7 +6,7 @@ import { MicroSentryService } from "@micro-sentry/angular";
 export class CustomMicroSentryErrorHandler implements ErrorHandler {
   constructor(
     private errorBus: MicroSentryErrorBusService,
-    microSentry: MicroSentryService
+    microSentry: MicroSentryService,
   ) {
     // tslint:disable-next-line:rxjs-prefer-angular-takeuntil
     errorBus.errors$.subscribe((error) => {

@@ -18,7 +18,8 @@
 // single CSS file for Angular Material in our app.
 // Don't include this anywhere else!
 
-@include mat.core();
+@include mat.elevation-classes();
+@include mat.app-background();
 @include mat.all-component-typographies(themes.$custom-typography);
 @include mat.card-typography(themes.$custom-card-typography);
 @include mat.table-typography(themes.$custom-table-typography);
@@ -41,9 +42,12 @@
   @include collect-themes.generate-dark-rules(themes.$candy-app-theme-dark);
 }
 
-.light, .dark {
+.light,
+.dark {
   @include meta.load-css("prismjs/plugins/line-numbers/prism-line-numbers.css");
-  @include meta.load-css("prismjs/plugins/line-highlight/prism-line-highlight.css");
+  @include meta.load-css(
+    "prismjs/plugins/line-highlight/prism-line-highlight.css"
+  );
 }
 
 // Responsive type maybe?

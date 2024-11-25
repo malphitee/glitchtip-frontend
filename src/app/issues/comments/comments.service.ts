@@ -38,23 +38,23 @@ export class CommentsService extends StatefulService<CommentsState> {
           updateLoading: state.commentUpdateLoading.includes(comment.id),
           deleteLoading: state.commentDeleteLoading.includes(comment.id),
         };
-      })
-    )
+      }),
+    ),
   );
   commentsListLoading$ = this.getState$.pipe(
-    map((state) => state.commentsListLoading)
+    map((state) => state.commentsListLoading),
   );
   createCommentLoading$ = this.getState$.pipe(
-    map((state) => state.createCommentLoading)
+    map((state) => state.createCommentLoading),
   );
   commentUpdateLoading$ = this.getState$.pipe(
-    map((state) => state.commentUpdateLoading)
+    map((state) => state.commentUpdateLoading),
   );
 
   constructor(
     private commentsAPIService: CommentsAPIService,
     private issueDetailService: IssueDetailService,
-    private snackbar: MatSnackBar
+    private snackbar: MatSnackBar,
   ) {
     super(initialState);
   }
@@ -68,12 +68,12 @@ export class CommentsService extends StatefulService<CommentsState> {
         }),
         catchError(() => {
           this.setCommentsListLoadingError(
-            "Something went wrong. Try reloading the page."
+            "Something went wrong. Try reloading the page.",
           );
           return EMPTY;
-        })
+        }),
       ),
-      { defaultValue: null }
+      { defaultValue: null },
     );
   }
 
@@ -88,12 +88,12 @@ export class CommentsService extends StatefulService<CommentsState> {
         catchError(() => {
           this.setCreateCommentLoadingError();
           this.snackbar.open(
-            "There was a problem posting this comment, please try again"
+            "There was a problem posting this comment, please try again",
           );
           return EMPTY;
-        })
+        }),
       ),
-      { defaultValue: null }
+      { defaultValue: null },
     );
   }
 
@@ -116,12 +116,12 @@ export class CommentsService extends StatefulService<CommentsState> {
         catchError(() => {
           this.setCommentUpdateLoadingError(commentId);
           this.snackbar.open(
-            "There was a problem updating this comment, please try again"
+            "There was a problem updating this comment, please try again",
           );
           return EMPTY;
-        })
+        }),
       ),
-      { defaultValue: null }
+      { defaultValue: null },
     );
   }
 
@@ -137,18 +137,18 @@ export class CommentsService extends StatefulService<CommentsState> {
         catchError(() => {
           this.setCommentDeleteError(commentId);
           this.snackbar.open(
-            "There was an error deleting this comment. Please try again."
+            "There was an error deleting this comment. Please try again.",
           );
           return EMPTY;
-        })
+        }),
       ),
-      { defaultValue: null }
+      { defaultValue: null },
     );
   }
 
   protected findAndReplaceComment(
     currentComments: Comment[],
-    newComment: Comment
+    newComment: Comment,
   ): Comment[] {
     const updatedComments = currentComments?.map((comment) => {
       if (comment.id === newComment.id) {
@@ -206,7 +206,7 @@ export class CommentsService extends StatefulService<CommentsState> {
     const state = this.state.getValue();
     this.setState({
       updateModeComments: state.updateModeComments.filter(
-        (id) => id !== commentId
+        (id) => id !== commentId,
       ),
     });
   }
@@ -222,7 +222,7 @@ export class CommentsService extends StatefulService<CommentsState> {
     const state = this.state.getValue();
     this.setState({
       commentUpdateLoading: state.updateModeComments.filter(
-        (id) => id !== commentId
+        (id) => id !== commentId,
       ),
     });
   }
@@ -232,10 +232,10 @@ export class CommentsService extends StatefulService<CommentsState> {
     this.setState({
       comments: this.findAndReplaceComment(state.comments, comment),
       updateModeComments: state.updateModeComments.filter(
-        (id) => id !== comment.id
+        (id) => id !== comment.id,
       ),
       commentUpdateLoading: state.commentUpdateLoading.filter(
-        (id) => id !== comment.id
+        (id) => id !== comment.id,
       ),
     });
   }
@@ -252,7 +252,7 @@ export class CommentsService extends StatefulService<CommentsState> {
     this.setState({
       comments: state.comments.filter((comment) => comment.id !== commentId),
       commentDeleteLoading: state.commentDeleteLoading.filter(
-        (id) => id !== commentId
+        (id) => id !== commentId,
       ),
     });
   }
@@ -261,7 +261,7 @@ export class CommentsService extends StatefulService<CommentsState> {
     const state = this.state.getValue();
     this.setState({
       commentDeleteLoading: state.commentDeleteLoading.filter(
-        (id) => id !== commentId
+        (id) => id !== commentId,
       ),
     });
   }

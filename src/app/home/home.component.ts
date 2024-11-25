@@ -5,7 +5,6 @@ import { ProjectListComponent } from "../shared/project-list/project-list.compon
   template: `<gt-project-list></gt-project-list>`,
   styleUrls: ["./home.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [ProjectListComponent],
 })
 export class HomeComponent {}

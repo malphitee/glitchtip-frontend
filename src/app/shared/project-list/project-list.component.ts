@@ -16,7 +16,6 @@ import { ProjectCardComponent } from "../project-card/project-card.component";
 import { EmptyProjectsComponent } from "../project-card/empty-projects/empty-projects.component";
 
 @Component({
-  standalone: true,
   selector: "gt-project-list",
   imports: [
     CommonModule,
@@ -43,16 +42,16 @@ export class ProjectListComponent implements OnInit {
         ...organization,
         projects: projects
           ? projects.filter(
-              (project) => project.organization.id === organization.id
+              (project) => project.organization.id === organization.id,
             )
           : [],
-      }))
-    )
+      })),
+    ),
   );
 
   constructor(
     private organizationsService: OrganizationsService,
-    private projectsService: ProjectsService
+    private projectsService: ProjectsService,
   ) {}
 
   ngOnInit() {

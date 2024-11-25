@@ -10,15 +10,14 @@ import { AsyncPipe, JsonPipe, KeyValuePipe } from "@angular/common";
   templateUrl: "./entry-csp.component.html",
   styleUrls: ["./entry-csp.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDividerModule,
     MatButtonToggleModule,
     EntryDataComponent,
     AsyncPipe,
     JsonPipe,
-    KeyValuePipe
-],
+    KeyValuePipe,
+  ],
 })
 export class EntryCSPComponent {
   eventEntryCSP$ = this.issueService.eventEntryCSP$;

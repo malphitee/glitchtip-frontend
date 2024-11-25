@@ -14,7 +14,6 @@ import { AuthService } from "./auth.service";
 @Component({
   selector: "gt-root",
   templateUrl: "./app.component.html",
-  standalone: true,
   imports: [RouterOutlet],
 })
 export class AppComponent implements OnInit {

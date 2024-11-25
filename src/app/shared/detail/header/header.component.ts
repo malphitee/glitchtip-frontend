@@ -10,7 +10,6 @@ import { MatButtonModule } from "@angular/material/button";
  */
 @Component({
   selector: "gt-detail-header",
-  standalone: true,
   imports: [RouterLink, MatIconModule, MatButtonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./header.component.html",

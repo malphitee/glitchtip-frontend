@@ -30,7 +30,7 @@ export class ReleaseDetailService extends PaginationStatefulService<ReleaseDetai
   release$ = this.getState$.pipe(map((state) => state.release));
   releaseFiles$ = this.getState$.pipe(map((state) => state.releaseFiles));
   releaseFileErrors$ = this.getState$.pipe(
-    map((state) => state.releaseFileErrors)
+    map((state) => state.releaseFileErrors),
   );
   constructor(private releasesAPIService: ReleasesAPIService) {
     super(initialState);
@@ -45,7 +45,7 @@ export class ReleaseDetailService extends PaginationStatefulService<ReleaseDetai
   getReleaseFiles(
     orgSlug: string,
     version: string,
-    cursor: string | undefined
+    cursor: string | undefined,
   ) {
     this.retrieveReleaseFiles(orgSlug, version, cursor).subscribe();
   }
@@ -59,19 +59,19 @@ export class ReleaseDetailService extends PaginationStatefulService<ReleaseDetai
   private retrieveReleaseFiles(
     orgSlug: string,
     version: string,
-    cursor?: string | null
+    cursor?: string | null,
   ) {
     this.startPaginatedLoading();
     return this.releasesAPIService
       .listReleaseFiles(orgSlug, version, cursor)
       .pipe(
         tap((res) =>
-          this.setStateAndPagination({ releaseFiles: res.body! }, res)
+          this.setStateAndPagination({ releaseFiles: res.body! }, res),
         ),
         catchError((err: HttpErrorResponse) => {
           this.setReleaseFileErrors(err);
           return EMPTY;
-        })
+        }),
       );
   }
 

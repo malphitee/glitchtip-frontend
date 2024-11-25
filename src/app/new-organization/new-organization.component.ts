@@ -21,7 +21,6 @@ import { AsyncPipe } from "@angular/common";
   selector: "gt-new-organizations",
   templateUrl: "./new-organization.component.html",
   styleUrls: ["./new-organization.component.scss"],
-  standalone: true,
   imports: [
     MatCardModule,
     ReactiveFormsModule,

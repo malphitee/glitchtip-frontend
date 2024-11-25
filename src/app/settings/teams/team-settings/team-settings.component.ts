@@ -21,7 +21,6 @@ import { AsyncPipe } from "@angular/common";
   templateUrl: "./team-settings.component.html",
   styleUrls: ["./team-settings.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCardModule,
     MatDividerModule,

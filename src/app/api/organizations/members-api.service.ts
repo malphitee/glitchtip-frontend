@@ -26,7 +26,7 @@ export class MembersAPIService {
   update(orgSlug: string, memberId: number, memberUpdateData: OrgMemberUpdate) {
     return this.http.put<Member>(
       this.detailURL(orgSlug, memberId),
-      memberUpdateData
+      memberUpdateData,
     );
   }
 
@@ -37,7 +37,7 @@ export class MembersAPIService {
   makeOrgOwner(orgSlug: string, memberId: number) {
     return this.http.post<Member>(
       this.detailURL(orgSlug, memberId) + "set_owner/",
-      null
+      null,
     );
   }
 

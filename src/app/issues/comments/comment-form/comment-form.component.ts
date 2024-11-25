@@ -17,14 +17,13 @@ import { MatFormFieldModule } from "@angular/material/form-field";
   selector: "gt-comment-form",
   templateUrl: "./comment-form.component.html",
   styleUrls: ["./comment-form.component.scss"],
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
     LoadingButtonComponent,
-    MatButtonModule
-],
+    MatButtonModule,
+  ],
 })
 export class CommentFormComponent implements OnInit {
   @Input() comment?: Comment;

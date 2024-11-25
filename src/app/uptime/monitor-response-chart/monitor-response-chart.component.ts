@@ -15,7 +15,6 @@ import { CommonModule } from "@angular/common";
 import { NgxChartsModule } from "@swimlane/ngx-charts";
 
 @Component({
-  standalone: true,
   selector: "gt-monitor-response-chart",
   templateUrl: "./monitor-response-chart.component.html",
   styleUrls: ["./monitor-response-chart.component.scss"],

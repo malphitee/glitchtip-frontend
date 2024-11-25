@@ -22,7 +22,6 @@ import { MatFormFieldModule } from "@angular/material/form-field";
   templateUrl: "./new-recipient.component.html",
   styleUrls: ["./new-recipient.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     CommonModule,
     MatDialogModule,

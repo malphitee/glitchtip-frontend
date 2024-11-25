@@ -1,7 +1,5 @@
 import { PlatformPickerComponent } from "./platform-picker.component";
 
-
-
 export default {
   title: "Project Settings/Platform Picker",
   component: PlatformPickerComponent,

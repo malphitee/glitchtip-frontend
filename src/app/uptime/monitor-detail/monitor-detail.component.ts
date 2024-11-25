@@ -10,7 +10,6 @@ import { CommonModule } from "@angular/common";
 import { MonitorChecksComponent } from "../monitor-checks/monitor-checks.component";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MonitorResponseChartComponent } from "../monitor-response-chart/monitor-response-chart.component";
-import { HumanizeDurationPipe } from "src/app/shared/seconds-or-ms.pipe";
 import { MonitorChartComponent } from "../monitor-chart/monitor-chart.component";
 import { TimeForPipe } from "src/app/shared/days-ago.pipe";
 import { MatButtonModule } from "@angular/material/button";
@@ -19,7 +18,6 @@ import { lastValueFrom } from "rxjs";
 import { DetailHeaderComponent } from "src/app/shared/detail/header/header.component";
 
 @Component({
-  standalone: true,
   selector: "gt-monitor-detail",
   templateUrl: "./monitor-detail.component.html",
   styleUrls: ["./monitor-detail.component.scss"],
@@ -30,7 +28,6 @@ import { DetailHeaderComponent } from "src/app/shared/detail/header/header.compo
     MonitorChecksComponent,
     CopyInputComponent,
     MonitorResponseChartComponent,
-    HumanizeDurationPipe,
     TimeForPipe,
     MatButtonModule,
     MonitorChartComponent,
@@ -51,7 +48,7 @@ export class MonitorDetailComponent
   associatedProjectSlug$ = this.service.associatedProjectSlug$;
 
   routeParams$ = this.route.paramMap.pipe(
-    map((params) => [params.get("org-slug"), params.get("monitor-id")])
+    map((params) => [params.get("org-slug"), params.get("monitor-id")]),
   );
 
   activeMonitorRecentChecksSeries$ =
@@ -76,7 +73,7 @@ export class MonitorDetailComponent
         yScaleMin: 0 - yScaleMax / 6,
         xScaleMin,
       };
-    })
+    }),
   );
 
   alertCountPluralMapping: { [k: string]: string } = {
@@ -86,7 +83,7 @@ export class MonitorDetailComponent
 
   constructor(
     protected service: MonitorService,
-    protected route: ActivatedRoute
+    protected route: ActivatedRoute,
   ) {
     super(service);
   }
@@ -97,15 +94,15 @@ export class MonitorDetailComponent
           if (orgSlug && monitorId) {
             this.service.retrieveMonitorDetails(orgSlug, monitorId);
           }
-        })
-      )
+        }),
+      ),
     );
   }
 
   delete() {
     if (
       window.confirm(
-        `Are you sure you want delete this monitor? You will permanently lose all associated uptime data.`
+        `Are you sure you want delete this monitor? You will permanently lose all associated uptime data.`,
       )
     ) {
       this.service.deleteMonitor();

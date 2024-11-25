@@ -20,7 +20,6 @@ import { toObservable } from "@angular/core/rxjs-interop";
   templateUrl: "./backup-codes.component.html",
   styleUrls: ["./backup-codes.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatButtonModule,
     ReactiveFormsModule,

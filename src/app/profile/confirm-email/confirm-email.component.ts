@@ -12,7 +12,7 @@ import { ConfirmEmailService } from "../../api/confirm-email/confirm-email.servi
 export class ConfirmEmailComponent implements OnInit {
   constructor(
     private activatedRoute: ActivatedRoute,
-    private confirmEmailService: ConfirmEmailService
+    private confirmEmailService: ConfirmEmailService,
   ) {}
 
   ngOnInit(): void {

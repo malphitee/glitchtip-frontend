@@ -12,7 +12,6 @@ import { combineLatest, map } from "rxjs";
 @Component({
   templateUrl: "./releases.component.html",
   styleUrls: ["./releases.component.scss"],
-  standalone: true,
   imports: [
     CommonModule,
     ListTitleComponent,
@@ -33,7 +32,7 @@ export class ReleasesComponent implements OnDestroy {
 
   constructor(
     protected service: ReleasesService,
-    protected route: ActivatedRoute
+    protected route: ActivatedRoute,
   ) {
     combineLatest([
       this.route.paramMap.pipe(map((params) => params.get("org-slug"))),

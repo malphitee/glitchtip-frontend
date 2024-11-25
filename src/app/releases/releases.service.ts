@@ -43,7 +43,7 @@ export class ReleasesService extends PaginationStatefulService<ReleasesState> {
       catchError((err: HttpErrorResponse) => {
         this.setReleasesError(err);
         return EMPTY;
-      })
+      }),
     );
   }
 

@@ -14,5 +14,5 @@ export const GRAMMAR_MAPPINGS: { [key: string]: string } = {
 };
 
 export const PRISM_ALL_SUPPORTED_GRAMMAR = PRISM_SUPPORTED_GRAMMAR.concat(
-  Object.keys(GRAMMAR_MAPPINGS)
+  Object.keys(GRAMMAR_MAPPINGS),
 );

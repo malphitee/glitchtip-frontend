@@ -12,29 +12,29 @@ export class ProjectEnvironmentsAPIService {
   list(organizationSlug: string, projectSlug: string) {
     return this.http.get<ProjectEnvironment[]>(
       this.projectEnvironmentsURL(organizationSlug, projectSlug) +
-        `?visibility=all`
+        `?visibility=all`,
     );
   }
 
   update(
     organizationSlug: string,
     projectSlug: string,
-    environment: ProjectEnvironment
+    environment: ProjectEnvironment,
   ) {
     return this.http.put<ProjectEnvironment>(
       this.projectEnvironmentsURL(
         organizationSlug,
         projectSlug,
-        environment.name
+        environment.name,
       ),
-      environment
+      environment,
     );
   }
 
   private projectEnvironmentsURL(
     organizationSlug: string,
     projectSlug: string,
-    name?: string
+    name?: string,
   ) {
     return `${baseUrl}/projects/${organizationSlug}/${projectSlug}/environments/${
       name ? encodeURIComponent(name) + "/" : ""

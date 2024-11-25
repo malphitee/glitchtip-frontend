@@ -11,7 +11,7 @@
       }
 
       &--false:after {
-        background-color: mat.m2-get-color-from-palette($primary);;
+        background-color: mat.m2-get-color-from-palette($primary);
       }
 
       // For monitors that do not yet have a check

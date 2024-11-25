@@ -8,7 +8,6 @@ import { AsyncPipe } from "@angular/common";
   templateUrl: "./contexts.component.html",
   styleUrls: ["./contexts.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [MatIconModule, AsyncPipe],
 })
 export class ContextsComponent implements OnInit {

@@ -30,7 +30,7 @@ export class MonitorsAPIService extends APIBaseService {
 
   retrieve(organizationSlug: string, monitorId: string) {
     return this.http.get<MonitorDetail>(
-      this.detailURL(organizationSlug, monitorId)
+      this.detailURL(organizationSlug, monitorId),
     );
   }
 
@@ -41,7 +41,7 @@ export class MonitorsAPIService extends APIBaseService {
   update(organizationSlug: string, monitorId: string, data: MonitorInput) {
     return this.http.put<MonitorDetail>(
       this.detailURL(organizationSlug, monitorId),
-      data
+      data,
     );
   }
 

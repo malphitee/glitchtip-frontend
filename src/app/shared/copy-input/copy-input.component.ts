@@ -11,7 +11,6 @@ import { take } from "rxjs/operators";
  * A read-only input that allows the user to copy it's value
  */
 @Component({
-  standalone: true,
   selector: "gt-copy-input",
   templateUrl: "./copy-input.component.html",
   imports: [
@@ -35,7 +34,7 @@ export class CopyInputComponent {
     timer(0, 4000)
       .pipe(take(2))
       .subscribe((i) =>
-        i === 0 ? this.copied$.next(true) : this.copied$.next(false)
+        i === 0 ? this.copied$.next(true) : this.copied$.next(false),
       );
   }
 }

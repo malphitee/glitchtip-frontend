@@ -46,7 +46,6 @@ function emailsValidator(control: AbstractControl): ValidationErrors | null {
   selector: "gt-new-member",
   templateUrl: "./new-member.component.html",
   styleUrls: ["./new-member.component.scss"],
-  standalone: true,
   imports: [
     MatCardModule,
     MatDividerModule,

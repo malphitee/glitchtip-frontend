@@ -24,7 +24,6 @@ import { MatCardModule } from "@angular/material/card";
   selector: "gt-new-token",
   templateUrl: "./new-token.component.html",
   styleUrls: ["./new-token.component.scss"],
-  standalone: true,
   imports: [
     MatCardModule,
     MatButtonModule,

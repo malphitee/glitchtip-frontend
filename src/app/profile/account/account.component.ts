@@ -16,7 +16,6 @@ import { AuthService } from "src/app/auth.service";
   selector: "gt-account",
   templateUrl: "./account.component.html",
   styleUrls: ["./account.component.scss"],
-  standalone: true,
   imports: [
     PreferencesComponent,
     ChangePasswordComponent,

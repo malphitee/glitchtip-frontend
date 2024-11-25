@@ -23,7 +23,6 @@ import { User } from "src/app/api/user/user.interfaces";
   templateUrl: "./social-auth.component.html",
   styleUrls: ["./social-auth.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCardModule,
     MatFormFieldModule,
@@ -33,8 +32,8 @@ import { User } from "src/app/api/user/user.interfaces";
     AuthSvgComponent,
     MatDividerModule,
     MatButtonModule,
-    AsyncPipe
-],
+    AsyncPipe,
+  ],
 })
 export class SocialAuthComponent
   extends StatefulComponent<SocialAuthState, SocialAuthService>

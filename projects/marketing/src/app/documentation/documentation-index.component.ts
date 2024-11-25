@@ -4,10 +4,9 @@ import { RouterLink } from "@angular/router";
 import { MatCardModule } from "@angular/material/card";
 
 @Component({
-  standalone: true,
-  imports: [RouterLink, MatCardModule],
-  templateUrl: "./documentation-index.component.html",
-  styleUrls: ["./documentation-index.component.scss"],
+    imports: [RouterLink, MatCardModule],
+    templateUrl: "./documentation-index.component.html",
+    styleUrls: ["./documentation-index.component.scss"]
 })
 export class DocumentationIndexComponent {
   registerLink = this.links.registerLink;

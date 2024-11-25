@@ -13,7 +13,6 @@ import { AsyncPipe } from "@angular/common";
   selector: "gt-auth-tokens",
   templateUrl: "./auth-tokens.component.html",
   styleUrls: ["./auth-tokens.component.scss"],
-  standalone: true,
   imports: [
     MatCardModule,
     MatButtonModule,
@@ -21,8 +20,8 @@ import { AsyncPipe } from "@angular/common";
     MatDividerModule,
     CopyInputComponent,
     LoadingButtonComponent,
-    AsyncPipe
-],
+    AsyncPipe,
+  ],
 })
 export class AuthTokensComponent
   extends StatefulBaseComponent<AuthTokensState, AuthTokensService>
@@ -43,7 +42,7 @@ export class AuthTokensComponent
   deleteAuthToken(id: string) {
     if (
       window.confirm(
-        "Are you sure you want to delete this authentication token?"
+        "Are you sure you want to delete this authentication token?",
       )
     )
       this.service.deleteAuthToken(id);

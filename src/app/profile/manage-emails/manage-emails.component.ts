@@ -24,7 +24,6 @@ import { MatCardModule } from "@angular/material/card";
   selector: "gt-manage-emails",
   templateUrl: "./manage-emails.component.html",
   styleUrls: ["./manage-emails.component.scss"],
-  standalone: true,
   imports: [
     MatCardModule,
     MatDividerModule,

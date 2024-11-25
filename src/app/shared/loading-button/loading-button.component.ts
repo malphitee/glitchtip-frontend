@@ -1,4 +1,3 @@
-
 import {
   Component,
   ChangeDetectionStrategy,
@@ -11,13 +10,8 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 
 @Component({
-  standalone: true,
   selector: "gt-loading-button",
-  imports: [
-    MatButtonModule,
-    MatIconModule,
-    MatProgressSpinnerModule
-],
+  imports: [MatButtonModule, MatIconModule, MatProgressSpinnerModule],
   templateUrl: "./loading-button.component.html",
   styleUrls: ["./loading-button.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,

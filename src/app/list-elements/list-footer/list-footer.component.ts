@@ -7,14 +7,13 @@ import { RouterModule } from "@angular/router";
 import { Paginator } from "src/app/shared/stateful-service/pagination-stateful-service";
 
 @Component({
-  standalone: true,
   selector: "gt-list-footer",
   imports: [
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    RouterModule
-],
+    RouterModule,
+  ],
   templateUrl: "./list-footer.component.html",
   styleUrls: ["./list-footer.component.scss"],
 })
