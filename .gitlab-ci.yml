@@ -99,7 +99,7 @@ upload-sourcemaps:
     - build-assets
   script:
     - VERSION=glitchtip@${CI_COMMIT_REF_NAME#*v}
-    - sentry-cli releases files ${VERSION} upload-sourcemaps dist/glitchtip-frontend
+    - sentry-cli releases files ${VERSION} upload-sourcemaps dist/glitchtip-frontend/browser
   allow_failure: true
   only:
     refs:
