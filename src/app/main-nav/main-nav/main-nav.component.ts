@@ -16,7 +16,6 @@ import { MatToolbarModule } from "@angular/material/toolbar";
 import { AsyncPipe } from "@angular/common";
 import { MatSidenavModule } from "@angular/material/sidenav";
 import { AuthService } from "src/app/auth.service";
-import { toObservable } from "@angular/core/rxjs-interop";
 
 @Component({
   selector: "gt-main-nav",
@@ -46,11 +45,11 @@ export class MainNavComponent {
     this.organizationsService.activeOrganizationDetail$;
   organizations$ = this.organizationsService.organizations$;
   organizationsInitialLoad$ = this.organizationsService.initialLoad$;
-  isLoggedIn$ = toObservable(this.auth.isAuthenticated);
-  navOpen$ = this.mainNav.navOpen$;
+  isLoggedIn = this.auth.isAuthenticated;
+  navOpen = this.mainNav.navOpen;
   billingEnabled$ = this.settingsService.billingEnabled$;
   paidForGlitchTip$ = this.settingsService.paidForGlitchTip$;
-  mobileNav$ = this.mainNav.mobileNav$;
+  mobileNav = this.mainNav.mobileNav;
   version$ = this.settingsService.version$;
   @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger | undefined = undefined;
 
@@ -61,7 +60,7 @@ export class MainNavComponent {
   ]).pipe(
     map(([settingsLoaded, orgsLoaded, user]) => {
       return settingsLoaded && orgsLoaded && !!user;
-    }),
+    })
   );
 
   canCreateOrg$ = combineLatest([
@@ -71,7 +70,7 @@ export class MainNavComponent {
   ]).pipe(
     map(([user, orgCount, enableOrgCreation]) => {
       return enableOrgCreation || user?.isSuperuser || orgCount === 0;
-    }),
+    })
   );
 
   constructor(
@@ -79,20 +78,20 @@ export class MainNavComponent {
     private organizationsService: OrganizationsService,
     private auth: AuthService,
     private settingsService: SettingsService,
-    private userService: UserService,
+    private userService: UserService
   ) {
     this.organizationsService.activeOrganizationLoaded$.subscribe(
-      (loaded) => (this.activeOrganizationLoaded = loaded),
+      (loaded) => (this.activeOrganizationLoaded = loaded)
     );
     this.activeOrganizationDetail$.subscribe(
       (organization) =>
-        (this.activeOrganizationSlug = organization ? organization.slug : ""),
+        (this.activeOrganizationSlug = organization ? organization.slug : "")
     );
   }
 
   logout() {
     firstValueFrom(
-      this.auth.logout().pipe(tap(() => (window.location.href = "/login"))),
+      this.auth.logout().pipe(tap(() => (window.location.href = "/login")))
     );
   }
 

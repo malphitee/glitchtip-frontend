@@ -1,13 +1,16 @@
-import { Injectable, WritableSignal, effect, signal } from "@angular/core";
+import {
+  Injectable,
+  WritableSignal,
+  computed,
+  effect,
+  signal,
+} from "@angular/core";
 import { HttpErrorResponse } from "@angular/common/http";
 import {
   EMPTY,
   catchError,
-  combineLatest,
   exhaustMap,
-  filter,
   lastValueFrom,
-  map,
   of,
   tap,
   throwError,
@@ -21,7 +24,6 @@ import {
   AllAuthLoginNotAuthResponse,
   AuthFlow,
 } from "./api/allauth/allauth.interfaces";
-import { toObservable } from "@angular/core/rxjs-interop";
 
 const initialIsAuthenticated = localStorage.getItem("isAuthenticated");
 
@@ -36,19 +38,18 @@ export class AuthService {
    * Emit isAuthenticated immediately when true or else after initialized is set
    * This ensures social auth checks are done during login without delaying logged in users
    */
-  loggedInGuard$ = combineLatest([
-    toObservable(this.isAuthenticated),
-    toObservable(this.initialized),
-  ]).pipe(
-    filter(([isLoggedIn, initialized]) => isLoggedIn || initialized),
-    map(([isLoggedIn]) => isLoggedIn),
-  );
+  loggedInGuard = computed(() => {
+    if (this.initialized()) {
+      return this.isAuthenticated();
+    }
+    return false;
+  });
 
   constructor(private authenticationService: AuthenticationService) {
     effect(() => {
       localStorage.setItem(
         "isAuthenticated",
-        this.isAuthenticated().toString(),
+        this.isAuthenticated().toString()
       );
     });
   }
@@ -71,7 +72,7 @@ export class AuthService {
         }
         this.initialized.set(true);
         return throwError(() => new Error("Unable to check auth status"));
-      }),
+      })
     );
   }
 
@@ -79,7 +80,7 @@ export class AuthService {
     return this.authenticationService
       .login(email, password)
       .pipe(
-        tap((resp) => this.isAuthenticated.set(resp.meta.is_authenticated)),
+        tap((resp) => this.isAuthenticated.set(resp.meta.is_authenticated))
       );
   }
 
@@ -96,7 +97,7 @@ export class AuthService {
     return this.authenticationService
       .mfaAuthenticate(code)
       .pipe(
-        tap((resp) => this.isAuthenticated.set(resp.meta.is_authenticated)),
+        tap((resp) => this.isAuthenticated.set(resp.meta.is_authenticated))
       );
   }
 
@@ -104,13 +105,13 @@ export class AuthService {
     return this.authenticationService.getWebAuthnCredentialRequest().pipe(
       exhaustMap(async (resp) => {
         return await get(
-          parseRequestOptionsFromJSON(resp.data.request_options),
+          parseRequestOptionsFromJSON(resp.data.request_options)
         );
       }),
       exhaustMap((credential) => {
         return this.authenticationService.perform2FAWebAuthn(credential);
       }),
-      tap((resp) => this.isAuthenticated.set(resp.meta.is_authenticated)),
+      tap((resp) => this.isAuthenticated.set(resp.meta.is_authenticated))
     );
   }
 
@@ -118,14 +119,14 @@ export class AuthService {
     return this.authenticationService
       .signup(email, password)
       .pipe(
-        tap((resp) => this.isAuthenticated.set(resp.meta.is_authenticated)),
+        tap((resp) => this.isAuthenticated.set(resp.meta.is_authenticated))
       );
   }
 
   providerRedirect(
     provider: string,
     callbackUrl: string,
-    process: "login" | "connect",
+    process: "login" | "connect"
   ) {
     this.authenticationService.providerRedirect(provider, callbackUrl, process);
   }
@@ -139,7 +140,7 @@ export class AuthService {
           return of(EMPTY);
         }
         return throwError(() => new Error("Unable to log out"));
-      }),
+      })
     );
   }
 }
