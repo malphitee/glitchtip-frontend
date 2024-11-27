@@ -1,5 +1,4 @@
 import { computed, Injectable, signal } from "@angular/core";
-import { toObservable } from "@angular/core/rxjs-interop";
 import { Router } from "@angular/router";
 import { fromEvent } from "rxjs";
 import { debounceTime, tap } from "rxjs/operators";
@@ -51,7 +50,6 @@ export class MainNavService {
         })
       )
       .subscribe();
-    toObservable(this.state).subscribe((x) => console.log(x));
   }
 
   mobileNavSettings() {
