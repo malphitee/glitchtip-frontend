@@ -47,7 +47,7 @@ export class LoginService extends StatefulService<LoginState> {
     return authMfaFlows.find((authFlow) => authFlow.id === "mfa_authenticate");
   });
   hasWebAuthn = computed(
-    () => this.mfaAuthenticate()?.types?.includes("webauthn") || false,
+    () => this.mfaAuthenticate()?.types?.includes("webauthn") || false
   );
   requiresMfa = computed(() => !!this.mfaAuthenticate());
   preferTOTP = computed(() => this.state().preferTOTP && this.hasWebAuthn());
@@ -55,22 +55,22 @@ export class LoginService extends StatefulService<LoginState> {
   formErrors = computed(() =>
     messagesLookup(
       this.state().errors.filter(
-        (err) => err.code === "email_password_mismatch" || !err.param,
-      ),
-    ),
+        (err) => err.code === "email_password_mismatch" || !err.param
+      )
+    )
   );
   fieldErrors = computed(() =>
     reduceParamErrors(
       this.state().errors.filter(
-        (err) => err.param && err.code !== "email_password_mismatch",
-      ),
-    ),
+        (err) => err.param && err.code !== "email_password_mismatch"
+      )
+    )
   );
 
   constructor(
     private authService: AuthService,
     private route: ActivatedRoute,
-    private router: Router,
+    private router: Router
   ) {
     super(initialState);
   }
@@ -110,7 +110,7 @@ export class LoginService extends StatefulService<LoginState> {
           }
           return throwError(() => err);
         }
-      }),
+      })
     );
   }
 
@@ -121,10 +121,10 @@ export class LoginService extends StatefulService<LoginState> {
         // Load Django, not JS router
         window.location.href = nextUrl;
       } else {
-        this.router.navigateByUrl(nextUrl);
+        setTimeout(() => this.router.navigateByUrl(nextUrl));
       }
     } else {
-      this.router.navigate(["/"]);
+      setTimeout(() => this.router.navigate(["/"]));
     }
   }
 
@@ -143,7 +143,7 @@ export class LoginService extends StatefulService<LoginState> {
         if (resp.meta.is_authenticated) {
           this.redirect();
         }
-      }),
+      })
     );
   }
 
@@ -162,7 +162,7 @@ export class LoginService extends StatefulService<LoginState> {
           return of(undefined);
         }
         return throwError(() => err);
-      }),
+      })
     );
   }
 }

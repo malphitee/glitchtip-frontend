@@ -1,16 +1,13 @@
-import {
-  Injectable,
-  WritableSignal,
-  computed,
-  effect,
-  signal,
-} from "@angular/core";
+import { Injectable, WritableSignal, effect, signal } from "@angular/core";
 import { HttpErrorResponse } from "@angular/common/http";
 import {
   EMPTY,
   catchError,
+  combineLatest,
   exhaustMap,
+  filter,
   lastValueFrom,
+  map,
   of,
   tap,
   throwError,
@@ -24,6 +21,7 @@ import {
   AllAuthLoginNotAuthResponse,
   AuthFlow,
 } from "./api/allauth/allauth.interfaces";
+import { toObservable } from "@angular/core/rxjs-interop";
 
 const initialIsAuthenticated = localStorage.getItem("isAuthenticated");
 
@@ -38,12 +36,13 @@ export class AuthService {
    * Emit isAuthenticated immediately when true or else after initialized is set
    * This ensures social auth checks are done during login without delaying logged in users
    */
-  loggedInGuard = computed(() => {
-    if (this.initialized()) {
-      return this.isAuthenticated();
-    }
-    return false;
-  });
+  loggedInGuard$ = combineLatest([
+    toObservable(this.isAuthenticated),
+    toObservable(this.initialized),
+  ]).pipe(
+    filter(([isLoggedIn, initialized]) => isLoggedIn || initialized),
+    map(([isLoggedIn]) => isLoggedIn)
+  );
 
   constructor(private authenticationService: AuthenticationService) {
     effect(() => {
