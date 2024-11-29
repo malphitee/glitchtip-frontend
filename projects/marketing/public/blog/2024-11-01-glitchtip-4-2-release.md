@@ -20,6 +20,10 @@ Under quota - no throttling
 
 If you had 1000 events such as the app.glitchtip.com free plan, you can now submit as many as 2000 events. Emails are sent out when a threshold is reached and upgrading the plan will immediately reset the throttle.
 
+## Source map support
+Source maps help make your code more readable, ensuring you see the original JavaScript and not a minified version. GlitchTip 4.2 includes support for sentry SDK "artifact bundles". These bundles embed a "debug id" into the source map which can be used to reference between an event and it's source code. Previously with GlitchTip, a release had to be set to enable source map look ups. That restriction is removed and more sentry SDKs will produce readable stack-traces by default.
+If you have any problems with source maps uploaded prior to 4.2, you may need to reupload them.
+
 ## Hosting and revenue sharing
 
 The GlitchTip team strongly believes in the freedom of choice for hosting. While Burke Software and Consulting hosts the app.glitchtip.com server, there are plenty of other options. Two of these participate in revenue sharing:
