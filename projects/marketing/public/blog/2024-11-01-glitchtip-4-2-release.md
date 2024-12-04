@@ -13,12 +13,12 @@ At this time, throttles must be set in Django Admin (/admin/) on the project and
 ## Throttling for hosted users
 Hosted users such as those on app.glitchtip.com pay for a plan with a set quota of events. Starting now, plans will have throttles progressively increased when over the quota. This means that you will actually get more events for no additional cost until the throttle hits 100%.
 
-Under quota - no throttling
-100% to 150% - 10% throttle
-150% to 200% - 50% throttle
->200% - No events are accepted 
+- Under quota - no throttling
+- 100% to 150% - 10% throttle
+- 150% to 200% - 50% throttle
+- \>200% - No events are accepted
 
-If you had 1000 events such as the app.glitchtip.com free plan, you can now submit as many as 2000 events. Emails are sent out when a threshold is reached and upgrading the plan will immediately reset the throttle.
+If you have a plan with 1,000 events, such as the [app.glitchtip.com](https://app.glitchtip.com) free plan, you can now submit as many as 2,000 events. Emails are sent out when a threshold is reached and upgrading the plan will immediately reset the throttle.
 
 ## Source map support
 Source maps help make your code more readable, ensuring you see the original JavaScript and not a minified version. GlitchTip 4.2 includes support for sentry SDK "artifact bundles". These bundles embed a "debug id" into the source map which can be used to reference between an event and it's source code. Previously with GlitchTip, a release had to be set to enable source map look ups. That restriction is removed and more sentry SDKs will produce readable stack-traces by default.
