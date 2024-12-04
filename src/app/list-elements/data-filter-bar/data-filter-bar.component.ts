@@ -47,16 +47,20 @@ export class DataFilterBarComponent {
       ? this.convertToZTime(this.dateForm?.value.startDate)
       : null;
 
-    /**
-     * End dates come in at midnight, so if you pick May 5, you don't get events
-     * from May 5. Bumping it to 23:59:59.999 fixes this
-     */
-    const modifiedEndDate = this.dateForm?.value.endDate
-      ? this.dateForm.value.endDate.getTime() + 86399999
-      : null;
-    const endDate = modifiedEndDate
-      ? this.convertToZTime(modifiedEndDate)
-      : null;
+    const endDateValue = this.dateForm?.value.endDate;
+    let endDate = null;
+
+    if (endDateValue) {
+      const modifiedEndDate = new Date(endDateValue);
+
+      /**
+       * End dates come in at midnight, so if you pick May 5, you don't get events
+       * from May 5. Bumping it to 23:59:59.999 fixes this
+       */
+      modifiedEndDate.setHours(23, 59, 59, 999);
+      endDate = this.convertToZTime(modifiedEndDate);
+    }
+
     this.dateFormSubmission.emit({
       cursor: null,
       start: startDate,
