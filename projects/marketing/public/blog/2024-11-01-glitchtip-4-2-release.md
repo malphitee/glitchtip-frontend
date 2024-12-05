@@ -38,7 +38,7 @@ The GlitchTip team has put in considerable time towards lowering resource requir
 
 Your time and financial donations are the only thing that keeps GlitchTip development going. GlitchTip is not backed by venture capital.
 
-- 💸 Donate via [Liberapay](https://en.liberapay.com/GlitchTip). We currently receive $12.89 per week from 20 patrons.
+- 💸 Donate via [Liberapay](https://en.liberapay.com/GlitchTip). We currently receive $16.64 per week from 21 patrons.
 - ⭐ on [GitLab](https://gitlab.com/glitchtip/glitchtip-backend/). Help us reach 300 stars!
 - ❤️ on [AlternativeTo](https://alternativeto.net/software/glitchtip/about/) and leave a review. AlternativeTo generates [significant](https://plausible.io/glitchtip.com?period=30d) website traffic.
 - ⭐ on [dockerhub](https://hub.docker.com/r/glitchtip/glitchtip) where we have over 3 million pulls
