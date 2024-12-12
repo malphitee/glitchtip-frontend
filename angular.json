@@ -10,15 +10,8 @@
           "strict": true
         },
         "@schematics/angular:component": {
-          "standalone": true,
           "style": "scss",
           "changeDetection": "OnPush"
-        },
-        "@schematics/angular:directive": {
-          "standalone": true
-        },
-        "@schematics/angular:pipe": {
-          "standalone": true
         }
       },
       "root": "",
@@ -43,7 +36,7 @@
               "base": "dist/glitchtip-frontend"
             },
             "index": "src/index.html",
-            "polyfills": ["src/polyfills.ts", "@angular/localize/init"],
+            "polyfills": ["zone.js", "@angular/localize/init"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -71,11 +64,7 @@
             ],
             "styles": ["src/styles.scss"],
             "stylePreprocessorOptions": {
-              "includePaths": [
-                "./src/assets/styles",
-                "",
-                "."
-              ]
+              "includePaths": ["./src/assets/styles", "", "."]
             },
             "scripts": [],
             "browser": "src/main.ts"
@@ -172,7 +161,7 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "main": "src/test.ts",
-            "polyfills": "src/polyfills.ts",
+            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
             "inlineStyleLanguage": "scss",

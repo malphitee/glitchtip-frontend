@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --host 0.0.0.0",
+    "start": "ng serve --host 0.0.0.0 -c development",
     "startssl": "ng serve --host 0.0.0.0 --ssl true",
     "start-prod-no-static": "ng serve --c prod-no-static",
     "build": "ng build",
@@ -73,6 +73,7 @@
     "@babel/core": "^7.7.2",
     "@compodoc/compodoc": "^1.1.19",
     "@cypress/webpack-preprocessor": "^6.0.2",
+    "@openapitools/openapi-generator-cli": "^2.15.3",
     "@types/d3": "^7.4.0",
     "@types/express": "^4.17.17",
     "@types/fs-extra": "^11.0.4",
