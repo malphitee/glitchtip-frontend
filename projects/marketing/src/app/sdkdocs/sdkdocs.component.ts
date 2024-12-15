@@ -12,11 +12,11 @@ import { MatCard, MatCardContent } from "@angular/material/card";
 import { flattenedPlatforms } from "src/app/settings/projects/platform-picker/platforms-for-picker";
 
 @Component({
-    imports: [MarkdownComponent, MatCard, MatCardContent],
-    templateUrl: "./sdkdocs.component.html",
-    styleUrls: ["./sdkdocs.component.scss"],
-    preserveWhitespaces: true,
-    encapsulation: ViewEncapsulation.Emulated
+  imports: [MarkdownComponent, MatCard, MatCardContent],
+  templateUrl: "./sdkdocs.component.html",
+  styleUrls: ["./sdkdocs.component.scss"],
+  preserveWhitespaces: true,
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class SDKDocsComponent implements AfterViewChecked, OnInit {
   slug: string | null = null;

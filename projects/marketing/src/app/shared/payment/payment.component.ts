@@ -17,24 +17,24 @@ import { AsyncPipe, DecimalPipe } from "@angular/common";
  * currently in use and hardcoded here, and sharing the SCSS file
  */
 @Component({
-    selector: "mkt-payment",
-    templateUrl: "./payment.component.html",
-    imports: [
-        AsyncPipe,
-        DecimalPipe,
-        MatTabsModule,
-        MatCard,
-        MatCardContent,
-        MatCardTitle,
-        MatCardHeader,
-        MatIcon,
-        RouterLink,
-        QuestionAndAnswerComponent,
-    ],
-    styleUrls: [
-        "/src/app/settings/subscription/payment/payment.component.scss",
-        "./payment.component.scss",
-    ]
+  selector: "mkt-payment",
+  templateUrl: "./payment.component.html",
+  imports: [
+    AsyncPipe,
+    DecimalPipe,
+    MatTabsModule,
+    MatCard,
+    MatCardContent,
+    MatCardTitle,
+    MatCardHeader,
+    MatIcon,
+    RouterLink,
+    QuestionAndAnswerComponent,
+  ],
+  styleUrls: [
+    "/src/app/settings/subscription/payment/payment.component.scss",
+    "./payment.component.scss",
+  ],
 })
 export class PaymentComponent implements AfterViewChecked {
   @ViewChild("tabs", { static: false }) tabs?: MatTabGroup;

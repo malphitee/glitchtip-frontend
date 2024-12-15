@@ -60,7 +60,7 @@ export class MainNavComponent {
   ]).pipe(
     map(([settingsLoaded, orgsLoaded, user]) => {
       return settingsLoaded && orgsLoaded && !!user;
-    })
+    }),
   );
 
   canCreateOrg$ = combineLatest([
@@ -70,7 +70,7 @@ export class MainNavComponent {
   ]).pipe(
     map(([user, orgCount, enableOrgCreation]) => {
       return enableOrgCreation || user?.isSuperuser || orgCount === 0;
-    })
+    }),
   );
 
   constructor(
@@ -78,20 +78,20 @@ export class MainNavComponent {
     private organizationsService: OrganizationsService,
     private auth: AuthService,
     private settingsService: SettingsService,
-    private userService: UserService
+    private userService: UserService,
   ) {
     this.organizationsService.activeOrganizationLoaded$.subscribe(
-      (loaded) => (this.activeOrganizationLoaded = loaded)
+      (loaded) => (this.activeOrganizationLoaded = loaded),
     );
     this.activeOrganizationDetail$.subscribe(
       (organization) =>
-        (this.activeOrganizationSlug = organization ? organization.slug : "")
+        (this.activeOrganizationSlug = organization ? organization.slug : ""),
     );
   }
 
   logout() {
     firstValueFrom(
-      this.auth.logout().pipe(tap(() => (window.location.href = "/login")))
+      this.auth.logout().pipe(tap(() => (window.location.href = "/login"))),
     );
   }
 

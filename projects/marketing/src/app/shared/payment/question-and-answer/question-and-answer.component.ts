@@ -1,10 +1,10 @@
 import { Component, Input } from "@angular/core";
 
 @Component({
-    imports: [],
-    selector: "mkt-question-and-answer",
-    templateUrl: "./question-and-answer.component.html",
-    styleUrls: ["./question-and-answer.component.scss"]
+  imports: [],
+  selector: "mkt-question-and-answer",
+  templateUrl: "./question-and-answer.component.html",
+  styleUrls: ["./question-and-answer.component.scss"],
 })
 export class QuestionAndAnswerComponent {
   @Input() question: string | undefined;

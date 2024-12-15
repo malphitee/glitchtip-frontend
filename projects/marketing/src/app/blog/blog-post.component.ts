@@ -5,10 +5,10 @@ import { ActivatedRoute } from "@angular/router";
 import { MarkdownComponent } from "ngx-markdown";
 
 @Component({
-    selector: "app-blog-post",
-    imports: [MarkdownComponent, MatCard, MatCardContent],
-    templateUrl: "./blog-post.component.html",
-    styleUrl: "./blog-post.component.scss"
+  selector: "app-blog-post",
+  imports: [MarkdownComponent, MatCard, MatCardContent],
+  templateUrl: "./blog-post.component.html",
+  styleUrl: "./blog-post.component.scss",
 })
 export class BlogPostComponent implements OnInit {
   cleanedMarkdown: string | null = null;

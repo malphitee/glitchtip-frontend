@@ -9,6 +9,6 @@ describe("Send reset email", () => {
     cy.visit("/reset-password");
     cy.get("input[formcontrolname=email]").type("aa@aa.com");
     cy.get("#submit").click();
-    cy.get("[data-cy=reset-success]")
+    cy.get("[data-cy=reset-success]");
   });
 });

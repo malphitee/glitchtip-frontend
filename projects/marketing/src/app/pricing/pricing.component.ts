@@ -3,11 +3,11 @@ import { MatCard } from "@angular/material/card";
 import { PaymentComponent } from "../shared/payment/payment.component";
 
 @Component({
-    selector: "mkt-pricing",
-    imports: [MatCard, PaymentComponent],
-    templateUrl: "./pricing.component.html",
-    preserveWhitespaces: true,
-    encapsulation: ViewEncapsulation.Emulated
+  selector: "mkt-pricing",
+  imports: [MatCard, PaymentComponent],
+  templateUrl: "./pricing.component.html",
+  preserveWhitespaces: true,
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class PricingComponent {
   constructor() {}

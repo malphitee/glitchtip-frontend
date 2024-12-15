@@ -9,7 +9,7 @@ import { AuthService } from "./auth.service";
 import { map } from "rxjs";
 
 export const alreadyLoggedInGuard: CanActivateFn = (
-  next: ActivatedRouteSnapshot
+  next: ActivatedRouteSnapshot,
 ) =>
   inject(AuthService).loggedInGuard$.pipe(
     map((loggedIn) => {
@@ -17,12 +17,12 @@ export const alreadyLoggedInGuard: CanActivateFn = (
         return createUrlTreeFromSnapshot(next, ["/"]);
       }
       return true;
-    })
+    }),
   );
 
 export const loggedInGuard: CanActivateFn = (
   next: ActivatedRouteSnapshot,
-  state: RouterStateSnapshot
+  state: RouterStateSnapshot,
 ) =>
   inject(AuthService).loggedInGuard$.pipe(
     map((isLoggedIn) => {
@@ -32,7 +32,7 @@ export const loggedInGuard: CanActivateFn = (
       return createUrlTreeFromSnapshot(
         next,
         ["/", "login"],
-        state.url !== "/" ? { next: state.url } : {}
+        state.url !== "/" ? { next: state.url } : {},
       );
-    })
+    }),
   );

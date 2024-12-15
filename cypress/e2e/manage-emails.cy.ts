@@ -37,7 +37,7 @@ describe("Change Password", () => {
       .type(emailForOtherAccount);
     cy.get("#add-email-form").submit();
     cy.get("gt-manage-emails").contains(
-      "This email address is already being used."
+      "This email address is already being used.",
     );
 
     // Delete email

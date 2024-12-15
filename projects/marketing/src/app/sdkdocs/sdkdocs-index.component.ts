@@ -10,18 +10,18 @@ import { platforms } from "src/app/settings/projects/platform-picker/platforms";
 // ];
 
 @Component({
-    templateUrl: "./sdkdocs-index.component.html",
-    imports: [RouterLink, MatCard, MatCardContent],
-    styles: [
-        `
+  templateUrl: "./sdkdocs-index.component.html",
+  imports: [RouterLink, MatCard, MatCardContent],
+  styles: [
+    `
       .unstyled {
         list-style: none;
         padding: 0;
       }
     `,
-    ],
-    preserveWhitespaces: true,
-    encapsulation: ViewEncapsulation.Emulated
+  ],
+  preserveWhitespaces: true,
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class SDKDocsIndexComponent {
   platforms = platforms;

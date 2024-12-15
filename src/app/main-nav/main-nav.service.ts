@@ -47,7 +47,7 @@ export class MainNavService {
           } else {
             this.desktopNavSettings();
           }
-        })
+        }),
       )
       .subscribe();
   }

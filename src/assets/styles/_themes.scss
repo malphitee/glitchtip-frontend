@@ -202,14 +202,34 @@ $candy-app-theme-dark: modify-background(
 // https://material.angular.io/guide/typography#what-is-typography-
 $custom-typography: mat.m2-define-typography-config(
   $font-family: $font-sans-serif,
-  $headline-1:
-    mat.m2-define-typography-level(56px, 65px, 700, $font-sans-serif, -0.05em),
-  $headline-2:
-    mat.m2-define-typography-level(45px, 55px, 700, $font-sans-serif, -0.035em),
-  $headline-3:
-    mat.m2-define-typography-level(34px, 40px, 700, $font-sans-serif, -0.02em),
-  $headline-4:
-    mat.m2-define-typography-level(24px, 30px, 700, $font-sans-serif, -0.02em),
+  $headline-1: mat.m2-define-typography-level(
+      56px,
+      65px,
+      700,
+      $font-sans-serif,
+      -0.05em
+    ),
+  $headline-2: mat.m2-define-typography-level(
+      45px,
+      55px,
+      700,
+      $font-sans-serif,
+      -0.035em
+    ),
+  $headline-3: mat.m2-define-typography-level(
+      34px,
+      40px,
+      700,
+      $font-sans-serif,
+      -0.02em
+    ),
+  $headline-4: mat.m2-define-typography-level(
+      24px,
+      30px,
+      700,
+      $font-sans-serif,
+      -0.02em
+    ),
   $subtitle-1: mat.m2-define-typography-level(15px, 24px, 500, $font-sans-serif),
   $subtitle-2: mat.m2-define-typography-level(16px, 28px, 500, $font-sans-serif),
   $body-1: mat.m2-define-typography-level(16px, 24px, 400, $font-sans-serif),
@@ -235,14 +255,34 @@ $custom-mobile-table-typography: mat.m2-define-typography-config(
 
 $mobile-typography: mat.m2-define-typography-config(
   $font-family: $font-sans-serif,
-  $headline-1:
-    mat.m2-define-typography-level(45px, 55px, 700, $font-sans-serif, -0.035em),
-  $headline-2:
-    mat.m2-define-typography-level(34px, 40px, 700, $font-sans-serif, -0.02em),
-  $headline-3:
-    mat.m2-define-typography-level(24px, 30px, 700, $font-sans-serif, -0.02em),
-  $headline-4:
-    mat.m2-define-typography-level(20px, 26px, 700, $font-sans-serif, -0.02em),
+  $headline-1: mat.m2-define-typography-level(
+      45px,
+      55px,
+      700,
+      $font-sans-serif,
+      -0.035em
+    ),
+  $headline-2: mat.m2-define-typography-level(
+      34px,
+      40px,
+      700,
+      $font-sans-serif,
+      -0.02em
+    ),
+  $headline-3: mat.m2-define-typography-level(
+      24px,
+      30px,
+      700,
+      $font-sans-serif,
+      -0.02em
+    ),
+  $headline-4: mat.m2-define-typography-level(
+      20px,
+      26px,
+      700,
+      $font-sans-serif,
+      -0.02em
+    ),
   $subtitle-1: mat.m2-define-typography-level(15px, 24px, 500, $font-sans-serif),
   $subtitle-2: mat.m2-define-typography-level(16px, 28px, 500, $font-sans-serif),
   $body-1: mat.m2-define-typography-level(16px, 24px, 400, $font-sans-serif),

@@ -6,24 +6,25 @@ import { MarkdownComponent, MarkdownService } from "ngx-markdown";
 @Component({
   imports: [MatCard, MatCardContent, RouterLink, MarkdownComponent],
   templateUrl: "./documentation-page.component.html",
-  styleUrls: ["./documentation-page.component.scss"]
+  styleUrls: ["./documentation-page.component.scss"],
 })
 export class DocumentationPageComponent implements OnInit {
   slug: string | null = null;
   constructor(
     private route: ActivatedRoute,
     private markdownService: MarkdownService,
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     const locationPrefix = `/documentation/${this.route.snapshot.params.slug}`;
 
     this.markdownService.renderer.heading = ({ text, depth }) => {
-      const escapedText = text.toLowerCase()
+      const escapedText = text
+        .toLowerCase()
         // replace non-letter characters with hyphens
         .replace(/[^\w]+/g, "-")
         //trim hyphens at end of string
-        .replace(/\-$/, '');
+        .replace(/\-$/, "");
       return (
         `<h${depth}>` +
         `<a id="${escapedText}" class="anchor" href="${locationPrefix}#${escapedText}">` +

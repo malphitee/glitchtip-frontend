@@ -5,10 +5,10 @@ import { MatToolbar } from "@angular/material/toolbar";
 import { MatButtonModule } from "@angular/material/button";
 
 @Component({
-    selector: "mkt-root",
-    imports: [RouterOutlet, RouterLink, MatToolbar, MatButtonModule],
-    templateUrl: "./app.component.html",
-    styleUrl: "./app.component.scss"
+  selector: "mkt-root",
+  imports: [RouterOutlet, RouterLink, MatToolbar, MatButtonModule],
+  templateUrl: "./app.component.html",
+  styleUrl: "./app.component.scss",
 })
 export class AppComponent {
   title = "glitchtip-marketing";
