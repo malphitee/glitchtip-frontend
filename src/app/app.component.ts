@@ -10,6 +10,7 @@ import { SettingsService } from "./api/settings.service";
 import { UserService } from "./api/user/user.service";
 import { setTheme } from "./shared/shared.utils";
 import { AuthService } from "./auth.service";
+import { MatIconRegistry } from "@angular/material/icon";
 
 @Component({
   selector: "gt-root",
@@ -23,7 +24,10 @@ export class AppComponent implements OnInit {
     private router: Router,
     private authService: AuthService,
     private userService: UserService,
-  ) {}
+    private matIconRegistry: MatIconRegistry
+  ) {
+    this.matIconRegistry.setDefaultFontSetClass("material-symbols-outlined");
+  }
 
   ngOnInit() {
     this.settings.getSettings().subscribe();
