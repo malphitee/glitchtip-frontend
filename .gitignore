@@ -52,3 +52,5 @@ projects/marketing/routes.txt
 buildStaticSite.js
 projects/marketing/public/blog/blogIndex.json
 projects/marketing/public/blog/rss.xml
+
+*storybook.log

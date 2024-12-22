@@ -1,4 +1,12 @@
+import { MatIconModule } from "@angular/material/icon";
+import { moduleMetadata } from "@storybook/angular";
+
 export default {
+  decorators: [
+    moduleMetadata({
+      imports: [MatIconModule],
+    }),
+  ],
   title: "Styles/General Styling",
 };
 
