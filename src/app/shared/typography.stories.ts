@@ -106,10 +106,40 @@ export const Typography = () => ({
   `,
 });
 
+const iconNames = [
+  "account_circle",
+  "add",
+  "brightness_medium",
+  "check_circle",
+  "close",
+  "code",
+  "computer",
+  "dark_mode",
+  "delete",
+  "delete_outline",
+  "devices_other",
+  "done",
+  "edit",
+  "favorite",
+  "file_copy",
+  "keyboard_arrow_down",
+  "keyboard_arrow_left",
+  "keyboard_arrow_right",
+  "light_mode",
+  "menu",
+  "settings",
+  "tab",
+  "warning"
+];
 export const Icons = () => ({
   template: `
   <section class="mat-typography">
     <h1>Icons</h1>
+
+    <div class="icon-grid">
+      ${iconNames.map(icon => `<mat-icon>${icon}</mat-icon>`).join('')}
+    </div>
+
     <p>Angular material has a bunch of icons. You can find a pretty exhaustive list of them <a href="https://www.angularjswiki.com/angular/angular-material-icons-list-mat-icon-list/" target="_blank">here</a>
     <p>Also, <a href="https://material.angular.io/components/icon/overview" target="_blank">here's</a> Angular's documentation on icons</p>
     <p>Make sure to add the appropriate aria classes for accessibility!</p>
@@ -139,6 +169,13 @@ export const Icons = () => ({
     </div>
   </section>
   `,
+  styles: [`
+    .icon-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 20px;
+    }
+  `]
 });
 
 export const Colors = () => ({
