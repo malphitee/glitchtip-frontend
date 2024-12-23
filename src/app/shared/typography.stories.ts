@@ -1,10 +1,11 @@
+import { MatDividerModule } from "@angular/material/divider";
 import { MatIconModule } from "@angular/material/icon";
 import { moduleMetadata } from "@storybook/angular";
 
 export default {
   decorators: [
     moduleMetadata({
-      imports: [MatIconModule],
+      imports: [MatIconModule, MatDividerModule],
     }),
   ],
   title: "Styles/General Styling",
@@ -131,35 +132,33 @@ const iconNames = [
   "tab",
   "warning"
 ];
+const iconURL = `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD&#64;20..48,100..700,0..1,-50..200&icon_names=${iconNames.join(',')}`
 export const Icons = () => ({
   template: `
   <section class="mat-typography">
     <h1>Icons</h1>
 
-    <div class="icon-grid">
-      ${iconNames.map(icon => `<mat-icon>${icon}</mat-icon>`).join('')}
-    </div>
+    We use Material Symbols with Angular Material. Here are the icons we use:
 
-    <p>Angular material has a bunch of icons. You can find a pretty exhaustive list of them <a href="https://www.angularjswiki.com/angular/angular-material-icons-list-mat-icon-list/" target="_blank">here</a>
-    <p>Also, <a href="https://material.angular.io/components/icon/overview" target="_blank">here's</a> Angular's documentation on icons</p>
-    <p>Make sure to add the appropriate aria classes for accessibility!</p>
+    <div class="icon-grid">
+      ${iconNames.map(icon => `
+        <div class="icon-container">
+          <mat-icon>${icon}</mat-icon>
+          <span class="icon-name">${icon}</span>
+        </div>
+      `).join('')}
+    </div>
     <mat-divider></mat-divider>
-    <mat-icon>delete</mat-icon>
-    <p aria-hidden="false" aria-label="this is trash">This is an icon</p>
-    <button mat-icon-button color="accent" aria-label="Example icon-button with a heart icon">
-      <mat-icon>favorite</mat-icon>
-    </button>
-    <p>This is a button icon</p>
-    <button mat-flat-button color="primary">
-      <mat-icon aria-hidden="true">done</mat-icon>
-      Resolve
-    </button>
-    <p>If the icon is purely decorative, you can make aria hidden true</p>
+    We self host a minimal set of symbol fonts. To add more, add to this stories list, then download from <a href="${iconURL}">fonts.googleapis.com</a> and copy to src/assets/fonts/.
   </section>
+
+  <br/>
   <section class="mat-typography">
     <h1>Custom Icons</h1>
     <p>In addition to Angular's icons, we have added custom ones in 'index.html'</p>
     <div style="display: flex; align-items: center; margin: 16px">
+      <div>#github:</div>
+      <svg style="width: 32px; height: 32px; margin-left: 8px; margin-right: 32px"><use xlink:href="#github"></use></svg>
       <div>#gitlab:</div>
       <svg style="width: 32px; height: 32px; margin-left: 8px; margin-right: 32px"><use xlink:href="#gitlab"></use></svg>
       <div>#google:</div>
@@ -174,6 +173,15 @@ export const Icons = () => ({
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
       gap: 20px;
+    }
+    .icon-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .icon-name {
+      font-size: 12px;
+      margin-top: 5px;
     }
   `]
 });
