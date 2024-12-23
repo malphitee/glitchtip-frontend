@@ -2,6 +2,10 @@ import { applicationConfig, componentWrapperDecorator, moduleMetadata, type Prev
 import "@angular/localize/init";
 import { MatIconRegistry } from "@angular/material/icon";
 import { Component } from "@angular/core";
+import { provideRouter } from "@angular/router";
+import { provideHttpClientTesting } from "@angular/common/http/testing";
+import { provideHttpClient } from "@angular/common/http";
+import { provideMicroSentry } from "@micro-sentry/angular";
 
 
 @Component({
@@ -25,7 +29,7 @@ const preview: Preview = {
   },
   decorators: [
     applicationConfig({
-      providers: [],
+      providers: [provideHttpClient(), provideMicroSentry({}), provideHttpClientTesting(), provideRouter([]),],
     }),
     moduleMetadata({
       imports: [ParentComponent]
