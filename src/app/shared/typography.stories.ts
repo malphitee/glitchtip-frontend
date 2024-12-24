@@ -130,9 +130,11 @@ const iconNames = [
   "menu",
   "settings",
   "tab",
-  "warning"
+  "warning",
 ];
-const iconURL = `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD&#64;20..48,100..700,0..1,-50..200&icon_names=${iconNames.join(',')}`
+const iconURL = `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD&#64;20..48,100..700,0..1,-50..200&icon_names=${iconNames.join(
+  ","
+)}`;
 export const Icons = () => ({
   template: `
   <section class="mat-typography">
@@ -141,12 +143,16 @@ export const Icons = () => ({
     We use Material Symbols with Angular Material. Here are the icons we use:
 
     <div class="icon-grid">
-      ${iconNames.map(icon => `
+      ${iconNames
+        .map(
+          (icon) => `
         <div class="icon-container">
           <mat-icon>${icon}</mat-icon>
           <span class="icon-name">${icon}</span>
         </div>
-      `).join('')}
+      `
+        )
+        .join("")}
     </div>
     <mat-divider></mat-divider>
     We self host a minimal set of symbol fonts. To add more, add to this stories list, then download from <a href="${iconURL}">fonts.googleapis.com</a> and copy to src/assets/fonts/.
@@ -168,7 +174,8 @@ export const Icons = () => ({
     </div>
   </section>
   `,
-  styles: [`
+  styles: [
+    `
     .icon-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
@@ -183,7 +190,8 @@ export const Icons = () => ({
       font-size: 12px;
       margin-top: 5px;
     }
-  `]
+  `,
+  ],
 });
 
 export const Colors = () => ({
