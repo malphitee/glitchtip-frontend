@@ -1,3 +1,62 @@
+import { moduleMetadata, type Meta, type StoryObj } from "@storybook/angular";
+import { MatExpansionModule } from "@angular/material/expansion";
+
+import { FrameExpandedComponent } from "./frame-expanded/frame-expanded.component";
+
+const meta: Meta<FrameExpandedComponent> = {
+  title: "Events/Event Detail/Frame Expanded",
+  component: FrameExpandedComponent,
+  tags: ["autodocs"],
+  argTypes: {},
+  decorators: [
+    moduleMetadata({
+      imports: [MatExpansionModule],
+    }),
+  ],
+};
+
+export default meta;
+type Story = StoryObj<FrameExpandedComponent>;
+
+export const PythonCode: Story = {
+  args: {
+    lineNo: 2,
+    context: [
+      [1, "x = 5"],
+      [2, "print(x)"],
+    ],
+    eventPlatform: "python",
+  },
+};
+
+export const InExpansionPanel: Story = {
+  render: (args) => ({
+    props: args,
+    template: `
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                Expanded Frame
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <gt-frame-expanded 
+              [lineNo]="lineNo" 
+              [context]="context" 
+              [eventPlatform]="eventPlatform"
+            ></gt-frame-expanded>
+          </mat-expansion-panel>
+        `,
+  }),
+  args: {
+    lineNo: 2,
+    context: [
+      [1, "x = 5"],
+      [2, "print(x)"],
+    ],
+    eventPlatform: "python",
+  },
+};
+
 // import { Story } from "@storybook/angular";
 // import { of } from "rxjs";
 
@@ -94,5 +153,3 @@
 //     },
 //   };
 // };
-
-export default {};

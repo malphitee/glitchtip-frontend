@@ -1,42 +1,53 @@
-import { importProvidersFrom } from "@angular/core";
-import { withThemeByClassName } from "@storybook/addon-themes";
-import { applicationConfig } from "@storybook/angular";
-import { setCompodocJson } from "@storybook/addon-docs/angular";
-import docJson from "../documentation.json";
-setCompodocJson(docJson);
-
-import { HttpClientTestingModule } from "@angular/common/http/testing";
-import { MatSnackBarModule } from "@angular/material/snack-bar";
+import {
+  applicationConfig,
+  componentWrapperDecorator,
+  moduleMetadata,
+  type Preview,
+} from "@storybook/angular";
+import "@angular/localize/init";
+import { MatIconRegistry } from "@angular/material/icon";
+import { Component } from "@angular/core";
+import { provideRouter } from "@angular/router";
+import { provideHttpClientTesting } from "@angular/common/http/testing";
+import { provideHttpClient } from "@angular/common/http";
+import { provideMicroSentry } from "@micro-sentry/angular";
 import { provideAnimations } from "@angular/platform-browser/animations";
-import { RouterTestingModule } from "@angular/router/testing";
-import { MicroSentryModule } from "@micro-sentry/angular";
 
-export const decorators = [
-  withThemeByClassName({
-    themes: {
-      light: "light",
-      dark: "dark",
-    },
-    defaultTheme: "light",
-  }),
-  applicationConfig({
-    providers: [
-      importProvidersFrom(MatSnackBarModule),
-      importProvidersFrom(HttpClientTestingModule),
-      importProvidersFrom(RouterTestingModule),
-      provideAnimations(),
-      importProvidersFrom(MicroSentryModule.forRoot({})),
-    ],
-  }),
-];
+@Component({
+  selector: "parent",
+  template: `<ng-content></ng-content>`,
+})
+class ParentComponent {
+  constructor(private matIconRegistry: MatIconRegistry) {
+    this.matIconRegistry.setDefaultFontSetClass("material-symbols-outlined");
+    document.documentElement.classList.add("light");
+  }
+}
 
-export const parameters = {
-  actions: { argTypesRegex: "^on[A-Z].*" },
-  controls: {
-    matchers: {
-      color: /(background|color)$/i,
-      date: /Date$/,
+const preview: Preview = {
+  parameters: {
+    controls: {
+      matchers: {
+        color: /(background|color)$/i,
+        date: /Date$/i,
+      },
     },
   },
+  decorators: [
+    applicationConfig({
+      providers: [
+        provideHttpClient(),
+        provideMicroSentry({}),
+        provideHttpClientTesting(),
+        provideAnimations(),
+        provideRouter([]),
+      ],
+    }),
+    moduleMetadata({
+      imports: [ParentComponent],
+    }),
+    componentWrapperDecorator(ParentComponent),
+  ],
 };
-export const tags = ["autodocs"];
+
+export default preview;
