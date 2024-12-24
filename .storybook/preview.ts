@@ -12,6 +12,7 @@ import { provideHttpClientTesting } from "@angular/common/http/testing";
 import { provideHttpClient } from "@angular/common/http";
 import { provideMicroSentry } from "@micro-sentry/angular";
 import { provideAnimations } from "@angular/platform-browser/animations";
+import { withColorScheme } from "./decorators/with-color-scheme.decorator";
 
 @Component({
   selector: "parent",
@@ -47,6 +48,7 @@ const preview: Preview = {
       imports: [ParentComponent],
     }),
     componentWrapperDecorator(ParentComponent),
+    withColorScheme,
   ],
 };
 
