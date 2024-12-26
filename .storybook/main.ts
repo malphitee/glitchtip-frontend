@@ -14,6 +14,7 @@ const config: StorybookConfig = {
   },
   staticDirs: [
     { from: '../node_modules/@browser-logos', to: '/static/assets/images/browser-svgs'},
+    { from: '../node_modules/@egoistdeveloper/operating-system-logos/src/48x48', to: 'static/assets/images/os-logos'},
     { from: '../src/assets', to: '/static/assets' },
   ],
 };
