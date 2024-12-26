@@ -12,5 +12,9 @@ const config: StorybookConfig = {
     name: "@storybook/angular",
     options: {},
   },
+  staticDirs: [
+    { from: '../node_modules/@browser-logos', to: '/static/assets/images/browser-svgs'},
+    { from: '../src/assets', to: '/static/assets' },
+  ],
 };
 export default config;
