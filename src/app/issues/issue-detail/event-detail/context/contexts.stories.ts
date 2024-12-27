@@ -39,7 +39,7 @@ export const Contexts = () => {
       subtitle: "20.0.4",
       key: "Version",
       type: "os",
-      icon: "static/assets/images/os-logos/ubuntu.png",
+      icon: "static/assets/images/os-logos/UBT.png",
       matIcon: null,
     },
     {
@@ -136,7 +136,7 @@ export const IconPaths = () => {
         src="${generateIconPath(icon)}"
       />
     </div>
-  `,
+  `
   );
 
   return {

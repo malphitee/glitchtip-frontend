@@ -123,6 +123,7 @@ const iconNames = [
   "edit",
   "favorite",
   "file_copy",
+  "help_outline",
   "keyboard_arrow_down",
   "keyboard_arrow_left",
   "keyboard_arrow_right",
