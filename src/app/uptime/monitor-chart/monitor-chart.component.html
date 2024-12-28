@@ -1,25 +1,20 @@
 <div>
-  @for (datapoint of data; track datapoint) {
-    @if (datapoint) {
-      @if (datapoint.isUp) {
-        <div
-          class="up-check"
-          matTooltip="Up at {{ datapoint.startCheck | date: 'short' }}"
-          matTooltipPosition="above"
-        ></div>
-      }
-      @if (datapoint.isUp === false) {
-        <div
-          class="down-check"
-          matTooltip="{{
-            datapoint.reason ? convertReasonText(datapoint.reason) : 'Down'
-          }} at {{ datapoint.startCheck | date: 'short' }}"
-          matTooltipPosition="above"
-        ></div>
-      }
-    }
-  }
-  @for (emptyCheck of emptyChecks; track emptyCheck) {
-    <div class="no-check"></div>
+  @for (datapoint of data; track datapoint.startCheck) { @if (datapoint) { @if
+  (datapoint.isUp) {
+  <div
+    class="up-check"
+    matTooltip="Up at {{ datapoint.startCheck | date : 'short' }}"
+    matTooltipPosition="above"
+  ></div>
+  } @if (datapoint.isUp === false) {
+  <div
+    class="down-check"
+    matTooltip="{{
+      datapoint.reason ? convertReasonText(datapoint.reason) : 'Down'
+    }} at {{ datapoint.startCheck | date : 'short' }}"
+    matTooltipPosition="above"
+  ></div>
+  } } } @for (emptyCheck of emptyChecks; track emptyCheck) {
+  <div class="no-check"></div>
   }
 </div>
