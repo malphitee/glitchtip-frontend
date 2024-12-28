@@ -2,6 +2,7 @@ import {
   enableProdMode,
   ErrorHandler,
   importProvidersFrom,
+  provideExperimentalZonelessChangeDetection,
 } from "@angular/core";
 import { loadTranslations } from "@angular/localize";
 
@@ -61,6 +62,7 @@ if (locale in localeMappings) {
 const bootstrap = () =>
   bootstrapApplication(AppComponent, {
     providers: [
+      provideExperimentalZonelessChangeDetection(),
       provideRouter(
         routes,
         withPreloading(CustomPreloadingStrategy),
@@ -70,11 +72,11 @@ const bootstrap = () =>
         withRouterConfig({
           onSameUrlNavigation: "reload",
           paramsInheritanceStrategy: "always",
-        }),
+        })
       ),
       importProvidersFrom(
         MatSnackBarModule,
-        MicroSentryModule.forRoot({ ignoreErrors: [serverErrorsRegex] }),
+        MicroSentryModule.forRoot({ ignoreErrors: [serverErrorsRegex] })
       ),
       {
         provide: MAT_SNACK_BAR_DEFAULT_OPTIONS,
@@ -92,7 +94,7 @@ const bootstrap = () =>
           cookieName: "csrftoken",
           headerName: "X-CSRFTOKEN",
         }),
-        withInterceptors([tokenInterceptor]),
+        withInterceptors([tokenInterceptor])
       ),
     ],
   }).catch((err) => console.error(err));
