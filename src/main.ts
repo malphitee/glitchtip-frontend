@@ -22,6 +22,7 @@ import { CustomMicroSentryErrorHandler } from "./app/custom-microsentry-error-ha
 import { tokenInterceptor } from "./app/api/auth/token.interceptor";
 import {
   provideHttpClient,
+  withFetch,
   withInterceptors,
   withXsrfConfiguration,
 } from "@angular/common/http";
@@ -90,6 +91,7 @@ const bootstrap = () =>
       },
       provideAnimationsAsync(),
       provideHttpClient(
+        withFetch(),
         withXsrfConfiguration({
           cookieName: "csrftoken",
           headerName: "X-CSRFTOKEN",
