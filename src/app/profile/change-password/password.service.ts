@@ -1,5 +1,5 @@
 import { Injectable, computed } from "@angular/core";
-import { catchError, tap, throwError } from "rxjs";
+import { catchError, EMPTY, of, tap, throwError } from "rxjs";
 import { AccountService } from "src/app/api/allauth/account.service";
 import {
   AllAuthError,
@@ -33,15 +33,15 @@ export class PasswordService extends StatefulService<PasswordState> {
   errors = computed(() => this.state().errors);
   success = computed(() => this.state().success);
   formErrors = computed(() =>
-    messagesLookup(this.state().errors.filter((err) => !err.param)),
+    messagesLookup(this.state().errors.filter((err) => !err.param))
   );
   fieldErrors = computed(() =>
-    reduceParamErrors(this.state().errors.filter((err) => err.param)),
+    reduceParamErrors(this.state().errors.filter((err) => err.param))
   );
 
   constructor(
     private accountService: AccountService,
-    private userService: UserService,
+    private userService: UserService
   ) {
     super(initialState);
   }
@@ -61,8 +61,11 @@ export class PasswordService extends StatefulService<PasswordState> {
             loading: false,
             errors: handleAllAuthErrorResponse(err),
           });
+          if (err.status === 400) {
+            return of(EMPTY);
+          }
           return throwError(() => new Error("Unable to change password"));
-        }),
+        })
       );
   }
 }

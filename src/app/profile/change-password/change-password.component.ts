@@ -1,4 +1,9 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  ViewChild,
+} from "@angular/core";
 import {
   Validators,
   FormGroupDirective,
@@ -27,6 +32,7 @@ import { StatefulComponent } from "src/app/shared/stateful-service/signal-state.
   selector: "gt-change-password",
   templateUrl: "./change-password.component.html",
   styleUrls: ["./change-password.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatCardModule,
     MatDividerModule,
@@ -78,10 +84,10 @@ export class ChangePasswordComponent
   constructor(
     protected service: PasswordService,
     private snackBar: MatSnackBar,
-    private userService: UserService,
+    private userService: UserService
   ) {
     toObservable(service.fieldErrors).subscribe((fieldErrors) =>
-      mapFormErrors(fieldErrors, this.form),
+      mapFormErrors(fieldErrors, this.form)
     );
     super(service);
   }
@@ -96,7 +102,7 @@ export class ChangePasswordComponent
         this.service
           .changePassword(
             this.form.value.current_password!,
-            this.form.value.new_password!,
+            this.form.value.new_password!
           )
           .pipe(
             tap(() => {
@@ -105,8 +111,8 @@ export class ChangePasswordComponent
               Object.keys(this.form.controls).forEach((key) => {
                 this.form.get(key)!.setErrors(null);
               });
-            }),
-          ),
+            })
+          )
       );
     }
   }
