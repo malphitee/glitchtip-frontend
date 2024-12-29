@@ -32,7 +32,7 @@ const defaultInterval = 60;
 
 // returns a pattern error to simplify error checking in template
 export function portUrlValidator(
-  control: AbstractControl<string>,
+  control: AbstractControl<string>
 ): ValidationErrors | null {
   if (control.value.startsWith("https:")) {
     return { pattern: true };
@@ -79,7 +79,7 @@ export class MonitorFormComponent implements OnInit {
   @Output() formSubmitted = new EventEmitter<MonitorInput>();
 
   orgProjects$ = this.organizationsService.activeOrganizationProjects$;
-  totalEventsAllowed$ = this.subscriptionsService.totalEventsAllowed$;
+  totalEventsAllowed = this.subscriptionsService.totalEventsAllowed;
 
   intervalPerMonth$: Observable<number | null> = of(null);
 
@@ -136,7 +136,7 @@ export class MonitorFormComponent implements OnInit {
     private organizationsService: OrganizationsService,
     private subscriptionsService: SubscriptionsService,
     private monitorService: MonitorService,
-    public dialog: MatDialog,
+    public dialog: MatDialog
   ) {}
 
   ngOnInit() {
@@ -144,19 +144,19 @@ export class MonitorFormComponent implements OnInit {
     this.intervalPerMonth$ =
       this.monitorForm.controls.interval.valueChanges.pipe(
         startWith(this.monitorSettings?.interval ?? defaultInterval),
-        map((interval) => Math.floor(2592000 / interval)),
+        map((interval) => Math.floor(2592000 / interval))
       );
 
     if (this.monitorSettings) {
       this.formName.patchValue(this.monitorSettings.name);
       this.formMonitorType.patchValue(this.monitorSettings.monitorType);
       this.formUrl.patchValue(
-        this.monitorSettings.url ? this.monitorSettings.url : "",
+        this.monitorSettings.url ? this.monitorSettings.url : ""
       );
       this.formExpectedStatus.patchValue(
         this.monitorSettings.expectedStatus
           ? this.monitorSettings.expectedStatus
-          : defaultExpectedStatus,
+          : defaultExpectedStatus
       );
       this.formExpectedBody.patchValue(this.monitorSettings.expectedBody);
       this.formInterval.patchValue(this.monitorSettings.interval);

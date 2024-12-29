@@ -10,7 +10,7 @@ import { MatDividerModule } from "@angular/material/divider";
 import { LoadingButtonComponent } from "../../../shared/loading-button/loading-button.component";
 import { MatIconModule } from "@angular/material/icon";
 import { MatCardModule } from "@angular/material/card";
-import { AsyncPipe, DecimalPipe } from "@angular/common";
+import { DecimalPipe } from "@angular/common";
 
 @Component({
   selector: "gt-payment",
@@ -23,19 +23,18 @@ import { AsyncPipe, DecimalPipe } from "@angular/common";
     LoadingButtonComponent,
     MatDividerModule,
     EventInfoComponent,
-    AsyncPipe,
     DecimalPipe,
   ],
 })
 export class PaymentComponent implements OnInit {
-  productOptions$ = this.subscriptionService.formattedProductOptions;
-  subscriptionCreationLoadingId$ =
-    this.subscriptionService.subscriptionCreationLoadingId$;
+  productOptions = this.subscriptionService.formattedProductOptions;
+  subscriptionCreationLoadingId =
+    this.subscriptionService.subscriptionCreationLoadingId;
   billingEmail = environment.billingEmail;
 
   constructor(
     private subscriptionService: SubscriptionsService,
-    private organizationService: OrganizationsService,
+    private organizationService: OrganizationsService
   ) {}
 
   ngOnInit() {
@@ -51,10 +50,10 @@ export class PaymentComponent implements OnInit {
         tap((activeOrganization) =>
           this.subscriptionService.dispatchSubscriptionCreation(
             activeOrganization!,
-            price,
-          ),
-        ),
-      ),
+            price
+          )
+        )
+      )
     );
   }
 }

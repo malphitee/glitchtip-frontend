@@ -14,6 +14,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatCardModule } from "@angular/material/card";
 import { AsyncPipe, CurrencyPipe, DatePipe } from "@angular/common";
+import { toObservable } from "@angular/core/rxjs-interop";
 
 interface Percentages {
   total: number;
@@ -42,18 +43,18 @@ interface Percentages {
   ],
 })
 export class SubscriptionComponent implements OnDestroy {
-  fromStripe$ = this.service.fromStripe$;
-  subscription$ = this.service.formattedSubscription$;
-  subscriptionLoading$ = this.service.subscriptionLoading$;
-  subscriptionLoadingTimeout$ = this.service.subscriptionLoadingTimeout$;
-  eventsCountWithTotal$ = this.service.eventsCountWithTotal$;
-  totalEventsAllowed$ = this.service.totalEventsAllowed$;
+  fromStripe = this.service.fromStripe;
+  subscription = this.service.formattedSubscription;
+  subscriptionLoading = this.service.subscriptionLoading;
+  subscriptionLoadingTimeout = this.service.subscriptionLoadingTimeout;
+  eventsCountWithTotal = this.service.eventsCountWithTotal;
+  totalEventsAllowed = this.service.totalEventsAllowed;
   activeOrganization$ = this.orgService.activeOrganization$;
   activeOrganizationSlug$ = this.orgService.activeOrganizationSlug$;
   promptForProject$ = combineLatest([
     this.orgService.activeOrganizationLoaded$,
     this.orgService.projectsCount$,
-    this.service.subscription$,
+    toObservable(this.service.subscription),
   ]).pipe(
     map(([status, count, subscription]) => {
       if (subscription) {
@@ -66,14 +67,14 @@ export class SubscriptionComponent implements OnDestroy {
       } else {
         return false;
       }
-    }),
+    })
   );
   routerSubscription: Subscription;
   billingEmail = environment.billingEmail;
-  error$ = this.stripe.error$;
+  error = this.stripe.error;
   eventsPercent$ = combineLatest([
-    this.totalEventsAllowed$,
-    this.eventsCountWithTotal$,
+    toObservable(this.totalEventsAllowed),
+    toObservable(this.eventsCountWithTotal),
   ]).pipe(
     filter(([eventsAllowed, events]) => !!eventsAllowed && !!events),
     map(([eventsAllowed, events]) => {
@@ -85,7 +86,7 @@ export class SubscriptionComponent implements OnDestroy {
         uptimeEvents: (events?.uptimeCheckEventCount! / eventsAllowed!) * 100,
         fileSize: (events?.fileSizeMB! / eventsAllowed!) * 100,
       };
-    }),
+    })
   );
 
   constructor(
@@ -93,7 +94,7 @@ export class SubscriptionComponent implements OnDestroy {
     private route: ActivatedRoute,
     public dialog: MatDialog,
     private stripe: StripeService,
-    private orgService: OrganizationsService,
+    private orgService: OrganizationsService
   ) {
     this.routerSubscription = combineLatest([
       this.route.params,
@@ -108,7 +109,7 @@ export class SubscriptionComponent implements OnDestroy {
           return { slug, sessionId, redirectFromBillingPortal };
         }),
         filter((routerData) => !!routerData.slug),
-        take(1),
+        take(1)
       )
       .subscribe((routerData) => {
         if (routerData.sessionId) {
@@ -134,8 +135,8 @@ export class SubscriptionComponent implements OnDestroy {
       this.activeOrganization$.pipe(
         filter((org) => !!org),
         tap((org) => this.stripe.redirectToBillingPortal(org!.slug)),
-        take(1),
-      ),
+        take(1)
+      )
     );
   }
 
