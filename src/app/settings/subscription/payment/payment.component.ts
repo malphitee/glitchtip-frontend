@@ -11,6 +11,7 @@ import { LoadingButtonComponent } from "../../../shared/loading-button/loading-b
 import { MatIconModule } from "@angular/material/icon";
 import { MatCardModule } from "@angular/material/card";
 import { DecimalPipe } from "@angular/common";
+import { PaymentService } from "./payment.service";
 
 @Component({
   selector: "gt-payment",
@@ -34,7 +35,8 @@ export class PaymentComponent implements OnInit {
 
   constructor(
     private subscriptionService: SubscriptionsService,
-    private organizationService: OrganizationsService
+    private organizationService: OrganizationsService,
+    private paymentService: PaymentService
   ) {}
 
   ngOnInit() {
@@ -48,7 +50,7 @@ export class PaymentComponent implements OnInit {
         first(),
         filter((activeOrganization) => !!activeOrganization),
         tap((activeOrganization) =>
-          this.subscriptionService.dispatchSubscriptionCreation(
+          this.paymentService.dispatchSubscriptionCreation(
             activeOrganization!,
             price
           )

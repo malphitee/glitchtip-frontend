@@ -2,14 +2,8 @@ import { computed, Injectable } from "@angular/core";
 import { Router } from "@angular/router";
 import { EMPTY, lastValueFrom, timer } from "rxjs";
 import { catchError, delay, expand, tap, takeUntil } from "rxjs/operators";
-import {
-  Subscription,
-  BasePrice,
-  Product,
-  EventsCount,
-} from "./subscriptions.interfaces";
+import { Subscription, Product, EventsCount } from "./subscriptions.interfaces";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
-import { Organization } from "../organizations/organizations.interface";
 import { ProductsAPIService } from "./products-api.service";
 import { SubscriptionsAPIService } from "./subscriptions-api.service";
 
@@ -178,32 +172,6 @@ export class SubscriptionsService extends StatefulService<SubscriptionsState> {
     );
   }
 
-  dispatchSubscriptionCreation(organization: Organization, price: BasePrice) {
-    this.setSubscriptionCreationStart(price.id);
-    if (price.unit_amount === 0) {
-      lastValueFrom(
-        this.subscriptionsAPIService.create(organization.id, price.id).pipe(
-          tap((resp) => {
-            this.setSubscription(resp.subscription);
-            this.router.navigate([organization.slug, "issues"]);
-          }),
-          catchError((err) => {
-            if (err.status === 409) {
-              this.setSubscriptionCreationError();
-              // this.snackBar.open(
-              //   "This organization already has a subscription. Please reload page for latest details."
-              // );
-            }
-            return EMPTY;
-          })
-        ),
-        { defaultValue: null }
-      );
-    } else {
-      // this.stripe.redirectToSubscriptionCheckout(organization.slug, price.id);
-    }
-  }
-
   /**
    * Retrieve Subscription and navigate to subscription page if no subscription exists
    */
@@ -241,7 +209,7 @@ export class SubscriptionsService extends StatefulService<SubscriptionsState> {
     this.setState({ products });
   }
 
-  private setSubscription(subscription: Subscription) {
+  setSubscription(subscription: Subscription) {
     this.setState({
       subscription,
       subscriptionLoading: false,
@@ -262,14 +230,6 @@ export class SubscriptionsService extends StatefulService<SubscriptionsState> {
       subscriptionLoading: false,
       subscriptionLoadingTimeout: true,
     });
-  }
-
-  private setSubscriptionCreationStart(subscriptionCreationLoadingId: string) {
-    this.setState({ subscriptionCreationLoadingId });
-  }
-
-  private setSubscriptionCreationError() {
-    this.setState({ subscriptionCreationLoadingId: null });
   }
 
   private setSubscriptionCount(eventsCount: EventsCount) {
