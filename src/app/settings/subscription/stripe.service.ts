@@ -1,7 +1,7 @@
-import { Injectable } from "@angular/core";
+import { computed, Injectable } from "@angular/core";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { lastValueFrom } from "rxjs";
-import { tap, exhaustMap, withLatestFrom, map } from "rxjs/operators";
+import { tap, exhaustMap, withLatestFrom } from "rxjs/operators";
 import { baseUrl } from "src/app/constants";
 import {
   StripeCheckoutSession,
@@ -9,7 +9,7 @@ import {
 } from "./stripe.interfaces";
 import { loadStripe } from "@stripe/stripe-js";
 import { EMPTY, catchError } from "rxjs";
-import { StatefulService } from "src/app/shared/stateful-service/stateful-service";
+import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
 import { SettingsService } from "src/app/api/settings.service";
 
 export interface StripeState {
@@ -26,10 +26,10 @@ const initialState: StripeState = {
 export class StripeService extends StatefulService<StripeState> {
   stripePublicKey$ = this.settingsService.stripePublicKey$;
 
-  readonly error$ = this.getState$.pipe(map((state) => state.error));
+  readonly error = computed(() => this.state().error);
   constructor(
     private http: HttpClient,
-    private settingsService: SettingsService,
+    private settingsService: SettingsService
   ) {
     super(initialState);
   }
@@ -41,14 +41,14 @@ export class StripeService extends StatefulService<StripeState> {
         exhaustMap(([resp, stripePublicKey]) => {
           if (stripePublicKey) {
             return loadStripe(stripePublicKey).then((stripe) =>
-              stripe?.redirectToCheckout({ sessionId: resp.id }),
+              stripe?.redirectToCheckout({ sessionId: resp.id })
             );
           } else {
             return EMPTY;
           }
-        }),
+        })
       ),
-      { defaultValue: null },
+      { defaultValue: null }
     );
   }
 
@@ -74,14 +74,10 @@ export class StripeService extends StatefulService<StripeState> {
             this.setState({ error: "Unknown Error" });
           }
           return EMPTY;
-        }),
+        })
       ),
-      { defaultValue: null },
+      { defaultValue: null }
     );
-  }
-
-  clearState() {
-    this.state.next(initialState);
   }
 
   private createSubscriptionCheckout(organizationSlug: string, price: string) {

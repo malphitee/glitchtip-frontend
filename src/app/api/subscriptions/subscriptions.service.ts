@@ -1,18 +1,10 @@
-import { Injectable } from "@angular/core";
+import { computed, Injectable } from "@angular/core";
 import { Router } from "@angular/router";
-import { MatSnackBar } from "@angular/material/snack-bar";
 import { EMPTY, lastValueFrom, timer } from "rxjs";
-import { catchError, delay, expand, map, tap, takeUntil } from "rxjs/operators";
-import {
-  Subscription,
-  BasePrice,
-  Product,
-  EventsCount,
-} from "./subscriptions.interfaces";
-import { StatefulService } from "src/app/shared/stateful-service/stateful-service";
-import { Organization } from "../organizations/organizations.interface";
+import { catchError, delay, expand, tap, takeUntil } from "rxjs/operators";
+import { Subscription, Product, EventsCount } from "./subscriptions.interfaces";
+import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
 import { ProductsAPIService } from "./products-api.service";
-import { StripeService } from "src/app/settings/subscription/stripe.service";
 import { SubscriptionsAPIService } from "./subscriptions-api.service";
 
 interface SubscriptionsState {
@@ -39,88 +31,62 @@ const initialState: SubscriptionsState = {
   providedIn: "root",
 })
 export class SubscriptionsService extends StatefulService<SubscriptionsState> {
-  readonly subscription$ = this.getState$.pipe(
-    map((state) => state.subscription),
-  );
-  readonly formattedSubscription$ = this.subscription$.pipe(
-    map((subscription) => {
-      if (subscription) {
-        let price = subscription.items[0]?.price
-          ? subscription.items[0].price
-          : null;
-        return {
-          ...subscription,
-          mainUnitPrice: price ? price.unit_amount / 100 : null,
-          productName: price ? subscription.items[0].price.product.name : null,
-          productDescription: price
-            ? subscription.items[0].price.product.description
-            : null,
-        };
-      } else {
-        return null;
-      }
-    }),
-  );
-  readonly subscriptionLoading$ = this.getState$.pipe(
-    map((state) => state.subscriptionLoading),
-  );
-  readonly subscriptionLoadingTimeout$ = this.getState$.pipe(
-    map((state) => state.subscriptionLoadingTimeout),
-  );
-  readonly subscriptionCreationLoadingId$ = this.getState$.pipe(
-    map((state) => state.subscriptionCreationLoadingId),
-  );
-  readonly fromStripe$ = this.getState$.pipe(map((state) => state.fromStripe));
+  subscription = computed(() => this.state().subscription);
+  formattedSubscription = computed(() => {
+    const subscription = this.subscription();
+    if (!subscription?.items[0]?.price) return null;
 
-  readonly eventsCountWithTotal$ = this.getState$.pipe(
-    map((state) => {
-      let total = 0;
-      if (state.eventsCount) {
-        total +=
-          state.eventsCount.eventCount! +
-          state.eventsCount.transactionEventCount! +
-          state.eventsCount.uptimeCheckEventCount! +
-          state.eventsCount.fileSizeMB!;
+    const { unit_amount } = subscription.items[0].price;
+    const { name, description } = subscription.items[0].price.product;
 
-        return {
-          ...state.eventsCount,
-          total,
-        };
-      } else {
-        return state.eventsCount;
-      }
-    }),
+    return {
+      ...subscription,
+      mainUnitPrice: unit_amount / 100,
+      productName: name,
+      productDescription: description,
+    };
+  });
+  subscriptionLoading = computed(() => this.state().subscriptionLoading);
+  subscriptionLoadingTimeout = computed(
+    () => this.state().subscriptionLoadingTimeout
   );
+  subscriptionCreationLoadingId = computed(
+    () => this.state().subscriptionCreationLoadingId
+  );
+  fromStripe = computed(() => this.state().fromStripe);
+  eventsCountWithTotal = computed(() => {
+    const state = this.state();
+    if (!state.eventsCount) return state.eventsCount;
 
-  readonly totalEventsAllowed$ = this.subscription$.pipe(
-    map((subscription) =>
-      subscription && subscription.items[0]
-        ? parseInt(subscription.items[0].price.product.metadata.events, 10)
-        : null,
-    ),
-  );
+    const total =
+      state.eventsCount.eventCount! +
+      state.eventsCount.transactionEventCount! +
+      state.eventsCount.uptimeCheckEventCount! +
+      state.eventsCount.fileSizeMB!;
 
-  readonly productOptions$ = this.getState$.pipe(
-    map((state) => state.products),
-  );
-  readonly formattedProductOptions = this.productOptions$.pipe(
-    map((products) => {
-      return products?.map((product) => ({
-        ...product,
-        name: product.name.startsWith("GlitchTip ")
-          ? product.name.substring(10)
-          : product.name,
-        mainUnitPrice: product.prices[0].unit_amount / 100,
-      }));
-    }),
+    return { ...state.eventsCount, total };
+  });
+  totalEventsAllowed = computed(() => {
+    const subscription = this.subscription();
+    return subscription?.items[0]?.price?.product?.metadata?.events
+      ? parseInt(subscription.items[0].price.product.metadata.events, 10)
+      : null;
+  });
+  productOptions = computed(() => this.state().products);
+  formattedProductOptions = computed(() =>
+    this.productOptions()?.map((product) => ({
+      ...product,
+      name: product.name.startsWith("GlitchTip ")
+        ? product.name.slice(10)
+        : product.name,
+      mainUnitPrice: product.prices[0].unit_amount / 100,
+    }))
   );
 
   constructor(
     private productsAPIService: ProductsAPIService,
     private subscriptionsAPIService: SubscriptionsAPIService,
-    private stripe: StripeService,
-    private router: Router,
-    private snackBar: MatSnackBar,
+    private router: Router
   ) {
     super(initialState);
   }
@@ -139,9 +105,9 @@ export class SubscriptionsService extends StatefulService<SubscriptionsState> {
         catchError(() => {
           this.setSubscriptionLoadingError();
           return EMPTY;
-        }),
+        })
       ),
-      { defaultValue: null },
+      { defaultValue: null }
     );
   }
 
@@ -167,9 +133,9 @@ export class SubscriptionsService extends StatefulService<SubscriptionsState> {
           this.setSubscriptionLoadingError();
           return EMPTY;
         }),
-        takeUntil(this.subscriptionRetryTimer()),
+        takeUntil(this.subscriptionRetryTimer())
       ),
-      { defaultValue: null },
+      { defaultValue: null }
     );
   }
 
@@ -183,9 +149,9 @@ export class SubscriptionsService extends StatefulService<SubscriptionsState> {
         tap((count) => this.setSubscriptionCount(count)),
         catchError((error) => {
           return EMPTY;
-        }),
+        })
       ),
-      { defaultValue: null },
+      { defaultValue: null }
     );
   }
 
@@ -198,38 +164,12 @@ export class SubscriptionsService extends StatefulService<SubscriptionsState> {
       this.productsAPIService.list().pipe(
         tap((products) => {
           const productAmountSorted = products.sort(
-            (a, b) => a.prices[0].unit_amount - b.prices[0].unit_amount,
+            (a, b) => a.prices[0].unit_amount - b.prices[0].unit_amount
           );
           this.setProducts(productAmountSorted);
-        }),
-      ),
+        })
+      )
     );
-  }
-
-  dispatchSubscriptionCreation(organization: Organization, price: BasePrice) {
-    this.setSubscriptionCreationStart(price.id);
-    if (price.unit_amount === 0) {
-      lastValueFrom(
-        this.subscriptionsAPIService.create(organization.id, price.id).pipe(
-          tap((resp) => {
-            this.setSubscription(resp.subscription);
-            this.router.navigate([organization.slug, "issues"]);
-          }),
-          catchError((err) => {
-            if (err.status === 409) {
-              this.setSubscriptionCreationError();
-              this.snackBar.open(
-                "This organization already has a subscription. Please reload page for latest details.",
-              );
-            }
-            return EMPTY;
-          }),
-        ),
-        { defaultValue: null },
-      );
-    } else {
-      this.stripe.redirectToSubscriptionCheckout(organization.slug, price.id);
-    }
   }
 
   /**
@@ -251,8 +191,8 @@ export class SubscriptionsService extends StatefulService<SubscriptionsState> {
             if (subscription === null) {
               this.router.navigate(subscriptionRoute);
             }
-          }),
-        ),
+          })
+        )
       );
     }
   }
@@ -261,7 +201,7 @@ export class SubscriptionsService extends StatefulService<SubscriptionsState> {
     return timer(60000).pipe(
       tap(() => {
         this.setSubscriptionLoadingTimeout();
-      }),
+      })
     );
   }
 
@@ -269,7 +209,7 @@ export class SubscriptionsService extends StatefulService<SubscriptionsState> {
     this.setState({ products });
   }
 
-  private setSubscription(subscription: Subscription) {
+  setSubscription(subscription: Subscription) {
     this.setState({
       subscription,
       subscriptionLoading: false,
@@ -290,14 +230,6 @@ export class SubscriptionsService extends StatefulService<SubscriptionsState> {
       subscriptionLoading: false,
       subscriptionLoadingTimeout: true,
     });
-  }
-
-  private setSubscriptionCreationStart(subscriptionCreationLoadingId: string) {
-    this.setState({ subscriptionCreationLoadingId });
-  }
-
-  private setSubscriptionCreationError() {
-    this.setState({ subscriptionCreationLoadingId: null });
   }
 
   private setSubscriptionCount(eventsCount: EventsCount) {
