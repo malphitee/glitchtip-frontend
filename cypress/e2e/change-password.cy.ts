@@ -10,10 +10,10 @@ describe("Change Password", () => {
 
   it("should show validation errors", () => {
     cy.get("input[formcontrolname=current_password]").type(
-      changePassword.incorrect_password,
+      changePassword.incorrect_password
     );
     cy.get("input[formcontrolname=new_password]").type(
-      changePassword.new_password,
+      changePassword.new_password
     );
     cy.get("[data-cy='confirm-password']")
       .click()
@@ -26,7 +26,7 @@ describe("Change Password", () => {
   it("Should confirm the user's password was saved", () => {
     cy.get("input[formcontrolname=current_password]").type(user.password);
     cy.get("input[formcontrolname=new_password]").type(
-      changePassword.new_password,
+      changePassword.new_password
     );
     cy.get("[data-cy='confirm-password']")
       .click()

@@ -2,6 +2,7 @@ import {
   enableProdMode,
   ErrorHandler,
   importProvidersFrom,
+  provideExperimentalZonelessChangeDetection,
 } from "@angular/core";
 import { loadTranslations } from "@angular/localize";
 
@@ -21,6 +22,7 @@ import { CustomMicroSentryErrorHandler } from "./app/custom-microsentry-error-ha
 import { tokenInterceptor } from "./app/api/auth/token.interceptor";
 import {
   provideHttpClient,
+  withFetch,
   withInterceptors,
   withXsrfConfiguration,
 } from "@angular/common/http";
@@ -61,6 +63,7 @@ if (locale in localeMappings) {
 const bootstrap = () =>
   bootstrapApplication(AppComponent, {
     providers: [
+      provideExperimentalZonelessChangeDetection(),
       provideRouter(
         routes,
         withPreloading(CustomPreloadingStrategy),
@@ -70,11 +73,11 @@ const bootstrap = () =>
         withRouterConfig({
           onSameUrlNavigation: "reload",
           paramsInheritanceStrategy: "always",
-        }),
+        })
       ),
       importProvidersFrom(
         MatSnackBarModule,
-        MicroSentryModule.forRoot({ ignoreErrors: [serverErrorsRegex] }),
+        MicroSentryModule.forRoot({ ignoreErrors: [serverErrorsRegex] })
       ),
       {
         provide: MAT_SNACK_BAR_DEFAULT_OPTIONS,
@@ -88,11 +91,12 @@ const bootstrap = () =>
       },
       provideAnimationsAsync(),
       provideHttpClient(
+        withFetch(),
         withXsrfConfiguration({
           cookieName: "csrftoken",
           headerName: "X-CSRFTOKEN",
         }),
-        withInterceptors([tokenInterceptor]),
+        withInterceptors([tokenInterceptor])
       ),
     ],
   }).catch((err) => console.error(err));

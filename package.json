@@ -56,8 +56,7 @@
     "ngx-markdown": "^19.0.0",
     "qrcode": "^1.5.4",
     "rxjs": "^7.8.1",
-    "tslib": "^2.6.2",
-    "zone.js": "~0.15.0"
+    "tslib": "^2.6.2"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~19.0.6",
@@ -93,8 +92,8 @@
     "@typescript-eslint/parser": "^6.13.1",
     "babel-loader": "^8.0.6",
     "concurrently": "^6.0.0",
-    "cypress": "^13.13.3",
-    "cypress-localstorage-commands": "^2.2.6",
+    "cypress": "^13.17.0",
+    "cypress-localstorage-commands": "^2.2.7",
     "eslint": "^8.0.0",
     "eslint-plugin-storybook": "^0.11.1",
     "jasmine-core": "^5.0.0",
