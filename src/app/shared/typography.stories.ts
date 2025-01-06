@@ -131,6 +131,7 @@ const iconNames = [
   "menu",
   "settings",
   "tab",
+  "volume_off",
   "warning",
 ];
 const iconURL = `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD&#64;20..48,100..700,0..1,-50..200&icon_names=${iconNames.join(
