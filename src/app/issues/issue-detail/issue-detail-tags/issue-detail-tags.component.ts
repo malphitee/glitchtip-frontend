@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, OnInit } from "@angular/core";
+import { Component, ChangeDetectionStrategy, OnInit, inject } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { IssueDetailService } from "../issue-detail.service";
 import { exhaustMap, map } from "rxjs/operators";
@@ -15,17 +15,15 @@ import { NgStyle, AsyncPipe } from "@angular/common";
   imports: [MatCardModule, NgStyle, MatTooltipModule, AsyncPipe],
 })
 export class IssueDetailTagsComponent implements OnInit {
+  private issueService = inject(IssueDetailService);
+  private route = inject(ActivatedRoute);
+
   tags$ = this.issueService.tags$;
 
   issueIdParam$ = this.route.paramMap.pipe(
     map((params) => params.get("issue-id")),
   );
   percent = 10;
-
-  constructor(
-    private issueService: IssueDetailService,
-    private route: ActivatedRoute,
-  ) {}
 
   ngOnInit() {
     this.issueIdParam$

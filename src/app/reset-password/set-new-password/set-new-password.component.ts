@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from "@angular/core";
+import { Component, ChangeDetectionStrategy, inject } from "@angular/core";
 import { toObservable } from "@angular/core/rxjs-interop";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import {
@@ -44,6 +44,11 @@ export class SetNewPasswordComponent extends StatefulComponent<
   ResetPasswordState,
   ResetPasswordService
 > {
+  private router = inject(Router);
+  private activatedRoute = inject(ActivatedRoute);
+  protected service: ResetPasswordService;
+  private snackBar = inject(MatSnackBar);
+
   params$ = this.activatedRoute.params.pipe(
     map((params) => ({ key: params.key })),
   );
@@ -69,16 +74,15 @@ export class SetNewPasswordComponent extends StatefulComponent<
     return this.form.get("password2");
   }
 
-  constructor(
-    private router: Router,
-    private activatedRoute: ActivatedRoute,
-    protected service: ResetPasswordService,
-    private snackBar: MatSnackBar,
-  ) {
+  constructor() {
+    const service = inject(ResetPasswordService);
+
     toObservable(service.fieldErrors).subscribe((fieldErrors) =>
       mapFormErrors(fieldErrors, this.form),
     );
     super(service);
+  
+    this.service = service;
   }
 
   onSubmit() {

@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from "@angular/core";
+import { Component, OnDestroy, inject } from "@angular/core";
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { CommonModule } from "@angular/common";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -22,6 +22,9 @@ import { combineLatest, map } from "rxjs";
   ],
 })
 export class ReleasesComponent implements OnDestroy {
+  protected service = inject(ReleasesService);
+  protected route = inject(ActivatedRoute);
+
   paginator$ = this.service.paginator$;
   tooltipDisabled = false;
   displayedColumns = ["version", "created"];
@@ -30,10 +33,7 @@ export class ReleasesComponent implements OnDestroy {
   loading$ = this.service.loading$;
   initialLoadComplete$ = this.service.initialLoadComplete$;
 
-  constructor(
-    protected service: ReleasesService,
-    protected route: ActivatedRoute,
-  ) {
+  constructor() {
     combineLatest([
       this.route.paramMap.pipe(map((params) => params.get("org-slug"))),
       this.route.queryParamMap,

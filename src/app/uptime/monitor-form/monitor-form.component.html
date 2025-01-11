@@ -1,7 +1,7 @@
 <mat-card>
   <mat-card-content>
     <div class="form-center">
-      @for (error of formError?.non_field_errors; track error) {
+      @for (error of formError()?.non_field_errors; track error) {
       <mat-error>{{ error }}</mat-error>
       }
     </div>
@@ -259,8 +259,8 @@
       }
       <gt-loading-button
         class="submit"
-        [loading]="loading === true"
-        [buttonText]="monitorSettings ? 'Update Monitor' : 'Create Monitor'"
+        [loading]="loading() === true"
+        [buttonText]="monitorSettings() ? 'Update Monitor' : 'Create Monitor'"
         data-cy="monitor-submit"
       >
       </gt-loading-button>

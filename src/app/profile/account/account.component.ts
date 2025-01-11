@@ -1,10 +1,9 @@
-import { Component, OnDestroy } from "@angular/core";
+import { Component, OnDestroy, inject } from "@angular/core";
 import { UserService } from "src/app/api/user/user.service";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { AsyncPipe } from "@angular/common";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatCardModule } from "@angular/material/card";
-import { lastValueFrom, tap } from "rxjs";
 import { LoadingButtonComponent } from "../../shared/loading-button/loading-button.component";
 import { ManageEmailsComponent } from "../manage-emails/manage-emails.component";
 import { SocialAuthComponent } from "../social-auth/social-auth.component";
@@ -29,29 +28,22 @@ import { AuthService } from "src/app/auth.service";
   ],
 })
 export class AccountComponent implements OnDestroy {
-  userDeleteLoading$ = this.userService.userDeleteLoading$;
-  userDeleteError$ = this.userService.userDeleteError$;
+  private userService = inject(UserService);
+  private authService = inject(AuthService);
 
-  constructor(
-    private userService: UserService,
-    private authService: AuthService,
-  ) {}
+  userDeleteLoading = this.userService.userDeleteLoading;
+  userDeleteError = this.userService.userDeleteError;
 
   deleteUser() {
     if (
       window.confirm(
-        `Are you sure you want to delete your user account? You will permanently lose access to all organizations, projects, and teams associated with it.`,
+        `Are you sure you want to delete your user account? You will permanently lose access to all organizations, projects, and teams associated with it.`
       )
     ) {
-      lastValueFrom(
-        this.userService.deleteUser().pipe(
-          tap(() => {
-            this.authService.expireAuth();
-            window.location.href = "/login";
-          }),
-        ),
-        { defaultValue: null },
-      );
+      this.userService.deleteUser().then((result) => {
+        this.authService.expireAuth();
+        window.location.href = "/login";
+      });
     }
   }
 

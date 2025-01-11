@@ -1,5 +1,5 @@
 import { HttpClient } from "@angular/common/http";
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { baseUrl } from "../../constants";
 import { Product } from "./subscriptions.interfaces";
 
@@ -7,8 +7,9 @@ import { Product } from "./subscriptions.interfaces";
   providedIn: "root",
 })
 export class ProductsAPIService {
+  protected http = inject(HttpClient);
+
   readonly url = `${baseUrl}/products/`;
-  constructor(protected http: HttpClient) {}
 
   list() {
     return this.http.get<Product[]>(this.url);

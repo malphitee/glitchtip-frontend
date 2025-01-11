@@ -1,5 +1,5 @@
 import { HttpClient } from "@angular/common/http";
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { MatCard, MatCardContent } from "@angular/material/card";
 import { ActivatedRoute } from "@angular/router";
 import { MarkdownComponent } from "ngx-markdown";
@@ -11,12 +11,11 @@ import { MarkdownComponent } from "ngx-markdown";
   styleUrl: "./blog-post.component.scss",
 })
 export class BlogPostComponent implements OnInit {
+  private http = inject(HttpClient);
+  private route = inject(ActivatedRoute);
+
   cleanedMarkdown: string | null = null;
   title: string | null = null;
-  constructor(
-    private http: HttpClient,
-    private route: ActivatedRoute,
-  ) {}
 
   ngOnInit() {
     const src = `/blog/${this.route.snapshot.params.slug}.md`;

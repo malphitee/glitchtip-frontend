@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from "@angular/core";
+import { Component, OnInit, ChangeDetectionStrategy, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormControl, FormGroup } from "@angular/forms";
 import { ActivatedRoute, RouterModule } from "@angular/router";
@@ -9,11 +9,11 @@ import { map, exhaustMap, tap } from "rxjs/operators";
 import { EMPTY, Observable } from "rxjs";
 import { DetailHeaderComponent } from "src/app/shared/detail/header/header.component";
 import { IssueDetailService } from "./issue-detail.service";
-import { OrganizationsService } from "src/app/api/organizations/organizations.service";
 import { DaysAgoPipe } from "../../shared/days-ago.pipe";
 import { IssueDetailTagsComponent } from "./issue-detail-tags/issue-detail-tags.component";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
+import { OrganizationsService } from "src/app/api/organizations.service";
 
 @Component({
   selector: "gt-issue-detail",
@@ -34,6 +34,10 @@ import { MatButtonModule } from "@angular/material/button";
   ],
 })
 export class IssueDetailComponent implements OnInit {
+  private issueService = inject(IssueDetailService);
+  private organizationsService = inject(OrganizationsService);
+  private route = inject(ActivatedRoute);
+
   issue$ = this.issueService.issue$;
   issueTitle$: Observable<[string, string | null]> = this.issue$.pipe(
     map((issue) => {
@@ -58,7 +62,7 @@ export class IssueDetailComponent implements OnInit {
         default:
           return [metadata.title!, null];
       }
-    }),
+    })
   );
   issueSubtitle$ = this.issue$.pipe(
     map((issue) => {
@@ -78,14 +82,14 @@ export class IssueDetailComponent implements OnInit {
         default:
           return issue.culprit;
       }
-    }),
+    })
   );
   initialLoadComplete$ = this.issueService.issueInitialLoadComplete$;
   form = new FormGroup({
     assignee: new FormControl(""),
   });
   issueIdParam$ = this.route.paramMap.pipe(
-    map((params) => params.get("issue-id")),
+    map((params) => params.get("issue-id"))
   );
   organization$ = this.organizationsService.activeOrganization$;
   participantCountPluralMapping: { [k: string]: string } = {
@@ -93,12 +97,6 @@ export class IssueDetailComponent implements OnInit {
     "=1": "1 Participant",
     other: "# Participants",
   };
-
-  constructor(
-    private issueService: IssueDetailService,
-    private organizationsService: OrganizationsService,
-    private route: ActivatedRoute,
-  ) {}
 
   ngOnInit() {
     this.issueIdParam$
@@ -109,7 +107,7 @@ export class IssueDetailComponent implements OnInit {
             return this.issueService.retrieveIssue(+issueId);
           }
           return EMPTY;
-        }),
+        })
       )
       .subscribe();
   }
@@ -133,12 +131,12 @@ export class IssueDetailComponent implements OnInit {
           if (
             id &&
             window.confirm(
-              `Are you sure you want delete this issue? You will permanently lose this issue and all associated events.`,
+              `Are you sure you want delete this issue? You will permanently lose this issue and all associated events.`
             )
           ) {
             this.issueService.deleteIssue(id.toString());
           }
-        }),
+        })
       )
       .subscribe();
   }

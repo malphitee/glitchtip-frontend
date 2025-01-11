@@ -1,11 +1,10 @@
-import { Component, ChangeDetectionStrategy, OnDestroy } from "@angular/core";
+import { Component, ChangeDetectionStrategy, OnDestroy, computed, inject } from "@angular/core";
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
-import { combineLatest, lastValueFrom, Subscription } from "rxjs";
-import { map, filter, take, tap } from "rxjs/operators";
+import { combineLatest, Subscription } from "rxjs";
+import { map, filter, take } from "rxjs/operators";
 import { EventInfoComponent } from "src/app/shared/event-info/event-info.component";
 import { environment } from "../../../environments/environment";
-import { OrganizationsService } from "src/app/api/organizations/organizations.service";
 import { StripeService } from "./stripe.service";
 import { SubscriptionsService } from "src/app/api/subscriptions/subscriptions.service";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
@@ -13,8 +12,8 @@ import { PaymentComponent } from "./payment/payment.component";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatCardModule } from "@angular/material/card";
-import { AsyncPipe, CurrencyPipe, DatePipe } from "@angular/common";
-import { toObservable } from "@angular/core/rxjs-interop";
+import { CurrencyPipe, DatePipe } from "@angular/common";
+import { OrganizationsService } from "src/app/api/organizations.service";
 
 interface Percentages {
   total: number;
@@ -37,65 +36,58 @@ interface Percentages {
     MatButtonModule,
     PaymentComponent,
     MatProgressSpinnerModule,
-    AsyncPipe,
     CurrencyPipe,
     DatePipe,
   ],
 })
 export class SubscriptionComponent implements OnDestroy {
+  private service = inject(SubscriptionsService);
+  private route = inject(ActivatedRoute);
+  dialog = inject(MatDialog);
+  private stripe = inject(StripeService);
+  private orgService = inject(OrganizationsService);
+
   fromStripe = this.service.fromStripe;
   subscription = this.service.formattedSubscription;
   subscriptionLoading = this.service.subscriptionLoading;
   subscriptionLoadingTimeout = this.service.subscriptionLoadingTimeout;
   eventsCountWithTotal = this.service.eventsCountWithTotal;
   totalEventsAllowed = this.service.totalEventsAllowed;
-  activeOrganization$ = this.orgService.activeOrganization$;
-  activeOrganizationSlug$ = this.orgService.activeOrganizationSlug$;
-  promptForProject$ = combineLatest([
-    this.orgService.activeOrganizationLoaded$,
-    this.orgService.projectsCount$,
-    toObservable(this.service.subscription),
-  ]).pipe(
-    map(([status, count, subscription]) => {
-      if (subscription) {
-        return status &&
-          count === 0 &&
-          subscription.status !== null &&
-          subscription.status !== "canceled"
-          ? true
-          : false;
-      } else {
-        return false;
-      }
-    })
-  );
+  activeOrganization = this.orgService.activeOrganization;
+  activeOrganizationSlug = this.orgService.activeOrganizationSlug;
+
+  promptForProject = computed(() => {
+    const status = this.orgService.activeOrganizationLoaded();
+    const count = this.orgService.projectsCount();
+    const subscription = this.service.subscription();
+    if (subscription) {
+      return status &&
+        count === 0 &&
+        subscription.status !== null &&
+        subscription.status !== "canceled"
+        ? true
+        : false;
+    } else {
+      return false;
+    }
+  });
   routerSubscription: Subscription;
   billingEmail = environment.billingEmail;
   error = this.stripe.error;
-  eventsPercent$ = combineLatest([
-    toObservable(this.totalEventsAllowed),
-    toObservable(this.eventsCountWithTotal),
-  ]).pipe(
-    filter(([eventsAllowed, events]) => !!eventsAllowed && !!events),
-    map(([eventsAllowed, events]) => {
-      return <Percentages>{
-        total: (events?.total! / eventsAllowed!) * 100,
-        errorEvents: (events?.eventCount! / eventsAllowed!) * 100,
-        transactionEvents:
-          (events?.transactionEventCount! / eventsAllowed!) * 100,
-        uptimeEvents: (events?.uptimeCheckEventCount! / eventsAllowed!) * 100,
-        fileSize: (events?.fileSizeMB! / eventsAllowed!) * 100,
-      };
-    })
-  );
+  eventsPercent = computed<Percentages>(() => {
+    const eventsAllowed = this.totalEventsAllowed();
+    const events = this.eventsCountWithTotal();
+    return {
+      total: (events?.total! / eventsAllowed!) * 100,
+      errorEvents: (events?.eventCount! / eventsAllowed!) * 100,
+      transactionEvents:
+        (events?.transactionEventCount! / eventsAllowed!) * 100,
+      uptimeEvents: (events?.uptimeCheckEventCount! / eventsAllowed!) * 100,
+      fileSize: (events?.fileSizeMB! / eventsAllowed!) * 100,
+    };
+  });
 
-  constructor(
-    private service: SubscriptionsService,
-    private route: ActivatedRoute,
-    public dialog: MatDialog,
-    private stripe: StripeService,
-    private orgService: OrganizationsService
-  ) {
+  constructor() {
     this.routerSubscription = combineLatest([
       this.route.params,
       this.route.queryParams,
@@ -131,13 +123,7 @@ export class SubscriptionComponent implements OnDestroy {
   }
 
   manageSubscription() {
-    lastValueFrom(
-      this.activeOrganization$.pipe(
-        filter((org) => !!org),
-        tap((org) => this.stripe.redirectToBillingPortal(org!.slug)),
-        take(1)
-      )
-    );
+    this.stripe.redirectToBillingPortal(this.activeOrganizationSlug());
   }
 
   ngOnDestroy() {

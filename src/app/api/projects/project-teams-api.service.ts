@@ -1,5 +1,5 @@
 import { HttpClient } from "@angular/common/http";
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { map } from "rxjs";
 import { baseUrl } from "../../constants";
 import { ProjectDetail } from "./projects-api.interfaces";
@@ -9,7 +9,8 @@ import { normalizeID } from "../shared-api.utils";
   providedIn: "root",
 })
 export class ProjectTeamsAPIService {
-  constructor(protected http: HttpClient) {}
+  protected http = inject(HttpClient);
+
 
   addProjectToTeam(
     organizationSlug: string,

@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { MatCard, MatCardContent } from "@angular/material/card";
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { MarkdownComponent, MarkdownService } from "ngx-markdown";
@@ -9,11 +9,10 @@ import { MarkdownComponent, MarkdownService } from "ngx-markdown";
   styleUrls: ["./documentation-page.component.scss"],
 })
 export class DocumentationPageComponent implements OnInit {
+  private route = inject(ActivatedRoute);
+  private markdownService = inject(MarkdownService);
+
   slug: string | null = null;
-  constructor(
-    private route: ActivatedRoute,
-    private markdownService: MarkdownService,
-  ) {}
 
   ngOnInit(): void {
     const locationPrefix = `/documentation/${this.route.snapshot.params.slug}`;

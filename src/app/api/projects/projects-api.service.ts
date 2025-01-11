@@ -1,5 +1,5 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { map } from "rxjs";
 import { APIBaseService } from "../api-base.service";
 import { baseUrl } from "../../constants";
@@ -10,11 +10,17 @@ import { normalizeID } from "../shared-api.utils";
   providedIn: "root",
 })
 export class ProjectsAPIService extends APIBaseService {
+  protected http: HttpClient;
+
   readonly url = "/projects/";
   readonly listUrl = `${baseUrl}${this.url}`;
 
-  constructor(protected http: HttpClient) {
+  constructor() {
+    const http = inject(HttpClient);
+
     super(http);
+  
+    this.http = http;
   }
 
   list() {

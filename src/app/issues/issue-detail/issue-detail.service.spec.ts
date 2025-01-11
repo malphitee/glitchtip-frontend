@@ -10,7 +10,7 @@ import { EMPTY } from "rxjs";
 import { take } from "rxjs/operators";
 import { IssueDetailService } from "./issue-detail.service";
 import { IssueDetail, EventDetail, AnnotatedContexts } from "../interfaces";
-import { OrganizationsService } from "src/app/api/organizations/organizations.service";
+import { OrganizationDetailService } from "src/app/api/organizations/organization-detail.service";
 import {
   sampleApiIssueDetail,
   sampleIssueDetail,
@@ -23,7 +23,7 @@ import { breadcrumbError } from "./event-detail/test-data/breadcrumb-error";
 describe("IssueDetailService", () => {
   let httpTestingController: HttpTestingController;
   let service: IssueDetailService;
-  let mockOrgService: OrganizationsService;
+  let mockOrgService: OrganizationDetailService;
 
   beforeEach(() => {
     mockOrgService = jasmine.createSpyObj(["retrieveIssue"]);
@@ -34,7 +34,7 @@ describe("IssueDetailService", () => {
         RouterTestingModule,
       ],
       providers: [
-        { provide: OrganizationsService, useValue: mockOrgService },
+        { provide: OrganizationDetailService, useValue: mockOrgService },
         MicroSentryService,
         { provide: MICRO_SENTRY_CONFIG, useValue: {} },
       ],
@@ -51,11 +51,11 @@ describe("IssueDetailService", () => {
     const testApiData = sampleApiIssueDetail;
     service.retrieveIssue(testApiData.id).toPromise();
     const req = httpTestingController.expectOne(
-      `/api/0/issues/${testApiData.id}/`,
+      `/api/0/issues/${testApiData.id}/`
     );
     req.flush(testApiData);
     service.issue$.subscribe((issue) =>
-      expect(issue).toEqual(sampleIssueDetail),
+      expect(issue).toEqual(sampleIssueDetail)
     );
   });
 
@@ -270,7 +270,7 @@ describe("IssueDetailService", () => {
     service.setEvent(testData);
     service.breadcrumbs$.subscribe((breadcrumb: any) => {
       expect(breadcrumb.values[0].timestamp).toEqual(
-        "2020-12-18T18:09:47.841276Z",
+        "2020-12-18T18:09:47.841276Z"
       );
     });
   });

@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { LinksService } from "../links.service";
 import { RouterLink } from "@angular/router";
 import { MatCardModule } from "@angular/material/card";
@@ -9,7 +9,7 @@ import { MatCardModule } from "@angular/material/card";
   styleUrls: ["./documentation-index.component.scss"],
 })
 export class DocumentationIndexComponent {
-  registerLink = this.links.registerLink;
+  private links = inject(LinksService);
 
-  constructor(private links: LinksService) {}
+  registerLink = this.links.registerLink;
 }

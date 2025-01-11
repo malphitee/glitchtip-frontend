@@ -203,7 +203,7 @@
     <a href="mailto:{{ billingEmail }}">{{ billingEmail }}</a
     >.
   </p>
-} @else if (selectedTab === 1 && pricingPage) {
+} @else if (selectedTab === 1 && pricingPage()) {
   <h2 class="mat-headline-4">Self-hosted support FAQs</h2>
   <dl>
     <mkt-question-and-answer

@@ -60,7 +60,7 @@
             (selectionChange)="sortByChanged.emit($event)"
             formControlName="sort"
           >
-            @for (sort of sorts; track sort) {
+            @for (sort of sorts(); track sort) {
               <mat-option [value]="sort.param">
                 {{ sort.display }}
               </mat-option>
@@ -78,7 +78,7 @@
             >
               <mat-option [value]="null">All Environments</mat-option>
               @for (
-                environment of organizationEnvironments;
+                environment of organizationEnvironments();
                 track environment
               ) {
                 <mat-option [value]="environment">

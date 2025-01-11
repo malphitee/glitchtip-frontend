@@ -6,13 +6,7 @@ import {
   DatePipe,
   KeyValuePipe,
 } from "@angular/common";
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef,
-  ViewChild,
-} from "@angular/core";
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, ViewChild, inject } from "@angular/core";
 import { Json } from "src/app/interface-primitives";
 import { IssueDetailService } from "../../issue-detail.service";
 import { MatIconModule } from "@angular/material/icon";
@@ -36,12 +30,12 @@ import { MatDividerModule } from "@angular/material/divider";
   ],
 })
 export class EntryBreadcrumbsComponent implements AfterViewInit {
+  private issueDetailService = inject(IssueDetailService);
+
   @ViewChild("breadBox") breadBox?: ElementRef;
 
   breadcrumbs$ = this.issueDetailService.breadcrumbs$;
   showShowMore$ = this.issueDetailService.showShowMore$;
-
-  constructor(private issueDetailService: IssueDetailService) {}
 
   ngAfterViewInit() {
     if (this.breadBox?.nativeElement.offsetHeight >= 1250) {

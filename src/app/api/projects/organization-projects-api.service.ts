@@ -1,5 +1,5 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { map } from "rxjs";
 import { baseUrl } from "../../constants";
 import { OrganizationProject } from "./projects-api.interfaces";
@@ -9,9 +9,9 @@ import { normalizeID } from "../shared-api.utils";
   providedIn: "root",
 })
 export class OrganizationProjectsAPIService {
-  readonly url = "/projects/";
+  protected http = inject(HttpClient);
 
-  constructor(protected http: HttpClient) {}
+  readonly url = "/projects/";
 
   list(organizationSlug: string, query?: string) {
     let params = new HttpParams();

@@ -1,11 +1,11 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { combineLatest, EMPTY } from "rxjs";
 import { filter, map, mergeMap, takeWhile, tap } from "rxjs/operators";
 import { ProjectEnvironment } from "src/app/api/organizations/organizations.interface";
-import { OrganizationsService } from "src/app/api/organizations/organizations.service";
 import { StatefulService } from "src/app/shared/stateful-service/stateful-service";
 import { ProjectSettingsService } from "../../project-settings.service";
 import { ProjectEnvironmentsAPIService } from "src/app/api/projects/project-environments-api.service";
+import { OrganizationsService } from "src/app/api/organizations.service";
 
 interface ProjectsState {
   initialLoad: boolean;
@@ -25,13 +25,17 @@ const initialState: ProjectsState = {
   providedIn: "root",
 })
 export class ProjectEnvironmentsService extends StatefulService<ProjectsState> {
+  private projectEnvironmentsAPIService = inject(ProjectEnvironmentsAPIService);
+  private organizationsService = inject(OrganizationsService);
+  private projectSettingsService = inject(ProjectSettingsService);
+
   readonly initialLoad$ = this.getState$.pipe(map((data) => data.initialLoad));
   readonly toggleHiddenLoading$ = this.getState$.pipe(
-    map((data) => data.toggleHiddenLoading),
+    map((data) => data.toggleHiddenLoading)
   );
   readonly error$ = this.getState$.pipe(map((data) => data.error));
   readonly environments$ = this.getState$.pipe(
-    map((data) => data.environments),
+    map((data) => data.environments)
   );
   readonly sortedEnvironments$ = this.environments$.pipe(
     map((environments) => {
@@ -39,42 +43,38 @@ export class ProjectEnvironmentsService extends StatefulService<ProjectsState> {
       const visible = {
         heading: "Visible",
         environments: environments.filter(
-          (environment) => environment.isHidden === false,
+          (environment) => environment.isHidden === false
         ),
       };
       const hidden = {
         heading: "Hidden",
         environments: environments.filter(
-          (environment) => environment.isHidden === true,
+          (environment) => environment.isHidden === true
         ),
       };
       const sorted = [];
       if (visible.environments.length > 0) sorted.push(visible);
       if (hidden.environments.length > 0) sorted.push(hidden);
       return sorted;
-    }),
+    })
   );
   readonly visibleEnvironments$ = this.environments$.pipe(
     map((environments) =>
       environments
         .filter((environment) => environment.isHidden === false)
-        .map((environment) => environment.name),
-    ),
+        .map((environment) => environment.name)
+    )
   );
   readonly visibleEnvironmentsLoaded$ = this.getState$.pipe(
     filter(({ initialLoad }) => initialLoad === true),
     map((state) =>
       state.environments
         .filter((environment) => environment.isHidden === false)
-        .map((environment) => environment.name),
-    ),
+        .map((environment) => environment.name)
+    )
   );
 
-  constructor(
-    private projectEnvironmentsAPIService: ProjectEnvironmentsAPIService,
-    private organizationsService: OrganizationsService,
-    private projectSettingsService: ProjectSettingsService,
-  ) {
+  constructor() {
     super(initialState);
   }
 
@@ -93,12 +93,12 @@ export class ProjectEnvironmentsService extends StatefulService<ProjectsState> {
                 this.setState({
                   environments: this.sortEnvironments(environments),
                   initialLoad: true,
-                }),
-              ),
+                })
+              )
             );
         }
         return EMPTY;
-      }),
+      })
     );
   }
 
@@ -108,8 +108,8 @@ export class ProjectEnvironmentsService extends StatefulService<ProjectsState> {
         this.setState({
           environments: this.sortEnvironments(environments),
           initialLoad: true,
-        }),
-      ),
+        })
+      )
     );
   }
 
@@ -130,26 +130,26 @@ export class ProjectEnvironmentsService extends StatefulService<ProjectsState> {
                 this.setState({
                   environments: this.updatedEnvironments(updatedEnvironment),
                   toggleHiddenLoading: null,
-                }),
-              ),
+                })
+              )
             );
         }
         return EMPTY;
-      }),
+      })
     );
   }
 
   private sortEnvironments(environments: ProjectEnvironment[]) {
     // https://stackoverflow.com/a/17387454/
     return environments.sort((a, b) =>
-      a.isHidden === b.isHidden ? 0 : a.isHidden ? 1 : -1,
+      a.isHidden === b.isHidden ? 0 : a.isHidden ? 1 : -1
     );
   }
 
   private updatedEnvironments(newEnvironment: ProjectEnvironment) {
     const currentEnvironments = this.state.getValue().environments;
     const environmentToReplace = currentEnvironments.findIndex(
-      (currentEnvironment) => currentEnvironment.name === newEnvironment.name,
+      (currentEnvironment) => currentEnvironment.name === newEnvironment.name
     );
     currentEnvironments[environmentToReplace] = newEnvironment;
     return this.sortEnvironments(currentEnvironments);

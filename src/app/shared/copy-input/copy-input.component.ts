@@ -1,6 +1,6 @@
 import { ClipboardModule } from "@angular/cdk/clipboard";
 import { CommonModule } from "@angular/common";
-import { Component, ChangeDetectionStrategy, Input } from "@angular/core";
+import { Component, ChangeDetectionStrategy, input } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { MatInputModule } from "@angular/material/input";
@@ -23,8 +23,8 @@ import { take } from "rxjs/operators";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CopyInputComponent {
-  @Input() value = "";
-  @Input() placeholder = "";
+  readonly value = input("");
+  readonly placeholder = input("");
   copied$ = new BehaviorSubject(false);
 
   /**

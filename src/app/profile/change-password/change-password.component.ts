@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  OnInit,
-  ViewChild,
-} from "@angular/core";
+import { ChangeDetectionStrategy, Component, OnInit, ViewChild, inject } from "@angular/core";
 import {
   Validators,
   FormGroupDirective,
@@ -50,8 +45,12 @@ export class ChangePasswordComponent
   extends StatefulComponent<PasswordState, PasswordService>
   implements OnInit
 {
+  protected service: PasswordService;
+  private snackBar = inject(MatSnackBar);
+  private userService = inject(UserService);
+
   @ViewChild(FormGroupDirective) formDirective?: FormGroupDirective;
-  user$ = this.userService.userDetails$;
+  user = this.userService.user;
   loading = this.service.loading;
   passwordResetSuccess = this.service.success;
   formErrors = this.service.formErrors;
@@ -81,15 +80,15 @@ export class ChangePasswordComponent
     return this.form.get("new_password2");
   }
 
-  constructor(
-    protected service: PasswordService,
-    private snackBar: MatSnackBar,
-    private userService: UserService
-  ) {
+  constructor() {
+    const service = inject(PasswordService);
+
     toObservable(service.fieldErrors).subscribe((fieldErrors) =>
       mapFormErrors(fieldErrors, this.form)
     );
     super(service);
+  
+    this.service = service;
   }
 
   ngOnInit() {

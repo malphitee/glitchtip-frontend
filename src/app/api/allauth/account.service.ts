@@ -1,5 +1,5 @@
 import { HttpClient } from "@angular/common/http";
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { allauthBase } from "src/app/constants";
 import {
   AllAuthProvidersResponse,
@@ -22,7 +22,8 @@ interface RecoveryCodes {
   providedIn: "root",
 })
 export class AccountService {
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
+
 
   changePassword(current_password: string, new_password: string) {
     return this.http.post<AllAuthSessionResponse>(

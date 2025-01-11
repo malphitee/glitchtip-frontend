@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, OnInit } from "@angular/core";
+import { Component, ChangeDetectionStrategy, OnInit, inject } from "@angular/core";
 import { MonitorState, MonitorService } from "../monitor.service";
 import { ActivatedRoute, RouterModule } from "@angular/router";
 import { map, tap } from "rxjs/operators";
@@ -42,6 +42,9 @@ export class MonitorDetailComponent
   extends StatefulBaseComponent<MonitorState, MonitorService>
   implements OnInit
 {
+  protected service: MonitorService;
+  protected route = inject(ActivatedRoute);
+
   monitor$ = this.service.activeMonitor$;
   uptimeAlertCount$ = this.service.uptimeAlertCount$;
   alertCountLoading$ = this.service.alertCountLoading$;
@@ -81,11 +84,12 @@ export class MonitorDetailComponent
     other: "are # uptime alerts",
   };
 
-  constructor(
-    protected service: MonitorService,
-    protected route: ActivatedRoute,
-  ) {
+  constructor() {
+    const service = inject(MonitorService);
+
     super(service);
+  
+    this.service = service;
   }
   ngOnInit() {
     lastValueFrom(

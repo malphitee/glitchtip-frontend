@@ -1,4 +1,4 @@
-import { Injectable, WritableSignal, effect, signal } from "@angular/core";
+import { Injectable, WritableSignal, effect, signal, inject } from "@angular/core";
 import { HttpErrorResponse } from "@angular/common/http";
 import {
   EMPTY,
@@ -29,6 +29,8 @@ const initialIsAuthenticated = localStorage.getItem("isAuthenticated");
   providedIn: "root",
 })
 export class AuthService {
+  private authenticationService = inject(AuthenticationService);
+
   readonly isAuthenticated = signal(initialIsAuthenticated === "true");
   readonly initialized = signal(false);
   readonly mfaFlows: WritableSignal<AuthFlow[]> = signal([]);
@@ -44,7 +46,7 @@ export class AuthService {
     map(([isLoggedIn]) => isLoggedIn),
   );
 
-  constructor(private authenticationService: AuthenticationService) {
+  constructor() {
     effect(() => {
       localStorage.setItem(
         "isAuthenticated",

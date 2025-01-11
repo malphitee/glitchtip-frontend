@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from "@angular/core";
+import { Component, OnInit, ChangeDetectionStrategy, inject } from "@angular/core";
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { map, exhaustMap } from "rxjs/operators";
 import { IssueDetailService } from "../issue-detail.service";
@@ -38,6 +38,9 @@ import { AsyncPipe, DatePipe, KeyValuePipe } from "@angular/common";
   ],
 })
 export class EventDetailComponent implements OnInit {
+  private issueService = inject(IssueDetailService);
+  route = inject(ActivatedRoute);
+
   event$ = this.issueService.event$;
   initialLoadComplete$ = this.issueService.eventInitialLoadComplete$;
   nextEvent$ = this.issueService.hasNextEvent$;
@@ -48,11 +51,6 @@ export class EventDetailComponent implements OnInit {
     map((params) => params.get("event-id")),
   );
   orgSlug$ = this.route.paramMap.pipe(map((params) => params.get("org-slug")));
-
-  constructor(
-    private issueService: IssueDetailService,
-    public route: ActivatedRoute,
-  ) {}
 
   ngOnInit() {
     this.eventIDParam$

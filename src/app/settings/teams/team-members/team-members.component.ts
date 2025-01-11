@@ -1,8 +1,8 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { TeamsService } from "src/app/api/teams/teams.service";
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { map } from "rxjs/operators";
-import { OrganizationsService } from "src/app/api/organizations/organizations.service";
+import { OrganizationDetailService } from "src/app/api/organizations/organization-detail.service";
 import { Member } from "src/app/api/organizations/organizations.interface";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { UserService } from "src/app/api/user/user.service";
@@ -32,6 +32,12 @@ import { MatCardModule } from "@angular/material/card";
   ],
 })
 export class TeamMembersComponent implements OnInit {
+  private teamsService = inject(TeamsService);
+  private organizationsService = inject(OrganizationDetailService);
+  route = inject(ActivatedRoute);
+  private snackBar = inject(MatSnackBar);
+  private userService = inject(UserService);
+
   teamMembers$ = this.teamsService.teamMembers$;
   filteredAddTeamMembers$ = this.organizationsService.filteredAddTeamMembers$;
   userTeamRole$ = this.teamsService.userTeamRole$;
@@ -44,14 +50,6 @@ export class TeamMembersComponent implements OnInit {
   loading = false;
   selectedTeamMember: number | null = null;
 
-  constructor(
-    private teamsService: TeamsService,
-    private organizationsService: OrganizationsService,
-    public route: ActivatedRoute,
-    private snackBar: MatSnackBar,
-    private userService: UserService,
-  ) {}
-
   ngOnInit() {
     this.route.params
       .pipe(
@@ -61,7 +59,7 @@ export class TeamMembersComponent implements OnInit {
           this.teamSlug = teamSlug;
           this.orgSlug = orgSlug;
           return { orgSlug, teamSlug };
-        }),
+        })
       )
       .subscribe(({ orgSlug, teamSlug }) => {
         if (orgSlug && teamSlug) {
@@ -88,7 +86,7 @@ export class TeamMembersComponent implements OnInit {
         (err) => {
           this.loading = false;
           this.addMemberError = `${err.statusText}: ${err.status}`;
-        },
+        }
       );
   }
 
@@ -100,13 +98,13 @@ export class TeamMembersComponent implements OnInit {
         (resp) => {
           this.selectedTeamMember = null;
           this.snackBar.open(
-            `${memberEmail} has been removed from #${resp.slug}`,
+            `${memberEmail} has been removed from #${resp.slug}`
           );
         },
         (err) => {
           this.selectedTeamMember = null;
           this.removeMemberError = `${err.statusText}: ${err.status}`;
-        },
+        }
       );
   }
 }

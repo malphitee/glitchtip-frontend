@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from "@angular/core";
+import { Component, OnDestroy, inject } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { combineLatest } from "rxjs";
 import { ReleaseDetailService } from "./release-detail.service";
@@ -21,6 +21,9 @@ import { DetailHeaderComponent } from "src/app/shared/detail/header/header.compo
   ],
 })
 export class ReleaseDetailComponent implements OnDestroy {
+  protected service = inject(ReleaseDetailService);
+  protected route = inject(ActivatedRoute);
+
   tooltipDisabled = false;
   displayedColumns = ["name"];
 
@@ -31,10 +34,7 @@ export class ReleaseDetailComponent implements OnDestroy {
   loading$ = this.service.loading$;
   initialLoadComplete$ = this.service.initialLoadComplete$;
 
-  constructor(
-    protected service: ReleaseDetailService,
-    protected route: ActivatedRoute,
-  ) {
+  constructor() {
     combineLatest([this.route.paramMap, this.route.queryParamMap]).subscribe(
       ([params, queryParams]) => {
         const orgSlug = params.get("org-slug");

@@ -1,12 +1,12 @@
-import { Directive, HostListener, ElementRef } from "@angular/core";
+import { Directive, HostListener, ElementRef, inject } from "@angular/core";
 @Directive({
   selector: "[gtSlugify]",
   standalone: true,
 })
 export class SlugifyDirective {
-  regexStr = "^[ ]*$";
+  private el = inject(ElementRef);
 
-  constructor(private el: ElementRef) {}
+  regexStr = "^[ ]*$";
 
   @HostListener("keypress", ["$event"]) onKeyPress(event: KeyboardEvent) {
     if (new RegExp(this.regexStr).test(event.key)) {

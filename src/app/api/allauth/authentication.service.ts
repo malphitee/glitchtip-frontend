@@ -1,5 +1,5 @@
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { allauthBase } from "src/app/constants";
 import {
   AllAuthGetEmailVerificationResponse,
@@ -10,6 +10,7 @@ import {
 import { catchError, Observable, of, throwError } from "rxjs";
 import { JsonObject } from "src/app/interface-primitives";
 import { AuthenticationPublicKeyCredential } from "@github/webauthn-json/dist/types/browser-ponyfill";
+import { getCSRFToken } from "src/app/shared/shared.utils";
 
 const baseUrl = allauthBase + "/auth";
 
@@ -29,30 +30,12 @@ function postForm(action: string, data: JsonObject) {
   f.submit();
 }
 
-function getCookie(name: string) {
-  let cookieValue = null;
-  if (document.cookie && document.cookie !== "") {
-    const cookies = document.cookie.split(";");
-    for (let i = 0; i < cookies.length; i++) {
-      const cookie = cookies[i].trim();
-      // Does this cookie string begin with the name we want?
-      if (cookie.substring(0, name.length + 1) === name + "=") {
-        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-        break;
-      }
-    }
-  }
-  return cookieValue;
-}
-export function getCSRFToken() {
-  return getCookie("csrftoken");
-}
-
 @Injectable({
   providedIn: "root",
 })
 export class AuthenticationService {
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
+
 
   getAuthenticationStatus() {
     return this.http.get<AllAuthSessionResponse>(baseUrl + "/session");
@@ -72,7 +55,7 @@ export class AuthenticationService {
   mfaAuthenticate(code: string) {
     return this.http.post<AllAuthSessionResponse>(
       baseUrl + "/2fa/authenticate",
-      { code },
+      { code }
     );
   }
 
@@ -90,7 +73,7 @@ export class AuthenticationService {
         headers: {
           "X-Email-Verification-Key": key,
         },
-      },
+      }
     );
   }
 
@@ -114,7 +97,7 @@ export class AuthenticationService {
 
   resetPassword(
     key: string,
-    password: string,
+    password: string
   ): Observable<AllAuthSessionResponse> {
     return this.http
       .post<AllAuthSessionResponse>(baseUrl + "/password/reset", {
@@ -128,14 +111,14 @@ export class AuthenticationService {
             return of(error.error);
           }
           return throwError(() => error);
-        }),
+        })
       );
   }
 
   providerRedirect(
     provider: string,
     callbackUrl = "/",
-    process: "login" | "connect" = "login",
+    process: "login" | "connect" = "login"
   ) {
     postForm(baseUrl + "/provider/redirect", {
       provider,
@@ -147,14 +130,14 @@ export class AuthenticationService {
 
   getWebAuthnCredentialRequest() {
     return this.http.get<GetWebAuthnCredentialRequestResponse>(
-      baseUrl + "/webauthn/authenticate",
+      baseUrl + "/webauthn/authenticate"
     );
   }
 
   perform2FAWebAuthn(credential: AuthenticationPublicKeyCredential) {
     return this.http.post<AllAuthSessionResponse>(
       baseUrl + "/webauthn/authenticate",
-      { credential },
+      { credential }
     );
   }
 }

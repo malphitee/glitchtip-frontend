@@ -1,17 +1,17 @@
 <mat-card>
   <a
-    [routerLink]="isMember ? cardLink : secondaryButton?.link"
-    [queryParams]="isMember ? cardLinkQueryParams || {} : {}"
-    [tabIndex]="sampleCard && -1"
+    [routerLink]="isMember() ? cardLink() : secondaryButton?.link"
+    [queryParams]="isMember() ? cardLinkQueryParams() || {} : {}"
+    [tabIndex]="sampleCard() && -1"
   >
     <mat-card-header>
       <mat-card-title>
-        <span>{{ title }}</span>
+        <span>{{ title() }}</span>
       </mat-card-title>
     </mat-card-header>
     <mat-divider></mat-divider>
     <mat-card-content>
-      @for (description of descriptionList; track description) {
+      @for (description of descriptionList(); track description) {
         <p class="mat-small key">
           <span>{{ description.key | uppercase }}</span>
         </p>
@@ -26,16 +26,16 @@
       <a
         class="action-button"
         mat-stroked-button
-        [disabled]="!isMember"
+        [disabled]="!isMember()"
         [matTooltip]="
-          isMember
+          isMember()
             ? ''
             : 'To view issues for this project, add yourself to the corresponding team.'
         "
         matTooltipPosition="right"
         color="primary"
-        [routerLink]="isMember ? cardLink : undefined"
-        [queryParams]="isMember ? primaryButton.query || {} : {}"
+        [routerLink]="isMember() ? cardLink() : undefined"
+        [queryParams]="isMember() ? primaryButton.query || {} : {}"
       >
         @if (primaryButton.icon) {
           <mat-icon class="icon__warning" aria-hidden="true">{{
@@ -51,7 +51,7 @@
         mat-button
         color="primary"
         [routerLink]="secondaryButton.link"
-        [disabled]="sampleCard"
+        [disabled]="sampleCard()"
       >
         @if (secondaryButton.icon) {
           <mat-icon class="icon__settings" aria-hidden="true">{{

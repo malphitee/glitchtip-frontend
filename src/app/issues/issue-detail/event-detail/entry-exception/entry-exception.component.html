@@ -79,7 +79,7 @@
                       >
                         <gt-frame-title
                           [frame]="frame"
-                          [eventPlatform]="eventPlatform"
+                          [eventPlatform]="eventPlatform()"
                         ></gt-frame-title>
                       </mat-expansion-panel-header>
                       @if (frame.context) {
@@ -87,7 +87,7 @@
                           [lineNo]="frame.lineNo"
                           [context]="frame.context"
                           [vars]="frame.vars"
-                          [eventPlatform]="eventPlatform"
+                          [eventPlatform]="eventPlatform()"
                         ></gt-frame-expanded>
                       }
                     </mat-expansion-panel>
@@ -101,7 +101,7 @@
       @if (group.value === "raw" && exception.values) {
         <div>
           <gt-raw-stacktrace
-            [eventPlatform]="eventPlatform"
+            [eventPlatform]="eventPlatform()"
           ></gt-raw-stacktrace>
         </div>
       }

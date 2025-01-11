@@ -1,5 +1,5 @@
 <div>
-  @for (datapoint of data; track datapoint.startCheck) { @if (datapoint) { @if
+  @for (datapoint of data(); track datapoint.startCheck) { @if (datapoint) { @if
   (datapoint.isUp) {
   <div
     class="up-check"

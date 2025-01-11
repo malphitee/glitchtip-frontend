@@ -1,9 +1,4 @@
-import {
-  Component,
-  ChangeDetectionStrategy,
-  OnDestroy,
-  OnInit,
-} from "@angular/core";
+import { Component, ChangeDetectionStrategy, OnDestroy, OnInit, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormControl, FormGroup } from "@angular/forms";
 import { MatSelectChange } from "@angular/material/select";
@@ -21,7 +16,7 @@ import {
 import { IssuesService } from "../issues.service";
 import { Issue, IssueStatus } from "../interfaces";
 import { normalizeProjectParams } from "src/app/shared/shared.utils";
-import { OrganizationsService } from "src/app/api/organizations/organizations.service";
+import { OrganizationDetailService } from "src/app/api/organizations/organization-detail.service";
 import { ProjectEnvironmentsService } from "src/app/settings/projects/project-detail/project-environments/project-environments.service";
 import { DaysAgoPipe, DaysOldPipe } from "../../shared/days-ago.pipe";
 import { IssueZeroStatesComponent } from "../issue-zero-states/issue-zero-states.component";
@@ -33,6 +28,7 @@ import { DataFilterBarComponent } from "../../list-elements/data-filter-bar/data
 import { MatTableModule } from "@angular/material/table";
 import { ProjectFilterBarComponent } from "../../list-elements/project-filter-bar/project-filter-bar.component";
 import { ListTitleComponent } from "../../list-elements/list-title/list-title.component";
+import { OrganizationsService } from "src/app/api/organizations.service";
 
 @Component({
   selector: "gt-issues-page",
@@ -56,10 +52,17 @@ import { ListTitleComponent } from "../../list-elements/list-title/list-title.co
   ],
 })
 export class IssuesPageComponent implements OnInit, OnDestroy {
+  protected service = inject(IssuesService);
+  protected router = inject(Router);
+  protected route = inject(ActivatedRoute);
+  private organizationsService = inject(OrganizationsService);
+  private organizationDetailService = inject(OrganizationDetailService);
+  private projectEnvironmentsService = inject(ProjectEnvironmentsService);
+
   displayedColumns: string[] = ["select", "title", "events"];
   paginator$ = this.service.paginator$;
   loading$ = this.service.getState$.pipe(
-    map((state) => state.pagination.loading),
+    map((state) => state.pagination.loading)
   );
   searchHits$ = this.service.searchHits$;
   searchDirectHit$ = this.service.searchDirectHit$;
@@ -122,11 +125,11 @@ export class IssuesPageComponent implements OnInit, OnDestroy {
         sort: params.get("sort"),
         environment: params.get("environment"),
       };
-    }),
+    })
   );
 
   projectsFromParams$ = this.route.queryParams.pipe(
-    map((params) => normalizeProjectParams(params.project)),
+    map((params) => normalizeProjectParams(params.project))
   );
 
   /**
@@ -139,7 +142,7 @@ export class IssuesPageComponent implements OnInit, OnDestroy {
         return projects.length;
       }
       return 0;
-    }),
+    })
   );
 
   showBulkSelectProject$ = combineLatest([
@@ -154,36 +157,30 @@ export class IssuesPageComponent implements OnInit, OnDestroy {
       } else {
         return false;
       }
-    }),
+    })
   );
 
   organizationEnvironments$ = combineLatest([
     this.appliedProjectCount$,
-    this.organizationsService.organizationEnvironmentsProcessed$,
+    this.organizationDetailService.organizationEnvironmentsProcessed$,
     this.projectEnvironmentsService.visibleEnvironments$,
   ]).pipe(
     map(([appliedProjectCount, orgEnvironments, projectEnvironments]) =>
-      appliedProjectCount !== 1 ? orgEnvironments : projectEnvironments,
-    ),
+      appliedProjectCount !== 1 ? orgEnvironments : projectEnvironments
+    )
   );
 
-  constructor(
-    protected service: IssuesService,
-    protected router: Router,
-    protected route: ActivatedRoute,
-    private organizationsService: OrganizationsService,
-    private projectEnvironmentsService: ProjectEnvironmentsService,
-  ) {
+  constructor() {
     this.issues$.subscribe((resp) =>
       resp.length === 0
         ? this.sortForm.controls.sort.disable()
-        : this.sortForm.controls.sort.enable(),
+        : this.sortForm.controls.sort.enable()
     );
 
     this.organizationEnvironments$.subscribe((environments) =>
       environments.length === 0
         ? this.environmentForm.controls.environment.disable()
-        : this.environmentForm.controls.environment.enable(),
+        : this.environmentForm.controls.environment.enable()
     );
 
     this.currentQueryParams$
@@ -198,12 +195,12 @@ export class IssuesPageComponent implements OnInit, OnDestroy {
               params.start,
               params.end,
               params.sort,
-              params.environment,
+              params.environment
             );
           }
           return EMPTY;
         }),
-        takeUntilDestroyed(),
+        takeUntilDestroyed()
       )
       .subscribe();
 
@@ -211,13 +208,13 @@ export class IssuesPageComponent implements OnInit, OnDestroy {
       .pipe(
         switchMap((orgSlug) => {
           if (orgSlug) {
-            return this.organizationsService.getOrganizationEnvironments(
-              orgSlug,
+            return this.organizationDetailService.getOrganizationEnvironments(
+              orgSlug
             );
           }
           return EMPTY;
         }),
-        takeUntilDestroyed(),
+        takeUntilDestroyed()
       )
       .subscribe();
 
@@ -226,24 +223,24 @@ export class IssuesPageComponent implements OnInit, OnDestroy {
       this.route.queryParamMap.pipe(
         map((params) => params.getAll("project")[0]),
         filter((project) => !!project),
-        distinctUntilChanged(),
+        distinctUntilChanged()
       ),
       this.organizationsService.activeOrganizationProjects$,
     ])
       .pipe(
         switchMap(([orgSlug, projectId, orgProjects]) => {
           const projectSlug = orgProjects?.find(
-            (orgProject) => orgProject.id.toString() === projectId,
+            (orgProject) => orgProject.id.toString() === projectId
           )?.slug;
           if (orgSlug && projectSlug) {
             return this.projectEnvironmentsService.retrieveEnvironmentsWithProperties(
               orgSlug,
-              projectSlug,
+              projectSlug
             );
           }
           return EMPTY;
         }),
-        takeUntilDestroyed(),
+        takeUntilDestroyed()
       )
       .subscribe();
 
@@ -269,7 +266,7 @@ export class IssuesPageComponent implements OnInit, OnDestroy {
               queryParamsHandling: "merge",
             });
           }
-        }),
+        })
       )
       .subscribe();
 
@@ -281,7 +278,7 @@ export class IssuesPageComponent implements OnInit, OnDestroy {
           queryParams: { query: null },
           queryParamsHandling: "merge",
           replaceUrl: true, // so the browser back button works
-        },
+        }
       );
     });
   }
@@ -362,14 +359,14 @@ export class IssuesPageComponent implements OnInit, OnDestroy {
                 params.query,
                 params.start,
                 params.end,
-                params.environment,
+                params.environment
               );
             } else {
               this.service.updateStatusByIssueId(params.orgSlug, status);
             }
           }
-        }),
-      ),
+        })
+      )
     );
   }
 

@@ -1,9 +1,4 @@
-import {
-  Component,
-  OnInit,
-  ChangeDetectionStrategy,
-  OnDestroy,
-} from "@angular/core";
+import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, inject } from "@angular/core";
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { filter, map, withLatestFrom, startWith } from "rxjs/operators";
@@ -44,6 +39,9 @@ import { DetailHeaderComponent } from "src/app/shared/detail/header/header.compo
   ],
 })
 export class MemberDetailComponent implements OnInit, OnDestroy {
+  route = inject(ActivatedRoute);
+  private memberDetailService = inject(MemberDetailService);
+
   member$ = this.memberDetailService.member$;
   memberTeams$ = this.memberDetailService.memberTeams$;
   availableRoles$ = this.memberDetailService.availableRoles$;
@@ -73,11 +71,6 @@ export class MemberDetailComponent implements OnInit, OnDestroy {
         ?.scopes.join(", ");
     }),
   );
-
-  constructor(
-    public route: ActivatedRoute,
-    private memberDetailService: MemberDetailService,
-  ) {}
 
   ngOnInit(): void {
     this.routeParams$

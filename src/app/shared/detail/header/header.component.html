@@ -3,10 +3,10 @@
     mat-stroked-button
     class="back-link"
     [routerLink]="['..']"
-    [queryParams]="backLinkParams"
+    [queryParams]="backLinkParams()"
   >
     <mat-icon>keyboard_arrow_left</mat-icon>
-    {{ backLinkText }}
+    {{ backLinkText() }}
   </a>
   <div class="header-group">
     <h1>
@@ -14,7 +14,7 @@
       @if (getTitleSuffix(); as suffix) {
         <span class="mat-h3">{{ suffix }}</span>
       }
-      <p class="mat-subtitle-2">{{ subtitle }}</p>
+      <p class="mat-subtitle-2">{{ subtitle() }}</p>
     </h1>
     <div class="button-row">
       <ng-content />

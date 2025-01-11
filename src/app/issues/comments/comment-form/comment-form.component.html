@@ -4,7 +4,7 @@
   (ngSubmit)="submitComment(formDirective)"
 >
   <mat-form-field appearance="outline">
-    <mat-label>{{ comment ? "Update Comment" : "Comment" }}</mat-label>
+    <mat-label>{{ comment() ? "Update Comment" : "Comment" }}</mat-label>
     <textarea matInput formControlName="text" required></textarea>
     <mat-hint>Markdown supported</mat-hint>
     @if (commentFormText.errors?.required) {
@@ -15,11 +15,11 @@
     <gt-loading-button
       class="submit-button"
       [disabled]="disableSubmissions()"
-      [loading]="loading"
-      [buttonText]="comment ? 'Update Comment' : 'Submit Comment'"
+      [loading]="loading()"
+      [buttonText]="comment() ? 'Update Comment' : 'Submit Comment'"
     >
     </gt-loading-button>
-    @if (comment) {
+    @if (comment()) {
       <button
         class="cancel-button"
         (click)="emitCancelUpdate()"

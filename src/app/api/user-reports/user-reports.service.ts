@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { tap, catchError, map } from "rxjs/operators";
 import { EMPTY } from "rxjs";
@@ -25,12 +25,14 @@ const initialState: UserReportsState = {
   providedIn: "root",
 })
 export class UserReportsService extends PaginationStatefulService<UserReportsState> {
+  private http = inject(HttpClient);
+
   private readonly issuePageUrl = baseUrl + "/issues/";
 
   reports$ = this.getState$.pipe(map((state) => state.reports));
   errors$ = this.getState$.pipe(map((state) => state.errors));
 
-  constructor(private http: HttpClient) {
+  constructor() {
     super(initialState);
   }
 

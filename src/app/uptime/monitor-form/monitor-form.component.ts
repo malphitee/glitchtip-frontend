@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { Component, OnInit, input, output, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { LoadingButtonComponent } from "src/app/shared/loading-button/loading-button.component";
 import {
@@ -21,11 +21,11 @@ import { MatButtonModule } from "@angular/material/button";
 import { map, Observable, of, startWith } from "rxjs";
 import { MonitorDetail, MonitorInput, MonitorType } from "../uptime.interfaces";
 import { intRegex, urlRegex } from "src/app/shared/validators";
-import { OrganizationsService } from "src/app/api/organizations/organizations.service";
 import { SubscriptionsService } from "src/app/api/subscriptions/subscriptions.service";
 import { EventInfoComponent } from "src/app/shared/event-info/event-info.component";
 import { MonitorService } from "../monitor.service";
 import { ServerError } from "src/app/shared/django.interfaces";
+import { OrganizationsService } from "src/app/api/organizations.service";
 
 const defaultExpectedStatus = 200;
 const defaultInterval = 60;
@@ -72,11 +72,16 @@ const portUrlValidators = [
   ],
 })
 export class MonitorFormComponent implements OnInit {
-  @Input() monitorSettings?: MonitorDetail;
-  @Input({ required: true }) formError!: ServerError | null;
-  @Input({ required: true }) loading!: boolean | null;
+  private organizationsService = inject(OrganizationsService);
+  private subscriptionsService = inject(SubscriptionsService);
+  private monitorService = inject(MonitorService);
+  dialog = inject(MatDialog);
 
-  @Output() formSubmitted = new EventEmitter<MonitorInput>();
+  readonly monitorSettings = input<MonitorDetail>();
+  readonly formError = input.required<ServerError | null>();
+  readonly loading = input.required<boolean | null>();
+
+  readonly formSubmitted = output<MonitorInput>();
 
   orgProjects$ = this.organizationsService.activeOrganizationProjects$;
   totalEventsAllowed = this.subscriptionsService.totalEventsAllowed;
@@ -132,36 +137,30 @@ export class MonitorFormComponent implements OnInit {
     project: this.formProject,
   });
 
-  constructor(
-    private organizationsService: OrganizationsService,
-    private subscriptionsService: SubscriptionsService,
-    private monitorService: MonitorService,
-    public dialog: MatDialog
-  ) {}
-
   ngOnInit() {
     this.monitorService.callSubscriptionDetails();
     this.intervalPerMonth$ =
       this.monitorForm.controls.interval.valueChanges.pipe(
-        startWith(this.monitorSettings?.interval ?? defaultInterval),
+        startWith(this.monitorSettings()?.interval ?? defaultInterval),
         map((interval) => Math.floor(2592000 / interval))
       );
 
-    if (this.monitorSettings) {
-      this.formName.patchValue(this.monitorSettings.name);
-      this.formMonitorType.patchValue(this.monitorSettings.monitorType);
+    const monitorSettings = this.monitorSettings();
+    if (monitorSettings) {
+      this.formName.patchValue(monitorSettings.name);
+      this.formMonitorType.patchValue(monitorSettings.monitorType);
       this.formUrl.patchValue(
-        this.monitorSettings.url ? this.monitorSettings.url : ""
+        monitorSettings.url ? monitorSettings.url : ""
       );
       this.formExpectedStatus.patchValue(
-        this.monitorSettings.expectedStatus
-          ? this.monitorSettings.expectedStatus
+        monitorSettings.expectedStatus
+          ? monitorSettings.expectedStatus
           : defaultExpectedStatus
       );
-      this.formExpectedBody.patchValue(this.monitorSettings.expectedBody);
-      this.formInterval.patchValue(this.monitorSettings.interval);
-      this.formTimeout.patchValue(this.monitorSettings.timeout);
-      this.formProject.patchValue(this.monitorSettings.project);
+      this.formExpectedBody.patchValue(monitorSettings.expectedBody);
+      this.formInterval.patchValue(monitorSettings.interval);
+      this.formTimeout.patchValue(monitorSettings.timeout);
+      this.formProject.patchValue(monitorSettings.project);
     }
 
     this.updateRequiredFields();

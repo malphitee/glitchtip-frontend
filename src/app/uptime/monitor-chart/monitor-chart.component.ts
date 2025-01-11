@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, input } from "@angular/core";
 import { MonitorCheck } from "../uptime.interfaces";
 import { DownReason } from "../uptime.interfaces";
 import { reasonTextConversions } from "../uptime.utils";
@@ -12,13 +12,13 @@ import { CommonModule } from "@angular/common";
   imports: [CommonModule, MatTooltipModule],
 })
 export class MonitorChartComponent {
-  @Input() data: MonitorCheck[] = [];
+  readonly data = input<MonitorCheck[]>([]);
 
   constructor() {}
 
   get emptyChecks() {
-    if (this.data.length < 60) {
-      return new Array(60 - this.data.length);
+    if (this.data().length < 60) {
+      return new Array(60 - this.data().length);
     } else {
       return [];
     }

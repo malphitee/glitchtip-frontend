@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { NewProjectAlert, ProjectAlert } from "./project-alerts.interface";
 import { baseUrl } from "../../../constants";
@@ -12,9 +12,15 @@ import { APIBaseService } from "../../api-base.service";
   providedIn: "root",
 })
 export class ProjectAlertsAPIService extends APIBaseService {
+  protected http: HttpClient;
+
   readonly url = baseUrl + "/projects/";
-  constructor(protected http: HttpClient) {
+  constructor() {
+    const http = inject(HttpClient);
+
     super(http);
+  
+    this.http = http;
   }
 
   list(organizationSlug: string, projectSlug: string) {

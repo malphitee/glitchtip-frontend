@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, input } from "@angular/core";
 
 @Component({
   imports: [],
@@ -7,7 +7,7 @@ import { Component, Input } from "@angular/core";
   styleUrls: ["./question-and-answer.component.scss"],
 })
 export class QuestionAndAnswerComponent {
-  @Input() question: string | undefined;
+  readonly question = input<string>();
   /**
    * If your answer is one paragraph of plaintext, use this. Otherwise, use
    * arbitrary HTML with children:

@@ -17,6 +17,7 @@ describe("Issues Page", () => {
     requestLogin();
     cy.visit(`/${organization.slug}/issues`);
     // Need the DSN to do this from the frontend
+    cy.wait(1000);
     cy.get("gt-project-filter-bar mat-expansion-panel-header").click();
     cy.get("gt-project-filter-bar").contains("PitchFlip").click();
     cy.get("[data-test-dsn]").invoke("val").as("dsn");
@@ -119,6 +120,7 @@ describe("Issues Page", () => {
   it("should make 55 issues and select issues beyond the first page", function () {
     jsErrors.generateIssues(getDSN(this.dsn), 55);
     cy.visit(`/${organization.slug}/issues`);
+    cy.wait(100);
 
     cy.get("#selectAll").click();
     cy.contains("Select all 55 issues that match this query");
@@ -126,17 +128,18 @@ describe("Issues Page", () => {
     cy.contains("All 55 issues are currently selected");
     cy.get("#bulkMarkResolved").click();
     cy.log(
-      "the ui will change, but to ensure this made a successful network call, we reload the page",
+      "the ui will change, but to ensure this made a successful network call, we reload the page"
     );
     cy.reload();
     cy.contains("No events match your filters");
     cy.visit(
-      `http://localhost:4200/${organization.slug}/issues?&query=is:resolved`,
+      `http://localhost:4200/${organization.slug}/issues?&query=is:resolved`
     );
+    cy.wait(100);
     cy.get("gt-project-filter-bar mat-expansion-panel-header").click();
     cy.get("gt-project-filter-bar").contains("PitchFlip").click();
     cy.log(
-      "now we are testing that the issues we resolved for a specific project are indeed resolved",
+      "now we are testing that the issues we resolved for a specific project are indeed resolved"
     );
     cy.get("table tbody").contains("What I'm really trying to say is:");
   });

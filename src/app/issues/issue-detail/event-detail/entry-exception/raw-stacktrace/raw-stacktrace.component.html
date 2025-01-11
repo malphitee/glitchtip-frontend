@@ -1,7 +1,7 @@
 @for (value of rawStacktraceValues$ | async; track value) {
   <div class="wrapper">
     <p>
-      @if (eventPlatform === "java") {
+      @if (eventPlatform() === "java") {
         @if (value.module) {
           {{ value.module }}.<ng-container
             >{{ value.type }}&#58; {{ value.value }}</ng-container
@@ -14,7 +14,7 @@
     @if (checkStacktraceInterface(value.stacktrace)) {
       @for (frame of value.stacktrace.frames; track frame; let i = $index) {
         <div class="indent">
-          @switch (frame.platform || eventPlatform) {
+          @switch (frame.platform || eventPlatform()) {
             @case ("javascript") {
               @if (frame.function) {
                 &ensp;at {{ frame.function }} &#40;

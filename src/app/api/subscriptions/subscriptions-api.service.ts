@@ -1,5 +1,5 @@
 import { HttpClient } from "@angular/common/http";
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { baseUrl } from "../../constants";
 import {
   CreateSubscriptionResp,
@@ -11,8 +11,9 @@ import {
   providedIn: "root",
 })
 export class SubscriptionsAPIService {
+  protected http = inject(HttpClient);
+
   readonly url = `${baseUrl}/subscriptions/`;
-  constructor(protected http: HttpClient) {}
 
   create(organizationId: number, priceId: string) {
     const data = {

@@ -3,7 +3,7 @@
   <img
     [src]="fallbackSrc"
     [srcset]="mainSrcset"
-    [attr.loading]="loading"
+    [attr.loading]="loading()"
     [alt]="alt ? alt : ''"
   />
 </picture>

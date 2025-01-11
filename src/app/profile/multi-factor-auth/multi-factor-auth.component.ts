@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from "@angular/core";
+import { Component, OnInit, ChangeDetectionStrategy, inject } from "@angular/core";
 
 import { lastValueFrom } from "rxjs";
 import { MultiFactorAuthService } from "./multi-factor-auth.service";
@@ -13,8 +13,9 @@ import { WebAuthnComponent } from "./webauthn/webauthn.component";
   imports: [TOTPComponent, WebAuthnComponent],
 })
 export class MultiFactorAuthComponent implements OnInit {
+  private service = inject(MultiFactorAuthService);
+
   initialLoadComplete = this.service.initialLoadComplete;
-  constructor(private service: MultiFactorAuthService) {}
 
   ngOnInit() {
     lastValueFrom(this.service.getAuthenticators());

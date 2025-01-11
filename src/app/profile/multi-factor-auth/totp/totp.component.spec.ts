@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, input } from "@angular/core";
 import { HttpClientTestingModule } from "@angular/common/http/testing";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
@@ -13,7 +13,7 @@ import { TOTPComponent } from "./totp.component";
   imports: [HttpClientTestingModule, MatSnackBarModule, NoopAnimationsModule],
 })
 class BackupCodesStubComponent {
-  @Input() error: any;
+  readonly error = input<any>();
 }
 
 describe("TotpComponent", () => {

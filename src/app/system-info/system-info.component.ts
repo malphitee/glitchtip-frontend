@@ -1,5 +1,4 @@
-import { ChangeDetectionStrategy, Component } from "@angular/core";
-import { AsyncPipe } from "@angular/common";
+import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import {
   MatCard,
   MatCardContent,
@@ -9,12 +8,10 @@ import {
 import { SettingsService } from "../api/settings.service";
 import { MatDivider } from "@angular/material/divider";
 import { MatHint } from "@angular/material/form-field";
-import { map, combineLatest } from "rxjs";
 
 @Component({
   selector: "gt-system-info",
   imports: [
-    AsyncPipe,
     MatCard,
     MatCardHeader,
     MatCardTitle,
@@ -27,28 +24,10 @@ import { map, combineLatest } from "rxjs";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SystemInfoComponent {
-  backendConfiguration$ = combineLatest([
-    this.settingsService.enableOrganizationCreation$,
-    this.settingsService.enableUserRegistration$,
-    this.settingsService.serverTimeZone$,
-    this.settingsService.version$,
-  ]).pipe(
-    map(
-      ([
-        enableOrganizationCreation,
-        enableUserRegistration,
-        serverTimeZone,
-        version,
-      ]) => {
-        return {
-          enableOrganizationCreation,
-          enableUserRegistration,
-          serverTimeZone,
-          version,
-        };
-      },
-    ),
-  );
+  private settingsService = inject(SettingsService);
 
-  constructor(private settingsService: SettingsService) {}
+  enableOrganizationCreate = this.settingsService.enableOrganizationCreation;
+  enableUserRegistration = this.settingsService.enableUserRegistration;
+  serverTimeZone = this.settingsService.serverTimeZone;
+  version = this.settingsService.version;
 }

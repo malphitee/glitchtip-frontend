@@ -1,4 +1,4 @@
-@if (template === "buttons") {
+@if (template() === "buttons") {
   <div class="heading">
     <div class="text-info">
       <label for="project-picker" class="mat-body-1">Platform</label>
@@ -75,7 +75,7 @@
   </mat-tab-group>
 }
 
-@if (template === "dropdown") {
+@if (template() === "dropdown") {
   <label class="mat-caption">Platform</label>
   <mat-accordion displayMode="flat">
     <mat-expansion-panel

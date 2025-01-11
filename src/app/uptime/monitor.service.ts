@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { map, tap, catchError, filter, take } from "rxjs/operators";
 import { EMPTY, combineLatest, lastValueFrom } from "rxjs";
 import { MatSnackBar } from "@angular/material/snack-bar";
@@ -11,12 +11,13 @@ import {
   ResponseTimeSeries,
 } from "./uptime.interfaces";
 import { MonitorsAPIService } from "../api/monitors/monitors-api.service";
-import { OrganizationsService } from "../api/organizations/organizations.service";
 import { HttpErrorResponse } from "@angular/common/http";
 import { ProjectAlertsAPIService } from "../api/projects/project-alerts/project-alerts.service";
 import { SettingsService } from "../api/settings.service";
 import { SubscriptionsService } from "../api/subscriptions/subscriptions.service";
 import { ServerError } from "../shared/django.interfaces";
+import { OrganizationsService } from "../api/organizations.service";
+import { toObservable } from "@angular/core/rxjs-interop";
 
 export interface MonitorState {
   monitorDetails: MonitorDetail | null;
@@ -42,95 +43,75 @@ const initialState: MonitorState = {
   providedIn: "root",
 })
 export class MonitorService extends StatefulService<MonitorState> {
+  private monitorsAPIService = inject(MonitorsAPIService);
+  private organizationsService = inject(OrganizationsService);
+  private projectAlertsService = inject(ProjectAlertsAPIService);
+  private settingsService = inject(SettingsService);
+  private subscriptionsService = inject(SubscriptionsService);
+  private snackBar = inject(MatSnackBar);
+  private router = inject(Router);
+
   editLoading$ = this.getState$.pipe(map((state) => state.editLoading));
   createLoading$ = this.getState$.pipe(map((state) => state.createLoading));
   deleteLoading$ = this.getState$.pipe(map((state) => state.deleteLoading));
   error$ = this.getState$.pipe(map((state) => state.error));
   uptimeAlertCount$ = this.getState$.pipe(
-    map((state) => state.uptimeAlertCount),
+    map((state) => state.uptimeAlertCount)
   );
   readonly alertCountLoading$ = this.getState$.pipe(
-    map((data) => data.alertCountLoading),
+    map((data) => data.alertCountLoading)
   );
   readonly activeMonitor$ = this.getState$.pipe(
-    map((data) => data.monitorDetails),
+    map((data) => data.monitorDetails)
   );
   associatedProjectSlug$ = combineLatest([
-    this.organizationsService.activeOrganizationProjects$,
+    toObservable(this.organizationsService.activeOrganizationProjects),
     this.activeMonitor$,
   ]).pipe(
     map(
       ([projects, monitor]) =>
-        projects?.find((project) => project.id === monitor?.project)?.slug,
-    ),
+        projects?.find((project) => project.id === monitor?.project?.toString())
+          ?.slug
+    )
   );
   activeMonitorRecentChecksSeries$ = this.activeMonitor$.pipe(
     map((monitor) =>
-      monitor?.checks.length
-        ? this.convertChecksToSeries(monitor.checks)
-        : null,
-    ),
+      monitor?.checks.length ? this.convertChecksToSeries(monitor.checks) : null
+    )
+  );
+  activeOrganizationSlug$ = toObservable(
+    this.organizationsService.activeOrganizationSlug
   );
 
-  constructor(
-    private monitorsAPIService: MonitorsAPIService,
-    private organizationsService: OrganizationsService,
-    private projectAlertsService: ProjectAlertsAPIService,
-    private settingsService: SettingsService,
-    private subscriptionsService: SubscriptionsService,
-    private snackBar: MatSnackBar,
-    private router: Router,
-  ) {
+  constructor() {
     super(initialState);
   }
 
   createMonitor(monitor: MonitorInput) {
-    lastValueFrom(
-      this.organizationsService.activeOrganizationSlug$.pipe(
-        take(1),
-        tap((orgSlug) => {
-          if (orgSlug) {
-            this.setCreateMonitorStart();
-            lastValueFrom(
-              this.monitorsAPIService.createMonitor(orgSlug, monitor).pipe(
-                tap((newMonitor) => {
-                  this.setCreateMonitorEnd();
-                  this.snackBar.open(`${newMonitor.name} has been created`);
-                  this.router.navigate([
-                    orgSlug,
-                    "uptime-monitors",
-                    newMonitor.id,
-                  ]);
-                }),
-                catchError((err) => this.processError(err)),
-              ),
-            );
-          }
-        }),
-      ),
-    );
+    const orgSlug = this.organizationsService.activeOrganizationSlug();
+    if (orgSlug) {
+      this.setCreateMonitorStart();
+      lastValueFrom(
+        this.monitorsAPIService.createMonitor(orgSlug, monitor).pipe(
+          tap((newMonitor) => {
+            this.setCreateMonitorEnd();
+            this.snackBar.open(`${newMonitor.name} has been created`);
+            this.router.navigate([orgSlug, "uptime-monitors", newMonitor.id]);
+          }),
+          catchError((err) => this.processError(err))
+        )
+      );
+    }
   }
 
   callSubscriptionDetails() {
-    lastValueFrom(
-      this.settingsService.billingEnabled$.pipe(
-        tap((billingEnabled) => {
-          if (billingEnabled) {
-            lastValueFrom(
-              this.organizationsService.activeOrganizationSlug$.pipe(
-                filter((slug) => !!slug),
-                take(1),
-                tap((slug) => {
-                  if (slug) {
-                    this.subscriptionsService.retrieveSubscription(slug);
-                  }
-                }),
-              ),
-            );
-          }
-        }),
-      ),
-    );
+    const billingEnabled = this.settingsService.billingEnabled();
+    if (billingEnabled) {
+      const slug = this.organizationsService.activeOrganizationSlug();
+      if (slug) {
+        this.subscriptionsService.retrieveSubscription(slug);
+      }
+    }
   }
 
   private processError(err: any) {
@@ -150,10 +131,7 @@ export class MonitorService extends StatefulService<MonitorState> {
 
   editMonitor(data: MonitorInput) {
     lastValueFrom(
-      combineLatest([
-        this.organizationsService.activeOrganizationSlug$,
-        this.activeMonitor$,
-      ]).pipe(
+      combineLatest([this.activeOrganizationSlug$, this.activeMonitor$]).pipe(
         take(1),
         filter(([orgSlug, monitor]) => !!orgSlug && !!monitor),
         tap(([orgSlug, monitor]) => {
@@ -169,11 +147,11 @@ export class MonitorService extends StatefulService<MonitorState> {
                   updatedMonitor.id,
                 ]);
               }),
-              catchError((err) => this.processError(err)),
-            ),
+              catchError((err) => this.processError(err))
+            )
           );
-        }),
-      ),
+        })
+      )
     );
   }
 
@@ -187,20 +165,17 @@ export class MonitorService extends StatefulService<MonitorState> {
         catchError(() => {
           this.setRetrieveMonitorDetailsError();
           this.snackBar.open(
-            `There was an error retrieving your monitor details. Please try again.`,
+            `There was an error retrieving your monitor details. Please try again.`
           );
           return EMPTY;
-        }),
-      ),
+        })
+      )
     );
   }
 
   deleteMonitor() {
     lastValueFrom(
-      combineLatest([
-        this.organizationsService.activeOrganizationSlug$,
-        this.activeMonitor$,
-      ]).pipe(
+      combineLatest([this.activeOrganizationSlug$, this.activeMonitor$]).pipe(
         take(1),
         filter(([orgSlug, monitor]) => !!orgSlug && !!monitor),
         tap(([orgSlug, monitor]) => {
@@ -215,14 +190,14 @@ export class MonitorService extends StatefulService<MonitorState> {
               catchError(() => {
                 this.setDeleteMonitorError();
                 this.snackBar.open(
-                  `There was an error deleting this issue. Please try again.`,
+                  `There was an error deleting this issue. Please try again.`
                 );
                 return EMPTY;
-              }),
-            ),
+              })
+            )
           );
-        }),
-      ),
+        })
+      )
     );
   }
 
@@ -239,19 +214,19 @@ export class MonitorService extends StatefulService<MonitorState> {
                 this.projectAlertsService.list(orgSlug, projectSlug).pipe(
                   tap((projectAlerts) => {
                     let alertCount = projectAlerts.filter(
-                      (alert) => alert.uptime === true,
+                      (alert) => alert.uptime === true
                     ).length;
                     this.setCountUptimeAlertsEnd(alertCount);
                   }),
                   catchError(() => {
                     this.setCountUptimeAlertsError();
                     return EMPTY;
-                  }),
-                ),
+                  })
+                )
               );
             }
-          }),
-        ),
+          })
+        )
       );
     }
   }
@@ -286,7 +261,7 @@ export class MonitorService extends StatefulService<MonitorState> {
           name: input[0].isUp ? "Up" : "Down",
           series: [],
         },
-      ] as ResponseTimeSeries[],
+      ] as ResponseTimeSeries[]
     );
   }
 

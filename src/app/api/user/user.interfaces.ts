@@ -1,4 +1,7 @@
+import { components } from "../api-schema";
 import { Avatar } from "../organizations/organizations.interface";
+
+type UserOptions = components["schemas"]["UserOptions"];
 
 export interface SocialAccount {
   id: number;
@@ -47,12 +50,4 @@ interface Email {
   is_verified: boolean;
   id: string;
   email: string;
-}
-
-export interface UserOptions {
-  timezone?: string;
-  stacktraceOrder?: number;
-  language?: string;
-  clock24Hours?: boolean;
-  preferredTheme?: string;
 }

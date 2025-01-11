@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from "@angular/common/http";
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { catchError, EMPTY, map, tap } from "rxjs";
 import { ReleasesAPIService } from "src/app/api/releases/releases-api.service";
 import { Release } from "../api/releases/releases.interfaces";
@@ -25,10 +25,12 @@ const initialState: ReleasesState = {
   providedIn: "root",
 })
 export class ReleasesService extends PaginationStatefulService<ReleasesState> {
+  private releasesAPIService = inject(ReleasesAPIService);
+
   releases$ = this.getState$.pipe(map((state) => state.releases));
   errors$ = this.getState$.pipe(map((state) => state.errors));
 
-  constructor(private releasesAPIService: ReleasesAPIService) {
+  constructor() {
     super(initialState);
   }
 

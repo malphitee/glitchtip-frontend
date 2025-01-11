@@ -1,7 +1,7 @@
-import { Component, OnInit, ChangeDetectionStrategy } from "@angular/core";
+import { Component, OnInit, ChangeDetectionStrategy, inject } from "@angular/core";
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { map, filter } from "rxjs/operators";
-import { OrganizationsService } from "src/app/api/organizations/organizations.service";
+import { OrganizationDetailService } from "src/app/api/organizations/organization-detail.service";
 import { MembersService } from "src/app/api/organizations/members.service";
 import {
   Member,
@@ -14,6 +14,7 @@ import { AsyncPipe } from "@angular/common";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatCardModule } from "@angular/material/card";
 import { MatButtonModule } from "@angular/material/button";
+import { OrganizationsService } from "src/app/api/organizations.service";
 
 @Component({
   selector: "gt-members",
@@ -32,24 +33,24 @@ import { MatButtonModule } from "@angular/material/button";
   ],
 })
 export class MembersComponent implements OnInit {
-  activeOrganizationDetail$ =
-    this.organizationsService.activeOrganizationDetail$;
-  members$ = this.membersService.members$;
+  private organizationsService = inject(OrganizationsService);
+  private organizationDetailService = inject(OrganizationDetailService);
+  private membersService = inject(MembersService);
+  private route = inject(ActivatedRoute);
 
-  constructor(
-    private organizationsService: OrganizationsService,
-    private membersService: MembersService,
-    private route: ActivatedRoute,
-  ) {}
+  activeOrganizationDetail$ = this.organizationsService.activeOrganization$;
+  members$ = this.membersService.members$;
 
   ngOnInit(): void {
     this.route.params
       .pipe(
         map((params) => params["org-slug"] as string),
-        filter((slug) => !!slug),
+        filter((slug) => !!slug)
       )
       .subscribe((slug) => {
-        this.organizationsService.retrieveOrganizationMembers(slug).toPromise();
+        this.organizationDetailService
+          .retrieveOrganizationMembers(slug)
+          .toPromise();
       });
   }
 

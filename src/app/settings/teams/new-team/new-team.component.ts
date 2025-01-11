@@ -1,4 +1,4 @@
-import { Component, Inject } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import {
   FormGroup,
   FormControl,
@@ -17,7 +17,7 @@ import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
 
 import { LoadingButtonComponent } from "../../../shared/loading-button/loading-button.component";
-import { OrganizationsService } from "src/app/api/organizations/organizations.service";
+import { OrganizationDetailService } from "src/app/api/organizations/organization-detail.service";
 import { SlugifyDirective } from "./slugify.directive";
 import { slugRegex } from "src/app/shared/validators";
 
@@ -36,6 +36,13 @@ import { slugRegex } from "src/app/shared/validators";
   ],
 })
 export class NewTeamComponent {
+  private organizationsService = inject(OrganizationDetailService);
+  private snackBar = inject(MatSnackBar);
+  dialogRef = inject<MatDialogRef<NewTeamComponent>>(MatDialogRef);
+  data = inject<{
+    orgSlug: string;
+}>(MAT_DIALOG_DATA);
+
   loading = false;
   errors: string[] = [];
   form = new FormGroup({
@@ -45,13 +52,6 @@ export class NewTeamComponent {
     ]),
   });
   orgSlug?: string;
-
-  constructor(
-    private organizationsService: OrganizationsService,
-    private snackBar: MatSnackBar,
-    public dialogRef: MatDialogRef<NewTeamComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { orgSlug: string },
-  ) {}
 
   get slug() {
     return this.form.get("slug");
@@ -79,7 +79,7 @@ export class NewTeamComponent {
             } else {
               this.errors = [`${err.statusText}: ${err.status}`];
             }
-          },
+          }
         );
     }
   }

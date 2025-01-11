@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { map, tap } from "rxjs/operators";
 import { MonitorChecksAPIService } from "src/app/api/monitors/monitor-checks-API.service";
 import {
@@ -21,9 +21,11 @@ const initialState: MonitorChecksState = {
   providedIn: "root",
 })
 export class MonitorChecksService extends PaginationStatefulService<MonitorChecksState> {
+  private monitorChecksAPIService = inject(MonitorChecksAPIService);
+
   monitorChecks$ = this.getState$.pipe(map((state) => state.monitorChecks));
 
-  constructor(private monitorChecksAPIService: MonitorChecksAPIService) {
+  constructor() {
     super(initialState);
   }
 

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from "@angular/core";
+import { Component, ChangeDetectionStrategy, inject } from "@angular/core";
 import { IssueDetailService } from "../../issue-detail.service";
 import { EntryDataComponent } from "../../../../shared/entry-data/entry-data.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -19,7 +19,7 @@ import { AsyncPipe, KeyValuePipe } from "@angular/common";
   ],
 })
 export class EntryRequestComponent {
-  eventEntryRequest$ = this.issueService.eventEntryRequest$;
+  private issueService = inject(IssueDetailService);
 
-  constructor(private issueService: IssueDetailService) {}
+  eventEntryRequest$ = this.issueService.eventEntryRequest$;
 }

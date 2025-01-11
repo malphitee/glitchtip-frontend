@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from "@angular/core";
+import { Component, OnInit, ChangeDetectionStrategy, inject } from "@angular/core";
 import {
   FormControl,
   Validators,
@@ -8,7 +8,7 @@ import {
 import { TeamsService } from "src/app/api/teams/teams.service";
 import { ActivatedRoute } from "@angular/router";
 import { map, take } from "rxjs/operators";
-import { OrganizationsService } from "src/app/api/organizations/organizations.service";
+import { OrganizationDetailService } from "src/app/api/organizations/organization-detail.service";
 import { LoadingButtonComponent } from "../../../shared/loading-button/loading-button.component";
 import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -32,6 +32,10 @@ import { AsyncPipe } from "@angular/common";
   ],
 })
 export class TeamSettingsComponent implements OnInit {
+  private teamsService = inject(TeamsService);
+  private organizationsService = inject(OrganizationDetailService);
+  private route = inject(ActivatedRoute);
+
   team$ = this.teamsService.team$;
   loading$ = this.teamsService.loading$;
   errors$ = this.teamsService.errors$;
@@ -39,14 +43,8 @@ export class TeamSettingsComponent implements OnInit {
     slug: new FormControl("", [Validators.required]),
   });
   routeSlugs$ = this.route.paramMap.pipe(
-    map((params) => [params.get("org-slug"), params.get("team-slug")]),
+    map((params) => [params.get("org-slug"), params.get("team-slug")])
   );
-
-  constructor(
-    private teamsService: TeamsService,
-    private organizationsService: OrganizationsService,
-    private route: ActivatedRoute,
-  ) {}
 
   ngOnInit(): void {
     this.routeSlugs$
@@ -56,7 +54,7 @@ export class TeamSettingsComponent implements OnInit {
             this.teamsService.retrieveSingleTeam(orgSlug, teamSlug);
             this.form.patchValue({ slug: teamSlug });
           }
-        }),
+        })
       )
       .subscribe();
   }
@@ -74,7 +72,7 @@ export class TeamSettingsComponent implements OnInit {
                 this.organizationsService.updateTeam(resp.id, resp.slug);
               });
           }
-        }),
+        })
       )
       .toPromise();
   }
@@ -88,10 +86,10 @@ export class TeamSettingsComponent implements OnInit {
               this.teamsService
                 .deleteTeam(orgSlug, teamSlug)
                 .subscribe(() =>
-                  this.organizationsService.deleteTeam(teamSlug),
+                  this.organizationsService.deleteTeam(teamSlug)
                 );
             }
-          }),
+          })
         )
         .toPromise();
     }

@@ -1,24 +1,26 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
 import { catchError, EMPTY, lastValueFrom, tap } from "rxjs";
-import { Organization } from "src/app/api/organizations/organizations.interface";
 import { SubscriptionsAPIService } from "src/app/api/subscriptions/subscriptions-api.service";
 import { BasePrice } from "src/app/api/subscriptions/subscriptions.interfaces";
 import { SubscriptionsService } from "src/app/api/subscriptions/subscriptions.service";
 import { StripeService } from "../stripe.service";
 
+import { components } from "src/app/api/api-schema";
+
+type Organization = components["schemas"]["OrganizationDetailSchema"];
+
 @Injectable({
   providedIn: "root",
 })
 export class PaymentService {
-  constructor(
-    private subscriptionsService: SubscriptionsService,
-    private subscriptionsAPIService: SubscriptionsAPIService,
-    private stripe: StripeService,
-    private snackBar: MatSnackBar,
-    private router: Router
-  ) {}
+  private subscriptionsService = inject(SubscriptionsService);
+  private subscriptionsAPIService = inject(SubscriptionsAPIService);
+  private stripe = inject(StripeService);
+  private snackBar = inject(MatSnackBar);
+  private router = inject(Router);
+
   dispatchSubscriptionCreation(organization: Organization, price: BasePrice) {
     this.setSubscriptionCreationStart(price.id);
     if (price.unit_amount === 0) {

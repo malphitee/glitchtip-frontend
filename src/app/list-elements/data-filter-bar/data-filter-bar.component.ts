@@ -1,5 +1,5 @@
 import { CommonModule, formatDate } from "@angular/common";
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { Component, Input, input, output } from "@angular/core";
 import { FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatNativeDateModule, MatOptionModule } from "@angular/material/core";
@@ -25,16 +25,19 @@ import { MatSelectChange, MatSelectModule } from "@angular/material/select";
 export class DataFilterBarComponent {
   @Input() dateForm?: FormGroup;
   @Input() sortForm?: FormGroup;
-  @Input() sorts?: { param: string; display: string }[];
+  readonly sorts = input<{
+    param: string;
+    display: string;
+}[]>();
   @Input() environmentForm?: FormGroup;
   @Input() searchForm?: FormGroup;
-  @Input() organizationEnvironments: string[] = [];
+  readonly organizationEnvironments = input<string[]>([]);
 
-  @Output() dateFormSubmission = new EventEmitter<object>();
-  @Output() dateFormReset = new EventEmitter();
-  @Output() filterByEnvironment = new EventEmitter<MatSelectChange>();
-  @Output() searchSubmit = new EventEmitter();
-  @Output() sortByChanged = new EventEmitter<MatSelectChange>();
+  readonly dateFormSubmission = output<object>();
+  readonly dateFormReset = output();
+  readonly filterByEnvironment = output<MatSelectChange>();
+  readonly searchSubmit = output();
+  readonly sortByChanged = output<MatSelectChange>();
 
   constructor() {}
 

@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { StatefulBaseComponent } from "src/app/shared/stateful-service/stateful-base.component";
 import { AuthTokensService, AuthTokensState } from "./auth-tokens.service";
 import { LoadingButtonComponent } from "../../shared/loading-button/loading-button.component";
@@ -27,12 +27,18 @@ export class AuthTokensComponent
   extends StatefulBaseComponent<AuthTokensState, AuthTokensService>
   implements OnInit
 {
+  protected service: AuthTokensService;
+
   authTokens$ = this.service.apiTokens$;
   deleteLoading$ = this.service.deleteLoading$;
   initialLoad$ = this.service.initialLoad$;
 
-  constructor(protected service: AuthTokensService) {
+  constructor() {
+    const service = inject(AuthTokensService);
+
     super(service);
+  
+    this.service = service;
   }
 
   ngOnInit(): void {

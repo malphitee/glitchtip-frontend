@@ -1,5 +1,5 @@
 import { KeyValuePipe } from "@angular/common";
-import { Component, ChangeDetectionStrategy, Input } from "@angular/core";
+import { Component, ChangeDetectionStrategy, Input, input } from "@angular/core";
 import { MatDividerModule } from "@angular/material/divider";
 import { JsonArrayOrObject, Json } from "src/app/interface-primitives";
 import { FrameContextTuple } from "src/app/issues/interfaces";
@@ -14,10 +14,10 @@ import { PrismDirective } from "src/app/prismjs/prism.directive";
   imports: [PrismDirective, MatDividerModule, KeyValuePipe],
 })
 export class FrameExpandedComponent {
-  @Input() lineNo?: string | number | null;
-  @Input() context?: FrameContextTuple[];
+  readonly lineNo = input<string | number | null>();
+  readonly context = input<FrameContextTuple[]>();
   @Input() vars?: { [key: string]: Json } | null;
-  @Input() eventPlatform?: string;
+  readonly eventPlatform = input<string>();
 
   checkType(value: JsonArrayOrObject | Json): string {
     if (value === null) {
@@ -30,21 +30,26 @@ export class FrameExpandedComponent {
   }
 
   get shouldDisplayPrismCode() {
+    const eventPlatform = this.eventPlatform();
+    const context = this.context();
     return (
-      this.eventPlatform &&
-      this.context &&
-      this.context[0] &&
-      PRISM_ALL_SUPPORTED_GRAMMAR.includes(this.eventPlatform)
+      eventPlatform &&
+      context &&
+      context[0] &&
+      PRISM_ALL_SUPPORTED_GRAMMAR.includes(eventPlatform)
     );
   }
 
   get firstLineNumber() {
-    return this.context ? this.context[0][0] : null;
+    const context = this.context();
+    return context ? context[0][0] : null;
   }
 
   get highlightLine() {
-    if (this.context && this.lineNo) {
-      return this.context[0][0] === 0 ? +this.lineNo + 1 : this.lineNo;
+    const context = this.context();
+    const lineNo = this.lineNo();
+    if (context && lineNo) {
+      return context[0][0] === 0 ? +lineNo + 1 : lineNo;
     }
     return null;
   }
@@ -56,8 +61,9 @@ export class FrameExpandedComponent {
     // see: https://gitlab.com/glitchtip/glitchtip-backend/-/merge_requests/887
     // But there will likely still be events in the DB that have null values here.
     // Ternary statement below can be simplified when that is no longer an issue.
-    return this.context?.length
-      ? this.context
+    const context = this.context();
+    return context?.length
+      ? context
           .map((tuple) =>
             tuple[1] ? tuple[1].toString().replace(trailingNewLine, "") : "",
           )

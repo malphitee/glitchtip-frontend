@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input } from "@angular/core";
+import { Component, ChangeDetectionStrategy, input } from "@angular/core";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 
 const knownSocialProviders = [
@@ -19,10 +19,10 @@ const knownSocialProviders = [
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AuthSvgComponent {
-  @Input() text = "";
-  @Input() provider = "";
-  @Input() source: "auth" | "dropdown" | "disconnect" | "" = "";
-  @Input() loading = false;
+  readonly text = input("");
+  readonly provider = input("");
+  readonly source = input<"auth" | "dropdown" | "disconnect" | "">("");
+  readonly loading = input(false);
 
   getProviderSvgName(provider: string) {
     if (knownSocialProviders.includes(provider)) {

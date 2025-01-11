@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild } from "@angular/core";
+import { Component, OnInit, OnDestroy, ViewChild, inject } from "@angular/core";
 import {
   AlertRecipient,
   ProjectAlert,
@@ -35,6 +35,9 @@ import { MatCardModule } from "@angular/material/card";
   ],
 })
 export class ProjectAlertsComponent implements OnInit, OnDestroy {
+  private alertsService = inject(ProjectAlertsService);
+  dialog = inject(MatDialog);
+
   @ViewChild("newAlert") newAlertRef?: AlertFormComponent;
   projectAlerts$ = this.alertsService.projectAlerts$;
   newProjectAlertRecipients$ = this.alertsService.newProjectAlertRecipients$;
@@ -50,11 +53,6 @@ export class ProjectAlertsComponent implements OnInit, OnDestroy {
   recipientDialogOpen$ = this.alertsService.recipientDialogOpen$;
   newAlertLoading$ = this.alertsService.newAlertLoading$;
   newAlertError$ = this.alertsService.newAlertError$;
-
-  constructor(
-    private alertsService: ProjectAlertsService,
-    public dialog: MatDialog,
-  ) {}
 
   ngOnInit(): void {
     this.alertsService.listProjectAlerts();

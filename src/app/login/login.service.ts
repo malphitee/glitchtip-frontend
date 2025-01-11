@@ -1,4 +1,4 @@
-import { Injectable, computed } from "@angular/core";
+import { Injectable, computed, inject } from "@angular/core";
 import { catchError, of, tap, throwError } from "rxjs";
 import { APIState } from "../shared/shared.interfaces";
 import { AuthService } from "../auth.service";
@@ -37,6 +37,10 @@ const initialState: LoginState = {
   providedIn: "root",
 })
 export class LoginService extends StatefulService<LoginState> {
+  private authService = inject(AuthService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+
   mfaAuthenticate = computed(() => {
     let authMfaFlows = this.authService.mfaFlows();
     const authFlows = this.state().authFlows;
@@ -67,11 +71,7 @@ export class LoginService extends StatefulService<LoginState> {
     ),
   );
 
-  constructor(
-    private authService: AuthService,
-    private route: ActivatedRoute,
-    private router: Router,
-  ) {
+  constructor() {
     super(initialState);
   }
 

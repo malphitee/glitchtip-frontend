@@ -1,6 +1,6 @@
 import { DatePipe } from "@angular/common";
 import { HttpClient } from "@angular/common/http";
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { MatCard, MatCardContent } from "@angular/material/card";
 import { RouterLink } from "@angular/router";
 
@@ -18,8 +18,9 @@ interface BlogItem {
   styleUrl: "./blog-index.component.scss",
 })
 export class BlogIndexComponent implements OnInit {
+  private http = inject(HttpClient);
+
   posts: BlogItem[] | null = null;
-  constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
     this.http

@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from "@angular/core";
+import { Component, OnInit, ChangeDetectionStrategy, inject } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { catchError, lastValueFrom, of, tap, throwError } from "rxjs";
 import { MatButtonModule } from "@angular/material/button";
@@ -39,19 +39,23 @@ export class SocialAuthComponent
   extends StatefulComponent<SocialAuthState, SocialAuthService>
   implements OnInit
 {
-  socialApps$ = this.service.socialApps$;
+  protected service: SocialAuthService;
+  private userService = inject(UserService);
+  private authenticationService = inject(AuthenticationService);
+  private snackBar = inject(MatSnackBar);
+
+  socialApps = this.service.socialApps;
   user$ = this.service.user$;
   user?: User | any;
   disconnectLoadingId = this.service.loadingId;
   account = new FormControl();
 
-  constructor(
-    protected service: SocialAuthService,
-    private userService: UserService,
-    private authenticationService: AuthenticationService,
-    private snackBar: MatSnackBar,
-  ) {
+  constructor() {
+    const service = inject(SocialAuthService);
+
     super(service);
+  
+    this.service = service;
   }
 
   ngOnInit() {
@@ -65,7 +69,7 @@ export class SocialAuthComponent
     this.authenticationService.providerRedirect(
       this.account.value.provider,
       window.location.href,
-      "connect",
+      "connect"
     );
   }
 
@@ -75,7 +79,7 @@ export class SocialAuthComponent
         this.service.disconnect(id, provider, account).pipe(
           tap(() => {
             this.snackBar.open(
-              $localize`You have successfully disconnected your social auth account`,
+              $localize`You have successfully disconnected your social auth account`
             );
           }),
           catchError((err: AllAuthHttpErrorResponse) => {
@@ -85,8 +89,8 @@ export class SocialAuthComponent
             }
             this.snackBar.open(UNHANDLED_ERROR);
             return throwError(() => err);
-          }),
-        ),
+          })
+        )
       );
     } else {
       this.snackBar.open($localize`Your account has no password set up.`);

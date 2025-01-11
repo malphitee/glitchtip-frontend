@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, OnDestroy } from "@angular/core";
+import { Component, ChangeDetectionStrategy, OnDestroy, inject } from "@angular/core";
 import { ActivatedRoute, RouterModule } from "@angular/router";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -32,6 +32,9 @@ import { combineLatest } from "rxjs";
   ],
 })
 export class MonitorListComponent implements OnDestroy {
+  protected route = inject(ActivatedRoute);
+  service = inject(MonitorListService);
+
   tooltipDisabled = false;
   monitors$ = this.service.monitors$;
   paginator$ = this.service.paginator$;
@@ -42,10 +45,7 @@ export class MonitorListComponent implements OnDestroy {
     "status",
   ];
 
-  constructor(
-    protected route: ActivatedRoute,
-    public service: MonitorListService,
-  ) {
+  constructor() {
     combineLatest([this.route.paramMap, this.route.queryParamMap]).subscribe(
       ([params, queryParams]) => {
         const orgSlug = params.get("org-slug");

@@ -1,11 +1,4 @@
-import {
-  Component,
-  ChangeDetectionStrategy,
-  ViewChild,
-  OnInit,
-  HostListener,
-  ElementRef,
-} from "@angular/core";
+import { Component, ChangeDetectionStrategy, ViewChild, OnInit, HostListener, ElementRef, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { MatDatepickerModule } from "@angular/material/datepicker";
@@ -17,13 +10,13 @@ import { MatInputModule } from "@angular/material/input";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { filter, map, startWith, tap } from "rxjs/operators";
-import { Observable, combineLatest, BehaviorSubject } from "rxjs";
+import { combineLatest, BehaviorSubject } from "rxjs";
 import { FormControl } from "@angular/forms";
 import { OrganizationProject } from "src/app/api/projects/projects-api.interfaces";
-import { OrganizationsService } from "src/app/api/organizations/organizations.service";
 import { Router, ActivatedRoute } from "@angular/router";
 import { MatExpansionPanel } from "@angular/material/expansion";
 import { normalizeProjectParams } from "src/app/shared/shared.utils";
+import { OrganizationsService } from "src/app/api/organizations.service";
 
 @Component({
   selector: "gt-project-filter-bar",
@@ -44,6 +37,10 @@ import { normalizeProjectParams } from "src/app/shared/shared.utils";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProjectFilterBarComponent implements OnInit {
+  private organizationsService = inject(OrganizationsService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+
   orgSlug$ = this.organizationsService.activeOrganizationSlug$;
   /** All projects available */
   projects$ = this.organizationsService.activeOrganizationProjects$;
@@ -60,7 +57,7 @@ export class ProjectFilterBarComponent implements OnInit {
       const normalizedParams = normalizeProjectParams(params.project);
       this.selectedProjectIds.next(normalizedParams);
       return normalizedParams;
-    }),
+    })
   );
 
   appliedProjectIds?: number[];
@@ -81,10 +78,13 @@ export class ProjectFilterBarComponent implements OnInit {
           return "All Projects";
         default:
           return ids
-            .map((id) => projects?.find((project) => id === project.id)?.name)
+            .map(
+              (id) =>
+                projects?.find((project) => id.toString() === project.id)?.name
+            )
             .join(", ");
       }
-    }),
+    })
   );
 
   selectedAndAppliedIdsAreEqual$ = combineLatest([
@@ -93,29 +93,34 @@ export class ProjectFilterBarComponent implements OnInit {
   ]).pipe(
     map(
       ([selected, applied]) =>
-        selected.sort().join(",") === applied.sort().join(","),
-    ),
+        selected.sort().join(",") === applied.sort().join(",")
+    )
   );
+
+  //** Yikes delete this please */
+  forceString(value: string | number) {
+    return String(value);
+  }
 
   /** Used to filter project names */
   filterProjectInput = new FormControl();
 
   /** Projects that are filtered via the text field form control */
-  filteredProjects$: Observable<OrganizationProject[] | null> = combineLatest([
+  filteredProjects$ = combineLatest([
     this.projects$.pipe(startWith([] as OrganizationProject[])),
     this.filterProjectInput.valueChanges.pipe(startWith("")),
   ]).pipe(
     map(([projects, value]) =>
       projects
         ? projects.filter((project) =>
-            project.name.toLowerCase().includes(value.toLowerCase()),
+            project.name.toLowerCase().includes(value.toLowerCase())
           )
-        : null,
-    ),
+        : null
+    )
   );
 
   someProjectsAreSelected$ = this.appliedProjectIds$.pipe(
-    map((ids) => ids.length !== 0),
+    map((ids) => ids.length !== 0)
   );
 
   singleProjectSlug$ = combineLatest([
@@ -125,7 +130,7 @@ export class ProjectFilterBarComponent implements OnInit {
     map(([projects, ids]) => {
       if (ids.length === 1 && projects) {
         const matchedProject = projects.find(
-          (project) => project.id === ids[0],
+          (project) => project.id === ids[0].toString()
         );
         if (matchedProject) {
           return matchedProject.slug;
@@ -133,7 +138,7 @@ export class ProjectFilterBarComponent implements OnInit {
         return false;
       }
       return false;
-    }),
+    })
   );
 
   @ViewChild("expansionPanel", { static: false })
@@ -143,7 +148,7 @@ export class ProjectFilterBarComponent implements OnInit {
   filterInput?: ElementRef<HTMLInputElement>;
 
   @HostListener("document:keydown", ["$event"]) onKeydownHandler(
-    event: KeyboardEvent,
+    event: KeyboardEvent
   ) {
     if (this.expansionPanel?.expanded) {
       if (event.key === "Escape") {
@@ -167,14 +172,14 @@ export class ProjectFilterBarComponent implements OnInit {
 
   moveDown() {
     const projectButtons = Array.from(
-      document.querySelectorAll(".picker-button"),
+      document.querySelectorAll(".picker-button")
     ) as HTMLElement[];
     // If the text box is focused, go to the first item
     if (this.filterInput?.nativeElement.id === document.activeElement?.id) {
       projectButtons[0]?.focus();
     } else {
       const indexOfActive = projectButtons.findIndex(
-        (button) => button.id === document.activeElement?.id,
+        (button) => button.id === document.activeElement?.id
       );
       if (indexOfActive <= projectButtons.length - 2) {
         // If we're in the list items, go to the next list item
@@ -188,10 +193,10 @@ export class ProjectFilterBarComponent implements OnInit {
 
   moveUp() {
     const projectButtons = Array.from(
-      document.querySelectorAll(".picker-button"),
+      document.querySelectorAll(".picker-button")
     ) as HTMLElement[];
     const indexOfActive = projectButtons.findIndex(
-      (button) => button.id === document.activeElement?.id,
+      (button) => button.id === document.activeElement?.id
     );
     if (indexOfActive > 0) {
       // If we're in the list items, go to the previous list item
@@ -209,27 +214,29 @@ export class ProjectFilterBarComponent implements OnInit {
     });
   }
 
-  isSelected(projectId: number) {
-    return !!this.selectedProjectIds.getValue().find((id) => id === projectId);
+  isSelected(projectId: string) {
+    return !!this.selectedProjectIds
+      .getValue()
+      .find((id) => id.toString() === projectId);
   }
 
   focusPanel() {
     this.filterInput?.nativeElement.focus();
   }
 
-  selectProjectAndClose(projectId: number) {
+  selectProjectAndClose(projectId: string) {
     this.navigate([projectId.toString()]);
-    this.selectedProjectIds.next([projectId]);
+    this.selectedProjectIds.next([parseInt(projectId)]);
     this.expansionPanel?.close();
   }
 
-  toggleProject(projectId: number) {
+  toggleProject(projectId: string) {
     const selectedIds = [...this.selectedProjectIds.getValue()];
-    const idMatchIndex = selectedIds.indexOf(projectId);
+    const idMatchIndex = selectedIds.indexOf(parseInt(projectId));
     if (idMatchIndex > -1) {
       selectedIds.splice(idMatchIndex, 1);
     } else {
-      selectedIds.push(projectId);
+      selectedIds.push(parseInt(projectId));
     }
     this.selectedProjectIds.next(selectedIds);
   }
@@ -243,7 +250,7 @@ export class ProjectFilterBarComponent implements OnInit {
 
   closePanel() {
     this.navigate(
-      this.selectedProjectIds.getValue().map((id) => id.toString()),
+      this.selectedProjectIds.getValue().map((id) => id.toString())
     );
     this.expansionPanel?.close();
   }
@@ -257,14 +264,8 @@ export class ProjectFilterBarComponent implements OnInit {
       .pipe(
         map((params) => params["org-slug"]),
         filter((orgSlug: string) => orgSlug !== undefined),
-        tap(() => this.expansionPanel?.close()),
+        tap(() => this.expansionPanel?.close())
       )
       .subscribe();
   }
-
-  constructor(
-    private organizationsService: OrganizationsService,
-    private router: Router,
-    private route: ActivatedRoute,
-  ) {}
 }
