@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { map, tap, catchError } from "rxjs/operators";
 import { EMPTY, lastValueFrom } from "rxjs";
 import { MatSnackBar } from "@angular/material/snack-bar";
@@ -29,6 +29,10 @@ const initialState: CommentsState = {
   providedIn: "root",
 })
 export class CommentsService extends StatefulService<CommentsState> {
+  private commentsAPIService = inject(CommentsAPIService);
+  private issueDetailService = inject(IssueDetailService);
+  private snackbar = inject(MatSnackBar);
+
   commentsWithUIState$ = this.getState$.pipe(
     map((state) =>
       state.comments.map((comment) => {
@@ -51,11 +55,7 @@ export class CommentsService extends StatefulService<CommentsState> {
     map((state) => state.commentUpdateLoading),
   );
 
-  constructor(
-    private commentsAPIService: CommentsAPIService,
-    private issueDetailService: IssueDetailService,
-    private snackbar: MatSnackBar,
-  ) {
+  constructor() {
     super(initialState);
   }
 

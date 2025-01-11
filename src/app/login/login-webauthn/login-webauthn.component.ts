@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, OnInit } from "@angular/core";
+import { Component, ChangeDetectionStrategy, OnInit, inject } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatButtonModule } from "@angular/material/button";
@@ -19,11 +19,11 @@ import { LoginService } from "../login.service";
   ],
 })
 export class LoginWebAuthnComponent implements OnInit {
+  private loginService = inject(LoginService);
+
   useTOTP = false; //this.loginService.useTOTP;
   // error$ = this.loginService.error$;
-  authInProg = false; //this.loginService.authInProg;
-
-  constructor(private loginService: LoginService) {}
+  authInProg = false;
 
   switchMethod() {
     this.loginService.switchMethod();

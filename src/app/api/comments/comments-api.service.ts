@@ -1,5 +1,5 @@
 import { HttpClient } from "@angular/common/http";
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { baseUrl } from "../../constants";
 import { Comment } from "./comments.interfaces";
 
@@ -7,9 +7,9 @@ import { Comment } from "./comments.interfaces";
   providedIn: "root",
 })
 export class CommentsAPIService {
-  readonly url = "/comments/";
+  protected http = inject(HttpClient);
 
-  constructor(protected http: HttpClient) {}
+  readonly url = "/comments/";
 
   create(issueId: number, text: string) {
     let data = {

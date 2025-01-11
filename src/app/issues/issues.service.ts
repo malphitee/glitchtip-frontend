@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { HttpErrorResponse } from "@angular/common/http";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { combineLatest, Observable, EMPTY, lastValueFrom } from "rxjs";
@@ -37,6 +37,9 @@ const initialState: IssuesState = {
   providedIn: "root",
 })
 export class IssuesService extends PaginationStatefulService<IssuesState> {
+  private snackbar = inject(MatSnackBar);
+  private issuesAPIService = inject(IssuesAPIService);
+
   issues$ = this.getState$.pipe(map((state) => state.issues));
   selectedIssues$ = this.getState$.pipe(map((state) => state.selectedIssues));
   issuesWithSelected$: Observable<IssueWithSelected[]> = combineLatest([
@@ -75,10 +78,7 @@ export class IssuesService extends PaginationStatefulService<IssuesState> {
   );
   readonly errors$ = this.getState$.pipe(map((state) => state.errors));
 
-  constructor(
-    private snackbar: MatSnackBar,
-    private issuesAPIService: IssuesAPIService,
-  ) {
+  constructor() {
     super(initialState);
   }
 

@@ -1,4 +1,4 @@
-import { computed, Injectable, signal } from "@angular/core";
+import { computed, Injectable, signal, inject } from "@angular/core";
 import { Router } from "@angular/router";
 import { fromEvent } from "rxjs";
 import { debounceTime, tap } from "rxjs/operators";
@@ -17,13 +17,15 @@ const initialState: MainNavState = {
   providedIn: "root",
 })
 export class MainNavService {
+  private router = inject(Router);
+
   private readonly state = signal<MainNavState>(initialState);
 
   // Use computed signals for derived state
   readonly navOpen = computed(() => this.state().navOpen);
   readonly mobileNav = computed(() => this.state().mobileNav);
 
-  constructor(private router: Router) {
+  constructor() {
     const tabletSize = 768; // same as $tablet for scss
 
     if (window.innerWidth < tabletSize) {

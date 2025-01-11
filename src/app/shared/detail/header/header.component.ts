@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
+import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 
 import { RouterLink } from "@angular/router";
 import { MatIconModule } from "@angular/material/icon";
@@ -16,21 +16,28 @@ import { MatButtonModule } from "@angular/material/button";
   styleUrls: ["./header.component.scss"],
 })
 export class DetailHeaderComponent {
-  @Input() backLinkParams: { [key: string]: string | number } = {};
-  @Input() backLinkText = "";
-  @Input() title: string | [string, string | null] = "";
-  @Input() subtitle?: string | null;
+  readonly backLinkParams = input<{
+    [key: string]: string | number;
+}>({});
+  readonly backLinkText = input("");
+  readonly title = input<string | [
+    string,
+    string | null
+]>("");
+  readonly subtitle = input<string | null>();
 
   getTitle() {
-    if (Array.isArray(this.title)) {
-      return this.title[0];
+    const title = this.title();
+    if (Array.isArray(title)) {
+      return title[0];
     }
-    return this.title;
+    return title;
   }
 
   getTitleSuffix() {
-    if (Array.isArray(this.title)) {
-      return this.title[1];
+    const title = this.title();
+    if (Array.isArray(title)) {
+      return title[1];
     }
     return null;
   }

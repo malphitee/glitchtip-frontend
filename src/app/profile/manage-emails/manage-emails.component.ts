@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { Component, OnInit, ViewChild, inject } from "@angular/core";
 import {
   FormGroup,
   FormControl,
@@ -39,6 +39,8 @@ import { MatCardModule } from "@angular/material/card";
   ],
 })
 export class ManageEmailsComponent implements OnInit {
+  private emailService = inject(EmailService);
+
   emailAddresses$ = this.emailService.emailAddressesSorted$;
   loadingStates$ = this.emailService.loadingStates$;
   addEmailError$ = this.emailService.addEmailError$;
@@ -79,8 +81,6 @@ export class ManageEmailsComponent implements OnInit {
       this.matchesExistingValidator,
     ),
   });
-
-  constructor(private emailService: EmailService) {}
 
   ngOnInit(): void {
     this.emailService.retrieveEmailAddresses();

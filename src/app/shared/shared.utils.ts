@@ -1,5 +1,6 @@
 // tslint:disable:max-line-length
 import { HttpErrorResponse } from "@angular/common/http";
+import { concat, delayWhen, interval, of, repeat } from "rxjs";
 
 /**
  * generateClassName comes from
@@ -158,7 +159,7 @@ export function timedeltaToMS(value: string) {
 }
 
 export function normalizeProjectParams(
-  projects: string | string[] | undefined | null,
+  projects: string | string[] | undefined | null
 ) {
   if (Array.isArray(projects)) {
     return projects.map((id) => parseInt(id, 10));
@@ -205,4 +206,39 @@ export function setTheme(preferredTheme?: string | null) {
   } else {
     setLight();
   }
+}
+
+function getCookie(name: string) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== "") {
+    const cookies = document.cookie.split(";");
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      // Does this cookie string begin with the name we want?
+      if (cookie.substring(0, name.length + 1) === name + "=") {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+export function getCSRFToken() {
+  return getCookie("csrftoken");
+}
+
+export function refreshInterval(
+  initialDelaysInSeconds: number[],
+  repeatIntervalInSeconds: number
+) {
+  const toMilliseconds = (seconds: number) => seconds * 1000;
+  const initialDelays = initialDelaysInSeconds.map(toMilliseconds);
+  const repeatInterval = toMilliseconds(repeatIntervalInSeconds);
+
+  return concat(
+    ...initialDelays.map((delay) =>
+      of(null).pipe(delayWhen(() => interval(delay)))
+    ),
+    interval(repeatInterval)
+  ).pipe(repeat());
 }

@@ -1,4 +1,4 @@
-import { Component, ViewChild, AfterViewChecked, Input } from "@angular/core";
+import { Component, ViewChild, AfterViewChecked, input, inject } from "@angular/core";
 import { MatTabGroup, MatTabsModule } from "@angular/material/tabs";
 import { LinksService } from "../../links.service";
 import { environment } from "src/environments/environment";
@@ -11,7 +11,7 @@ import {
 import { QuestionAndAnswerComponent } from "./question-and-answer/question-and-answer.component";
 import { RouterLink } from "@angular/router";
 import { MatIcon } from "@angular/material/icon";
-import { AsyncPipe, DecimalPipe } from "@angular/common";
+import { DecimalPipe } from "@angular/common";
 /**
  * Copied HTML from the frontend version of this, pulled some data that is
  * currently in use and hardcoded here, and sharing the SCSS file
@@ -20,7 +20,6 @@ import { AsyncPipe, DecimalPipe } from "@angular/common";
   selector: "mkt-payment",
   templateUrl: "./payment.component.html",
   imports: [
-    AsyncPipe,
     DecimalPipe,
     MatTabsModule,
     MatCard,
@@ -37,13 +36,13 @@ import { AsyncPipe, DecimalPipe } from "@angular/common";
   ],
 })
 export class PaymentComponent implements AfterViewChecked {
+  private links = inject(LinksService);
+
   @ViewChild("tabs", { static: false }) tabs?: MatTabGroup;
-  @Input() pricingPage: boolean = false;
+  readonly pricingPage = input<boolean>(false);
   billingEmail = environment.billingEmail;
   registerLink = this.links.registerLink;
   selectedTab = 0;
-
-  constructor(private links: LinksService) {}
 
   /**
    * Pulled from frontend's payment component's planOptions$, pruned to use

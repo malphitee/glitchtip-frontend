@@ -1,4 +1,4 @@
-import { Injectable, computed } from "@angular/core";
+import { Injectable, computed, inject } from "@angular/core";
 import { catchError, of, tap, throwError } from "rxjs";
 import {
   AllAuthError,
@@ -28,6 +28,8 @@ const initialState: ResetPasswordState = {
   providedIn: "root",
 })
 export class ResetPasswordService extends StatefulService<ResetPasswordState> {
+  private authenticationService = inject(AuthenticationService);
+
   loading = computed(() => this.state().loading);
   success = computed(() => this.state().success);
   formErrors = computed(() =>
@@ -39,7 +41,7 @@ export class ResetPasswordService extends StatefulService<ResetPasswordState> {
     reduceParamErrors(this.state().errors.filter((err) => err.param)),
   );
 
-  constructor(private authenticationService: AuthenticationService) {
+  constructor() {
     super(initialState);
   }
 

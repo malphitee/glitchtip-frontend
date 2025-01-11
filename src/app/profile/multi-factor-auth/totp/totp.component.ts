@@ -1,11 +1,4 @@
-import {
-  Component,
-  ChangeDetectionStrategy,
-  ElementRef,
-  ViewChild,
-  OnInit,
-  OnDestroy,
-} from "@angular/core";
+import { Component, ChangeDetectionStrategy, ElementRef, ViewChild, OnInit, OnDestroy, inject } from "@angular/core";
 import {
   FormControl,
   FormGroup,
@@ -45,6 +38,8 @@ import { lastValueFrom } from "rxjs";
   ],
 })
 export class TOTPComponent implements OnInit, OnDestroy {
+  private service = inject(MultiFactorAuthService);
+
   @ViewChild("canvas", { static: false }) canvas: ElementRef | undefined;
   TOTPAuthenticator = this.service.TOTPAuthenticator;
   totp = this.service.totp;
@@ -59,7 +54,9 @@ export class TOTPComponent implements OnInit, OnDestroy {
     ]),
   });
 
-  constructor(private service: MultiFactorAuthService) {
+  constructor() {
+    const service = this.service;
+
     toObservable(service.fieldErrors).subscribe((fieldErrors) =>
       mapFormErrors(fieldErrors, this.codeForm),
     );

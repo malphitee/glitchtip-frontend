@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from "@angular/core";
+import { Component, OnInit, ChangeDetectionStrategy, inject } from "@angular/core";
 import { MatDialogRef, MatDialogModule } from "@angular/material/dialog";
 import {
   FormGroup,
@@ -35,6 +35,9 @@ import { MatFormFieldModule } from "@angular/material/form-field";
   ],
 })
 export class NewRecipientComponent implements OnInit {
+  dialogRef = inject<MatDialogRef<NewRecipientComponent>>(MatDialogRef);
+  private alertsService = inject(ProjectAlertsService);
+
   recipientDialogOpen$ = this.alertsService.recipientDialogOpen$;
   emailSelected$ = this.alertsService.emailSelected$;
   recipientError$ = this.alertsService.recipientError$;
@@ -54,10 +57,7 @@ export class NewRecipientComponent implements OnInit {
   recipientType = this.recipientForm.get("recipientType") as FormControl;
   url = this.recipientForm.get("url") as FormControl;
 
-  constructor(
-    public dialogRef: MatDialogRef<NewRecipientComponent>,
-    private alertsService: ProjectAlertsService,
-  ) {
+  constructor() {
     this.recipientDialogOpen$.subscribe(
       (resp) => !resp && this.dialogRef.close(),
     );

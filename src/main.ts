@@ -29,6 +29,7 @@ import {
 import {
   provideRouter,
   TitleStrategy,
+  withComponentInputBinding,
   withInMemoryScrolling,
   withPreloading,
   withRouterConfig,
@@ -66,6 +67,7 @@ const bootstrap = () =>
       provideExperimentalZonelessChangeDetection(),
       provideRouter(
         routes,
+        withComponentInputBinding(),
         withPreloading(CustomPreloadingStrategy),
         withInMemoryScrolling({
           scrollPositionRestoration: "enabled",

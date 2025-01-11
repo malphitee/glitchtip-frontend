@@ -1,4 +1,4 @@
-import { Component, Optional } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatDialogModule, MatDialogRef } from "@angular/material/dialog";
 
@@ -9,15 +9,21 @@ import { MatDialogModule, MatDialogRef } from "@angular/material/dialog";
   styleUrls: ["./event-info.component.scss"],
 })
 export class EventInfoComponent {
+  private dialogRef = inject<MatDialogRef<EventInfoComponent>>(MatDialogRef, {
+    optional: true,
+  });
+
   dialog = false;
 
-  constructor(@Optional() private dialogRef: MatDialogRef<EventInfoComponent>) {
+  constructor() {
+    const dialogRef = this.dialogRef;
+
     if (dialogRef) {
       this.dialog = true;
     }
   }
 
   closeDialog(): void {
-    this.dialogRef.close();
+    this.dialogRef!.close();
   }
 }

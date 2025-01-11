@@ -1,11 +1,4 @@
-import {
-  AfterViewInit,
-  Directive,
-  ElementRef,
-  HostBinding,
-  Input,
-  OnInit,
-} from "@angular/core";
+import { AfterViewInit, Directive, ElementRef, HostBinding, OnInit, input, inject } from "@angular/core";
 import Prism from "prismjs";
 import { GRAMMAR_MAPPINGS, PRISM_SUPPORTED_GRAMMAR } from "./constants";
 
@@ -25,10 +18,10 @@ import "prismjs/components/prism-rust";
   standalone: true,
 })
 export class PrismDirective implements AfterViewInit, OnInit {
-  @Input() language?: string;
-  @HostBinding("class") elementClass = "";
+  private el = inject(ElementRef);
 
-  constructor(private el: ElementRef) {}
+  readonly language = input<string>();
+  @HostBinding("class") elementClass = "";
 
   ngOnInit() {
     const language = this.getLanguage();
@@ -48,7 +41,7 @@ export class PrismDirective implements AfterViewInit, OnInit {
   }
 
   getLanguage() {
-    let language = this.language;
+    let language = this.language();
     if (language && language in GRAMMAR_MAPPINGS) {
       language = GRAMMAR_MAPPINGS[language] as string;
     }

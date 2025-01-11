@@ -1,13 +1,8 @@
-import {
-  ActivatedRouteSnapshot,
-  RouterStateSnapshot,
-  Routes,
-  TitleStrategy,
-} from "@angular/router";
-import { Injectable, inject } from "@angular/core";
+import { RouterStateSnapshot, Routes, TitleStrategy } from "@angular/router";
+import { Injectable } from "@angular/core";
 import { LoggedInComponent } from "./logged-in.component";
 import { alreadyLoggedInGuard, loggedInGuard } from "./guards";
-import { OrganizationsService } from "./api/organizations/organizations.service";
+import { OrganizationFrameComponent } from "./organization/organization.component";
 
 export const routes: Routes = [
   {
@@ -83,10 +78,7 @@ export const routes: Routes = [
       },
       {
         path: ":org-slug",
-        canActivate: [
-          (next: ActivatedRouteSnapshot) =>
-            inject(OrganizationsService).watchRoute(next),
-        ],
+        component: OrganizationFrameComponent,
         children: [
           {
             path: "issues",

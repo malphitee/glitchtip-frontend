@@ -37,7 +37,7 @@
         (click)="toggleFromInput()"
         formControlName="quantity"
         placeholder="#"
-        [errorStateMatcher]="newAlert ? newFormMatcher : matcher"
+        [errorStateMatcher]="newAlert() ? newFormMatcher : matcher"
       />
       @if (projectFormQuantity.errors) {
         <mat-error>
@@ -59,7 +59,7 @@
         (click)="toggleFromInput()"
         formControlName="timespanMinutes"
         placeholder="#"
-        [errorStateMatcher]="newAlert ? newFormMatcher : matcher"
+        [errorStateMatcher]="newAlert() ? newFormMatcher : matcher"
       />
       @if (projectFormTimespan.errors) {
         <mat-error>
@@ -80,16 +80,16 @@
     </div>
   </div>
   <div class="update" data-cy="update-container">
-    @if (!newAlert) {
+    @if (!newAlert()) {
       <gt-loading-button
         buttonText="Update"
         [disabled]="
-          projectFormTimespan.value === timespan &&
-          projectFormQuantity.value === quantity &&
-          projectFormUptime.value === uptime
+          projectFormTimespan.value === timespan() &&
+          projectFormQuantity.value === quantity() &&
+          projectFormUptime.value === uptime()
         "
         buttonStyle="stroked"
-        [loading]="loading === true"
+        [loading]="loading() === true"
       ></gt-loading-button>
     }
   </div>

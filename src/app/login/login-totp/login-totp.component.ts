@@ -5,6 +5,8 @@ import {
   ElementRef,
   ViewChild,
   AfterViewInit,
+  inject,
+  Signal,
 } from "@angular/core";
 import { toObservable } from "@angular/core/rxjs-interop";
 import {
@@ -41,7 +43,11 @@ export class LoginTotpComponent
   extends StatefulComponent<LoginState, LoginService>
   implements AfterViewInit
 {
-  hasWebAuthn = this.loginService.hasWebAuthn;
+  private changeDetector = inject(ChangeDetectorRef);
+  private loginService: LoginService;
+  private router = inject(Router);
+
+  hasWebAuthn: Signal<boolean> | undefined;
   @ViewChild("input") input!: ElementRef;
   form = new FormGroup({
     code: new FormControl("", [
@@ -52,15 +58,15 @@ export class LoginTotpComponent
     remember: new FormControl(false),
   });
 
-  constructor(
-    private changeDetector: ChangeDetectorRef,
-    private loginService: LoginService,
-    private router: Router,
-  ) {
+  constructor() {
+    const loginService = inject(LoginService);
+
     toObservable(loginService.fieldErrors).subscribe((fieldErrors) =>
-      mapFormErrors(fieldErrors, this.form),
+      mapFormErrors(fieldErrors, this.form)
     );
     super(loginService);
+    this.hasWebAuthn = loginService.hasWebAuthn;
+    this.loginService = loginService;
   }
 
   ngAfterViewInit() {
@@ -86,7 +92,7 @@ export class LoginTotpComponent
       lastValueFrom(
         this.loginService
           .totpAuthenticate(code)
-          .pipe(tap(() => this.router.navigate(["/"]))),
+          .pipe(tap(() => this.router.navigate(["/"])))
       );
     }
   }

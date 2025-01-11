@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from "@angular/core";
+import { Component, OnInit, ChangeDetectionStrategy, inject } from "@angular/core";
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
@@ -16,6 +16,10 @@ import { AuthService } from "src/app/auth.service";
   imports: [MatCardModule, MatButtonModule, RouterLink, AsyncPipe],
 })
 export class AcceptInviteComponent implements OnInit {
+  private authService = inject(AuthService);
+  private acceptService = inject(AcceptInviteService);
+  private activatedRoute = inject(ActivatedRoute);
+
   isLoggedIn$ = toObservable(this.authService.isAuthenticated);
   params$ = this.activatedRoute.params.pipe(
     map((params) => ({
@@ -28,12 +32,6 @@ export class AcceptInviteComponent implements OnInit {
   );
   acceptInfo$ = this.acceptService.acceptInfo$;
   alreadyInOrg$ = this.acceptService.alreadyInOrg$;
-
-  constructor(
-    private authService: AuthService,
-    private acceptService: AcceptInviteService,
-    private activatedRoute: ActivatedRoute,
-  ) {}
 
   ngOnInit(): void {
     this.params$

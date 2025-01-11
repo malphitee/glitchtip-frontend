@@ -1,4 +1,4 @@
-import { Injectable, computed } from "@angular/core";
+import { Injectable, computed, inject } from "@angular/core";
 import { catchError, EMPTY, of, tap, throwError } from "rxjs";
 import { AccountService } from "src/app/api/allauth/account.service";
 import {
@@ -29,6 +29,9 @@ const initialState: PasswordState = {
   providedIn: "root",
 })
 export class PasswordService extends StatefulService<PasswordState> {
+  private accountService = inject(AccountService);
+  private userService = inject(UserService);
+
   loading = computed(() => this.state().loading);
   errors = computed(() => this.state().errors);
   success = computed(() => this.state().success);
@@ -39,10 +42,7 @@ export class PasswordService extends StatefulService<PasswordState> {
     reduceParamErrors(this.state().errors.filter((err) => err.param))
   );
 
-  constructor(
-    private accountService: AccountService,
-    private userService: UserService
-  ) {
+  constructor() {
     super(initialState);
   }
 

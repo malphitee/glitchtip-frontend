@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { BehaviorSubject, Subject, EMPTY } from "rxjs";
@@ -48,6 +48,9 @@ const initialState: EmailState = {
   providedIn: "root",
 })
 export class EmailService {
+  private http = inject(HttpClient);
+  private snackBar = inject(MatSnackBar);
+
   private readonly state = new BehaviorSubject<EmailState>(initialState);
   readonly resetFormSubject = new Subject();
   readonly emailAddresses$ = this.state.pipe(
@@ -75,10 +78,6 @@ export class EmailService {
   );
 
   private readonly url = baseUrl + "/users/me/emails/";
-  constructor(
-    private http: HttpClient,
-    private snackBar: MatSnackBar,
-  ) {}
 
   retrieveEmailAddresses() {
     this.getEmailAddresses()

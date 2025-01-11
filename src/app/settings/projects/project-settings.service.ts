@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { HttpErrorResponse } from "@angular/common/http";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { EMPTY } from "rxjs";
@@ -54,6 +54,12 @@ const initialState: ProjectSettingsState = {
   providedIn: "root",
 })
 export class ProjectSettingsService extends PaginationStatefulService<ProjectSettingsState> {
+  private snackBar = inject(MatSnackBar);
+  private projectsAPIService = inject(ProjectsAPIService);
+  private projectTeamsAPIService = inject(ProjectTeamsAPIService);
+  private orgProjectsAPIService = inject(OrganizationProjectsAPIService);
+  private projectKeysAPIService = inject(ProjectKeysAPIService);
+
   readonly projects$ = this.getState$.pipe(map((data) => data.projects));
 
   readonly activeProject$ = this.getState$.pipe(
@@ -73,13 +79,7 @@ export class ProjectSettingsService extends PaginationStatefulService<ProjectSet
   readonly addRemoveLoading$ = this.getState$.pipe(map((data) => data.loading));
   readonly errors$ = this.getState$.pipe(map((data) => data.errors));
 
-  constructor(
-    private snackBar: MatSnackBar,
-    private projectsAPIService: ProjectsAPIService,
-    private projectTeamsAPIService: ProjectTeamsAPIService,
-    private orgProjectsAPIService: OrganizationProjectsAPIService,
-    private projectKeysAPIService: ProjectKeysAPIService,
-  ) {
+  constructor() {
     super(initialState);
   }
 

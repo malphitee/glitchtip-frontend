@@ -1,4 +1,4 @@
-import { computed, Injectable } from "@angular/core";
+import { computed, Injectable, inject } from "@angular/core";
 import { Router } from "@angular/router";
 import { EMPTY, lastValueFrom, timer } from "rxjs";
 import { catchError, delay, expand, tap, takeUntil } from "rxjs/operators";
@@ -31,6 +31,10 @@ const initialState: SubscriptionsState = {
   providedIn: "root",
 })
 export class SubscriptionsService extends StatefulService<SubscriptionsState> {
+  private productsAPIService = inject(ProductsAPIService);
+  private subscriptionsAPIService = inject(SubscriptionsAPIService);
+  private router = inject(Router);
+
   subscription = computed(() => this.state().subscription);
   formattedSubscription = computed(() => {
     const subscription = this.subscription();
@@ -83,11 +87,7 @@ export class SubscriptionsService extends StatefulService<SubscriptionsState> {
     }))
   );
 
-  constructor(
-    private productsAPIService: ProductsAPIService,
-    private subscriptionsAPIService: SubscriptionsAPIService,
-    private router: Router
-  ) {
+  constructor() {
     super(initialState);
   }
 

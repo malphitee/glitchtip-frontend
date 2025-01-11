@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { Component, OnInit, ViewChild, inject } from "@angular/core";
 import {
   FormGroup,
   UntypedFormArray,
@@ -42,6 +42,9 @@ export class NewTokenComponent
   extends StatefulBaseComponent<AuthTokensState, AuthTokensService>
   implements OnInit
 {
+  protected service: AuthTokensService;
+  private fb = inject(UntypedFormBuilder);
+
   @ViewChild("selectAllCheckbox") selectAllCheckbox?: MatCheckbox;
 
   createLoading$ = this.service.createLoading$;
@@ -77,11 +80,12 @@ export class NewTokenComponent
     return this.form.controls.label as FormControl;
   }
 
-  constructor(
-    protected service: AuthTokensService,
-    private fb: UntypedFormBuilder,
-  ) {
+  constructor() {
+    const service = inject(AuthTokensService);
+
     super(service);
+    this.service = service;
+
     this.form = this.fb.group({
       label: new FormControl("", [Validators.required]),
       scopes: new UntypedFormArray([]),

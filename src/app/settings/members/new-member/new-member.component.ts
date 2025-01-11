@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Component, OnInit, OnDestroy, inject } from "@angular/core";
 import {
   FormGroup,
   FormControl,
@@ -9,7 +9,7 @@ import {
 } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
 import { map } from "rxjs/operators";
-import { OrganizationsService } from "src/app/api/organizations/organizations.service";
+import { OrganizationDetailService } from "src/app/api/organizations/organization-detail.service";
 import { SettingsService } from "src/app/api/settings.service";
 import { LoadingButtonComponent } from "../../../shared/loading-button/loading-button.component";
 import { MatOptionModule } from "@angular/material/core";
@@ -29,7 +29,7 @@ function validateEmails(emails: string) {
       .map((email) =>
         Validators.email({
           value: email.replace(/\s/g, ""),
-        } as AbstractControl),
+        } as AbstractControl)
       )
       .find((email) => email !== null) === undefined
   );
@@ -60,7 +60,11 @@ function emailsValidator(control: AbstractControl): ValidationErrors | null {
   ],
 })
 export class NewMemberComponent implements OnInit, OnDestroy {
-  enableUserRegistration$ = this.settingsService.enableUserRegistration$;
+  private organizationsService = inject(OrganizationDetailService);
+  private route = inject(ActivatedRoute);
+  private settingsService = inject(SettingsService);
+
+  enableUserRegistration = this.settingsService.enableUserRegistration;
   organizationTeams$ = this.organizationsService.organizationTeams$;
   filteredOrganizationTeams$ =
     this.organizationsService.filteredOrganizationTeams$;
@@ -72,12 +76,6 @@ export class NewMemberComponent implements OnInit, OnDestroy {
     teams: new FormControl([]),
   });
   formRole = this.form.get("role") as FormControl;
-
-  constructor(
-    private organizationsService: OrganizationsService,
-    private route: ActivatedRoute,
-    private settingsService: SettingsService,
-  ) {}
 
   ngOnInit(): void {
     this.route.params
@@ -103,7 +101,7 @@ export class NewMemberComponent implements OnInit, OnDestroy {
         this.organizationsService.inviteOrganizationMembers(
           email.replace(/\s/g, ""),
           teams!,
-          role! as any,
+          role! as any
         );
       });
     }

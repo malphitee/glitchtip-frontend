@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import {
   Validators,
   ReactiveFormsModule,
@@ -19,11 +19,13 @@ import { InputMatcherDirective } from "../shared/input-matcher.directive";
 import { RegisterService, RegisterState } from "./register.service";
 import { AcceptInviteService } from "../api/accept/accept-invite.service";
 import { SettingsService } from "../api/settings.service";
-import { SocialApp } from "../api/user/user.interfaces";
 import { getUTM } from "../shared/shared.utils";
 import { FormErrorComponent } from "../shared/forms/form-error/form-error.component";
 import { mapFormErrors } from "../shared/forms/form.utils";
 import { StatefulComponent } from "../shared/stateful-service/signal-state.component";
+import type { components } from "src/app/api/api-schema";
+
+type SocialApp = components["schemas"]["SocialAppSchema"];
 
 @Component({
   selector: "gt-register",
@@ -46,8 +48,14 @@ export class RegisterComponent
   extends StatefulComponent<RegisterState, RegisterService>
   implements OnInit
 {
+  protected service: RegisterService;
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private acceptService = inject(AcceptInviteService);
+  private settings = inject(SettingsService);
+
   tags = "";
-  socialApps$ = this.settings.socialApps$;
+  socialApps = this.settings.socialApps;
   form = new FormGroup({
     email: new FormControl("", [Validators.required, Validators.email]),
     password: new FormControl("", [
@@ -62,17 +70,15 @@ export class RegisterComponent
   formErrors = this.service.formErrors;
   acceptInfo$ = this.acceptService.acceptInfo$;
 
-  constructor(
-    protected service: RegisterService,
-    private router: Router,
-    private route: ActivatedRoute,
-    private acceptService: AcceptInviteService,
-    private settings: SettingsService,
-  ) {
+  constructor() {
+    const service = inject(RegisterService);
+
     toObservable(service.fieldErrors).subscribe((fieldErrors) =>
-      mapFormErrors(fieldErrors, this.form),
+      mapFormErrors(fieldErrors, this.form)
     );
     super(service);
+  
+    this.service = service;
   }
 
   ngOnInit() {
@@ -84,7 +90,7 @@ export class RegisterComponent
           if (acceptInfo) {
             this.form.patchValue({ email: acceptInfo.orgUser.email });
           }
-        }),
+        })
       )
       .subscribe();
   }
@@ -116,8 +122,8 @@ export class RegisterComponent
                   this.router.navigate(["organizations", "new"]);
                 }
               }
-            }),
-          ),
+            })
+          )
       );
     }
   }

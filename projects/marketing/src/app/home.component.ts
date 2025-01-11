@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { LinksService } from "./links.service";
 import { MatCard, MatCardContent } from "@angular/material/card";
 import { ResponsiveImageComponent } from "./shared/responsive-image/responsive-image.component";
@@ -30,7 +30,7 @@ import { MatButtonModule } from "@angular/material/button";
   styleUrls: ["./home.component.scss"],
 })
 export class HomeComponent {
-  registerLink = this.links.registerLink;
+  private links = inject(LinksService);
 
-  constructor(private links: LinksService) {}
+  registerLink = this.links.registerLink;
 }

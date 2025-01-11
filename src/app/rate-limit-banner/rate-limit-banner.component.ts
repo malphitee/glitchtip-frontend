@@ -1,11 +1,11 @@
-import { Component, ChangeDetectionStrategy } from "@angular/core";
-import { OrganizationsService } from "../api/organizations/organizations.service";
+import { Component, ChangeDetectionStrategy, inject } from "@angular/core";
 import { map } from "rxjs/operators";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
 import { MatIconModule } from "@angular/material/icon";
 import { AsyncPipe } from "@angular/common";
 import { RouterLink } from "@angular/router";
+import { OrganizationsService } from "../api/organizations.service";
 
 @Component({
   selector: "gt-rate-limit-banner",
@@ -21,13 +21,13 @@ import { RouterLink } from "@angular/router";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RateLimitBannerComponent {
+  private organizationsService = inject(OrganizationsService);
+
   eventThrottleRate$ = this.organizationsService.activeOrganization$.pipe(
-    map((activeOrganization) => activeOrganization?.eventThrottleRate),
+    map((activeOrganization) => activeOrganization?.eventThrottleRate)
   );
   activeOrgSlug$ = this.organizationsService.activeOrganizationSlug$;
   bannerVisible = true;
-
-  constructor(private organizationsService: OrganizationsService) {}
 
   hideBanner() {
     this.bannerVisible = false;

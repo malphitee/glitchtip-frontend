@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from "@angular/core";
+import { Component, OnInit, ChangeDetectionStrategy, computed, inject } from "@angular/core";
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { combineLatest } from "rxjs";
 import { distinctUntilChanged, filter, map, switchMap } from "rxjs/operators";
@@ -6,13 +6,13 @@ import { CommonModule } from "@angular/common";
 import { MarkdownModule } from "ngx-markdown";
 
 import { IssuesService } from "../issues.service";
-import { OrganizationsService } from "src/app/api/organizations/organizations.service";
 import { normalizeProjectParams } from "src/app/shared/shared.utils";
 import { OrganizationProject } from "src/app/api/projects/projects-api.interfaces";
 import { ProjectsService } from "src/app/projects/projects.service";
 import { ProjectKeysAPIService } from "src/app/api/projects/project-keys-api.service";
 import { flattenedPlatforms } from "src/app/settings/projects/platform-picker/platforms-for-picker";
 import { CopyInputComponent } from "../../shared/copy-input/copy-input.component";
+import { OrganizationsService } from "src/app/api/organizations.service";
 
 @Component({
   selector: "gt-issue-zero-states",
@@ -22,6 +22,12 @@ import { CopyInputComponent } from "../../shared/copy-input/copy-input.component
   imports: [CommonModule, RouterLink, CopyInputComponent, MarkdownModule],
 })
 export class IssueZeroStatesComponent implements OnInit {
+  private issuesService = inject(IssuesService);
+  private organizationsService = inject(OrganizationsService);
+  private projectKeysAPIService = inject(ProjectKeysAPIService);
+  private projectsService = inject(ProjectsService);
+  private activatedRoute = inject(ActivatedRoute);
+
   loading$ = combineLatest([
     this.issuesService.loading$,
     this.projectsService.loading$,
@@ -34,11 +40,13 @@ export class IssueZeroStatesComponent implements OnInit {
     this.loading$,
     this.initialLoadComplete$,
   ]).pipe(
-    map(([loading, initialLoadComplete]) => !loading && initialLoadComplete),
+    map(([loading, initialLoadComplete]) => !loading && initialLoadComplete)
   );
-  orgHasAProject$ = this.organizationsService.orgHasAProject$;
+  orgHasAProject = computed(
+    () => this.organizationsService.projectsCount() > 0
+  );
   projectsFromParams$ = this.activatedRoute.queryParams.pipe(
-    map((params) => normalizeProjectParams(params.project)),
+    map((params) => normalizeProjectParams(params.project))
   );
   activeOrganizationProjects$ =
     this.organizationsService.activeOrganizationProjects$;
@@ -56,7 +64,7 @@ export class IssueZeroStatesComponent implements OnInit {
       }
       return null;
     }),
-    distinctUntilChanged(),
+    distinctUntilChanged()
   );
   activeProject$ = combineLatest([
     this.projectsService.projects$,
@@ -65,27 +73,25 @@ export class IssueZeroStatesComponent implements OnInit {
     map(([projects, activeProjectID]) => {
       if (projects && activeProjectID) {
         const activeProject = projects.find(
-          (project) => project.id === activeProjectID,
+          (project) => project.id === activeProjectID
         );
         return activeProject ? activeProject : null;
       }
       return null;
     }),
-    distinctUntilChanged(),
+    distinctUntilChanged()
   );
   showOnboarding$ = this.activeProject$.pipe(
-    map((project) => !project?.firstEvent),
+    map((project) => !project?.firstEvent)
   );
   activeProjectPlatform$ = this.activeProject$.pipe(
-    map((project) => project?.platform),
+    map((project) => project?.platform)
   );
   activeProjectSlug$ = this.activeProject$.pipe(
-    map((project) => project?.slug),
+    map((project) => project?.slug)
   );
   activeProjectPlatformName$ = this.activeProjectPlatform$.pipe(
-    map(
-      (id) => flattenedPlatforms.find((platform) => platform.id === id)?.name,
-    ),
+    map((id) => flattenedPlatforms.find((platform) => platform.id === id)?.name)
   );
 
   firstProjectKey$ = combineLatest([
@@ -94,14 +100,14 @@ export class IssueZeroStatesComponent implements OnInit {
   ]).pipe(
     filter(
       ([organizationSlug, activeProject]) =>
-        !!organizationSlug && !!activeProject,
+        !!organizationSlug && !!activeProject
     ),
     distinctUntilChanged((x, y) => JSON.stringify(x) === JSON.stringify(y)),
     switchMap(([organizationSlug, activeProject]) =>
       this.projectKeysAPIService
         .list(organizationSlug!, activeProject!.slug)
-        .pipe(map((keys) => keys[0])),
-    ),
+        .pipe(map((keys) => keys[0]))
+    )
   );
   errors$ = this.issuesService.errors$;
 
@@ -115,7 +121,7 @@ export class IssueZeroStatesComponent implements OnInit {
         return projects.length;
       }
       return 0;
-    }),
+    })
   );
 
   /**
@@ -128,8 +134,8 @@ export class IssueZeroStatesComponent implements OnInit {
   ]).pipe(
     map(
       ([appliedProjectCount, activeOrganizationProjects]) =>
-        appliedProjectCount === 1 || activeOrganizationProjects?.length === 1,
-    ),
+        appliedProjectCount === 1 || activeOrganizationProjects?.length === 1
+    )
   );
 
   projectsWhereAdminIsNotOnTheTeam$ = combineLatest([
@@ -143,16 +149,16 @@ export class IssueZeroStatesComponent implements OnInit {
       const projectsMatchedFromParams: OrganizationProject[] = [];
       projectsFromParams.forEach((projectId) => {
         const matchedProject = activeOrgProjects?.find(
-          (project) => project.id === projectId,
+          (project) => (project.id as any) === projectId
         );
         if (matchedProject) {
-          projectsMatchedFromParams.push(matchedProject);
+          projectsMatchedFromParams.push(matchedProject as any);
         }
       });
       return projectsMatchedFromParams.filter(
-        (project) => project.isMember === false,
+        (project) => project.isMember === false
       );
-    }),
+    })
   );
 
   userNotInSomeTeams$ = combineLatest([
@@ -161,17 +167,9 @@ export class IssueZeroStatesComponent implements OnInit {
   ]).pipe(
     map(
       ([projectsWhereAdminIsNotOnTheTeam, appliedProjectCount]) =>
-        projectsWhereAdminIsNotOnTheTeam.length && appliedProjectCount > 1,
-    ),
+        projectsWhereAdminIsNotOnTheTeam.length && appliedProjectCount > 1
+    )
   );
-
-  constructor(
-    private issuesService: IssuesService,
-    private organizationsService: OrganizationsService,
-    private projectKeysAPIService: ProjectKeysAPIService,
-    private projectsService: ProjectsService,
-    private activatedRoute: ActivatedRoute,
-  ) {}
 
   ngOnInit() {
     this.projectsService.retrieveProjects();

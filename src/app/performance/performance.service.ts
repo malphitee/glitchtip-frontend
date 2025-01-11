@@ -1,8 +1,7 @@
 import { HttpErrorResponse } from "@angular/common/http";
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { combineLatest, EMPTY } from "rxjs";
 import { catchError, filter, map, tap } from "rxjs/operators";
-import { OrganizationsService } from "../api/organizations/organizations.service";
 import { TransactionGroupsAPIService } from "../api/transactions/transaction-groups-api.service";
 import { TransactionGroup } from "../api/transactions/transactions.interfaces";
 import {
@@ -11,6 +10,7 @@ import {
   PaginationStatefulServiceState,
 } from "../shared/stateful-service/pagination-stateful-service";
 import { parseErrorMessage } from "../shared/shared.utils";
+import { OrganizationsService } from "../api/organizations.service";
 
 export interface PerformanceState extends PaginationStatefulServiceState {
   transactionGroups: TransactionGroup[];
@@ -27,8 +27,11 @@ const initialState: PerformanceState = {
   providedIn: "root",
 })
 export class PerformanceService extends PaginationStatefulService<PerformanceState> {
+  private transactionGroupsAPIService = inject(TransactionGroupsAPIService);
+  private organizationsService = inject(OrganizationsService);
+
   transactionGroups$ = this.getState$.pipe(
-    map((state) => state.transactionGroups),
+    map((state) => state.transactionGroups)
   );
 
   transactionGroupsDisplay$ = combineLatest([
@@ -39,22 +42,19 @@ export class PerformanceService extends PaginationStatefulService<PerformanceSta
     map(([projects, groups]) => {
       return groups.map((group) => {
         const projectSlug = projects?.find(
-          (project) => +project.id === group.project,
+          (project) => +project.id === group.project
         )?.name;
         return {
           ...group,
           projectSlug,
         };
       });
-    }),
+    })
   );
 
   errors$ = this.getState$.pipe(map((state) => state.errors));
 
-  constructor(
-    private transactionGroupsAPIService: TransactionGroupsAPIService,
-    private organizationsService: OrganizationsService,
-  ) {
+  constructor() {
     super(initialState);
   }
 
@@ -66,7 +66,7 @@ export class PerformanceService extends PaginationStatefulService<PerformanceSta
     end: string | undefined | null,
     sort: string | undefined | null,
     environment: string | undefined | null,
-    query: string | undefined | null,
+    query: string | undefined | null
   ) {
     return this.retrieveTransactionGroups(
       orgSlug,
@@ -76,7 +76,7 @@ export class PerformanceService extends PaginationStatefulService<PerformanceSta
       end,
       sort,
       environment,
-      query,
+      query
     );
   }
 
@@ -88,7 +88,7 @@ export class PerformanceService extends PaginationStatefulService<PerformanceSta
     end?: string | null,
     sort?: string | null,
     environment?: string | null,
-    query?: string | null,
+    query?: string | null
   ) {
     this.setLoadingStart();
     return this.transactionGroupsAPIService
@@ -100,7 +100,7 @@ export class PerformanceService extends PaginationStatefulService<PerformanceSta
         catchError((err: HttpErrorResponse) => {
           this.setTransactionGroupsError(err);
           return EMPTY;
-        }),
+        })
       );
   }
 

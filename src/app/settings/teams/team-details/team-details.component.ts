@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import {
   ActivatedRoute,
   RouterLink,
@@ -28,6 +28,8 @@ import { DetailHeaderComponent } from "src/app/shared/detail/header/header.compo
   ],
 })
 export class TeamDetailsComponent {
+  private route = inject(ActivatedRoute);
+
   teamSlug$ = this.route.paramMap.pipe(
     map((params) => params.get("team-slug")),
   );
@@ -46,5 +48,4 @@ export class TeamDetailsComponent {
       label: "Settings",
     },
   ];
-  constructor(private route: ActivatedRoute) {}
 }

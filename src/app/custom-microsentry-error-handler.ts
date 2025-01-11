@@ -1,13 +1,15 @@
-import { ErrorHandler, Injectable } from "@angular/core";
+import { ErrorHandler, Injectable, inject } from "@angular/core";
 import { MicroSentryErrorBusService } from "@micro-sentry/angular";
 import { MicroSentryService } from "@micro-sentry/angular";
 
 @Injectable({ providedIn: "root" })
 export class CustomMicroSentryErrorHandler implements ErrorHandler {
-  constructor(
-    private errorBus: MicroSentryErrorBusService,
-    microSentry: MicroSentryService,
-  ) {
+  private errorBus = inject(MicroSentryErrorBusService);
+
+  constructor() {
+    const errorBus = this.errorBus;
+    const microSentry = inject(MicroSentryService);
+
     // tslint:disable-next-line:rxjs-prefer-angular-takeuntil
     errorBus.errors$.subscribe((error) => {
       microSentry.report(error as Error);

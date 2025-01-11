@@ -5,15 +5,15 @@
       [attr.data-start]="firstLineNumber"
       [attr.data-line-offset]="firstLineNumber"
       [attr.data-line]="highlightLine"
-    ><code gtPrism [language]="eventPlatform" class="line-numbers">{{ codeBlock }}</code></pre>
+    ><code gtPrism [language]="eventPlatform()" class="line-numbers">{{ codeBlock }}</code></pre>
   </div>
 } @else {
   <div class="simple-code-container">
-    @for (contextLine of context; track contextLine) {
+    @for (contextLine of context(); track contextLine) {
       <div>
         <pre
           [class.highlight]="
-            contextLine[0] === lineNo && context && context.length > 1
+            contextLine[0] === lineNo() && context() && context()!.length > 1
           "
           class="context padding"
           >{{ contextLine[0] }}. {{ contextLine[1] }}</pre

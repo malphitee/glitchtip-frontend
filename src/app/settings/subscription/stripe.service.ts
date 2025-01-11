@@ -1,7 +1,7 @@
-import { computed, Injectable } from "@angular/core";
+import { computed, Injectable, inject } from "@angular/core";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { lastValueFrom } from "rxjs";
-import { tap, exhaustMap, withLatestFrom } from "rxjs/operators";
+import { tap, exhaustMap } from "rxjs/operators";
 import { baseUrl } from "src/app/constants";
 import {
   StripeCheckoutSession,
@@ -24,21 +24,21 @@ const initialState: StripeState = {
   providedIn: "root",
 })
 export class StripeService extends StatefulService<StripeState> {
-  stripePublicKey$ = this.settingsService.stripePublicKey$;
+  private http = inject(HttpClient);
+  private settingsService = inject(SettingsService);
+
+  stripePublicKey = this.settingsService.stripePublicKey;
 
   readonly error = computed(() => this.state().error);
-  constructor(
-    private http: HttpClient,
-    private settingsService: SettingsService
-  ) {
+  constructor() {
     super(initialState);
   }
 
   redirectToSubscriptionCheckout(organizationSlug: string, price: string) {
     lastValueFrom(
       this.createSubscriptionCheckout(organizationSlug, price).pipe(
-        withLatestFrom(this.settingsService.stripePublicKey$),
-        exhaustMap(([resp, stripePublicKey]) => {
+        exhaustMap((resp) => {
+          const stripePublicKey = this.stripePublicKey();
           if (stripePublicKey) {
             return loadStripe(stripePublicKey).then((stripe) =>
               stripe?.redirectToCheckout({ sessionId: resp.id })

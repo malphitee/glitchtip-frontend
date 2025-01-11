@@ -1,8 +1,7 @@
 import {
   Component,
   ChangeDetectionStrategy,
-  input,
-  Input,
+  input
 } from "@angular/core";
 
 import { MatInputModule } from "@angular/material/input";
@@ -15,5 +14,5 @@ import { MatInputModule } from "@angular/material/input";
 })
 export class FormErrorComponent {
   errors = input<string[]>();
-  @Input() error: any; // Do not use
+  readonly error = input<any>(); // Do not use
 }

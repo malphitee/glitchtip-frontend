@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from "@angular/core";
+import { Component, ChangeDetectionStrategy, inject } from "@angular/core";
 import {
   Validators,
   FormGroup,
@@ -44,22 +44,26 @@ export class ResetPasswordComponent extends StatefulComponent<
   ResetPasswordState,
   ResetPasswordService
 > {
+  protected service: ResetPasswordService;
+  private settings = inject(SettingsService);
+
   success = this.service.success;
   loading = this.service.loading;
   formErrors = this.service.formErrors;
   form = new FormGroup({
     email: new FormControl("", [Validators.required, Validators.email]),
   });
-  enableUserRegistration$ = this.settings.enableUserRegistration$;
+  enableUserRegistration = this.settings.enableUserRegistration;
 
-  constructor(
-    protected service: ResetPasswordService,
-    private settings: SettingsService,
-  ) {
+  constructor() {
+    const service = inject(ResetPasswordService);
+
     toObservable(service.fieldErrors).subscribe((fieldErrors) =>
-      mapFormErrors(fieldErrors, this.form),
+      mapFormErrors(fieldErrors, this.form)
     );
     super(service);
+  
+    this.service = service;
   }
 
   get email() {

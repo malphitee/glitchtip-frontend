@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from "@angular/core";
+import { Component, ChangeDetectionStrategy, inject } from "@angular/core";
 import {
   FormControl,
   FormGroup,
@@ -38,6 +38,9 @@ import { checkForOverflow } from "src/app/shared/shared.utils";
   ],
 })
 export class WebAuthnComponent {
+  private service = inject(MultiFactorAuthService);
+  private snackBar = inject(MatSnackBar);
+
   stage = this.service.webAuthnState;
   hasTOTP = this.service.TOTPAuthenticator;
   error = null;
@@ -50,10 +53,6 @@ export class WebAuthnComponent {
   form = new FormGroup({
     name: new FormControl("", [Validators.required]),
   });
-  constructor(
-    private service: MultiFactorAuthService,
-    private snackBar: MatSnackBar,
-  ) {}
   get name() {
     return this.form.get("name");
   }

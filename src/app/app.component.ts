@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import {
   ActivatedRoute,
   NavigationEnd,
@@ -11,6 +11,7 @@ import { UserService } from "./api/user/user.service";
 import { setTheme } from "./shared/shared.utils";
 import { AuthService } from "./auth.service";
 import { MatIconRegistry } from "@angular/material/icon";
+import { toObservable } from "@angular/core/rxjs-interop";
 
 @Component({
   selector: "gt-root",
@@ -18,19 +19,19 @@ import { MatIconRegistry } from "@angular/material/icon";
   imports: [RouterOutlet],
 })
 export class AppComponent implements OnInit {
-  constructor(
-    private settings: SettingsService,
-    private route: ActivatedRoute,
-    private router: Router,
-    private authService: AuthService,
-    private userService: UserService,
-    private matIconRegistry: MatIconRegistry
-  ) {
+  private settings = inject(SettingsService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private authService = inject(AuthService);
+  private userService = inject(UserService);
+  private matIconRegistry = inject(MatIconRegistry);
+
+  userDetails$ = toObservable(this.userService.user);
+  constructor() {
     this.matIconRegistry.setDefaultFontSetClass("material-symbols-outlined");
   }
 
   ngOnInit() {
-    this.settings.getSettings().subscribe();
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         const params = this.route.snapshot.firstChild?.params;
@@ -40,11 +41,11 @@ export class AppComponent implements OnInit {
     });
 
     const systemTheme = matchMedia("(prefers-color-scheme: dark)");
-    this.userService.userDetails$.subscribe((user) => {
+    this.userDetails$.subscribe((user) => {
       setTheme(user?.options.preferredTheme || localStorage.getItem("theme"));
     });
     systemTheme.addEventListener("change", () => {
-      const s = this.userService.userDetails$.subscribe((user) => {
+      const s = this.userDetails$.subscribe((user) => {
         setTheme(user?.options.preferredTheme);
       });
       s.unsubscribe();

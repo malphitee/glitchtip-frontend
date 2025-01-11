@@ -1,11 +1,12 @@
 import { HttpClient } from "@angular/common/http";
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 
 @Injectable({
   providedIn: "root",
 })
 export class SocialAuthAPIService {
-  constructor(protected http: HttpClient) {}
+  protected http = inject(HttpClient);
+
 
   disconnect(account: string, provider: string) {
     return this.http.request(

@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from "@angular/common/http";
-import { Injectable, computed } from "@angular/core";
+import { Injectable, computed, inject } from "@angular/core";
 import {
   RegistrationPublicKeyCredential,
   create,
@@ -68,6 +68,8 @@ const initialState: MFAState = {
   providedIn: "root",
 })
 export class MultiFactorAuthService extends StatefulService<MFAState> {
+  private accountService = inject(AccountService);
+
   initialLoadComplete = computed(() => this.state().initialLoadComplete);
   loading = computed(() => this.state().loading);
   setupTOTPStage = computed(() => this.state().setupTOTPStage);
@@ -96,7 +98,7 @@ export class MultiFactorAuthService extends StatefulService<MFAState> {
   regenCodes = computed(() => this.state().regenCodes);
   webAuthnState = computed(() => this.state().webAuthnStage);
 
-  constructor(private accountService: AccountService) {
+  constructor() {
     super(initialState);
   }
 

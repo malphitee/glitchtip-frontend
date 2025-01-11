@@ -1,4 +1,5 @@
-import { Injectable, computed } from "@angular/core";
+import { Injectable, computed, inject } from "@angular/core";
+import { toObservable } from "@angular/core/rxjs-interop";
 import { catchError, combineLatest, map, tap, throwError } from "rxjs";
 import { AccountService } from "src/app/api/allauth/account.service";
 import { AllAuthHttpErrorResponse } from "src/app/api/allauth/allauth.interfaces";
@@ -18,31 +19,32 @@ const initialState: SocialAuthState = {
   providedIn: "root",
 })
 export class SocialAuthService extends StatefulService<SocialAuthState> {
+  private accountService = inject(AccountService);
+  private settingsService = inject(SettingsService);
+  private userService = inject(UserService);
+
   loadingId = computed(() => this.state().loadingId);
-  socialApps$ = this.settingsService.socialApps$;
-  user$ = combineLatest([this.socialApps$, this.userService.userDetails$]).pipe(
-    map(([socialApps, userDetails]) => {
+  socialApps = this.settingsService.socialApps;
+  user$ = combineLatest([toObservable(this.userService.user)]).pipe(
+    map(([userDetails]) => {
+      const socialApps = this.socialApps();
       let socialAccountsWithNames = userDetails?.identities.map(
         (socialAccount) => {
           return {
             ...socialAccount,
             name: socialApps.find(
-              (socialApp) => socialApp.provider === socialAccount.provider,
+              (socialApp) => socialApp.provider === socialAccount.provider
             )?.name,
           };
-        },
+        }
       );
       return {
         ...userDetails,
         identities: socialAccountsWithNames,
       };
-    }),
+    })
   );
-  constructor(
-    private accountService: AccountService,
-    private settingsService: SettingsService,
-    private userService: UserService,
-  ) {
+  constructor() {
     super(initialState);
   }
 
@@ -56,7 +58,7 @@ export class SocialAuthService extends StatefulService<SocialAuthState> {
       catchError((err: AllAuthHttpErrorResponse) => {
         this.setState({ loadingId: null });
         return throwError(() => err);
-      }),
+      })
     );
   }
 }

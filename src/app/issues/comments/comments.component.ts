@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit, inject } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { lastValueFrom } from "rxjs";
 import { map, tap } from "rxjs/operators";
@@ -32,20 +32,19 @@ export class CommentsComponent
   extends StatefulBaseComponent<CommentsState, CommentsService>
   implements OnDestroy, OnInit
 {
+  private userService = inject(UserService);
+  protected route = inject(ActivatedRoute);
+
   comments$ = this.commentsService.commentsWithUIState$;
   createCommentLoading$ = this.commentsService.createCommentLoading$;
   commentsListLoading$ = this.commentsService.commentsListLoading$;
   commentUpdateLoading$ = this.commentsService.commentUpdateLoading$;
-  user$ = this.userService.userDetails$;
+  user = this.userService.user;
   displayCommentCreation$ = this.comments$.pipe(
-    map((comments) => comments.length < 50),
+    map((comments) => comments.length < 50)
   );
 
-  constructor(
-    private commentsService: CommentsService,
-    private userService: UserService,
-    protected route: ActivatedRoute,
-  ) {
+  constructor(private commentsService: CommentsService) {
     super(commentsService);
   }
 
@@ -65,13 +64,13 @@ export class CommentsComponent
             this.commentsService.updateComment(
               +params["issue-id"],
               data.id,
-              data.text,
+              data.text
             );
           } else {
             this.commentsService.createComment(+params["issue-id"], data.text);
           }
-        }),
-      ),
+        })
+      )
     );
   }
 
@@ -89,8 +88,8 @@ export class CommentsComponent
         this.route.params.pipe(
           tap((params) => {
             this.commentsService.deleteComment(+params["issue-id"], commentId);
-          }),
-        ),
+          })
+        )
       );
   }
 }

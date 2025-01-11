@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { catchError, map, tap } from "rxjs/operators";
 import { lastValueFrom, EMPTY } from "rxjs";
 import {
@@ -23,12 +23,12 @@ const initialState: MonitorListState = {
   providedIn: "root",
 })
 export class MonitorListService extends PaginationStatefulService<MonitorListState> {
+  private monitorsAPIService = inject(MonitorsAPIService);
+  private snackBar = inject(MatSnackBar);
+
   monitors$ = this.getState$.pipe(map((state) => state.monitors));
 
-  constructor(
-    private monitorsAPIService: MonitorsAPIService,
-    private snackBar: MatSnackBar,
-  ) {
+  constructor() {
     super(initialState);
   }
 

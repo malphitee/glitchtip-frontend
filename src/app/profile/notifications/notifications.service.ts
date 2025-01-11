@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { BehaviorSubject, EMPTY, combineLatest } from "rxjs";
 import { map, tap, catchError } from "rxjs/operators";
 import { baseUrl } from "src/app/constants";
@@ -38,6 +38,9 @@ const initialState: NotificationsState = {
   providedIn: "root",
 })
 export class NotificationsService {
+  private projectsService = inject(ProjectsService);
+  private http = inject(HttpClient);
+
   private readonly notificationsState = new BehaviorSubject<NotificationsState>(
     initialState,
   );
@@ -64,11 +67,6 @@ export class NotificationsService {
   readonly projectAlertsError$ = this.getState$.pipe(
     map((data) => data.projectAlertError),
   );
-
-  constructor(
-    private projectsService: ProjectsService,
-    private http: HttpClient,
-  ) {}
 
   subscribeToEndpoints() {
     this.notificationsList();

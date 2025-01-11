@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input } from "@angular/core";
+import { Component, ChangeDetectionStrategy, input } from "@angular/core";
 import { MatIconModule } from "@angular/material/icon";
 
 /**
@@ -13,6 +13,6 @@ import { MatIconModule } from "@angular/material/icon";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ToDoItemComponent {
-  @Input() title = "";
-  @Input() isDone: "false" | "doing" | "true" = "false";
+  readonly title = input("");
+  readonly isDone = input<"false" | "doing" | "true">("false");
 }

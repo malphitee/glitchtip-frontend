@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, OnDestroy } from "@angular/core";
+import { Component, ChangeDetectionStrategy, OnDestroy, inject } from "@angular/core";
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { map } from "rxjs/operators";
 import { combineLatest } from "rxjs";
@@ -27,16 +27,16 @@ import { UserReportsService } from "src/app/api/user-reports/user-reports.servic
   ],
 })
 export class UserReportsIssueComponent implements OnDestroy {
+  private issueService = inject(IssueDetailService);
+  private userReportService = inject(UserReportsService);
+  protected route = inject(ActivatedRoute);
+
   paginator$ = this.userReportService.paginator$;
   issueId$ = this.issueService.issue$.pipe(map((issue) => issue?.id));
   reports$ = this.userReportService.reports$;
   errorReports$ = this.userReportService.errors$;
 
-  constructor(
-    private issueService: IssueDetailService,
-    private userReportService: UserReportsService,
-    protected route: ActivatedRoute,
-  ) {
+  constructor() {
     combineLatest([this.route.queryParamMap, this.issueId$]).subscribe(
       ([queryParams, issueId]) => {
         if (issueId) {

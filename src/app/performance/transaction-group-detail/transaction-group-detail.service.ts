@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { HttpErrorResponse } from "@angular/common/http";
 import { EMPTY } from "rxjs";
 import { catchError, map, tap } from "rxjs/operators";
@@ -22,6 +22,8 @@ const initialState: TransactionGroupDetailState = {
   providedIn: "root",
 })
 export class TransactionGroupDetailService extends StatefulService<TransactionGroupDetailState> {
+  private transactionGroupsAPIService = inject(TransactionGroupsAPIService);
+
   readonly transactionGroup$ = this.getState$.pipe(
     map((state) => state.transactionGroup),
   );
@@ -33,9 +35,7 @@ export class TransactionGroupDetailService extends StatefulService<TransactionGr
     map((state) => state.transactionGroupInitialLoadComplete),
   );
 
-  constructor(
-    private transactionGroupsAPIService: TransactionGroupsAPIService,
-  ) {
+  constructor() {
     super(initialState);
   }
 

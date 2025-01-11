@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, OnDestroy } from "@angular/core";
+import { Component, ChangeDetectionStrategy, OnDestroy, inject } from "@angular/core";
 import { ProjectEnvironment } from "src/app/api/organizations/organizations.interface";
 import { ProjectEnvironmentsService } from "./project-environments.service";
 import { LoadingButtonComponent } from "../../../../shared/loading-button/loading-button.component";
@@ -21,12 +21,14 @@ import { MatCardModule } from "@angular/material/card";
   ],
 })
 export class ProjectEnvironmentsComponent implements OnDestroy {
+  private environmentsService = inject(ProjectEnvironmentsService);
+
   initialLoad$ = this.environmentsService.initialLoad$;
   toggleHiddenloading$ = this.environmentsService.toggleHiddenLoading$;
   error$ = this.environmentsService.error$;
   sortedEnvironments$ = this.environmentsService.sortedEnvironments$;
 
-  constructor(private environmentsService: ProjectEnvironmentsService) {
+  constructor() {
     this.environmentsService.retrieveEnvironments().subscribe();
   }
 

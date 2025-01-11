@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Component, OnInit, OnDestroy, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { FormControl, FormGroup } from "@angular/forms";
@@ -12,7 +12,7 @@ import {
   switchMap,
   tap,
 } from "rxjs/operators";
-import { OrganizationsService } from "src/app/api/organizations/organizations.service";
+import { OrganizationDetailService } from "src/app/api/organizations/organization-detail.service";
 import { PerformanceService } from "../performance.service";
 import { ProjectEnvironmentsService } from "src/app/settings/projects/project-detail/project-environments/project-environments.service";
 import { normalizeProjectParams } from "src/app/shared/shared.utils";
@@ -24,6 +24,7 @@ import { DataFilterBarComponent } from "../../list-elements/data-filter-bar/data
 import { MatTableModule } from "@angular/material/table";
 import { ProjectFilterBarComponent } from "../../list-elements/project-filter-bar/project-filter-bar.component";
 import { ListTitleComponent } from "../../list-elements/list-title/list-title.component";
+import { OrganizationsService } from "src/app/api/organizations.service";
 
 @Component({
   selector: "gt-transaction-groups",
@@ -42,6 +43,13 @@ import { ListTitleComponent } from "../../list-elements/list-title/list-title.co
   ],
 })
 export class TransactionGroupsComponent implements OnInit, OnDestroy {
+  private organizationsService = inject(OrganizationsService);
+  private organizationDetailService = inject(OrganizationDetailService);
+  protected service = inject(PerformanceService);
+  private projectEnvironmentsService = inject(ProjectEnvironmentsService);
+  protected router = inject(Router);
+  protected route = inject(ActivatedRoute);
+
   paginator$ = this.service.paginator$;
   orgSlug$ = this.route.paramMap.pipe(map((params) => params.get("org-slug")));
   displayedColumns = ["name-and-project", "avgDuration"];
@@ -82,7 +90,7 @@ export class TransactionGroupsComponent implements OnInit, OnDestroy {
     this.organizationsService.activeOrganizationProjects$;
 
   projectsFromParams$ = this.route.queryParams.pipe(
-    map((params) => normalizeProjectParams(params.project)),
+    map((params) => normalizeProjectParams(params.project))
   );
 
   appliedProjectCount$ = this.projectsFromParams$.pipe(
@@ -91,26 +99,20 @@ export class TransactionGroupsComponent implements OnInit, OnDestroy {
         return projects.length;
       }
       return 0;
-    }),
+    })
   );
 
   organizationEnvironments$ = combineLatest([
     this.appliedProjectCount$,
-    this.organizationsService.organizationEnvironmentsProcessed$,
+    this.organizationDetailService.organizationEnvironmentsProcessed$,
     this.projectEnvironmentsService.visibleEnvironments$,
   ]).pipe(
     map(([appliedProjectCount, orgEnvironments, projectEnvironments]) =>
-      appliedProjectCount !== 1 ? orgEnvironments : projectEnvironments,
-    ),
+      appliedProjectCount !== 1 ? orgEnvironments : projectEnvironments
+    )
   );
 
-  constructor(
-    private organizationsService: OrganizationsService,
-    protected service: PerformanceService,
-    private projectEnvironmentsService: ProjectEnvironmentsService,
-    protected router: Router,
-    protected route: ActivatedRoute,
-  ) {
+  constructor() {
     combineLatest([this.orgSlug$, this.route.queryParamMap])
       .pipe(
         switchMap(([orgSlug, params]) => {
@@ -124,19 +126,19 @@ export class TransactionGroupsComponent implements OnInit, OnDestroy {
               params.get("end"),
               params.get("sort"),
               params.get("environment"),
-              params.get("query"),
+              params.get("query")
             );
           }
           return EMPTY;
         }),
-        takeUntilDestroyed(),
+        takeUntilDestroyed()
       )
       .subscribe();
 
     this.organizationEnvironments$.subscribe((environments) =>
       environments.length === 0
         ? this.environmentForm.controls.environment.disable()
-        : this.environmentForm.controls.environment.enable(),
+        : this.environmentForm.controls.environment.enable()
     );
 
     this.transactionGroupsDisplay$
@@ -144,20 +146,20 @@ export class TransactionGroupsComponent implements OnInit, OnDestroy {
       .subscribe((groups) =>
         groups.length === 0
           ? this.sortForm.controls.sort.disable()
-          : this.sortForm.controls.sort.enable(),
+          : this.sortForm.controls.sort.enable()
       );
 
     this.orgSlug$
       .pipe(
         switchMap((orgSlug) => {
           if (orgSlug) {
-            return this.organizationsService.getOrganizationEnvironments(
-              orgSlug,
+            return this.organizationDetailService.getOrganizationEnvironments(
+              orgSlug
             );
           }
           return EMPTY;
         }),
-        takeUntilDestroyed(),
+        takeUntilDestroyed()
       )
       .subscribe();
 
@@ -166,23 +168,23 @@ export class TransactionGroupsComponent implements OnInit, OnDestroy {
       this.route.queryParamMap.pipe(
         map((params) => params.getAll("project")[0]),
         filter((project) => !!project),
-        distinctUntilChanged(),
+        distinctUntilChanged()
       ),
       this.organizationsService.activeOrganizationProjects$,
     ]).pipe(
       switchMap(([orgSlug, projectId, orgProjects]) => {
         const projectSlug = orgProjects?.find(
-          (orgProject) => orgProject.id.toString() === projectId,
+          (orgProject) => orgProject.id.toString() === projectId
         )?.slug;
         if (orgSlug && projectSlug) {
           return this.projectEnvironmentsService.retrieveEnvironmentsWithProperties(
             orgSlug,
-            projectSlug,
+            projectSlug
           );
         }
         return EMPTY;
       }),
-      takeUntilDestroyed(),
+      takeUntilDestroyed()
     );
 
     combineLatest([
@@ -203,7 +205,7 @@ export class TransactionGroupsComponent implements OnInit, OnDestroy {
               queryParamsHandling: "merge",
             });
           }
-        }),
+        })
       )
       .subscribe();
   }

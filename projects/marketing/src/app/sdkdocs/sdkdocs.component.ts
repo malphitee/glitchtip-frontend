@@ -1,9 +1,4 @@
-import {
-  AfterViewChecked,
-  Component,
-  OnInit,
-  ViewEncapsulation,
-} from "@angular/core";
+import { AfterViewChecked, Component, OnInit, ViewEncapsulation, inject } from "@angular/core";
 
 import { HighlightService } from "../shared/highlight.service";
 import { MarkdownComponent } from "ngx-markdown";
@@ -19,12 +14,11 @@ import { flattenedPlatforms } from "src/app/settings/projects/platform-picker/pl
   encapsulation: ViewEncapsulation.Emulated,
 })
 export class SDKDocsComponent implements AfterViewChecked, OnInit {
+  private highlightService = inject(HighlightService);
+  private route = inject(ActivatedRoute);
+
   slug: string | null = null;
   title?: string;
-  constructor(
-    private highlightService: HighlightService,
-    private route: ActivatedRoute,
-  ) {}
 
   ngAfterViewChecked() {
     this.highlightService.highlightAll();

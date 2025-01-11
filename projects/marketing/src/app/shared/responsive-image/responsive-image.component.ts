@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, input } from "@angular/core";
 
 @Component({
   standalone: true,
@@ -7,7 +7,7 @@ import { Component, Input } from "@angular/core";
 })
 export class ResponsiveImageComponent {
   @Input() alt: string | undefined;
-  @Input() loading = "lazy";
+  readonly loading = input("lazy");
 
   _webP: string | undefined;
   _main: string | undefined;

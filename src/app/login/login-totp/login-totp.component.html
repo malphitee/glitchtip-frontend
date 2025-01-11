@@ -26,7 +26,7 @@
     <!-- <mat-checkbox class="mat-caption" formControlName="remember">Don't prompt again on this device</mat-checkbox> -->
   </form>
 
-  @if (hasWebAuthn()) {
+  @if (hasWebAuthn!()) {
     <div>
       <a [routerLink]="[]" (click)="switchMethod()" i18n
         >Log in with security key instead</a

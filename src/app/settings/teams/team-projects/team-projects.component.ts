@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { combineLatest } from "rxjs";
@@ -30,6 +30,10 @@ import { AsyncPipe } from "@angular/common";
   ],
 })
 export class TeamProjectsComponent implements OnInit {
+  private projectsService = inject(ProjectSettingsService);
+  private teamsService = inject(TeamsService);
+  private route = inject(ActivatedRoute);
+
   userTeamRole$ = this.teamsService.userTeamRole$;
   projectsOnTeam$ = this.projectsService.projectsOnTeam$;
   projectsNotOnTeam$ = this.projectsService.projectsNotOnTeam$;
@@ -40,12 +44,6 @@ export class TeamProjectsComponent implements OnInit {
     map((params) => params.get("team-slug")),
   );
   orgSlug$ = this.route.paramMap.pipe(map((params) => params.get("org-slug")));
-
-  constructor(
-    private projectsService: ProjectSettingsService,
-    private teamsService: TeamsService,
-    private route: ActivatedRoute,
-  ) {}
 
   ngOnInit(): void {
     combineLatest([this.orgSlug$, this.teamSlug$])

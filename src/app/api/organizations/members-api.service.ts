@@ -1,5 +1,5 @@
 import { HttpClient } from "@angular/common/http";
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { baseUrl } from "../../constants";
 import {
   Member,
@@ -12,8 +12,9 @@ import {
   providedIn: "root",
 })
 export class MembersAPIService {
+  protected http = inject(HttpClient);
+
   readonly url = `/members/`;
-  constructor(protected http: HttpClient) {}
 
   list(orgSlug: string) {
     return this.http.get<Member[]>(this.listURL(orgSlug));

@@ -1,10 +1,10 @@
-<div class="wrapper {{ source }}">
-  @if (loading) {
+<div class="wrapper {{ source() }}">
+  @if (loading()) {
     <mat-spinner diameter="24"></mat-spinner>
   } @else {
     <svg>
-      <use [attr.xlink:href]="getProviderSvgName(provider)"></use>
+      <use [attr.xlink:href]="getProviderSvgName(provider())"></use>
     </svg>
-    <span class="text">{{ text }}</span>
+    <span class="text">{{ text() }}</span>
   }
 </div>

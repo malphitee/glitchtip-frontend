@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import {
   AbstractControl,
   FormControl,
@@ -21,6 +21,7 @@ import { AsyncPipe } from "@angular/common";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatCardModule } from "@angular/material/card";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
+import { toObservable } from "@angular/core/rxjs-interop";
 
 function autocompleteStringValidator(validOptions: Array<string>): ValidatorFn {
   return (control: AbstractControl): { [key: string]: any } | null => {
@@ -51,6 +52,9 @@ function autocompleteStringValidator(validOptions: Array<string>): ValidatorFn {
   ],
 })
 export class PreferencesComponent implements OnInit {
+  private service = inject(UserService);
+  private settings = inject(SettingsService);
+
   defaultTimeZone: string = "Default";
   timeZones: string[] = (Intl as any).supportedValuesOf("timeZone");
   currentTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -61,26 +65,21 @@ export class PreferencesComponent implements OnInit {
     }),
     theme: new FormControl(
       "",
-      autocompleteStringValidator(["system", "light", "dark"]),
+      autocompleteStringValidator(["system", "light", "dark"])
     ),
   });
   filteredOptions?: Observable<string[]>;
-  userDetails$ = this.service.userDetails$;
-  serverTimeZone$ = this.settings.serverTimeZone$;
+  userDetails$ = toObservable(this.service.user);
+  serverTimeZone$ = toObservable(this.settings.serverTimeZone);
 
   formName = this.form.get("name") as FormControl;
   formTimeZone = this.form.get("timeZone") as FormControl;
-
-  constructor(
-    private service: UserService,
-    private settings: SettingsService,
-  ) {}
 
   ngOnInit() {
     this.serverTimeZone$
       .pipe(
         filter((serverTimeZone) => !!serverTimeZone),
-        take(1),
+        take(1)
       )
       .subscribe((serverTimeZone) => {
         this.defaultTimeZone = this.defaultTimeZone + ` \(${serverTimeZone}\)`;
@@ -91,15 +90,15 @@ export class PreferencesComponent implements OnInit {
       });
     this.userDetails$.subscribe((user) => {
       if (user) {
-        this.form.controls.name.setValue(user.name);
+        this.form.controls.name.setValue(user.name!);
       }
-      if (user?.options.timezone) {
+      if (user?.options!.timezone) {
         if (!this.timeZones.includes(user.options.timezone)) {
           this.timeZones.unshift(user.options.timezone); // Existing TZ always valid
         }
         this.form.controls.timeZone.setValue(user.options.timezone);
       }
-      if (user?.options.preferredTheme) {
+      if (user?.options!.preferredTheme) {
         this.form.controls.theme.setValue(user.options.preferredTheme);
       } else {
         this.form.controls.theme.setValue("light");
@@ -107,7 +106,7 @@ export class PreferencesComponent implements OnInit {
     });
     this.filteredOptions = this.form.controls["timeZone"].valueChanges.pipe(
       startWith(""),
-      map((value) => this._filter(value || "")),
+      map((value) => this._filter(value || ""))
     );
   }
 
@@ -115,7 +114,7 @@ export class PreferencesComponent implements OnInit {
     const filterValue = value.toLowerCase().replace(/\s/g, "_");
 
     return this.timeZones.filter((option) =>
-      option.toLowerCase().includes(filterValue),
+      option.toLowerCase().includes(filterValue)
     );
   }
 

@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { Router } from "@angular/router";
 import { EMPTY } from "rxjs";
 import { tap, map, catchError } from "rxjs/operators";
@@ -34,6 +34,9 @@ const initialState: AuthTokensState = {
   providedIn: "root",
 })
 export class AuthTokensService extends StatefulService<AuthTokensState> {
+  private apiTokenService = inject(APITokenService);
+  private router = inject(Router);
+
   readonly apiTokens$ = this.getState$.pipe(map((state) => state.apiTokens));
   readonly initialLoad$ = this.getState$.pipe(
     map((state) => state.loading.apiTokens),
@@ -54,10 +57,7 @@ export class AuthTokensService extends StatefulService<AuthTokensState> {
     map((state) => state.loading.delete),
   );
 
-  constructor(
-    private apiTokenService: APITokenService,
-    private router: Router,
-  ) {
+  constructor() {
     super(initialState);
   }
 

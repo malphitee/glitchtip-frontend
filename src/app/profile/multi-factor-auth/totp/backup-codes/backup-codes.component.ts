@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from "@angular/core";
+import { Component, ChangeDetectionStrategy, inject } from "@angular/core";
 import {
   FormControl,
   FormGroup,
@@ -29,6 +29,9 @@ import { toObservable } from "@angular/core/rxjs-interop";
   ],
 })
 export class BackupCodesComponent {
+  private service = inject(MultiFactorAuthService);
+  private snackBar = inject(MatSnackBar);
+
   TOTPAuthenticator = this.service.TOTPAuthenticator;
   error = this.service.error;
   copiedCodes = this.service.copiedCodes;
@@ -41,10 +44,7 @@ export class BackupCodesComponent {
     ]),
   });
 
-  constructor(
-    private service: MultiFactorAuthService,
-    private snackBar: MatSnackBar,
-  ) {
+  constructor() {
     toObservable(this.error).subscribe((error) =>
       this.backupCode?.setErrors({ serverError: [error] }),
     );

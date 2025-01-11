@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from "@angular/core";
+import { Component, OnInit, ChangeDetectionStrategy, inject } from "@angular/core";
 import { NotificationsService } from "./notifications.service";
 import { NotificationStatus } from "./notifications.interface";
 import { RouterLink } from "@angular/router";
@@ -30,6 +30,8 @@ import { MatCardModule } from "@angular/material/card";
   ],
 })
 export class NotificationsComponent implements OnInit {
+  private notificationsService = inject(NotificationsService);
+
   subscribeByDefault$ = this.notificationsService.subscribeByDefault$;
   projectViewExpanded$ = this.notificationsService.projectViewExpanded$;
   subscribeByDefaultLoading$ =
@@ -38,8 +40,6 @@ export class NotificationsComponent implements OnInit {
   projectAlertLoading$ = this.notificationsService.projectAlertLoading$;
   groupedProjects$ = this.notificationsService.groupedProjects$;
   projectAlertsError$ = this.notificationsService.projectAlertsError$;
-
-  constructor(private notificationsService: NotificationsService) {}
 
   ngOnInit(): void {
     this.notificationsService.subscribeToEndpoints();

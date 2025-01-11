@@ -2,10 +2,10 @@ import {
   Component,
   ChangeDetectionStrategy,
   forwardRef,
-  Input,
   ViewChild,
   ElementRef,
   HostListener,
+  input
 } from "@angular/core";
 import {
   MatExpansionPanel,
@@ -51,7 +51,7 @@ import { AsyncPipe } from "@angular/common";
   ],
 })
 export class PlatformPickerComponent implements ControlValueAccessor {
-  @Input() template: "buttons" | "dropdown" = "buttons";
+  readonly template = input<"buttons" | "dropdown">("buttons");
 
   @ViewChild("expansionPanel", { static: false })
   expansionPanel?: MatExpansionPanel;

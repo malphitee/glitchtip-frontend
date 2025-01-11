@@ -1,10 +1,5 @@
 import { CommonModule } from "@angular/common";
-import {
-  ChangeDetectionStrategy,
-  Component,
-  Input,
-  OnDestroy,
-} from "@angular/core";
+import { ChangeDetectionStrategy, Component, OnDestroy, input, inject } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTableModule } from "@angular/material/table";
@@ -38,7 +33,11 @@ import { MonitorChecksService } from "./monitor-checks.service";
   ],
 })
 export class MonitorChecksComponent implements OnDestroy {
-  @Input({ required: true }) monitor!: MonitorDetail;
+  protected service = inject(MonitorChecksService);
+  protected router = inject(Router);
+  protected route = inject(ActivatedRoute);
+
+  readonly monitor = input.required<MonitorDetail>();
   monitorChecks$ = this.service.monitorChecks$;
   isChange$ = this.route.queryParamMap.pipe(
     map((params) => (params.get("isChange") === "false" ? false : true)),
@@ -55,11 +54,7 @@ export class MonitorChecksComponent implements OnDestroy {
     ),
   );
 
-  constructor(
-    protected service: MonitorChecksService,
-    protected router: Router,
-    protected route: ActivatedRoute,
-  ) {
+  constructor() {
     combineLatest([this.route.paramMap, this.route.queryParamMap])
       .pipe(
         withLatestFrom(this.isChange$),

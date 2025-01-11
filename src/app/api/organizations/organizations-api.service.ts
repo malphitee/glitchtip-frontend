@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { map } from "rxjs";
 import {
@@ -14,9 +14,15 @@ import { normalizeID } from "../shared-api.utils";
   providedIn: "root",
 })
 export class OrganizationAPIService extends APIBaseService {
+  protected http: HttpClient;
+
   readonly url = baseUrl + "/organizations/";
-  constructor(protected http: HttpClient) {
+  constructor() {
+    const http = inject(HttpClient);
+
     super(http);
+  
+    this.http = http;
   }
 
   list() {
@@ -30,7 +36,7 @@ export class OrganizationAPIService extends APIBaseService {
           project.id = normalizeID(project.id);
         });
         return orgDetail;
-      }),
+      })
     );
   }
 
@@ -40,9 +46,5 @@ export class OrganizationAPIService extends APIBaseService {
 
   update(id: string, obj: OrganizationNew) {
     return this.http.put<Organization>(this.detailURL(id), obj);
-  }
-
-  destroy(id: string) {
-    return this.http.delete(this.detailURL(id));
   }
 }

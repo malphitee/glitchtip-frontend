@@ -1,5 +1,5 @@
 import { HttpClient } from "@angular/common/http";
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { baseUrl } from "../../constants";
 import { ProjectEnvironment } from "../organizations/organizations.interface";
 
@@ -7,7 +7,8 @@ import { ProjectEnvironment } from "../organizations/organizations.interface";
   providedIn: "root",
 })
 export class ProjectEnvironmentsAPIService {
-  constructor(protected http: HttpClient) {}
+  protected http = inject(HttpClient);
+
 
   list(organizationSlug: string, projectSlug: string) {
     return this.http.get<ProjectEnvironment[]>(
