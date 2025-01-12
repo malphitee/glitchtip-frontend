@@ -93,6 +93,7 @@ export class NewMemberComponent implements OnInit, OnDestroy {
 
   onSubmit() {
     if (this.form.valid) {
+      console.log("?");
       const emails = this.form.get("email")?.value;
       const role = this.form.get("role")?.value;
       const teams = this.form.get("teams")?.value;

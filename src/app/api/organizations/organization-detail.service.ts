@@ -32,6 +32,9 @@ import { StatefulService } from "src/app/shared/stateful-service/stateful-servic
 import { OrganizationsService } from "../organizations.service";
 import { toObservable } from "@angular/core/rxjs-interop";
 import { client } from "../api";
+import { components } from "../api-schema";
+
+type MemberRole = components["schemas"]["Member"];
 
 interface OrganizationsState {
   organizationMembers: Member[];
@@ -220,6 +223,29 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
     teamsInput: string[],
     roleInput: MemberRole
   ) {
+    const orgSlug = this.organizationsService.activeOrganizationSlug();
+    const data = {
+      email: emailInput,
+      orgRole: roleInput,
+      teamRoles: teamsInput.map((teamSlug) => {
+        return { teamSlug, role: "" };
+      }),
+      sendInvite: true,
+      reinvite: true,
+    };
+    client
+      .POST("/api/0/organizations/{organization_slug}/members/", {
+        params: { path: { organization_slug: orgSlug } },
+        body: data,
+      })
+      .then((result) => {
+        if (result.data) {
+          this.snackBar.open(
+            `An email invite has been sent to ${result.data.email}`
+          );
+          this.router.navigate([orgSlug, "settings", "members"]);
+        }
+      });
     // const data = {
     //   email: emailInput,
     //   orgRole: roleInput,
