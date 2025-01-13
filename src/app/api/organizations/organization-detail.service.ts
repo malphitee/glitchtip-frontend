@@ -15,7 +15,6 @@ import {
 import {
   Environment,
   Organization,
-  Member,
   MemberRole,
   OrganizationErrors,
   OrganizationLoading,
@@ -25,7 +24,6 @@ import { SubscriptionsService } from "../subscriptions/subscriptions.service";
 import { TeamsService } from "../teams/teams.service";
 import { Team } from "../teams/teams.interfaces";
 import { EnvironmentsAPIService } from "../environments/environments-api.service";
-import { MembersAPIService } from "./members-api.service";
 import { OrganizationAPIService } from "./organizations-api.service";
 import { TeamsAPIService } from "../teams/teams-api.service";
 import { StatefulService } from "src/app/shared/stateful-service/stateful-service";
@@ -34,7 +32,7 @@ import { toObservable } from "@angular/core/rxjs-interop";
 import { client } from "../api";
 import { components } from "../api-schema";
 
-type MemberRole = components["schemas"]["Member"];
+type Member = components["schemas"]["OrganizationUserSchema"];
 
 interface OrganizationsState {
   organizationMembers: Member[];
@@ -71,7 +69,6 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
   private router = inject(Router);
   private organizationsService = inject(OrganizationsService);
   private environmentsAPIService = inject(EnvironmentsAPIService);
-  private membersAPIService = inject(MembersAPIService);
   private organizationAPIService = inject(OrganizationAPIService);
   private snackBar = inject(MatSnackBar);
   private settingsService = inject(SettingsService);
@@ -109,7 +106,9 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
     map(([organizationMembers, teamMembers]) => {
       return organizationMembers.filter(
         (orgMembers) =>
-          !teamMembers.find((teamMems) => orgMembers.id === teamMems.id)
+          !teamMembers.find(
+            (teamMems) => orgMembers.id === teamMems.id.toString()
+          )
       );
     })
   );
@@ -209,12 +208,17 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
       });
   }
 
-  retrieveOrganizationMembers(orgSlug: string) {
-    return this.membersAPIService.list(orgSlug).pipe(
-      tap((members) => {
-        this.setActiveOrganizationMembers(members);
-      })
+  async retrieveOrganizationMembers(orgSlug: string) {
+    const result = await client.GET(
+      "/api/0/organizations/{organization_slug}/members/",
+      {
+        params: { path: { organization_slug: orgSlug } },
+      }
     );
+    if (result.data) {
+      this.setActiveOrganizationMembers(result.data!);
+    }
+    return result;
   }
 
   /** Invite a user via email to join an organization */
@@ -244,46 +248,20 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
             `An email invite has been sent to ${result.data.email}`
           );
           this.router.navigate([orgSlug, "settings", "members"]);
+        } else {
+          if (result.response.status === 403) {
+            this.setAddMemberError(
+              "Only organization members with a role of manager or owner can invite new members."
+            );
+            // } else if (error.detail) {
+            //   this.setAddMemberError(error.error?.detail);
+          } else {
+            this.setAddMemberError(
+              "There was an error processing this request."
+            );
+          }
         }
       });
-    // const data = {
-    //   email: emailInput,
-    //   orgRole: roleInput,
-    //   teamRoles: teamsInput.map((teamSlug) => {
-    //     return { teamSlug, role: "" };
-    //   }),
-    // };
-    // return this.activeOrganizationSlug$
-    //   .pipe(
-    //     take(1),
-    //     mergeMap((orgSlug) =>
-    //       this.membersAPIService
-    //         .inviteUser(orgSlug!, data)
-    //         .pipe(map((response) => ({ response, orgSlug })))
-    //     ),
-    //     tap(({ response, orgSlug }) => {
-    //       this.setAddMemberLoading(false);
-    //       this.snackBar.open(
-    //         `An email invite has been sent to ${response.email}`
-    //       );
-    //       this.router.navigate([orgSlug, "settings", "members"]);
-    //     }),
-    //     catchError((error: HttpErrorResponse) => {
-    //       if (error.status === 403) {
-    //         this.setAddMemberError(
-    //           "Only organization members with a role of manager or owner can invite new members."
-    //         );
-    //       } else if (error.error?.detail) {
-    //         this.setAddMemberError(error.error?.detail);
-    //       } else {
-    //         this.setAddMemberError(
-    //           "There was an error processing this request."
-    //         );
-    //       }
-    //       return EMPTY;
-    //     })
-    //   )
-    //   .toPromise();
   }
 
   retrieveOrganizationTeams(orgSlug: string) {
@@ -311,7 +289,7 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
         lastValueFrom(
           this.teamsService.retrieveTeamMembers(orgSlug, team.slug)
         );
-        lastValueFrom(this.retrieveOrganizationMembers(orgSlug));
+        this.retrieveOrganizationMembers(orgSlug);
       })
     );
   }
@@ -425,19 +403,19 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
   //   });
   // }
 
-  // private setAddMemberError(error: string) {
-  //   const state = this.state.getValue();
-  //   this.setState({
-  //     errors: {
-  //       ...state.errors,
-  //       addOrganizationMember: error,
-  //     },
-  //     loading: {
-  //       ...state.loading,
-  //       addOrganizationMember: false,
-  //     },
-  //   });
-  // }
+  private setAddMemberError(error: string) {
+    const state = this.state.getValue();
+    this.setState({
+      errors: {
+        ...state.errors,
+        addOrganizationMember: error,
+      },
+      loading: {
+        ...state.loading,
+        addOrganizationMember: false,
+      },
+    });
+  }
 
   private setLeaveTeamError(error: HttpErrorResponse) {
     const state = this.state.getValue();

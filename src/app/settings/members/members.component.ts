@@ -1,12 +1,13 @@
-import { Component, OnInit, ChangeDetectionStrategy, inject } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  ChangeDetectionStrategy,
+  inject,
+} from "@angular/core";
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { map, filter } from "rxjs/operators";
 import { OrganizationDetailService } from "src/app/api/organizations/organization-detail.service";
 import { MembersService } from "src/app/api/organizations/members.service";
-import {
-  Member,
-  MemberSelector,
-} from "src/app/api/organizations/organizations.interface";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { LoadingButtonComponent } from "../../shared/loading-button/loading-button.component";
 import { MatChipsModule } from "@angular/material/chips";
@@ -15,6 +16,9 @@ import { MatDividerModule } from "@angular/material/divider";
 import { MatCardModule } from "@angular/material/card";
 import { MatButtonModule } from "@angular/material/button";
 import { OrganizationsService } from "src/app/api/organizations.service";
+import { components } from "src/app/api/api-schema";
+
+type Member = components["schemas"]["OrganizationUserSchema"];
 
 @Component({
   selector: "gt-members",
@@ -38,7 +42,7 @@ export class MembersComponent implements OnInit {
   private membersService = inject(MembersService);
   private route = inject(ActivatedRoute);
 
-  activeOrganizationDetail$ = this.organizationsService.activeOrganization$;
+  activeOrganizationDetail = this.organizationsService.activeOrganization;
   members$ = this.membersService.members$;
 
   ngOnInit(): void {
@@ -48,9 +52,7 @@ export class MembersComponent implements OnInit {
         filter((slug) => !!slug)
       )
       .subscribe((slug) => {
-        this.organizationDetailService
-          .retrieveOrganizationMembers(slug)
-          .toPromise();
+        this.organizationDetailService.retrieveOrganizationMembers(slug);
       });
   }
 
@@ -58,12 +60,12 @@ export class MembersComponent implements OnInit {
     this.membersService.resendInvite(member);
   }
 
-  removeMember(member: MemberSelector) {
+  removeMember(member: any) {
     const message = member.isMe
       ? `Are you sure you'd like to leave this organization?`
       : `Are you sure you want to remove ${member.email} from this organization?`;
     if (window.confirm(message)) {
-      this.membersService.removeMember(member);
+      this.membersService.removeMember(member as any);
     }
   }
 }
