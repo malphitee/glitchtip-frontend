@@ -47,7 +47,7 @@ export class MembersService {
   );
   /** Organization members with computed loading/success data */
   readonly members$ = combineLatest([
-    this.organizationDetailService.organizationMembers$,
+    toObservable(this.organizationDetailService.organizationMembers),
     this.loadingResendInvite$,
     this.sentResendInvite$,
     toObservable(this.userService.activeUserEmail),

@@ -4,7 +4,9 @@ import { getCSRFToken } from "../shared/shared.utils";
 
 const csrfMiddleware: Middleware = {
   async onRequest({ request }) {
-    request.headers.set("X-CSRFToken", getCSRFToken()!);
+    if (["DELETE", "POST", "PUT", "PATCH"].includes(request.method)) {
+      request.headers.set("X-CSRFToken", getCSRFToken()!);
+    }
     return request;
   },
 };

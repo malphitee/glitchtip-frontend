@@ -10,15 +10,16 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatCardModule } from "@angular/material/card";
 import { MatButtonModule } from "@angular/material/button";
-import { CommonModule } from "@angular/common";
 import { OrganizationsService } from "src/app/api/organizations.service";
+import { AsyncPipe, I18nPluralPipe } from "@angular/common";
 
 @Component({
   selector: "gt-teams",
   templateUrl: "./teams.component.html",
   styleUrls: ["./teams.component.scss"],
   imports: [
-    CommonModule,
+    AsyncPipe,
+    I18nPluralPipe,
     MatButtonModule,
     MatCardModule,
     MatDialogModule,
@@ -42,8 +43,8 @@ export class TeamsComponent implements OnInit {
   otherTeams$ = this.activeOrganization$.pipe(
     map((orgDetails) => orgDetails?.teams?.filter((team) => !team.isMember))
   );
-  errors$ = this.organizationDetailService.errors$;
-  loading$ = this.organizationDetailService.loading$;
+  errors = this.organizationDetailService.errors;
+  loading = this.organizationDetailService.loading;
   orgSlug?: string;
 
   memberCountPluralMapping: { [k: string]: string } = {

@@ -1,17 +1,9 @@
-import { Injectable, inject } from "@angular/core";
+import { Injectable, computed, inject } from "@angular/core";
 import { HttpErrorResponse } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { combineLatest, lastValueFrom, EMPTY } from "rxjs";
-import {
-  map,
-  withLatestFrom,
-  filter,
-  distinctUntilChanged,
-  catchError,
-  distinct,
-  tap,
-} from "rxjs/operators";
+import { filter, distinctUntilChanged, catchError, tap } from "rxjs/operators";
 import {
   Environment,
   Organization,
@@ -26,11 +18,11 @@ import { Team } from "../teams/teams.interfaces";
 import { EnvironmentsAPIService } from "../environments/environments-api.service";
 import { OrganizationAPIService } from "./organizations-api.service";
 import { TeamsAPIService } from "../teams/teams-api.service";
-import { StatefulService } from "src/app/shared/stateful-service/stateful-service";
 import { OrganizationsService } from "../organizations.service";
-import { toObservable } from "@angular/core/rxjs-interop";
+import { toObservable, toSignal } from "@angular/core/rxjs-interop";
 import { client } from "../api";
 import { components } from "../api-schema";
+import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
 
 type Member = components["schemas"]["OrganizationUserSchema"];
 
@@ -76,75 +68,64 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
   private teamsAPIService = inject(TeamsAPIService);
   private teamsService = inject(TeamsService);
 
-  orgSlug: string | null = null;
-  initialLoad$ = this.getState$.pipe(
-    map((data) => data.initialLoad),
-    distinct()
+  readonly initialLoad = computed(() => this.state().initialLoad);
+  readonly organizationMembers = computed(
+    () => this.state().organizationMembers
   );
 
-  readonly organizationMembers$ = this.getState$.pipe(
-    map((data) => data.organizationMembers)
-  );
-  readonly orgHasAProject$ =
-    this.organizationsService.activeOrganizationProjects$.pipe(
-      map((projects) => !!projects && projects.length > 0)
-    );
-  readonly projectsCount$ =
-    this.organizationsService.activeOrganizationProjects$.pipe(
-      map((projects) => {
-        if (!projects) {
-          return 0;
-        }
-        return projects.length;
-      })
-    );
+  readonly orgHasAProject = computed(() => {
+    const projects = this.organizationsService.activeOrganizationProjects();
+    return !!projects && projects.length > 0;
+  });
 
-  readonly filteredAddTeamMembers$ = combineLatest([
-    this.organizationMembers$,
-    this.teamsService.teamMembers$,
-  ]).pipe(
-    map(([organizationMembers, teamMembers]) => {
-      return organizationMembers.filter(
-        (orgMembers) =>
-          !teamMembers.find(
-            (teamMems) => orgMembers.id === teamMems.id.toString()
-          )
-      );
-    })
-  );
-  readonly organizationTeams$ = this.getState$.pipe(
-    map((data) => data.organizationTeams)
-  );
-  readonly selectedOrganizationTeams$ = this.organizationTeams$.pipe(
-    map((data) => data)
-  );
+  readonly projectsCount = computed(() => {
+    const projects = this.organizationsService.activeOrganizationProjects();
+    if (!projects) {
+      return 0;
+    }
+    return projects.length;
+  });
+  teamMembers = toSignal(this.teamsService.teamMembers$);
 
-  readonly filteredOrganizationTeams$ = this.organizationTeams$.pipe(
-    withLatestFrom(this.selectedOrganizationTeams$),
-    filter(([orgTeams, selectedOrgTeams]) => orgTeams === selectedOrgTeams)
-  );
+  readonly filteredAddTeamMembers = computed(() => {
+    const organizationMembers = this.organizationMembers();
+    const teamMembers = this.teamMembers() || [];
 
-  readonly organizationEnvironments$ = this.getState$.pipe(
-    map((data) => data.organizationEnvironments)
-  );
-
-  readonly organizationEnvironmentsProcessed$ =
-    this.organizationEnvironments$.pipe(
-      map((environments) =>
-        environments.reduce(
-          (accumulator, environment) => [
-            ...accumulator,
-            ...(!accumulator.includes(environment.name)
-              ? [environment.name]
-              : []),
-          ],
-          [] as string[]
+    return organizationMembers.filter(
+      (orgMembers) =>
+        !teamMembers.find(
+          (teamMems) => orgMembers.id === teamMems.id.toString()
         )
-      )
     );
+  });
 
-  readonly errors$ = this.getState$.pipe(map((data) => data.errors));
-  readonly loading$ = this.getState$.pipe(map((data) => data.loading));
+  readonly organizationTeams = computed(() => this.state().organizationTeams);
+
+  readonly selectedOrganizationTeams = computed(() => this.organizationTeams());
+
+  readonly filteredOrganizationTeams = computed(() => {
+    const orgTeams = this.organizationTeams();
+    const selectedOrgTeams = this.selectedOrganizationTeams();
+    return orgTeams === selectedOrgTeams;
+  });
+
+  readonly organizationEnvironments = computed(
+    () => this.state().organizationEnvironments
+  );
+
+  readonly organizationEnvironmentsProcessed = computed(() => {
+    const environments = this.organizationEnvironments();
+    return environments.reduce(
+      (accumulator, environment) => [
+        ...accumulator,
+        ...(!accumulator.includes(environment.name) ? [environment.name] : []),
+      ],
+      [] as string[]
+    );
+  });
+
+  readonly errors = computed(() => this.state().errors);
+  readonly loading = computed(() => this.state().loading);
 
   constructor() {
     super(initialState);
@@ -274,13 +255,19 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
     );
   }
 
-  createTeam(teamSlug: string, orgSlug: string) {
-    return this.teamsAPIService.create(orgSlug, teamSlug).pipe(
-      tap((team) => {
-        this.organizationsService.refreshActiveOrganization();
-        this.teamsService.addTeam(team);
-      })
+  async createTeam(teamSlug: string, orgSlug: string) {
+    const result = await client.POST(
+      "/api/0/organizations/{organization_slug}/teams/",
+      {
+        params: { path: { organization_slug: orgSlug } },
+        body: { slug: teamSlug },
+      }
     );
+    if (result.data) {
+      this.organizationsService.refreshActiveOrganization();
+      this.teamsService.addTeam(result.data as any);
+    }
+    return result;
   }
 
   addTeamMember(member: Member, orgSlug: string, teamSlug: string) {
@@ -374,7 +361,7 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
   }
 
   private setLeaveTeamLoading(team: string) {
-    const state = this.state.getValue();
+    const state = this.state();
     this.setState({
       loading: {
         ...state.loading,
@@ -384,7 +371,7 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
   }
 
   private setJoinTeamLoading(team: string) {
-    const state = this.state.getValue();
+    const state = this.state();
     this.setState({
       loading: {
         ...state.loading,
@@ -404,7 +391,7 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
   // }
 
   private setAddMemberError(error: string) {
-    const state = this.state.getValue();
+    const state = this.state();
     this.setState({
       errors: {
         ...state.errors,
@@ -418,7 +405,7 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
   }
 
   private setLeaveTeamError(error: HttpErrorResponse) {
-    const state = this.state.getValue();
+    const state = this.state();
     this.setState({
       errors: {
         ...state.errors,
@@ -432,7 +419,7 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
   }
 
   private setJoinTeamError(error: HttpErrorResponse) {
-    const state = this.state.getValue();
+    const state = this.state();
     this.setState({
       errors: {
         ...state.errors,

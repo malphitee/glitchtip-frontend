@@ -9,8 +9,8 @@ import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatCardModule } from "@angular/material/card";
-import { AsyncPipe } from "@angular/common";
 import { OrganizationsService } from "src/app/api/organizations.service";
+import { toObservable } from "@angular/core/rxjs-interop";
 
 @Component({
   selector: "gt-organization",
@@ -23,7 +23,6 @@ import { OrganizationsService } from "src/app/api/organizations.service";
     MatFormFieldModule,
     MatInputModule,
     LoadingButtonComponent,
-    AsyncPipe,
   ],
 })
 export class OrganizationComponent implements OnInit {
@@ -31,7 +30,9 @@ export class OrganizationComponent implements OnInit {
   private organizationDetailService = inject(OrganizationDetailService);
   private snackBar = inject(MatSnackBar);
 
-  activeOrganizationDetail$ = this.organizationsService.activeOrganization$;
+  activeOrganizationDetail = this.organizationsService.activeOrganization;
+  initialLoad$ = toObservable(this.organizationDetailService.initialLoad);
+  activeOrganizationDetail$ = toObservable(this.activeOrganizationDetail);
   updateError = "";
   updateLoading = false;
   deleteError = "";
@@ -42,7 +43,7 @@ export class OrganizationComponent implements OnInit {
 
   ngOnInit() {
     // Ignore first load, on subsequent inits refresh org data
-    this.organizationDetailService.initialLoad$
+    this.initialLoad$
       .pipe(
         take(1),
         tap((initialLoad) => {

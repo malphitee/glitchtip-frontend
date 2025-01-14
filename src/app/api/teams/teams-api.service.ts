@@ -21,10 +21,6 @@ export class TeamsAPIService extends APIBaseService {
     this.http = http;
   }
 
-  create(orgSlug: string, teamSlug: string) {
-    return this.http.post<Team>(this.listURL(orgSlug), { slug: teamSlug });
-  }
-
   retrieve(orgSlug: string, teamSlug: string) {
     return this.http.get<Team>(this.detailURL(orgSlug, teamSlug));
   }

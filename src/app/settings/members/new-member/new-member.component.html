@@ -6,7 +6,7 @@
     <mat-divider></mat-divider>
     <mat-card-content>
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        @if ((errors$ | async)?.addOrganizationMember; as error) {
+        @if ((errors())?.addOrganizationMember; as error) {
         <mat-error class="server-error">{{ error }}</mat-error>
         }
         <div>
@@ -71,8 +71,8 @@
           <mat-form-field appearance="outline">
             <mat-label>Add Team</mat-label>
             <mat-select multiple formControlName="teams" disableOptionCentering>
-              @if ((organizationTeams$ | async)?.length) {
-              @for (team of organizationTeams$ | async; track team) {
+              @if ((organizationTeams())?.length) {
+              @for (team of organizationTeams(); track team.id) {
               <mat-option [value]="team.slug">
                 {{ team.slug }}
               </mat-option>
@@ -84,7 +84,7 @@
           </mat-form-field>
         </div>
         <gt-loading-button buttonText="Add Member(s)"
-          [loading]="(loading$ | async)?.addOrganizationMember"></gt-loading-button>
+          [loading]="(loading())?.addOrganizationMember"></gt-loading-button>
       </form>
     </mat-card-content>
   </mat-card>

@@ -1,4 +1,9 @@
-import { Component, inject } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+} from "@angular/core";
 import {
   FormGroup,
   FormControl,
@@ -25,6 +30,7 @@ import { slugRegex } from "src/app/shared/validators";
   selector: "gt-new-team",
   templateUrl: "./new-team.component.html",
   styleUrls: ["./new-team.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatDialogModule,
     ReactiveFormsModule,
@@ -41,9 +47,9 @@ export class NewTeamComponent {
   dialogRef = inject<MatDialogRef<NewTeamComponent>>(MatDialogRef);
   data = inject<{
     orgSlug: string;
-}>(MAT_DIALOG_DATA);
+  }>(MAT_DIALOG_DATA);
 
-  loading = false;
+  loading = signal(false);
   errors: string[] = [];
   form = new FormGroup({
     slug: new FormControl("", [
@@ -63,24 +69,18 @@ export class NewTeamComponent {
 
   onSubmit() {
     if (this.form.valid) {
-      this.loading = true;
+      this.loading.set(true);
       this.organizationsService
         .createTeam(this.form.value.slug!, this.data.orgSlug)
-        .subscribe(
-          (team) => {
-            this.loading = false;
-            this.snackBar.open(`${team.slug} has been created`);
-            this.dialogRef.close();
-          },
-          (err) => {
-            this.loading = false;
-            if (err.error.slug?.length) {
-              this.errors = err.error.slug;
-            } else {
-              this.errors = [`${err.statusText}: ${err.status}`];
-            }
+        .then((result) => {
+          this.loading.set(false);
+          if (result.data) {
+            this.snackBar.open(`${result.data.slug} has been created`);
+          } else if (result.error) {
+            // this.errors = [`${result.response.status}: ${err.status}`];
           }
-        );
+          this.dialogRef.close();
+        });
     }
   }
 }

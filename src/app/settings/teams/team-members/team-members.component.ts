@@ -39,7 +39,7 @@ export class TeamMembersComponent implements OnInit {
   private userService = inject(UserService);
 
   teamMembers$ = this.teamsService.teamMembers$;
-  filteredAddTeamMembers$ = this.organizationsService.filteredAddTeamMembers$;
+  filteredAddTeamMembers = this.organizationsService.filteredAddTeamMembers;
   userTeamRole$ = this.teamsService.userTeamRole$;
 
   member = new FormControl();
