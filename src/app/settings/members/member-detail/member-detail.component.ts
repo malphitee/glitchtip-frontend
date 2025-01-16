@@ -1,7 +1,16 @@
-import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, inject } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  ChangeDetectionStrategy,
+  OnDestroy,
+  inject,
+  effect,
+  computed,
+} from "@angular/core";
+import { DatePipe } from "@angular/common";
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
-import { filter, map, withLatestFrom, startWith } from "rxjs/operators";
+import { map } from "rxjs/operators";
 import { combineLatest } from "rxjs";
 import { MatListModule } from "@angular/material/list";
 import { MatRadioModule } from "@angular/material/radio";
@@ -11,8 +20,7 @@ import { MatDividerModule } from "@angular/material/divider";
 import { MatCardModule } from "@angular/material/card";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
-import { CommonModule } from "@angular/common";
-import { MemberDetailService } from "src/app/api/organizations/member-detail.service";
+import { MemberDetailService } from "src/app/settings/members/member-detail/member-detail.service";
 import { MemberRole } from "src/app/api/organizations/organizations.interface";
 import { LoadingButtonComponent } from "../../../shared/loading-button/loading-button.component";
 import { DetailHeaderComponent } from "src/app/shared/detail/header/header.component";
@@ -23,7 +31,7 @@ import { DetailHeaderComponent } from "src/app/shared/detail/header/header.compo
   styleUrls: ["./member-detail.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
+    DatePipe,
     MatButtonModule,
     RouterLink,
     MatIconModule,
@@ -42,18 +50,18 @@ export class MemberDetailComponent implements OnInit, OnDestroy {
   route = inject(ActivatedRoute);
   private memberDetailService = inject(MemberDetailService);
 
-  member$ = this.memberDetailService.member$;
-  memberTeams$ = this.memberDetailService.memberTeams$;
-  availableRoles$ = this.memberDetailService.availableRoles$;
-  updateMemberError$ = this.memberDetailService.updateMemberRoleError$;
-  updateMemberLoading$ = this.memberDetailService.updateMemberRoleLoading$;
-  transferOrgOwnershipError$ =
-    this.memberDetailService.transferOrgOwnershipError$;
-  transferOrgOwnershipLoading$ =
-    this.memberDetailService.transferOrgOwnershipLoading$;
+  member = this.memberDetailService.member;
+  memberTeams = this.memberDetailService.memberTeams;
+  availableRoles = this.memberDetailService.availableRoles;
+  updateMemberError = this.memberDetailService.updateMemberRoleError;
+  updateMemberLoading = this.memberDetailService.updateMemberRoleLoading;
+  transferOrgOwnershipError =
+    this.memberDetailService.transferOrgOwnershipError;
+  transferOrgOwnershipLoading =
+    this.memberDetailService.transferOrgOwnershipLoading;
   orgSlug$ = this.route.paramMap.pipe(map((params) => params.get("org-slug")));
   memberIdParam$ = this.route.paramMap.pipe(
-    map((params) => params.get("member-id")),
+    map((params) => params.get("member-id"))
   );
   routeParams$ = combineLatest([this.orgSlug$, this.memberIdParam$]);
   form = new FormGroup({
@@ -61,16 +69,27 @@ export class MemberDetailComponent implements OnInit, OnDestroy {
   });
   formRole = this.form.get("role") as FormControl<MemberRole | null>;
 
-  selectedRoleScopes$ = this.formRole.valueChanges.pipe(
-    startWith(null),
-    withLatestFrom(this.availableRoles$),
-    filter(([_, availableRoles]) => !!availableRoles),
-    map(([_, availableRoles]) => {
-      return availableRoles!
+  selectedRoleScopes = computed(() => {
+    const availableRoles = this.availableRoles();
+    if (availableRoles) {
+      return availableRoles
         .find((roleDetails) => roleDetails.id === this.formRole.value)
         ?.scopes.join(", ");
-    }),
-  );
+    }
+    return;
+  });
+
+  constructor() {
+    effect(() => {
+      const member = this.member();
+      if (member && this.form.pristine) {
+        this.form.patchValue({
+          role: member.role,
+        });
+        this.form.markAsPristine();
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.routeParams$
@@ -79,21 +98,12 @@ export class MemberDetailComponent implements OnInit, OnDestroy {
           if (organizationSlug && memberIdParam) {
             this.memberDetailService.retrieveMemberDetail(
               organizationSlug,
-              +memberIdParam,
+              +memberIdParam
             );
           }
-        }),
+        })
       )
       .subscribe();
-
-    this.member$.subscribe((data) => {
-      if (data && this.form.pristine) {
-        this.form.patchValue({
-          role: data.role,
-        });
-        this.form.markAsPristine();
-      }
-    });
   }
 
   ngOnDestroy() {

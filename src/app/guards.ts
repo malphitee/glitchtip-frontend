@@ -4,35 +4,31 @@ import {
   CanActivateFn,
   createUrlTreeFromSnapshot,
   RouterStateSnapshot,
+  UrlTree,
 } from "@angular/router";
 import { AuthService } from "./auth.service";
-import { map } from "rxjs";
 
 export const alreadyLoggedInGuard: CanActivateFn = (
-  next: ActivatedRouteSnapshot,
-) =>
-  inject(AuthService).loggedInGuard$.pipe(
-    map((loggedIn) => {
-      if (loggedIn) {
-        return createUrlTreeFromSnapshot(next, ["/"]);
-      }
-      return true;
-    }),
-  );
+  next: ActivatedRouteSnapshot
+): boolean | UrlTree => {
+  const authService = inject(AuthService);
+  if (authService.loggedInGuard()) {
+    return createUrlTreeFromSnapshot(next, ["/"]);
+  }
+  return true;
+};
 
 export const loggedInGuard: CanActivateFn = (
   next: ActivatedRouteSnapshot,
-  state: RouterStateSnapshot,
-) =>
-  inject(AuthService).loggedInGuard$.pipe(
-    map((isLoggedIn) => {
-      if (isLoggedIn) {
-        return true;
-      }
-      return createUrlTreeFromSnapshot(
-        next,
-        ["/", "login"],
-        state.url !== "/" ? { next: state.url } : {},
-      );
-    }),
+  state: RouterStateSnapshot
+): boolean | UrlTree => {
+  const authService = inject(AuthService);
+  if (authService.loggedInGuard()) {
+    return true;
+  }
+  return createUrlTreeFromSnapshot(
+    next,
+    ["/", "login"],
+    state.url !== "/" ? { next: state.url } : {}
   );
+};

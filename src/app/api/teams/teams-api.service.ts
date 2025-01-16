@@ -17,12 +17,8 @@ export class TeamsAPIService extends APIBaseService {
     const http = inject(HttpClient);
 
     super(http);
-  
-    this.http = http;
-  }
 
-  create(orgSlug: string, teamSlug: string) {
-    return this.http.post<Team>(this.listURL(orgSlug), { slug: teamSlug });
+    this.http = http;
   }
 
   retrieve(orgSlug: string, teamSlug: string) {
@@ -47,16 +43,16 @@ export class TeamsAPIService extends APIBaseService {
     return this.http.get<Member[]>(this.teamMembersListURL(orgSlug, teamSlug));
   }
 
-  addTeamMember(member: Member, orgSlug: string, teamSlug: string) {
+  addTeamMember(member: any, orgSlug: string, teamSlug: string) {
     return this.http.post<Team>(
       this.teamMemberURL(member.id, orgSlug, teamSlug),
-      member,
+      member
     );
   }
 
   removeTeamMember(memberId: number, orgSlug: string, teamSlug: string) {
     return this.http.delete<Team>(
-      this.teamMemberURL(memberId, orgSlug, teamSlug),
+      this.teamMemberURL(memberId, orgSlug, teamSlug)
     );
   }
 

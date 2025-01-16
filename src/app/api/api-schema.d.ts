@@ -3380,20 +3380,25 @@ export interface components {
         OrganizationUserSchema: {
             /** Id */
             id: string;
-            /** Get Role */
-            get_role: string;
-            /** Get Role Display */
-            get_role_display: string;
             /**
-             * Created
+             * Role
+             * @enum {string}
+             */
+            role: "member" | "admin" | "manager" | "owner";
+            /** Rolename */
+            roleName: string;
+            /**
+             * Datecreated
              * Format: date-time
              */
-            created: string;
-            /** Get Email */
-            get_email: string;
+            dateCreated: string;
+            /** Email */
+            email: string;
             user?: components["schemas"]["UserSchema"] | null;
             /** Pending */
             pending: boolean;
+            /** Isowner */
+            isOwner: boolean;
         };
         /** OrganizationUserIn */
         OrganizationUserIn: {
@@ -3434,24 +3439,27 @@ export interface components {
         OrganizationUserDetailSchema: {
             /** Id */
             id: string;
-            /** Get Role */
-            get_role: string;
-            /** Get Role Display */
-            get_role_display: string;
             /**
-             * Created
+             * Role
+             * @enum {string}
+             */
+            role: "member" | "admin" | "manager" | "owner";
+            /** Rolename */
+            roleName: string;
+            /**
+             * Datecreated
              * Format: date-time
              */
-            created: string;
-            /** Get Email */
-            get_email: string;
+            dateCreated: string;
+            /** Email */
+            email: string;
             user?: components["schemas"]["UserSchema"] | null;
             /** Pending */
             pending: boolean;
-            /** Teams */
-            teams: string[];
             /** Isowner */
             isOwner: boolean;
+            /** Teams */
+            teams: string[];
         };
         /** OrganizationUserUpdateSchema */
         OrganizationUserUpdateSchema: {
@@ -3476,20 +3484,25 @@ export interface components {
         OrganizationUserOrganizationSchema: {
             /** Id */
             id: string;
-            /** Get Role */
-            get_role: string;
-            /** Get Role Display */
-            get_role_display: string;
             /**
-             * Created
+             * Role
+             * @enum {string}
+             */
+            role: "member" | "admin" | "manager" | "owner";
+            /** Rolename */
+            roleName: string;
+            /**
+             * Datecreated
              * Format: date-time
              */
-            created: string;
-            /** Get Email */
-            get_email: string;
+            dateCreated: string;
+            /** Email */
+            email: string;
             user?: components["schemas"]["UserSchema"] | null;
             /** Pending */
             pending: boolean;
+            /** Isowner */
+            isOwner: boolean;
             organization: components["schemas"]["OrganizationSchema"];
         };
         /** AcceptInviteIn */

@@ -1,4 +1,9 @@
-import { Component, OnInit, ChangeDetectionStrategy, inject } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  ChangeDetectionStrategy,
+  inject,
+} from "@angular/core";
 import {
   FormControl,
   Validators,
@@ -85,9 +90,7 @@ export class TeamSettingsComponent implements OnInit {
             if (orgSlug && teamSlug) {
               this.teamsService
                 .deleteTeam(orgSlug, teamSlug)
-                .subscribe(() =>
-                  this.organizationsService.deleteTeam(teamSlug)
-                );
+                .then(() => this.organizationsService.deleteTeam(teamSlug));
             }
           })
         )

@@ -27,11 +27,9 @@ export class AppComponent implements OnInit {
   private matIconRegistry = inject(MatIconRegistry);
 
   userDetails$ = toObservable(this.userService.user);
-  constructor() {
-    this.matIconRegistry.setDefaultFontSetClass("material-symbols-outlined");
-  }
 
   ngOnInit() {
+    this.matIconRegistry.setDefaultFontSetClass("material-symbols-outlined");
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         const params = this.route.snapshot.firstChild?.params;

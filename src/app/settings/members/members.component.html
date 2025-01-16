@@ -6,64 +6,47 @@
   <mat-card>
     <mat-card-header>
       <mat-card-title>
-        {{ (activeOrganizationDetail$ | async)?.name }}
+        {{ (activeOrganizationDetail())?.name }}
       </mat-card-title>
     </mat-card-header>
     <mat-divider></mat-divider>
     <mat-card-content>
       <div class="list">
         @for (member of members$ | async; track member) {
-          <div class="list--item">
-            <div class="email-and-badge">
-              <a class="email" mat-line [routerLink]="[member.id]"
-                >{{ member.email }}
-              </a>
-              @if (member.isOwner) {
-                <mat-chip
-                  class="mat-caption"
-                  color="primary"
-                  highlighted="true"
-                >
-                  Account Owner
-                </mat-chip>
-              }
-              @if (member.pending) {
-                <mat-chip class="mat-caption" color="primary">
-                  Invite Pending
-                </mat-chip>
-              }
-            </div>
-            <div class="reinvite-and-role">
-              @if (member.pending) {
-                <div class="reinvite">
-                  @if (!member.loadingResendInvite) {
-                    <gt-loading-button
-                      class="resend-invite"
-                      [loading]="member.loadingResendInvite"
-                      [buttonText]="
+        <div class="list--item">
+          <div class="email-and-badge">
+            <a class="email" mat-line [routerLink]="[member.id]">{{ member.email }}
+            </a>
+            @if (member.isOwner) {
+            <mat-chip class="mat-caption" color="primary" highlighted="true">
+              Account Owner
+            </mat-chip>
+            }
+            @if (member.pending) {
+            <mat-chip class="mat-caption" color="primary">
+              Invite Pending
+            </mat-chip>
+            }
+          </div>
+          <div class="reinvite-and-role">
+            @if (member.pending) {
+            <div class="reinvite">
+              @if (!member.loadingResendInvite) {
+              <gt-loading-button class="resend-invite" [loading]="member.loadingResendInvite" [buttonText]="
                         member.sentResendInvite
                           ? 'Invite Resent'
                           : 'Resend Invite'
-                      "
-                      [disabled]="member.sentResendInvite"
-                      (buttonClick)="resendInvite(member)"
-                    >
-                    </gt-loading-button>
-                  }
-                </div>
+                      " [disabled]="member.sentResendInvite" (buttonClick)="resendInvite(member)">
+              </gt-loading-button>
               }
-              <div class="role">{{ member.roleName }}</div>
             </div>
-            <gt-loading-button
-              class="remove-button"
-              matTooltip="Account ownership must be transferred."
-              [matTooltipDisabled]="!member.isOwner"
-              [disabled]="member.isOwner"
-              (buttonClick)="removeMember(member)"
-              [buttonText]="member.isMe ? 'Leave' : 'Remove'"
-              buttonStyle="stroked"
-            ></gt-loading-button>
+            }
+            <div class="role">{{ member.roleName }}</div>
           </div>
+          <gt-loading-button class="remove-button" matTooltip="Account ownership must be transferred."
+            [matTooltipDisabled]="!member.isOwner" [disabled]="member.isOwner" (buttonClick)="removeMember(member)"
+            [buttonText]="member.isMe ? 'Leave' : 'Remove'" buttonStyle="stroked"></gt-loading-button>
+        </div>
         }
       </div>
     </mat-card-content>

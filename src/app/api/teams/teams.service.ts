@@ -9,6 +9,7 @@ import { Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { TeamsAPIService } from "./teams-api.service";
 import { toObservable } from "@angular/core/rxjs-interop";
+import { client } from "../api";
 
 interface TeamsState {
   teams: Team[] | null;
@@ -100,19 +101,22 @@ export class TeamsService {
     );
   }
 
-  deleteTeam(orgSlug: string, teamSlug: string) {
+  async deleteTeam(orgSlug: string, teamSlug: string) {
     this.setDeleteTeamLoading(true);
-    return this.teamsAPIService.destroy(orgSlug, teamSlug).pipe(
-      tap(() => {
-        this.setDeleteTeamLoading(false);
-        this.snackBar.open(`You have successfully deleted #${teamSlug}`);
-        this.router.navigate([orgSlug, "settings", "teams"]);
-      }),
-      catchError((error: HttpErrorResponse) => {
-        this.setDeleteTeamError(error);
-        return EMPTY;
-      })
+    const result = await client.DELETE(
+      "/api/0/teams/{organization_slug}/{team_slug}/",
+      {
+        params: { path: { organization_slug: orgSlug, team_slug: teamSlug } },
+      }
     );
+    this.setDeleteTeamLoading(false);
+    if (result.error) {
+      // this.setDeleteTeamError(result.response);
+    } else {
+      this.snackBar.open(`You have successfully deleted #${teamSlug}`);
+      this.router.navigate([orgSlug, "settings", "teams"]);
+    }
+    return result;
   }
 
   private setDeleteTeamLoading(loading: boolean) {
@@ -126,20 +130,20 @@ export class TeamsService {
     });
   }
 
-  private setDeleteTeamError(error: HttpErrorResponse) {
-    const state = this.state.getValue();
-    this.state.next({
-      ...state,
-      errors: {
-        ...state.errors,
-        deleteTeam: `${error.statusText}: ${error.status}`,
-      },
-      loading: {
-        ...state.loading,
-        deleteTeam: false,
-      },
-    });
-  }
+  // private setDeleteTeamError(error: HttpErrorResponse) {
+  //   const state = this.state.getValue();
+  //   this.state.next({
+  //     ...state,
+  //     errors: {
+  //       ...state.errors,
+  //       deleteTeam: `${error.statusText}: ${error.status}`,
+  //     },
+  //     loading: {
+  //       ...state.loading,
+  //       deleteTeam: false,
+  //     },
+  //   });
+  // }
 
   addTeam(team: Team) {
     this.addOneTeam(team);

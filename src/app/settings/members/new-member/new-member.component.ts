@@ -17,7 +17,6 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatRadioModule } from "@angular/material/radio";
 import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { AsyncPipe } from "@angular/common";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatCardModule } from "@angular/material/card";
 
@@ -56,7 +55,6 @@ function emailsValidator(control: AbstractControl): ValidationErrors | null {
     MatSelectModule,
     MatOptionModule,
     LoadingButtonComponent,
-    AsyncPipe,
   ],
 })
 export class NewMemberComponent implements OnInit, OnDestroy {
@@ -65,11 +63,11 @@ export class NewMemberComponent implements OnInit, OnDestroy {
   private settingsService = inject(SettingsService);
 
   enableUserRegistration = this.settingsService.enableUserRegistration;
-  organizationTeams$ = this.organizationsService.organizationTeams$;
-  filteredOrganizationTeams$ =
-    this.organizationsService.filteredOrganizationTeams$;
-  errors$ = this.organizationsService.errors$;
-  loading$ = this.organizationsService.loading$;
+  organizationTeams = this.organizationsService.organizationTeams;
+  filteredOrganizationTeams =
+    this.organizationsService.filteredOrganizationTeams;
+  errors = this.organizationsService.errors;
+  loading = this.organizationsService.loading;
   form = new FormGroup({
     email: new FormControl("", [Validators.required, emailsValidator]),
     role: new FormControl("", [Validators.required]),
@@ -93,6 +91,7 @@ export class NewMemberComponent implements OnInit, OnDestroy {
 
   onSubmit() {
     if (this.form.valid) {
+      console.log("?");
       const emails = this.form.get("email")?.value;
       const role = this.form.get("role")?.value;
       const teams = this.form.get("teams")?.value;

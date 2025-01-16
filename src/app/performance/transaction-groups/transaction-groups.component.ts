@@ -3,7 +3,7 @@ import { CommonModule } from "@angular/common";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { FormControl, FormGroup } from "@angular/forms";
 import { MatSelectChange } from "@angular/material/select";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { takeUntilDestroyed, toObservable } from "@angular/core/rxjs-interop";
 import { combineLatest, EMPTY } from "rxjs";
 import {
   distinctUntilChanged,
@@ -104,7 +104,9 @@ export class TransactionGroupsComponent implements OnInit, OnDestroy {
 
   organizationEnvironments$ = combineLatest([
     this.appliedProjectCount$,
-    this.organizationDetailService.organizationEnvironmentsProcessed$,
+    toObservable(
+      this.organizationDetailService.organizationEnvironmentsProcessed
+    ),
     this.projectEnvironmentsService.visibleEnvironments$,
   ]).pipe(
     map(([appliedProjectCount, orgEnvironments, projectEnvironments]) =>

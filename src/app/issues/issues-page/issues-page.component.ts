@@ -1,9 +1,15 @@
-import { Component, ChangeDetectionStrategy, OnDestroy, OnInit, inject } from "@angular/core";
+import {
+  Component,
+  ChangeDetectionStrategy,
+  OnDestroy,
+  OnInit,
+  inject,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormControl, FormGroup } from "@angular/forms";
 import { MatSelectChange } from "@angular/material/select";
 import { Router, ActivatedRoute, RouterLink } from "@angular/router";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { takeUntilDestroyed, toObservable } from "@angular/core/rxjs-interop";
 import { combineLatest, EMPTY, lastValueFrom } from "rxjs";
 import {
   map,
@@ -162,7 +168,9 @@ export class IssuesPageComponent implements OnInit, OnDestroy {
 
   organizationEnvironments$ = combineLatest([
     this.appliedProjectCount$,
-    this.organizationDetailService.organizationEnvironmentsProcessed$,
+    toObservable(
+      this.organizationDetailService.organizationEnvironmentsProcessed
+    ),
     this.projectEnvironmentsService.visibleEnvironments$,
   ]).pipe(
     map(([appliedProjectCount, orgEnvironments, projectEnvironments]) =>
