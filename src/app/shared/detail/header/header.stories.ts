@@ -10,11 +10,13 @@ const meta: Meta<DetailHeaderComponent> = {
       providers: [provideRouter([])],
     }),
   ],
-  render: (args: DetailHeaderComponent) => ({
-    props: {
-      ...args,
-    },
-  }),
+  // This story is currently disabled due to problems with type detection
+  // on signal inputs
+  // render: (args: DetailHeaderComponent) => ({
+  //   props: {
+  //     ...args,
+  //   },
+  // }),
 };
 
 export default meta;
@@ -30,13 +32,13 @@ export const Complex: Story = {
     subtitle: "Subtitle is here.",
     backLinkText: "Go back",
   },
-  render: (args: DetailHeaderComponent) => ({
-    props: {
-      ...args,
-    },
-    template: `
-    <gt-detail-header [title]="title" [subtitle]="subtitle" [backLinkText]="backLinkText">
-      <button mat-button>Button</button>
-    </gt-detail-header>`,
-  }),
+  // render: (args: DetailHeaderComponent) => ({
+  //   props: {
+  //     ...args,
+  //   },
+  //   template: `
+  //   <gt-detail-header [title]="title" [subtitle]="subtitle" [backLinkText]="backLinkText">
+  //     <button mat-button>Button</button>
+  //   </gt-detail-header>`,
+  // }),
 };
