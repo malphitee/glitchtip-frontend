@@ -39,10 +39,10 @@
               {{ totalEventsAllowed() }}
             </div>
             <div class="display-bar">
-              <div class="file-size-percent" style="width: {{ eventsPercent.fileSize }}%"></div>
-              <div class="error-event" style="width: {{ eventsPercent.errorEvents }}%"></div>
-              <div class="uptime-event" style="width: {{ eventsPercent.uptimeEvents }}%"></div>
-              <div class="transaction-event" style="width: {{ eventsPercent.transactionEvents }}%"></div>
+              <div class="file-size-percent" [style.width.%]="eventsPercent.fileSize"></div>
+              <div class="error-event" [style.width.%]="eventsPercent.errorEvents"></div>
+              <div class="uptime-event" [style.width.%]="eventsPercent.uptimeEvents"></div>
+              <div class="transaction-event" [style.width.%]="eventsPercent.transactionEvents"></div>
             </div>
             @if (eventsCountWithTotal(); as count) {
             <div class="event-count" [class.event-count--left]="eventsPercent.total < 25"
