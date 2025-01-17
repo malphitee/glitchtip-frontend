@@ -1,8 +1,11 @@
 import { user } from "../fixtures/users";
 
-export function seedBackend(doExtraStuff = false) {
-  const url = `/api/test/seed/${doExtraStuff ? "?extras=true" : ""}`;
-  cy.request("POST", url);
+export function seedBackend(generateExtras = false, seedIssues = false) {
+  let paramString = generateExtras ? "?extras=true" : ""
+  if (paramString)
+    paramString += seedIssues ? "&seedIssues=true" : ""
+  const url = `/api/test/seed/` + paramString;
+  return cy.request("POST", url);
 }
 
 export function requestLogin() {
