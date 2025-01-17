@@ -35,6 +35,7 @@ import {
   withRouterConfig,
 } from "@angular/router";
 import { CustomPreloadingStrategy } from "./app/preloadingStrategy";
+import { APP_BASE_HREF, DOCUMENT } from "@angular/common";
 
 let snackBarDuration = 4000;
 if (window.Cypress) {
@@ -61,10 +62,23 @@ if (locale in localeMappings) {
   locale = localeMappings[locale];
 }
 
+function getBaseHref(doc: Document): string {
+  const baseUrl = doc.body.dataset.baseUrl;
+  if (baseUrl && baseUrl !== "{{base_path}}") {
+    return baseUrl.startsWith("/") ? baseUrl : "/" + baseUrl;
+  }
+  return "";
+}
+
 const bootstrap = () =>
   bootstrapApplication(AppComponent, {
     providers: [
       provideExperimentalZonelessChangeDetection(),
+      {
+        provide: APP_BASE_HREF,
+        useFactory: getBaseHref,
+        deps: [DOCUMENT],
+      },
       provideRouter(
         routes,
         withComponentInputBinding(),
