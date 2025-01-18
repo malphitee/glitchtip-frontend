@@ -14,12 +14,13 @@ const csrfMiddleware: Middleware = {
   },
 };
 
-let baseUrl = document.body.dataset.baseUrl;
 const options: ClientOptions = {};
-if (baseUrl && baseUrl !== "{{base_path}}") {
-  baseUrl = baseUrl.startsWith("/") ? baseUrl : "/" + baseUrl;
-  options["baseUrl"] = baseUrl;
+const baseElement = document.querySelector("base");
+if (baseElement) {
+  const baseHref = baseElement.href;
+  if (baseHref !== "/") {
+    options["baseUrl"] = baseHref;
+  }
 }
-
 export const client = createClient<paths>(options);
 client.use(csrfMiddleware);

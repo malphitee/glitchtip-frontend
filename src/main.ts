@@ -2,7 +2,9 @@ import {
   enableProdMode,
   ErrorHandler,
   importProvidersFrom,
+  inject,
   provideExperimentalZonelessChangeDetection,
+  Provider,
 } from "@angular/core";
 import { loadTranslations } from "@angular/localize";
 
@@ -21,6 +23,10 @@ import { ErrorStateMatcher } from "@angular/material/core";
 import { CustomMicroSentryErrorHandler } from "./app/custom-microsentry-error-handler";
 import { tokenInterceptor } from "./app/api/auth/token.interceptor";
 import {
+  HttpEvent,
+  HttpHandlerFn,
+  HttpInterceptorFn,
+  HttpRequest,
   provideHttpClient,
   withFetch,
   withInterceptors,
@@ -35,7 +41,8 @@ import {
   withRouterConfig,
 } from "@angular/router";
 import { CustomPreloadingStrategy } from "./app/preloadingStrategy";
-import { APP_BASE_HREF, DOCUMENT } from "@angular/common";
+import { Observable } from "rxjs";
+import { APP_BASE_HREF } from "@angular/common";
 
 let snackBarDuration = 4000;
 if (window.Cypress) {
@@ -62,23 +69,33 @@ if (locale in localeMappings) {
   locale = localeMappings[locale];
 }
 
-function getBaseHref(doc: Document): string {
-  const baseUrl = doc.body.dataset.baseUrl;
-  if (baseUrl && baseUrl !== "{{base_path}}") {
-    return baseUrl.startsWith("/") ? baseUrl : "/" + baseUrl;
+export function baseHrefInterceptor(
+  req: HttpRequest<unknown>,
+  next: HttpHandlerFn
+): Observable<HttpEvent<unknown>> {
+  const baseHref = inject(APP_BASE_HREF);
+  const apiReq = req.clone({ url: `${baseHref.replace(/\/$/, "")}${req.url}` });
+  return next(apiReq);
+}
+
+const extraInterceptors: HttpInterceptorFn[] = [];
+const extraProviders: Provider[] = [];
+
+const baseElement = document.querySelector("base");
+if (baseElement) {
+  const baseHref = baseElement.href;
+  // Only add base href support when it's not "/"
+  if (baseHref !== "/") {
+    extraProviders.push({ provide: APP_BASE_HREF, useValue: baseHref });
+    extraInterceptors.push(baseHrefInterceptor);
   }
-  return "";
 }
 
 const bootstrap = () =>
   bootstrapApplication(AppComponent, {
     providers: [
+      ...extraProviders,
       provideExperimentalZonelessChangeDetection(),
-      {
-        provide: APP_BASE_HREF,
-        useFactory: getBaseHref,
-        deps: [DOCUMENT],
-      },
       provideRouter(
         routes,
         withComponentInputBinding(),
@@ -112,7 +129,7 @@ const bootstrap = () =>
           cookieName: "csrftoken",
           headerName: "X-CSRFTOKEN",
         }),
-        withInterceptors([tokenInterceptor])
+        withInterceptors([...extraInterceptors, tokenInterceptor])
       ),
     ],
   }).catch((err) => console.error(err));
