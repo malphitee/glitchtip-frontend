@@ -1,7 +1,6 @@
 import { Component, OnDestroy, inject } from "@angular/core";
 import { UserService } from "src/app/api/user/user.service";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { AsyncPipe } from "@angular/common";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatCardModule } from "@angular/material/card";
 import { LoadingButtonComponent } from "../../shared/loading-button/loading-button.component";
@@ -24,7 +23,6 @@ import { AuthService } from "src/app/auth.service";
     MatDividerModule,
     MatFormFieldModule,
     LoadingButtonComponent,
-    AsyncPipe,
   ],
 })
 export class AccountComponent implements OnDestroy {
