@@ -4,8 +4,8 @@
     backLinkText="View all uptime monitors"
   />
   <gt-monitor-form
-    [loading]="(loading$ | async) === true"
-    [formError]="error$ | async"
+    [loading]="loading() === true"
+    [formError]="error()"
     (formSubmitted)="submit($event)"
   ></gt-monitor-form>
 </section>

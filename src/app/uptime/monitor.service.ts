@@ -1,6 +1,5 @@
 import { Injectable, computed, inject } from "@angular/core";
-import { tap, catchError } from "rxjs/operators";
-import { EMPTY, lastValueFrom } from "rxjs";
+import { EMPTY } from "rxjs";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
 import {
@@ -17,6 +16,7 @@ import { ServerError } from "../shared/django.interfaces";
 import { OrganizationsService } from "../api/organizations.service";
 import { StatefulService } from "../shared/stateful-service/signal-state.service";
 import { client } from "../api/api";
+import { organization } from "cypress/fixtures/variables";
 
 export interface MonitorState {
   monitorDetails: MonitorDetail | null;
@@ -158,49 +158,59 @@ export class MonitorService extends StatefulService<MonitorState> {
   }
 
   retrieveMonitorDetails(orgSlug: string, monitorId: string) {
-    lastValueFrom(
-      this.monitorsAPIService.retrieve(orgSlug, monitorId).pipe(
-        tap((monitor) => {
-          this.countUptimeAlerts(orgSlug, monitor);
-          this.setRetrieveMonitorDetailsEnd(monitor);
-        }),
-        catchError(() => {
-          this.setRetrieveMonitorDetailsError();
+    client
+      .GET("/api/0/organizations/{organization_slug}/monitors/{monitor_id}/", {
+        params: {
+          path: {
+            organization_slug: orgSlug,
+            monitor_id: parseInt(monitorId),
+          },
+        },
+      })
+      .then((result) => {
+        if (result.data) {
+          const monitor = result.data;
+          this.countUptimeAlerts(orgSlug, monitor as any);
+          this.setRetrieveMonitorDetailsEnd(monitor as any);
+        } else {
           this.snackBar.open(
             `There was an error retrieving your monitor details. Please try again.`
           );
-          return EMPTY;
-        })
-      )
-    );
+          this.setRetrieveMonitorDetailsError();
+        }
+      });
   }
 
   deleteMonitor() {
-    // lastValueFrom(
-    //   combineLatest([this.activeOrganizationSlug$, this.activeMonitor$]).pipe(
-    //     take(1),
-    //     filter(([orgSlug, monitor]) => !!orgSlug && !!monitor),
-    //     tap(([orgSlug, monitor]) => {
-    //       this.setDeleteMonitorStart();
-    //       lastValueFrom(
-    //         this.monitorsAPIService.destroy(orgSlug!, monitor!.id).pipe(
-    //           tap(() => {
-    //             this.setDeleteMonitorEnd();
-    //             this.snackBar.open("Monitor has been deleted.");
-    //             this.router.navigate([orgSlug, "uptime-monitors"]);
-    //           }),
-    //           catchError(() => {
-    //             this.setDeleteMonitorError();
-    //             this.snackBar.open(
-    //               `There was an error deleting this issue. Please try again.`
-    //             );
-    //             return EMPTY;
-    //           })
-    //         )
-    //       );
-    //     })
-    //   )
-    // );
+    const monitorId = this.activeMonitor()?.id;
+    const organizationSlug = this.activeOrganizationSlug();
+    if (!monitorId) {
+      return;
+    }
+    client
+      .DELETE(
+        "/api/0/organizations/{organization_slug}/monitors/{monitor_id}/",
+        {
+          params: {
+            path: {
+              organization_slug: organizationSlug,
+              monitor_id: parseInt(monitorId),
+            },
+          },
+        }
+      )
+      .then((result) => {
+        if (result.data) {
+          this.setDeleteMonitorEnd();
+          this.snackBar.open("Monitor has been deleted.");
+          this.router.navigate([organizationSlug, "uptime-monitors"]);
+        } else {
+          this.setDeleteMonitorError();
+          this.snackBar.open(
+            `There was an error deleting this issue. Please try again.`
+          );
+        }
+      });
   }
 
   private countUptimeAlerts(orgSlug: string, monitor: MonitorDetail) {

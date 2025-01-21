@@ -1,5 +1,4 @@
 import { Component, OnInit, inject } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { ActivatedRoute, RouterModule } from "@angular/router";
 import { tap, filter, take } from "rxjs/operators";
 import { lastValueFrom } from "rxjs";
@@ -18,7 +17,6 @@ import { DetailHeaderComponent } from "src/app/shared/detail/header/header.compo
   templateUrl: "./monitor-update.component.html",
   styleUrls: ["./monitor-update.component.scss"],
   imports: [
-    CommonModule,
     RouterModule,
     MatButtonModule,
     MatCardModule,
@@ -35,16 +33,16 @@ export class MonitorUpdateComponent
   protected service: MonitorService;
   protected route = inject(ActivatedRoute);
 
-  monitor$ = this.service.activeMonitor$;
-  loading$ = this.service.editLoading$;
-  error$ = this.service.error$;
-  deleteLoading$ = this.service.deleteLoading$;
+  monitor = this.service.activeMonitor;
+  loading = this.service.editLoading;
+  error = this.service.error;
+  deleteLoading = this.service.deleteLoading;
 
   constructor() {
     const service = inject(MonitorService);
 
     super(service);
-  
+
     this.service = service;
   }
 
@@ -59,8 +57,8 @@ export class MonitorUpdateComponent
           if (orgSlug && monitorId) {
             this.service.retrieveMonitorDetails(orgSlug, monitorId);
           }
-        }),
-      ),
+        })
+      )
     );
   }
 
@@ -71,7 +69,7 @@ export class MonitorUpdateComponent
   delete() {
     if (
       window.confirm(
-        `Are you sure you want delete this monitor? You will permanently lose all associated uptime data.`,
+        `Are you sure you want delete this monitor? You will permanently lose all associated uptime data.`
       )
     ) {
       this.service.deleteMonitor();
