@@ -16,7 +16,7 @@
     "screenshot": "SCREENSHOT=true cypress run --spec cypress/integration/screenshot-run.ts --env screenshot=true",
     "cy:openscreenshot": "cypress open --env screenshot=true",
     "cy:run": "cypress run",
-    "e2e": "concurrently \"npm run start\" \"wait-on http-get://localhost:4200 && npm run cy:run\" --kill-others --success first",
+    "e2e": "concurrently \"npm run start -- --no-hmr\" \"wait-on http-get://localhost:4200 && npm run cy:run\" --kill-others --success first",
     "build-stats": "ng build --stats-json",
     "analyze": "webpack-bundle-analyzer dist/glitchtip-frontend/stats.json",
     "docs:json": "compodoc -p ./tsconfig.json -e json -d .",

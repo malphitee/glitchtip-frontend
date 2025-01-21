@@ -94,10 +94,16 @@
           [formGroup]="searchForm"
           (ngSubmit)="searchSubmit.emit()"
           class="search-form"
+          data-cy="list-search-form"
         >
           <mat-form-field appearance="outline">
             <mat-label>Search</mat-label>
-            <input matInput type="search" formControlName="query" />
+            <input 
+              matInput
+              type="search"
+              formControlName="query"
+              data-cy="list-search-field"
+            />
           </mat-form-field>
         </form>
       }
