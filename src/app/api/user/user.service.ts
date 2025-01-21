@@ -115,6 +115,10 @@ export class UserService extends StatefulService<UserState> {
     });
   }
 
+  reload() {
+    this.userResource.reload();
+  }
+
   private setUserDeleteLoadingStart() {
     this.setState({
       userDeleteLoading: true,
@@ -130,8 +134,6 @@ export class UserService extends StatefulService<UserState> {
 
   private refresh() {
     // Refresh 10s, 3m, 15m...
-    refreshInterval([10, 60 * 3], 60 * 15).subscribe(() =>
-      this.userResource.reload()
-    );
+    refreshInterval([10, 60 * 3], 60 * 15).subscribe(() => this.reload());
   }
 }

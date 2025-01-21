@@ -1,7 +1,13 @@
-import { Component, ChangeDetectionStrategy, ViewChild, inject } from "@angular/core";
+import {
+  Component,
+  ChangeDetectionStrategy,
+  ViewChild,
+  inject,
+  computed,
+} from "@angular/core";
 import { MatMenuTrigger, MatMenuModule } from "@angular/material/menu";
-import { combineLatest, firstValueFrom } from "rxjs";
-import { map, tap } from "rxjs/operators";
+import { firstValueFrom } from "rxjs";
+import { tap } from "rxjs/operators";
 import { MainNavService } from "../main-nav.service";
 import { SettingsService } from "src/app/api/settings.service";
 import { UserService } from "src/app/api/user/user.service";
@@ -12,11 +18,9 @@ import { MatDividerModule } from "@angular/material/divider";
 import { MatButtonModule } from "@angular/material/button";
 import { RouterLink, RouterLinkActive } from "@angular/router";
 import { MatToolbarModule } from "@angular/material/toolbar";
-import { AsyncPipe } from "@angular/common";
 import { MatSidenavModule } from "@angular/material/sidenav";
 import { AuthService } from "src/app/auth.service";
 import { OrganizationsService } from "src/app/api/organizations.service";
-import { toObservable } from "@angular/core/rxjs-interop";
 
 @Component({
   selector: "gt-main-nav",
@@ -34,7 +38,6 @@ import { toObservable } from "@angular/core/rxjs-interop";
     RouterLinkActive,
     MatCardModule,
     MobileNavToolbarComponent,
-    AsyncPipe,
   ],
 })
 export class MainNavComponent {
@@ -59,24 +62,18 @@ export class MainNavComponent {
   version = this.settingsService.version;
   @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger | undefined = undefined;
 
-  contextLoaded$ = combineLatest([
-    toObservable(this.settingsService.initialLoad),
-    toObservable(this.organizationsInitialLoad),
-    toObservable(this.userService.user),
-  ]).pipe(
-    map(([settingsLoaded, orgsLoaded, user]) => {
-      return settingsLoaded && orgsLoaded && !!user;
-    })
+  contextLoaded = computed(
+    () =>
+      this.settingsService.initialLoad() &&
+      this.organizationsInitialLoad() &&
+      !!this.userService.user()
   );
 
-  canCreateOrg$ = combineLatest([
-    toObservable(this.userService.user),
-    toObservable(this.organizationsService.organizationsCount),
-    toObservable(this.settingsService.enableOrganizationCreation),
-  ]).pipe(
-    map(([user, orgCount, enableOrgCreation]) => {
-      return enableOrgCreation || user?.isSuperuser || orgCount === 0;
-    })
+  canCreateOrg = computed(
+    () =>
+      this.settingsService.enableOrganizationCreation() ||
+      this.userService.user() ||
+      this.organizationsService.organizationsCount()
   );
 
   logout() {
@@ -100,5 +97,7 @@ export class MainNavComponent {
 
   reload() {
     this.settingsService.reload();
+    this.userService.reload();
+    this.organizationsService.reload();
   }
 }

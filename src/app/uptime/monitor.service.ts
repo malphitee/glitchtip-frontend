@@ -1,23 +1,22 @@
-import { Injectable, inject } from "@angular/core";
-import { map, tap, catchError, filter, take } from "rxjs/operators";
-import { EMPTY, combineLatest, lastValueFrom } from "rxjs";
+import { Injectable, computed, inject } from "@angular/core";
+import { tap, catchError } from "rxjs/operators";
+import { EMPTY, lastValueFrom } from "rxjs";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
-import { StatefulService } from "src/app/shared/stateful-service/stateful-service";
 import {
   MonitorCheck,
   MonitorDetail,
   MonitorInput,
   ResponseTimeSeries,
 } from "./uptime.interfaces";
-import { MonitorsAPIService } from "../api/monitors/monitors-api.service";
 import { HttpErrorResponse } from "@angular/common/http";
 import { ProjectAlertsAPIService } from "../api/projects/project-alerts/project-alerts.service";
 import { SettingsService } from "../api/settings.service";
 import { SubscriptionsService } from "../api/subscriptions/subscriptions.service";
 import { ServerError } from "../shared/django.interfaces";
 import { OrganizationsService } from "../api/organizations.service";
-import { toObservable } from "@angular/core/rxjs-interop";
+import { StatefulService } from "../shared/stateful-service/signal-state.service";
+import { client } from "../api/api";
 
 export interface MonitorState {
   monitorDetails: MonitorDetail | null;
@@ -43,7 +42,6 @@ const initialState: MonitorState = {
   providedIn: "root",
 })
 export class MonitorService extends StatefulService<MonitorState> {
-  private monitorsAPIService = inject(MonitorsAPIService);
   private organizationsService = inject(OrganizationsService);
   private projectAlertsService = inject(ProjectAlertsAPIService);
   private settingsService = inject(SettingsService);
@@ -51,37 +49,30 @@ export class MonitorService extends StatefulService<MonitorState> {
   private snackBar = inject(MatSnackBar);
   private router = inject(Router);
 
-  editLoading$ = this.getState$.pipe(map((state) => state.editLoading));
-  createLoading$ = this.getState$.pipe(map((state) => state.createLoading));
-  deleteLoading$ = this.getState$.pipe(map((state) => state.deleteLoading));
-  error$ = this.getState$.pipe(map((state) => state.error));
-  uptimeAlertCount$ = this.getState$.pipe(
-    map((state) => state.uptimeAlertCount)
-  );
-  readonly alertCountLoading$ = this.getState$.pipe(
-    map((data) => data.alertCountLoading)
-  );
-  readonly activeMonitor$ = this.getState$.pipe(
-    map((data) => data.monitorDetails)
-  );
-  associatedProjectSlug$ = combineLatest([
-    toObservable(this.organizationsService.activeOrganizationProjects),
-    this.activeMonitor$,
-  ]).pipe(
-    map(
-      ([projects, monitor]) =>
-        projects?.find((project) => project.id === monitor?.project?.toString())
-          ?.slug
-    )
-  );
-  activeMonitorRecentChecksSeries$ = this.activeMonitor$.pipe(
-    map((monitor) =>
-      monitor?.checks.length ? this.convertChecksToSeries(monitor.checks) : null
-    )
-  );
-  activeOrganizationSlug$ = toObservable(
-    this.organizationsService.activeOrganizationSlug
-  );
+  editLoading = computed(() => this.state().editLoading);
+  createLoading = computed(() => this.state().createLoading);
+  deleteLoading = computed(() => this.state().deleteLoading);
+  error = computed(() => this.state().error);
+  uptimeAlertCount = computed(() => this.state().uptimeAlertCount);
+  alertCountLoading = computed(() => this.state().alertCountLoading);
+  activeMonitor = computed(() => this.state().monitorDetails);
+
+  associatedProjectSlug = computed(() => {
+    const projects = this.organizationsService.activeOrganizationProjects();
+    const monitor = this.activeMonitor();
+    return projects?.find(
+      (project) => project.id === monitor?.project?.toString()
+    )?.slug;
+  });
+
+  activeMonitorRecentChecksSeries = computed(() => {
+    const monitor = this.activeMonitor();
+    return monitor?.checks.length
+      ? this.convertChecksToSeries(monitor.checks)
+      : null;
+  });
+
+  activeOrganizationSlug = this.organizationsService.activeOrganizationSlug;
 
   constructor() {
     super(initialState);
@@ -91,16 +82,21 @@ export class MonitorService extends StatefulService<MonitorState> {
     const orgSlug = this.organizationsService.activeOrganizationSlug();
     if (orgSlug) {
       this.setCreateMonitorStart();
-      lastValueFrom(
-        this.monitorsAPIService.createMonitor(orgSlug, monitor).pipe(
-          tap((newMonitor) => {
+      client
+        .POST("/api/0/organizations/{organization_slug}/monitors/", {
+          params: { path: { organization_slug: orgSlug } },
+          body: monitor as any,
+        })
+        .then((result) => {
+          if (result.data) {
+            const newMonitor = result.data;
             this.setCreateMonitorEnd();
             this.snackBar.open(`${newMonitor.name} has been created`);
             this.router.navigate([orgSlug, "uptime-monitors", newMonitor.id]);
-          }),
-          catchError((err) => this.processError(err))
-        )
-      );
+          } else {
+            this.processError(result.error);
+          }
+        });
     }
   }
 
@@ -130,29 +126,35 @@ export class MonitorService extends StatefulService<MonitorState> {
   }
 
   editMonitor(data: MonitorInput) {
-    lastValueFrom(
-      combineLatest([this.activeOrganizationSlug$, this.activeMonitor$]).pipe(
-        take(1),
-        filter(([orgSlug, monitor]) => !!orgSlug && !!monitor),
-        tap(([orgSlug, monitor]) => {
-          this.setEditMonitorStart();
-          lastValueFrom(
-            this.monitorsAPIService.update(orgSlug!, monitor!.id, data).pipe(
-              tap((updatedMonitor) => {
-                this.setEditMonitorEnd();
-                this.snackBar.open(`${updatedMonitor.name} has been updated`);
-                this.router.navigate([
-                  orgSlug,
-                  "uptime-monitors",
-                  updatedMonitor.id,
-                ]);
-              }),
-              catchError((err) => this.processError(err))
-            )
-          );
-        })
-      )
-    );
+    const monitorId = this.activeMonitor()?.id;
+    const organizationSlug = this.activeOrganizationSlug();
+    if (!monitorId) {
+      return;
+    }
+    client
+      .PUT("/api/0/organizations/{organization_slug}/monitors/{monitor_id}/", {
+        params: {
+          path: {
+            organization_slug: organizationSlug,
+            monitor_id: parseInt(monitorId),
+          },
+        },
+        body: data as any,
+      })
+      .then((result) => {
+        if (result.data) {
+          const updatedMonitor = result.data;
+          this.setEditMonitorEnd();
+          this.snackBar.open(`${updatedMonitor.name} has been updated`);
+          this.router.navigate([
+            organizationSlug,
+            "uptime-monitors",
+            updatedMonitor.id,
+          ]);
+        } else {
+          // Handle error
+        }
+      });
   }
 
   retrieveMonitorDetails(orgSlug: string, monitorId: string) {
@@ -174,61 +176,61 @@ export class MonitorService extends StatefulService<MonitorState> {
   }
 
   deleteMonitor() {
-    lastValueFrom(
-      combineLatest([this.activeOrganizationSlug$, this.activeMonitor$]).pipe(
-        take(1),
-        filter(([orgSlug, monitor]) => !!orgSlug && !!monitor),
-        tap(([orgSlug, monitor]) => {
-          this.setDeleteMonitorStart();
-          lastValueFrom(
-            this.monitorsAPIService.destroy(orgSlug!, monitor!.id).pipe(
-              tap(() => {
-                this.setDeleteMonitorEnd();
-                this.snackBar.open("Monitor has been deleted.");
-                this.router.navigate([orgSlug, "uptime-monitors"]);
-              }),
-              catchError(() => {
-                this.setDeleteMonitorError();
-                this.snackBar.open(
-                  `There was an error deleting this issue. Please try again.`
-                );
-                return EMPTY;
-              })
-            )
-          );
-        })
-      )
-    );
+    // lastValueFrom(
+    //   combineLatest([this.activeOrganizationSlug$, this.activeMonitor$]).pipe(
+    //     take(1),
+    //     filter(([orgSlug, monitor]) => !!orgSlug && !!monitor),
+    //     tap(([orgSlug, monitor]) => {
+    //       this.setDeleteMonitorStart();
+    //       lastValueFrom(
+    //         this.monitorsAPIService.destroy(orgSlug!, monitor!.id).pipe(
+    //           tap(() => {
+    //             this.setDeleteMonitorEnd();
+    //             this.snackBar.open("Monitor has been deleted.");
+    //             this.router.navigate([orgSlug, "uptime-monitors"]);
+    //           }),
+    //           catchError(() => {
+    //             this.setDeleteMonitorError();
+    //             this.snackBar.open(
+    //               `There was an error deleting this issue. Please try again.`
+    //             );
+    //             return EMPTY;
+    //           })
+    //         )
+    //       );
+    //     })
+    //   )
+    // );
   }
 
   private countUptimeAlerts(orgSlug: string, monitor: MonitorDetail) {
-    if (monitor.project) {
-      this.setCountUptimeAlertsStart();
-      lastValueFrom(
-        this.associatedProjectSlug$.pipe(
-          filter((projectSlug) => !!projectSlug),
-          take(1),
-          tap((projectSlug) => {
-            if (projectSlug) {
-              lastValueFrom(
-                this.projectAlertsService.list(orgSlug, projectSlug).pipe(
-                  tap((projectAlerts) => {
-                    let alertCount = projectAlerts.filter(
-                      (alert) => alert.uptime === true
-                    ).length;
-                    this.setCountUptimeAlertsEnd(alertCount);
-                  }),
-                  catchError(() => {
-                    this.setCountUptimeAlertsError();
-                    return EMPTY;
-                  })
-                )
-              );
-            }
-          })
-        )
-      );
-    }
+    // if (monitor.project) {
+    //   this.setCountUptimeAlertsStart();
+    //   lastValueFrom(
+    //     this.associatedProjectSlug$.pipe(
+    //       filter((projectSlug) => !!projectSlug),
+    //       take(1),
+    //       tap((projectSlug) => {
+    //         if (projectSlug) {
+    //           lastValueFrom(
+    //             this.projectAlertsService.list(orgSlug, projectSlug).pipe(
+    //               tap((projectAlerts) => {
+    //                 let alertCount = projectAlerts.filter(
+    //                   (alert) => alert.uptime === true
+    //                 ).length;
+    //                 this.setCountUptimeAlertsEnd(alertCount);
+    //               }),
+    //               catchError(() => {
+    //                 this.setCountUptimeAlertsError();
+    //                 return EMPTY;
+    //               })
+    //             )
+    //           );
+    //         }
+    //       })
+    //     )
+    //   );
+    // }
   }
 
   private formatData(check: MonitorCheck) {
