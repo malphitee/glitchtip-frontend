@@ -9,8 +9,8 @@ import { MatIconModule } from "@angular/material/icon";
 import { MonitorFormComponent } from "../monitor-form/monitor-form.component";
 import { MonitorInput } from "../uptime.interfaces";
 import { MonitorService, MonitorState } from "../monitor.service";
-import { StatefulBaseComponent } from "src/app/shared/stateful-service/stateful-base.component";
 import { DetailHeaderComponent } from "src/app/shared/detail/header/header.component";
+import { StatefulComponent } from "src/app/shared/stateful-service/signal-state.component";
 
 @Component({
   selector: "gt-monitor-update",
@@ -27,7 +27,7 @@ import { DetailHeaderComponent } from "src/app/shared/detail/header/header.compo
   ],
 })
 export class MonitorUpdateComponent
-  extends StatefulBaseComponent<MonitorState, MonitorService>
+  extends StatefulComponent<MonitorState, MonitorService>
   implements OnInit
 {
   protected service: MonitorService;

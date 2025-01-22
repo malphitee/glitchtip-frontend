@@ -6,7 +6,7 @@
     <mat-divider></mat-divider>
     <mat-card-content>
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        @if ((errors())?.addOrganizationMember; as error) {
+        @if ((errors()).addOrganizationMember; as error) {
         <mat-error class="server-error">{{ error }}</mat-error>
         }
         <div>
@@ -14,12 +14,12 @@
           <p class="email-paragraph">
             Invite a member to join this organization via their email address.
             @if (enableUserRegistration()) {
-            <span>If they do not already have an account, they will first be
-              asked to create one.</span>
-            } @else {
-            Only existing GlitchTip users may be invited.
-            }
-            Multiple emails delimited by commas.
+            <span
+              >If they do not already have an account, they will first be asked
+              to create one.</span
+            >
+            } @else { Only existing GlitchTip users may be invited. } Multiple
+            emails delimited by commas.
           </p>
           <mat-form-field appearance="outline">
             <mat-label>Email</mat-label>
@@ -28,8 +28,7 @@
             <mat-error>
               @if (form.get("email")?.errors?.invalidEmails) {
               <span> Enter a valid email</span>
-              }
-              @if (form.get("email")?.errors?.required) {
+              } @if (form.get("email")?.errors?.required) {
               <span>Enter at least one email</span>
               }
             </mat-error>
@@ -46,23 +45,27 @@
           </mat-radio-group>
           <div class="role-description">
             @if (formRole.value === "member") {
-            <span i18n>Members can view and act on events, as well as view most other
-              data within the organization.</span>
-            }
-            @if (formRole.value === "admin") {
-            <span i18n>Admin privileges on any teams of which user is a member. They
-              can create new teams and projects, as well as delete teams and
+            <span i18n
+              >Members can view and act on events, as well as view most other
+              data within the organization.</span
+            >
+            } @if (formRole.value === "admin") {
+            <span i18n
+              >Admin privileges on any teams of which user is a member. They can
+              create new teams and projects, as well as delete teams and
               projects they are already members of. Additionally, they can
-              manage memberships of teams that they are members of.</span>
-            }
-            @if (formRole.value === "manager") {
-            <span i18n>Gains admin access on all teams as well as the ability to add
-              and remove members.</span>
-            }
-            @if (formRole.value === "owner") {
-            <span i18n>Unrestricted access to the organization, its data, and its
-              settings. Can add, modify, and delete projects and
-              members.</span>
+              manage memberships of teams that they are members of.</span
+            >
+            } @if (formRole.value === "manager") {
+            <span i18n
+              >Gains admin access on all teams as well as the ability to add and
+              remove members.</span
+            >
+            } @if (formRole.value === "owner") {
+            <span i18n
+              >Unrestricted access to the organization, its data, and its
+              settings. Can add, modify, and delete projects and members.</span
+            >
             }
           </div>
         </div>
@@ -71,20 +74,21 @@
           <mat-form-field appearance="outline">
             <mat-label>Add Team</mat-label>
             <mat-select multiple formControlName="teams" disableOptionCentering>
-              @if ((organizationTeams())?.length) {
-              @for (team of organizationTeams(); track team.id) {
+              @if ((organizationTeams()).length) { @for (team of
+              organizationTeams(); track team.id) {
               <mat-option [value]="team.slug">
                 {{ team.slug }}
               </mat-option>
-              }
-              } @else {
+              } } @else {
               <mat-option disabled>No Teams</mat-option>
               }
             </mat-select>
           </mat-form-field>
         </div>
-        <gt-loading-button buttonText="Add Member(s)"
-          [loading]="(loading())?.addOrganizationMember"></gt-loading-button>
+        <gt-loading-button
+          buttonText="Add Member(s)"
+          [loading]="loading().addOrganizationMember"
+        ></gt-loading-button>
       </form>
     </mat-card-content>
   </mat-card>

@@ -1,5 +1,5 @@
 import { Injectable, computed, inject } from "@angular/core";
-import { EMPTY } from "rxjs";
+import { catchError, EMPTY, lastValueFrom, tap } from "rxjs";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
 import {
@@ -16,7 +16,6 @@ import { ServerError } from "../shared/django.interfaces";
 import { OrganizationsService } from "../api/organizations.service";
 import { StatefulService } from "../shared/stateful-service/signal-state.service";
 import { client } from "../api/api";
-import { organization } from "cypress/fixtures/variables";
 
 export interface MonitorState {
   monitorDetails: MonitorDetail | null;
@@ -131,6 +130,7 @@ export class MonitorService extends StatefulService<MonitorState> {
     if (!monitorId) {
       return;
     }
+    this.setEditMonitorStart();
     client
       .PUT("/api/0/organizations/{organization_slug}/monitors/{monitor_id}/", {
         params: {
@@ -187,6 +187,7 @@ export class MonitorService extends StatefulService<MonitorState> {
     if (!monitorId) {
       return;
     }
+    this.setDeleteMonitorStart();
     client
       .DELETE(
         "/api/0/organizations/{organization_slug}/monitors/{monitor_id}/",
@@ -214,33 +215,25 @@ export class MonitorService extends StatefulService<MonitorState> {
   }
 
   private countUptimeAlerts(orgSlug: string, monitor: MonitorDetail) {
-    // if (monitor.project) {
-    //   this.setCountUptimeAlertsStart();
-    //   lastValueFrom(
-    //     this.associatedProjectSlug$.pipe(
-    //       filter((projectSlug) => !!projectSlug),
-    //       take(1),
-    //       tap((projectSlug) => {
-    //         if (projectSlug) {
-    //           lastValueFrom(
-    //             this.projectAlertsService.list(orgSlug, projectSlug).pipe(
-    //               tap((projectAlerts) => {
-    //                 let alertCount = projectAlerts.filter(
-    //                   (alert) => alert.uptime === true
-    //                 ).length;
-    //                 this.setCountUptimeAlertsEnd(alertCount);
-    //               }),
-    //               catchError(() => {
-    //                 this.setCountUptimeAlertsError();
-    //                 return EMPTY;
-    //               })
-    //             )
-    //           );
-    //         }
-    //       })
-    //     )
-    //   );
-    // }
+    const projectSlug = this.associatedProjectSlug();
+    if (!monitor.project || !projectSlug) {
+      return;
+    }
+    this.setCountUptimeAlertsStart();
+    lastValueFrom(
+      this.projectAlertsService.list(orgSlug, projectSlug).pipe(
+        tap((projectAlerts) => {
+          let alertCount = projectAlerts.filter(
+            (alert) => alert.uptime === true
+          ).length;
+          this.setCountUptimeAlertsEnd(alertCount);
+        }),
+        catchError(() => {
+          this.setCountUptimeAlertsError();
+          return EMPTY;
+        })
+      )
+    );
   }
 
   private formatData(check: MonitorCheck) {

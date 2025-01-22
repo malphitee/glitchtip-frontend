@@ -1,14 +1,13 @@
 import { Injectable, inject } from "@angular/core";
-import { catchError, map, tap } from "rxjs/operators";
-import { lastValueFrom, EMPTY } from "rxjs";
+import { map } from "rxjs/operators";
 import {
   initialPaginationState,
   PaginationStatefulService,
   PaginationStatefulServiceState,
 } from "../../shared/stateful-service/pagination-stateful-service";
 import { MonitorDetail } from "../uptime.interfaces";
-import { MonitorsAPIService } from "../../api/monitors/monitors-api.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { client } from "src/app/api/api";
 
 export interface MonitorListState extends PaginationStatefulServiceState {
   monitors: MonitorDetail[];
@@ -23,7 +22,6 @@ const initialState: MonitorListState = {
   providedIn: "root",
 })
 export class MonitorListService extends PaginationStatefulService<MonitorListState> {
-  private monitorsAPIService = inject(MonitorsAPIService);
   private snackBar = inject(MatSnackBar);
 
   monitors$ = this.getState$.pipe(map((state) => state.monitors));
@@ -34,20 +32,23 @@ export class MonitorListService extends PaginationStatefulService<MonitorListSta
 
   getMonitors(organizationSlug: string, cursor: string | null) {
     this.setGetMonitorsStart();
-    lastValueFrom(
-      this.monitorsAPIService.list(organizationSlug, cursor).pipe(
-        tap((res) => {
-          this.setStateAndPagination({ monitors: res.body! }, res);
-        }),
-        catchError(() => {
+    client
+      .GET("/api/0/organizations/{organization_slug}/monitors/", {
+        params: { path: { organization_slug: organizationSlug } },
+      })
+      .then((result) => {
+        if (result.data) {
+          this.setStateAndPagination(
+            { monitors: result.data as any },
+            result.response as any
+          );
+        } else {
           this.setGetMonitorsError();
           this.snackBar.open(
-            "There was an error retrieving your uptime monitors. Please try again.",
+            "There was an error retrieving your uptime monitors. Please try again."
           );
-          return EMPTY;
-        }),
-      ),
-    );
+        }
+      });
   }
 
   private setGetMonitorsStart() {
