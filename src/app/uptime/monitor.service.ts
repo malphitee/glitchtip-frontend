@@ -1,4 +1,4 @@
-import { Injectable, computed, inject } from "@angular/core";
+import { Injectable, computed, inject, resource, signal } from "@angular/core";
 import { catchError, EMPTY, lastValueFrom, tap } from "rxjs";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
@@ -18,7 +18,6 @@ import { StatefulService } from "../shared/stateful-service/signal-state.service
 import { client } from "../api/api";
 
 export interface MonitorState {
-  monitorDetails: MonitorDetail | null;
   uptimeAlertCount: number | null;
   alertCountLoading: boolean;
   editLoading: boolean;
@@ -28,7 +27,6 @@ export interface MonitorState {
 }
 
 const initialState: MonitorState = {
-  monitorDetails: null,
   uptimeAlertCount: null,
   alertCountLoading: true,
   editLoading: false,
@@ -48,13 +46,38 @@ export class MonitorService extends StatefulService<MonitorState> {
   private snackBar = inject(MatSnackBar);
   private router = inject(Router);
 
+  monitorId = signal<number | null>(null);
+  monitorResource = resource({
+    request: () => ({
+      organizationSlug: this.activeOrganizationSlug(),
+      monitorId: this.monitorId(),
+    }),
+    loader: async ({ request }) => {
+      if (!request.organizationSlug || !request.monitorId) {
+        return undefined;
+      }
+      const { data } = await client.GET(
+        "/api/0/organizations/{organization_slug}/monitors/{monitor_id}/",
+        {
+          params: {
+            path: {
+              organization_slug: request.organizationSlug,
+              monitor_id: request.monitorId,
+            },
+          },
+        }
+      );
+      return data;
+    },
+  });
+
   editLoading = computed(() => this.state().editLoading);
   createLoading = computed(() => this.state().createLoading);
   deleteLoading = computed(() => this.state().deleteLoading);
   error = computed(() => this.state().error);
   uptimeAlertCount = computed(() => this.state().uptimeAlertCount);
   alertCountLoading = computed(() => this.state().alertCountLoading);
-  activeMonitor = computed(() => this.state().monitorDetails);
+  activeMonitor = computed(() => this.monitorResource.value());
 
   associatedProjectSlug = computed(() => {
     const projects = this.organizationsService.activeOrganizationProjects();
