@@ -5,9 +5,11 @@ import {
   PaginationStatefulService,
   PaginationStatefulServiceState,
 } from "../../shared/stateful-service/pagination-stateful-service";
-import { MonitorDetail } from "../uptime.interfaces";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { client } from "src/app/api/api";
+import { components } from "src/app/api/api-schema";
+
+type MonitorDetail = components["schemas"]["MonitorDetailSchema"];
 
 export interface MonitorListState extends PaginationStatefulServiceState {
   monitors: MonitorDetail[];

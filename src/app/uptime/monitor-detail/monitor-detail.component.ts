@@ -4,10 +4,10 @@ import {
   OnInit,
   inject,
   computed,
+  input,
 } from "@angular/core";
 import { MonitorState, MonitorService } from "../monitor.service";
-import { ActivatedRoute, RouterModule } from "@angular/router";
-import { map, tap } from "rxjs/operators";
+import { RouterModule } from "@angular/router";
 import { CopyInputComponent } from "src/app/shared/copy-input/copy-input.component";
 import { MatCardModule } from "@angular/material/card";
 import { MatDividerModule } from "@angular/material/divider";
@@ -18,7 +18,6 @@ import { MonitorChartComponent } from "../monitor-chart/monitor-chart.component"
 import { TimeForPipe } from "src/app/shared/days-ago.pipe";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
-import { lastValueFrom } from "rxjs";
 import { DetailHeaderComponent } from "src/app/shared/detail/header/header.component";
 import { StatefulComponent } from "src/app/shared/stateful-service/signal-state.component";
 import { DecimalPipe, I18nPluralPipe } from "@angular/common";
@@ -50,16 +49,13 @@ export class MonitorDetailComponent
   implements OnInit
 {
   protected service: MonitorService;
-  protected route = inject(ActivatedRoute);
+
+  monitorID = input.required<number>({ alias: "monitor-id" });
 
   monitor = this.service.activeMonitor;
   uptimeAlertCount = this.service.uptimeAlertCount;
   alertCountLoading = this.service.alertCountLoading;
   associatedProjectSlug = this.service.associatedProjectSlug;
-
-  routeParams$ = this.route.paramMap.pipe(
-    map((params) => [params.get("org-slug"), params.get("monitor-id")])
-  );
 
   activeMonitorRecentChecksSeries =
     this.service.activeMonitorRecentChecksSeries;
@@ -94,21 +90,12 @@ export class MonitorDetailComponent
 
   constructor() {
     const service = inject(MonitorService);
-
     super(service);
-
     this.service = service;
   }
+
   ngOnInit() {
-    lastValueFrom(
-      this.routeParams$.pipe(
-        tap(([orgSlug, monitorId]) => {
-          if (orgSlug && monitorId) {
-            this.service.retrieveMonitorDetails(orgSlug, monitorId);
-          }
-        })
-      )
-    );
+    this.service.retrieveMonitorDetails(this.monitorID());
   }
 
   delete() {

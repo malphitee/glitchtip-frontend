@@ -1,7 +1,5 @@
-import { Component, OnInit, inject } from "@angular/core";
-import { ActivatedRoute, RouterModule } from "@angular/router";
-import { tap, filter, take } from "rxjs/operators";
-import { lastValueFrom } from "rxjs";
+import { Component, OnInit, inject, input } from "@angular/core";
+import { RouterModule } from "@angular/router";
 import { MatCardModule } from "@angular/material/card";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatButtonModule } from "@angular/material/button";
@@ -31,7 +29,7 @@ export class MonitorUpdateComponent
   implements OnInit
 {
   protected service: MonitorService;
-  protected route = inject(ActivatedRoute);
+  monitorID = input.required<number>({ alias: "monitor-id" });
 
   monitor = this.service.activeMonitor;
   loading = this.service.editLoading;
@@ -40,26 +38,12 @@ export class MonitorUpdateComponent
 
   constructor() {
     const service = inject(MonitorService);
-
     super(service);
-
     this.service = service;
   }
 
   ngOnInit() {
-    lastValueFrom(
-      this.route.params.pipe(
-        filter((params) => !!params),
-        take(1),
-        tap((params) => {
-          const orgSlug = params["org-slug"];
-          const monitorId = params["monitor-id"];
-          if (orgSlug && monitorId) {
-            this.service.retrieveMonitorDetails(orgSlug, monitorId);
-          }
-        })
-      )
-    );
+    this.service.retrieveMonitorDetails(this.monitorID());
   }
 
   submit(formValues: MonitorInput) {

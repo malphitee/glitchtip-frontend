@@ -1,12 +1,14 @@
 import { Injectable, inject } from "@angular/core";
 import { map, tap } from "rxjs/operators";
+import { components } from "src/app/api/api-schema";
 import { MonitorChecksAPIService } from "src/app/api/monitors/monitor-checks-API.service";
 import {
   PaginationStatefulService,
   PaginationStatefulServiceState,
   initialPaginationState,
 } from "src/app/shared/stateful-service/pagination-stateful-service";
-import { MonitorCheck } from "../uptime.interfaces";
+
+type MonitorCheck = components["schemas"]["MonitorCheckSchema"];
 
 export interface MonitorChecksState extends PaginationStatefulServiceState {
   monitorChecks: MonitorCheck[];
@@ -33,7 +35,7 @@ export class MonitorChecksService extends PaginationStatefulService<MonitorCheck
     orgSlug: string,
     monitorId: string,
     isChange: boolean,
-    cursor: string | null,
+    cursor: string | null
   ) {
     this.setRetrieveMonitorChecksStart();
     return this.monitorChecksAPIService
@@ -42,11 +44,11 @@ export class MonitorChecksService extends PaginationStatefulService<MonitorCheck
         tap((res) => {
           this.setStateAndPagination(
             {
-              monitorChecks: res.body!,
+              monitorChecks: res.body as any,
             },
-            res,
+            res
           );
-        }),
+        })
       );
   }
 

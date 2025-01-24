@@ -19,13 +19,16 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { map, Observable, of, startWith } from "rxjs";
-import { MonitorDetail, MonitorInput, MonitorType } from "../uptime.interfaces";
+import { MonitorInput, MonitorType } from "../uptime.interfaces";
 import { intRegex, urlRegex } from "src/app/shared/validators";
 import { SubscriptionsService } from "src/app/api/subscriptions/subscriptions.service";
 import { EventInfoComponent } from "src/app/shared/event-info/event-info.component";
 import { MonitorService } from "../monitor.service";
 import { ServerError } from "src/app/shared/django.interfaces";
 import { OrganizationsService } from "src/app/api/organizations.service";
+import { components } from "src/app/api/api-schema";
+
+type MonitorDetail = components["schemas"]["MonitorDetailSchema"];
 
 const defaultExpectedStatus = 200;
 const defaultInterval = 60;
@@ -149,18 +152,16 @@ export class MonitorFormComponent implements OnInit {
     if (monitorSettings) {
       this.formName.patchValue(monitorSettings.name);
       this.formMonitorType.patchValue(monitorSettings.monitorType);
-      this.formUrl.patchValue(
-        monitorSettings.url ? monitorSettings.url : ""
-      );
+      this.formUrl.patchValue(monitorSettings.url ? monitorSettings.url : "");
       this.formExpectedStatus.patchValue(
         monitorSettings.expectedStatus
           ? monitorSettings.expectedStatus
           : defaultExpectedStatus
       );
-      this.formExpectedBody.patchValue(monitorSettings.expectedBody);
+      this.formExpectedBody.patchValue(monitorSettings.expectedBody!);
       this.formInterval.patchValue(monitorSettings.interval);
-      this.formTimeout.patchValue(monitorSettings.timeout);
-      this.formProject.patchValue(monitorSettings.project);
+      this.formTimeout.patchValue(monitorSettings.timeout!);
+      this.formProject.patchValue(monitorSettings.projectID);
     }
 
     this.updateRequiredFields();

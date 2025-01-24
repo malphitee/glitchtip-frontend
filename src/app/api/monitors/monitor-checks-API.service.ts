@@ -1,7 +1,6 @@
 import { Injectable, inject } from "@angular/core";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { baseUrl } from "../../constants";
-import { MonitorCheck } from "src/app/uptime/uptime.interfaces";
 
 @Injectable({
   providedIn: "root",
@@ -9,12 +8,11 @@ import { MonitorCheck } from "src/app/uptime/uptime.interfaces";
 export class MonitorChecksAPIService {
   private http = inject(HttpClient);
 
-
   list(
     organizationSlug: string,
     monitorId: string,
     cursor?: string | null,
-    isChange = true,
+    isChange = true
   ) {
     let httpParams = new HttpParams();
     const url = `${baseUrl}/organizations/${organizationSlug}/monitors/${monitorId}/checks/`;
@@ -24,7 +22,7 @@ export class MonitorChecksAPIService {
     if (isChange) {
       httpParams = httpParams.set("is_change", "true");
     }
-    return this.http.get<MonitorCheck[]>(url, {
+    return this.http.get(url, {
       observe: "response",
       params: httpParams,
     });
