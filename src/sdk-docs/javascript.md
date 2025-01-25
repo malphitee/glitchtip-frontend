@@ -12,7 +12,7 @@ Add the following script tag to your HTML file.
 <script src="https://browser.sentry-cdn.com/7.60.0/bundle.min.js" crossorigin="anonymous"></script>
 ```
 
-Consider checking the Sentry GitHub repository for the latest available version number.
+Consider checking the [Sentry GitHub repository](https://github.com/getsentry/sentry-javascript) for the latest available version number.
 
 ### Option 2: NPM
 
