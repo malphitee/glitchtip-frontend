@@ -226,7 +226,7 @@ export class MonitorService extends StatefulService<MonitorState> {
         }
       )
       .then((result) => {
-        if (result.data) {
+        if (result.response.ok) {
           this.setDeleteMonitorEnd();
           this.snackBar.open("Monitor has been deleted.");
           this.router.navigate([organizationSlug, "uptime-monitors"]);
