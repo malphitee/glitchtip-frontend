@@ -163,7 +163,7 @@ export class MonitorService extends StatefulService<MonitorState> {
       });
     } else {
       this.setMonitorError({
-        non_field_errors: [`There was an error updating this monitor.`],
+        non_field_errors: [`There was an error saving your monitor details.`],
       });
     }
     return EMPTY;
@@ -197,7 +197,7 @@ export class MonitorService extends StatefulService<MonitorState> {
             updatedMonitor.id,
           ]);
         } else {
-          // Handle error
+          this.processError(result.error);
         }
       });
   }
@@ -319,5 +319,11 @@ export class MonitorService extends StatefulService<MonitorState> {
     this.setState({
       deleteLoading: false,
     });
+  }
+
+  clearState() {
+    super.clearState()
+    this.monitorId.set(null)
+    this.monitorResource.set(undefined)
   }
 }
