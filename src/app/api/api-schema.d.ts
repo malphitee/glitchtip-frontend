@@ -3852,7 +3852,7 @@ export interface components {
         /** MonitorSchema */
         MonitorSchema: {
             /** Projectid */
-            projectID: number | null;
+            projectID: string | null;
             /** Environmentid */
             environmentID: number | null;
             /** Isup */
@@ -3917,6 +3917,8 @@ export interface components {
             expectedStatus: number | null;
             /** Timeout */
             timeout: number | null;
+            /** Project */
+            project?: string | null;
             /**
              * Monitor Type
              * @default Ping
@@ -3926,8 +3928,6 @@ export interface components {
             name: string;
             /** Url */
             url?: string | null;
-            /** Project */
-            project_id?: number | null;
             /**
              * Interval
              * @default 60
@@ -3961,7 +3961,7 @@ export interface components {
         /** MonitorDetailSchema */
         MonitorDetailSchema: {
             /** Projectid */
-            projectID: number | null;
+            projectID: string | null;
             /** Environmentid */
             environmentID: number | null;
             /** Isup */
@@ -4356,6 +4356,8 @@ export interface components {
              * Format: date-time
              */
             djstripe_updated: string;
+            /** Stripe Data */
+            stripe_data?: Record<string, unknown>;
             /** ID */
             djstripe_id?: number | null;
             /** Id */

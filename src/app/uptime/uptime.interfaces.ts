@@ -26,7 +26,7 @@ interface MonitorBase {
 }
 
 export interface MonitorInput extends MonitorBase {
-  project?: number | null;
+  project?: string | null;
   timeout?: number | null;
 }
 

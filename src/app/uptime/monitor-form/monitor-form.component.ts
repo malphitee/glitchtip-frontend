@@ -127,7 +127,7 @@ export class MonitorFormComponent implements OnInit {
     Validators.pattern(intRegex),
   ]);
 
-  formProject = new FormControl<number | null>(null);
+  formProject = new FormControl<string | null>(null);
 
   monitorForm = new FormGroup({
     monitorType: this.formMonitorType,
