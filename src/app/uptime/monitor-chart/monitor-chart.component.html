@@ -14,7 +14,7 @@
     }} at {{ datapoint.startCheck | date : 'short' }}"
     matTooltipPosition="above"
   ></div>
-  } } } @for (emptyCheck of emptyChecks; track emptyCheck) {
+  } } } @for (emptyCheck of emptyChecks; track $index) {
   <div class="no-check"></div>
   }
 </div>

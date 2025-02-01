@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, OnInit, ViewChild, inject } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  ViewChild,
+  inject,
+} from "@angular/core";
 import {
   Validators,
   FormGroupDirective,
@@ -11,7 +17,6 @@ import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatCardModule } from "@angular/material/card";
-import { AsyncPipe } from "@angular/common";
 import { toObservable } from "@angular/core/rxjs-interop";
 import { lastValueFrom, tap } from "rxjs";
 import { MatSnackBar } from "@angular/material/snack-bar";
@@ -37,7 +42,6 @@ import { StatefulComponent } from "src/app/shared/stateful-service/signal-state.
     InputMatcherDirective,
     LoadingButtonComponent,
     MatIconModule,
-    AsyncPipe,
     FormErrorComponent,
   ],
 })
@@ -87,7 +91,7 @@ export class ChangePasswordComponent
       mapFormErrors(fieldErrors, this.form)
     );
     super(service);
-  
+
     this.service = service;
   }
 

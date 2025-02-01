@@ -1,5 +1,4 @@
 import { Component, ChangeDetectionStrategy, inject } from "@angular/core";
-import { AsyncPipe } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
@@ -13,7 +12,6 @@ import { DetailHeaderComponent } from "src/app/shared/detail/header/header.compo
   templateUrl: "./new-monitor.component.html",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    AsyncPipe,
     RouterModule,
     MonitorFormComponent,
     MatButtonModule,
@@ -24,8 +22,8 @@ import { DetailHeaderComponent } from "src/app/shared/detail/header/header.compo
 export class NewMonitorComponent {
   private monitorService = inject(MonitorService);
 
-  error$ = this.monitorService.error$;
-  loading$ = this.monitorService.createLoading$;
+  error = this.monitorService.error;
+  loading = this.monitorService.createLoading;
 
   submit(formValues: MonitorInput) {
     this.monitorService.createMonitor(formValues);

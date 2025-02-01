@@ -5,16 +5,12 @@
     <mat-form-field appearance="outline" data-cy="team-member-select">
       <mat-label i18n>Add Member</mat-label>
       <mat-select (selectionChange)="addTeamMember()" [formControl]="member">
-        @if ((filteredAddTeamMembers())?.length) {
-        @for (
-        orgMember of filteredAddTeamMembers();
-        track orgMember
-        ) {
+        @if ((filteredAddTeamMembers()).length) { @for ( orgMember of
+        filteredAddTeamMembers(); track orgMember ) {
         <mat-option [value]="orgMember">
           {{ orgMember.email }}
         </mat-option>
-        }
-        } @else {
+        } } @else {
         <mat-option disabled i18n>No members</mat-option>
         }
       </mat-select>
@@ -32,13 +28,21 @@
     <ul data-test-list class="member-list">
       @if (removeMemberError) {
       <mat-error class="center-text">{{ removeMemberError }}</mat-error>
-      }
-      @for (teamMember of teamMembers$ | async; track teamMember) {
+      } @for (teamMember of teamMembers$ | async; track teamMember) {
       <li class="member-list-item">
-        <a mat-line [routerLink]="['../', 'members', teamMember.id]" [relativeTo]="route.parent?.parent">{{
-          teamMember.email }}</a>
-        <gt-loading-button buttonText="Remove" buttonStyle="stroked" [loading]="selectedTeamMember === teamMember.id"
-          (buttonClick)="removeTeamMember(teamMember.id, teamMember.email)" id="remove-team-member"></gt-loading-button>
+        <a
+          mat-line
+          [routerLink]="['../', 'members', teamMember.id]"
+          [relativeTo]="route.parent?.parent"
+          >{{ teamMember.email }}</a
+        >
+        <gt-loading-button
+          buttonText="Remove"
+          buttonStyle="stroked"
+          [loading]="selectedTeamMember === teamMember.id"
+          (buttonClick)="removeTeamMember(teamMember.id, teamMember.email)"
+          id="remove-team-member"
+        ></gt-loading-button>
       </li>
       }
     </ul>

@@ -1,12 +1,20 @@
 <section class="l-body">
   <header class="page-header">
     <h1 class="mat-headline-4" i18n>Teams</h1>
-    <button mat-flat-button color="primary" (click)="openCreateTeamDialog()" id="new-team" i18n>Create Team</button>
+    <button
+      mat-flat-button
+      color="primary"
+      (click)="openCreateTeamDialog()"
+      id="new-team"
+      i18n
+      >Create Team</button
+    >
   </header>
   <mat-card>
     <mat-card-header>
       <mat-card-title i18n>Your Teams</mat-card-title>
-      <p class="description mat-body-1" i18n>Teams are for managing issue notifications and workflow. View
+      <p class="description mat-body-1" i18n
+        >Teams are for managing issue notifications and workflow. View
         permissions are handled through
         <a routerLink="../members"> organization membership.</a>
       </p>
@@ -16,39 +24,42 @@
       @if ((yourTeams$ | async)?.length) {
       <ul>
         @if (errors(); as error) {
-        <mat-error class="center-text">{{
-          error.removeTeamMember
-          }}</mat-error>
-        }
-        @for (yourTeam of yourTeams$ | async; track yourTeam) {
+        <mat-error class="center-text">{{ error.removeTeamMember }}</mat-error>
+        } @for (yourTeam of yourTeams$ | async; track yourTeam) {
         <li class="team-list-item">
           <div class="team-list-item-text">
             <a [routerLink]="[yourTeam.slug, 'members']">
               #{{ yourTeam.slug }}
             </a>
             <div>
-              {{
-              yourTeam.memberCount | i18nPlural: memberCountPluralMapping
-              }}
+              {{ yourTeam.memberCount | i18nPlural : memberCountPluralMapping }}
             </div>
           </div>
-          <gt-loading-button buttonText="Leave Team" buttonStyle="stroked" [loading]="
-                  (loading())?.removeTeamMember === yourTeam.slug
-                " (buttonClick)="leaveTeam(yourTeam.slug)" id="leave-team"></gt-loading-button>
+          <gt-loading-button
+            buttonText="Leave Team"
+            buttonStyle="stroked"
+            [loading]="loading().removeTeamMember === yourTeam.slug"
+            (buttonClick)="leaveTeam(yourTeam.slug)"
+            id="leave-team"
+          ></gt-loading-button>
         </li>
         }
       </ul>
+      } @else { @if ((otherTeams$ | async)?.length) {
+      <p i18n
+        >You aren't part of any teams. Join a team below or press the "Create
+        Team" button in the upper right.</p
+      >
       } @else {
-      @if ((otherTeams$ | async)?.length) {
-      <p i18n>You aren't part of any teams. Join a team below or press the
-        "Create Team" button in the upper right.</p>
-      } @else {
-      <p i18n>You don't have any teams set up. Teams determine which users have
-        access to projects in your organization.</p>
-      <p i18n>To create a new team, press the "Create Team" button in the upper
-        right.</p>
-      }
-      }
+      <p i18n
+        >You don't have any teams set up. Teams determine which users have
+        access to projects in your organization.</p
+      >
+      <p i18n
+        >To create a new team, press the "Create Team" button in the upper
+        right.</p
+      >
+      } }
     </mat-card-content>
   </mat-card>
 
@@ -60,8 +71,7 @@
       <ul>
         @if (errors(); as error) {
         <mat-error class="center-text">{{ error.addTeamMember }}</mat-error>
-        }
-        @for (otherTeam of otherTeams$ | async; track otherTeam) {
+        } @for (otherTeam of otherTeams$ | async; track otherTeam) {
         <li class="team-list-item">
           <div class="team-list-item-text">
             <a [routerLink]="[otherTeam.slug, 'members']">
@@ -69,13 +79,17 @@
             </a>
             <div>
               {{
-              otherTeam.memberCount | i18nPlural: memberCountPluralMapping
+                otherTeam.memberCount | i18nPlural : memberCountPluralMapping
               }}
             </div>
           </div>
-          <gt-loading-button buttonText="Join Team" buttonStyle="stroked"
-            [loading]="(loading())?.addTeamMember === otherTeam.slug" (buttonClick)="joinTeam(otherTeam.slug)"
-            id="leave-team"></gt-loading-button>
+          <gt-loading-button
+            buttonText="Join Team"
+            buttonStyle="stroked"
+            [loading]="loading().addTeamMember === otherTeam.slug"
+            (buttonClick)="joinTeam(otherTeam.slug)"
+            id="leave-team"
+          ></gt-loading-button>
         </li>
         }
       </ul>

@@ -3,6 +3,7 @@ import { client } from "./api";
 import { toObservable } from "@angular/core/rxjs-interop";
 import { interval, takeUntil, takeWhile } from "rxjs";
 import { AuthService } from "../auth.service";
+import { refreshInterval } from "../shared/shared.utils";
 
 @Injectable({
   providedIn: "root",
@@ -65,12 +66,21 @@ export class OrganizationsService {
   activeOrganizationSlug$ = toObservable(this.activeOrganizationSlug);
   activeOrganizationProjects$ = toObservable(this.activeOrganizationProjects);
 
+  constructor() {
+    this.refresh();
+  }
+
   setActiveOrganizationSlug(slug: string | null) {
     this.#activeOrganizationSlug.set(slug);
   }
 
   refreshActiveOrganization() {
     return this.activeOrganizationResource.reload();
+  }
+
+  reload() {
+    this.organizationsResource.reload();
+    this.activeOrganizationResource.reload();
   }
 
   async createOrganization(name: string) {
@@ -100,5 +110,10 @@ export class OrganizationsService {
         )
       )
       .subscribe(() => this.activeOrganizationResource.reload());
+  }
+
+  private refresh() {
+    // Refresh 30s, 10m, 30m...
+    refreshInterval([30, 60 * 10], 60 * 30).subscribe(() => this.reload());
   }
 }

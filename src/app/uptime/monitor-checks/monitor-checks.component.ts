@@ -1,5 +1,11 @@
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, Component, OnDestroy, input, inject } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  input,
+  inject,
+} from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTableModule } from "@angular/material/table";
@@ -14,9 +20,11 @@ import {
 } from "rxjs";
 import { ListFooterComponent } from "src/app/list-elements/list-footer/list-footer.component";
 import { HumanizeDurationPipe } from "src/app/shared/seconds-or-ms.pipe";
-import { DownReason, MonitorDetail } from "../uptime.interfaces";
+import { DownReason } from "../uptime.interfaces";
 import { reasonTextConversions } from "../uptime.utils";
 import { MonitorChecksService } from "./monitor-checks.service";
+import { components } from "src/app/api/api-schema";
+type MonitorDetail = components["schemas"]["MonitorDetailSchema"];
 
 @Component({
   selector: "gt-monitor-checks",
@@ -40,7 +48,7 @@ export class MonitorChecksComponent implements OnDestroy {
   readonly monitor = input.required<MonitorDetail>();
   monitorChecks$ = this.service.monitorChecks$;
   isChange$ = this.route.queryParamMap.pipe(
-    map((params) => (params.get("isChange") === "false" ? false : true)),
+    map((params) => (params.get("isChange") === "false" ? false : true))
   );
   paginator$ = this.service.paginator$;
   displayedColumns$ = this.isChange$.pipe(
@@ -50,8 +58,8 @@ export class MonitorChecksComponent implements OnDestroy {
         "reason",
         isChanged ? undefined : "responseTime",
         "startCheck",
-      ].filter((column) => !!column),
-    ),
+      ].filter((column) => !!column)
+    )
   );
 
   constructor() {
@@ -66,12 +74,12 @@ export class MonitorChecksComponent implements OnDestroy {
               orgSlug,
               monitorId,
               isChange,
-              queryParams.get("cursor"),
+              queryParams.get("cursor")
             );
           }
           return EMPTY;
         }),
-        takeUntilDestroyed(),
+        takeUntilDestroyed()
       )
       .subscribe();
   }

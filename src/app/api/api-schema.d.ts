@@ -473,7 +473,8 @@ export interface paths {
         };
         /** Get Issue */
         get: operations["apps_issue_events_api_issues_get_issue"];
-        put?: never;
+        /** Update Issue */
+        put: operations["apps_issue_events_api_issues_update_issue"];
         post?: never;
         /** Delete Issue */
         delete: operations["apps_issue_events_api_issues_delete_issue"];
@@ -3850,38 +3851,12 @@ export interface components {
         };
         /** MonitorSchema */
         MonitorSchema: {
-            /** Expected Body */
-            expectedBody?: string | null;
-            /**
-             * Expected Status
-             * @default 200
-             */
-            expectedStatus: number | null;
-            /**
-             * Timeout
-             * @description Blank implies default value of 20
-             */
-            timeout?: number | null;
-            /**
-             * Monitor Type
-             * @default Ping
-             */
-            monitorType: string;
-            /** Name */
-            name: string;
-            /** Url */
-            url?: string | null;
-            /** Project Id */
-            project_id: number | null;
-            /**
-             * Interval
-             * @default 60
-             */
-            interval: number;
-            /** Environment Id */
-            environment_id: number | null;
-            /** Latest Is Up */
-            latest_is_up: boolean | null;
+            /** Projectid */
+            projectID: string | null;
+            /** Environmentid */
+            environmentID: number | null;
+            /** Isup */
+            isUp: boolean | null;
             /** Lastchange */
             lastChange: string | null;
             /** Heartbeatendpoint */
@@ -3892,8 +3867,9 @@ export interface components {
             envName?: string | null;
             /** Checks */
             checks: components["schemas"]["MonitorCheckSchema"][];
-            /** Organization Id */
-            organization_id: number;
+            /** Organizationid */
+            organizationID: number;
+            monitorType: components["schemas"]["MonitorType"];
             /** ID */
             id?: number | null;
             /**
@@ -3906,7 +3882,33 @@ export interface components {
              * Format: date-time
              */
             created: string;
+            /** Name */
+            name: string;
+            /** Url */
+            url?: string | null;
+            /**
+             * Expected Status
+             * @default 200
+             */
+            expectedStatus: number | null;
+            /** Expected Body */
+            expectedBody?: string | null;
+            /**
+             * Interval
+             * @default 60
+             */
+            interval: number;
+            /**
+             * Timeout
+             * @description Blank implies default value of 20
+             */
+            timeout?: number | null;
         };
+        /**
+         * MonitorType
+         * @enum {string}
+         */
+        MonitorType: "Ping" | "GET" | "POST" | "TCP Port" | "SSL" | "Heartbeat";
         /** MonitorIn */
         MonitorIn: {
             /** Expectedbody */
@@ -3915,6 +3917,8 @@ export interface components {
             expectedStatus: number | null;
             /** Timeout */
             timeout: number | null;
+            /** Project */
+            project?: string | null;
             /**
              * Monitor Type
              * @default Ping
@@ -3924,8 +3928,6 @@ export interface components {
             name: string;
             /** Url */
             url?: string | null;
-            /** Project */
-            project_id?: number | null;
             /**
              * Interval
              * @default 60
@@ -3958,38 +3960,12 @@ export interface components {
         };
         /** MonitorDetailSchema */
         MonitorDetailSchema: {
-            /** Expected Body */
-            expectedBody?: string | null;
-            /**
-             * Expected Status
-             * @default 200
-             */
-            expectedStatus: number | null;
-            /**
-             * Timeout
-             * @description Blank implies default value of 20
-             */
-            timeout?: number | null;
-            /**
-             * Monitor Type
-             * @default Ping
-             */
-            monitorType: string;
-            /** Name */
-            name: string;
-            /** Url */
-            url?: string | null;
-            /** Project Id */
-            project_id: number | null;
-            /**
-             * Interval
-             * @default 60
-             */
-            interval: number;
-            /** Environment Id */
-            environment_id: number | null;
-            /** Latest Is Up */
-            latest_is_up: boolean | null;
+            /** Projectid */
+            projectID: string | null;
+            /** Environmentid */
+            environmentID: number | null;
+            /** Isup */
+            isUp: boolean | null;
             /** Lastchange */
             lastChange: string | null;
             /** Heartbeatendpoint */
@@ -4000,8 +3976,9 @@ export interface components {
             envName?: string | null;
             /** Checks */
             checks: components["schemas"]["MonitorCheckResponseTimeSchema"][];
-            /** Organization Id */
-            organization_id: number;
+            /** Organizationid */
+            organizationID: number;
+            monitorType: components["schemas"]["MonitorType"];
             /** ID */
             id?: number | null;
             /**
@@ -4014,6 +3991,27 @@ export interface components {
              * Format: date-time
              */
             created: string;
+            /** Name */
+            name: string;
+            /** Url */
+            url?: string | null;
+            /**
+             * Expected Status
+             * @default 200
+             */
+            expectedStatus: number | null;
+            /** Expected Body */
+            expectedBody?: string | null;
+            /**
+             * Interval
+             * @default 60
+             */
+            interval: number;
+            /**
+             * Timeout
+             * @description Blank implies default value of 20
+             */
+            timeout?: number | null;
         };
         /** StatusPageSchema */
         StatusPageSchema: {
@@ -4358,6 +4356,8 @@ export interface components {
              * Format: date-time
              */
             djstripe_updated: string;
+            /** Stripe Data */
+            stripe_data?: Record<string, unknown>;
             /** ID */
             djstripe_id?: number | null;
             /** Id */
@@ -5378,6 +5378,32 @@ export interface operations {
             cookie?: never;
         };
         requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IssueDetailSchema"];
+                };
+            };
+        };
+    };
+    apps_issue_events_api_issues_update_issue: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                issue_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateIssueSchema"];
+            };
+        };
         responses: {
             /** @description OK */
             200: {
