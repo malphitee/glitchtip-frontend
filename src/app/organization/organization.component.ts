@@ -33,8 +33,10 @@ export class OrganizationFrameComponent implements OnInit {
 
   constructor() {
     effect(() => {
+      // Make sure we have actually retrieved the organization list
       if (this.organizationService.organizationsResource.hasValue()) {
         if (!this.organizationService.organizations().length) {
+          // User doesn't have an organization, so they shouldn't have an active organization slug
           this.organizationService.setActiveOrganizationSlug(null);
         } else if (
           !this.organizationService
@@ -44,6 +46,7 @@ export class OrganizationFrameComponent implements OnInit {
                 org.slug === this.organizationService.activeOrganizationSlug()
             )
         ) {
+          // Current url org slug does not match any of their organizations, so it should not be set as active org slug
           this.organizationService.setActiveOrganizationSlug(null);
         }
       }
