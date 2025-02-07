@@ -33,15 +33,41 @@ export class OrganizationFrameComponent implements OnInit {
 
   constructor() {
     effect(() => {
-      const activeOrgSlug = this.organizationService.activeOrganizationSlug();
-      if (activeOrgSlug !== this.orgSlug()) {
-        if (this.isNavigationFromBackButton) {
-          this.organizationService.setActiveOrganizationSlug(this.orgSlug());
-        } else {
-          this.router.navigate(["../", activeOrgSlug, this.firstChildRoute], {
-            relativeTo: this.route,
-          });
+      if (this.organizationService.organizationsResource.hasValue()) {
+        if (!this.organizationService.organizations().length) {
+          this.organizationService.setActiveOrganizationSlug(null);
+        } else if (
+          !this.organizationService
+            .organizations()
+            .find(
+              (org) =>
+                org.slug === this.organizationService.activeOrganizationSlug()
+            )
+        ) {
+          this.organizationService.setActiveOrganizationSlug(null);
         }
+      }
+      if (this.organizationService.activeOrganizationSlug()) {
+        if (
+          this.organizationService.activeOrganizationSlug() !== this.orgSlug()
+        ) {
+          if (this.isNavigationFromBackButton) {
+            this.organizationService.setActiveOrganizationSlug(this.orgSlug());
+          } else {
+            this.router.navigate(
+              [
+                "../",
+                this.organizationService.activeOrganizationSlug(),
+                this.firstChildRoute,
+              ],
+              {
+                relativeTo: this.route,
+              }
+            );
+          }
+        }
+      } else {
+        this.router.navigate(["/"]);
       }
     });
   }
