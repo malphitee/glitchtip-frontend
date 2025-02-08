@@ -33,36 +33,28 @@ export class OrganizationFrameComponent implements OnInit {
 
   constructor() {
     effect(() => {
-      // Make sure we have actually retrieved the organization list
-      if (this.organizationService.organizationsResource.hasValue()) {
-        if (!this.organizationService.organizations().length) {
-          // User doesn't have an organization, so they shouldn't have an active organization slug
-          this.organizationService.setActiveOrganizationSlug(null);
-        } else if (
-          !this.organizationService
-            .organizations()
-            .find(
-              (org) =>
-                org.slug === this.organizationService.activeOrganizationSlug()
-            )
-        ) {
-          // Current url org slug does not match any of their organizations, so it should not be set as active org slug
-          this.organizationService.setActiveOrganizationSlug(null);
-        }
+      const organizations = this.organizationService.organizations();
+      const activeOrganizationSlug =
+        this.organizationService.activeOrganizationSlug();
+      const orgSlug = this.orgSlug();
+
+      // Check if the organizations have loaded. If so, ensure the active organization slug
+      // is valid.  If the current slug doesn't match any existing organization,
+      // clear the active organization slug.
+      if (
+        this.organizationService.organizationsResource.hasValue() &&
+        !organizations.find((org) => org.slug === activeOrganizationSlug)
+      ) {
+        this.organizationService.setActiveOrganizationSlug(null);
       }
-      if (this.organizationService.activeOrganizationSlug()) {
-        if (
-          this.organizationService.activeOrganizationSlug() !== this.orgSlug()
-        ) {
+
+      if (activeOrganizationSlug) {
+        if (activeOrganizationSlug !== orgSlug) {
           if (this.isNavigationFromBackButton) {
-            this.organizationService.setActiveOrganizationSlug(this.orgSlug());
+            this.organizationService.setActiveOrganizationSlug(orgSlug);
           } else {
             this.router.navigate(
-              [
-                "../",
-                this.organizationService.activeOrganizationSlug(),
-                this.firstChildRoute,
-              ],
+              ["../", activeOrganizationSlug, this.firstChildRoute],
               {
                 relativeTo: this.route,
               }
