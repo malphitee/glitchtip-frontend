@@ -77,7 +77,7 @@ export class AcceptInviteService {
     this.postAcceptInvite(memberId, token)
       .pipe(
         tap((response: AcceptAPIResponse) => {
-          // this.orgService.retrieveOrganizations().subscribe();
+          this.organizationsService.reload()
           this.snackBar.open(
             `You have been added to ${response.orgUser.organization.name}.`
           );
