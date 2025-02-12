@@ -1,7 +1,8 @@
 <section class="l-body">
   @if (
   (projects())?.length === 0 &&
-  (activeOrganization()) === undefined
+  (activeOrganization()) === undefined &&
+  (orgServiceInitialLoad())
   ) {
   <mat-card>
     <mat-card-content>

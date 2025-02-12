@@ -32,6 +32,7 @@ export class ProjectListComponent implements OnInit {
   activeOrganization = this.organizationsService.activeOrganization;
   projects = toSignal(this.projectsService.projects$);
   organizations = this.organizationsService.organizations;
+  orgServiceInitialLoad = this.organizationsService.initialLoad
   orgsAndProjects = computed(() =>
     this.organizations().map((organization) => ({
       ...organization,
