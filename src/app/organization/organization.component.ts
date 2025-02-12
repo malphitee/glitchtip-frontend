@@ -5,6 +5,7 @@ import {
   inject,
   input,
   InputSignal,
+  OnDestroy,
   OnInit,
 } from "@angular/core";
 import {
@@ -22,7 +23,7 @@ import { OrganizationsService } from "../api/organizations.service";
   template: `<router-outlet></router-outlet>`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class OrganizationFrameComponent implements OnInit {
+export class OrganizationFrameComponent implements OnDestroy, OnInit {
   route = inject(ActivatedRoute);
   router = inject(Router);
   private firstChildRoute: string = "";
@@ -72,6 +73,7 @@ export class OrganizationFrameComponent implements OnInit {
     this.organizationService.setActiveOrganizationSlug(this.orgSlug());
     this.subscribeToRouteChanges();
   }
+
   ngOnDestroy() {
     this.subscriptions.map((sub) => sub.unsubscribe());
   }
