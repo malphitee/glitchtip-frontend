@@ -1,4 +1,11 @@
-import { Component, OnInit, ChangeDetectionStrategy, Input, computed, inject } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  ChangeDetectionStrategy,
+  Input,
+  computed,
+  inject,
+} from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
@@ -32,11 +39,13 @@ export class ProjectListComponent implements OnInit {
   activeOrganization = this.organizationsService.activeOrganization;
   projects = toSignal(this.projectsService.projects$);
   organizations = this.organizationsService.organizations;
-  orgServiceInitialLoad = this.organizationsService.initialLoad
+  orgServiceInitialLoad = this.organizationsService.initialLoad;
   orgsAndProjects = computed(() =>
     this.organizations().map((organization) => ({
       ...organization,
-      projects: this.projects()?.filter((project) => project.organization.id),
+      projects: this.projects()?.filter(
+        (project) => project.organization.id === organization.id
+      ),
     }))
   );
 
