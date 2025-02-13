@@ -65,7 +65,7 @@ export class MembersComponent implements OnInit {
       ? `Are you sure you'd like to leave this organization?`
       : `Are you sure you want to remove ${member.email} from this organization?`;
     if (window.confirm(message)) {
-      this.membersService.removeMember(member as any);
+      this.membersService.removeMember(member as any, member.isMe);
     }
   }
 }

@@ -5,6 +5,7 @@ import {
   inject,
   input,
   InputSignal,
+  OnDestroy,
   OnInit,
 } from "@angular/core";
 import {
@@ -22,7 +23,7 @@ import { OrganizationsService } from "../api/organizations.service";
   template: `<router-outlet></router-outlet>`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class OrganizationFrameComponent implements OnInit {
+export class OrganizationFrameComponent implements OnDestroy, OnInit {
   route = inject(ActivatedRoute);
   router = inject(Router);
   private firstChildRoute: string = "";
@@ -33,15 +34,36 @@ export class OrganizationFrameComponent implements OnInit {
 
   constructor() {
     effect(() => {
-      const activeOrgSlug = this.organizationService.activeOrganizationSlug();
-      if (activeOrgSlug !== this.orgSlug()) {
-        if (this.isNavigationFromBackButton) {
-          this.organizationService.setActiveOrganizationSlug(this.orgSlug());
-        } else {
-          this.router.navigate(["../", activeOrgSlug, this.firstChildRoute], {
-            relativeTo: this.route,
-          });
+      const organizations = this.organizationService.organizations();
+      const activeOrganizationSlug =
+        this.organizationService.activeOrganizationSlug();
+      const orgSlug = this.orgSlug();
+
+      // Check if the organizations have loaded. If so, ensure the active organization slug
+      // is valid.  If the current slug doesn't match any existing organization,
+      // clear the active organization slug.
+      if (
+        this.organizationService.organizationsResource.hasValue() &&
+        !organizations.find((org) => org.slug === activeOrganizationSlug)
+      ) {
+        this.organizationService.setActiveOrganizationSlug(null);
+      }
+
+      if (activeOrganizationSlug) {
+        if (activeOrganizationSlug !== orgSlug) {
+          if (this.isNavigationFromBackButton) {
+            this.organizationService.setActiveOrganizationSlug(orgSlug);
+          } else {
+            this.router.navigate(
+              ["../", activeOrganizationSlug, this.firstChildRoute],
+              {
+                relativeTo: this.route,
+              }
+            );
+          }
         }
+      } else {
+        this.router.navigate(["/"]);
       }
     });
   }
@@ -51,6 +73,7 @@ export class OrganizationFrameComponent implements OnInit {
     this.organizationService.setActiveOrganizationSlug(this.orgSlug());
     this.subscribeToRouteChanges();
   }
+
   ngOnDestroy() {
     this.subscriptions.map((sub) => sub.unsubscribe());
   }

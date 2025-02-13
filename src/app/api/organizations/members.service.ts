@@ -1,4 +1,5 @@
 import { Injectable, inject } from "@angular/core";
+import { Router } from "@angular/router";
 import { HttpErrorResponse } from "@angular/common/http";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { BehaviorSubject, EMPTY, lastValueFrom, combineLatest } from "rxjs";
@@ -31,6 +32,7 @@ const initialState: MembersState = {
 
 @Injectable({ providedIn: "root" })
 export class MembersService {
+  router = inject(Router);
   private membersAPIService = inject(MembersAPIService);
   private organizationsService = inject(OrganizationsService);
   private organizationDetailService = inject(OrganizationDetailService);
@@ -92,7 +94,7 @@ export class MembersService {
   }
 
   /** Remove member for active organization. */
-  removeMember(member: Member) {
+  removeMember(member: Member, isRemovingSelf: boolean = false) {
     lastValueFrom(
       this.organizationsService.activeOrganizationSlug$.pipe(
         take(1),
@@ -104,6 +106,11 @@ export class MembersService {
                 this.snackBar.open(
                   `Successfully removed ${member.email} from organization`
                 );
+                if (isRemovingSelf) {
+                  this.organizationsService.reload()
+                  this.organizationsService.setActiveOrganizationSlug(null)
+                  this.router.navigate(["/"]);
+                }
                 if (orgSlug) {
                   return this.organizationDetailService.retrieveOrganizationMembers(
                     orgSlug
