@@ -147,10 +147,9 @@ export interface Request {
   } | null;
   headers: string[][];
   url: string;
-  query?: { [key: string]: Json }[];
+  query?: string[][];
   data?: { [key: string]: string } | null;
   method?: string | null;
-  query_string?: string[][];
 }
 
 export interface AnnotatedRequest extends Request {

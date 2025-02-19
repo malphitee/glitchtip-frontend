@@ -30,11 +30,11 @@
           </dl>
         </div>
       }
-      @if (request?.query_string) {
+      @if (request?.query) {
         <section>
           <h3>Query String</h3>
           <dl>
-            @for (query of request?.query_string; track query) {
+            @for (query of request?.query; track query) {
               <gt-entry-data
                 [key]="query[0]"
                 [value]="query[1]"
