@@ -19,7 +19,7 @@ Burke Software does not share user data with any third parties. We do rely on Di
 - Subscriptions and payment are handled by Stripe. Burke Software does not store credit card information. Only subscription related information is sent to Stripe. Error data is not shared.
 - Docker images used for both hosted GlitchTip and self-hosting are hosted on both [GitLab](https://gitlab.com/glitchtip/glitchtip-frontend/container_registry) and [Docker Hub](https://hub.docker.com/r/glitchtip/glitchtip). These images are built in [GitLab CI](https://gitlab.com/glitchtip/glitchtip-frontend/-/pipelines).
 - Cookies are used for session based authentication and are required for using GlitchTip. Cookies are never shared with third parties.
-- Event data is purged after 90 days. Users who wish to purge all account information should email [info@burkesoftware.com](mailto:info@burkesoftware.com).
+- Event data is purged after 90 days. Users who wish to purge all account information should email [support@glitchtip.com](mailto:support@glitchtip.com).
 - Mozilla Observatory rates app.glitchtip.com as "A+". View [report](https://observatory.mozilla.org/analyze/app.glitchtip.com). To keep users safe, we utilize Content Security Policy, secure cookies, HTTPS, and HSTS.
 
 ## Disaster Recovery
@@ -51,4 +51,4 @@ The GlitchTip team aims to update server and browser packages at least monthly. 
 
 Found a security vulnerability? [Open a private issue on GitLab](https://gitlab.com/glitchtip). Please do not report results of automated tools, such as dependency bots. If you believe an automated tool would be helpful, discuss on Gitter first.
 
-Need more information? Email us at [info@burkesoftware.com](mailto:info@burkesoftware.com)
+Need more information? Email us at [sales@glitchtip.com](mailto:sales@glitchtip.com)
