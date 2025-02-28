@@ -79,7 +79,15 @@ Get started by clicking here. Note this is a referral link and is a great way to
 <img src="https://www.deploytodo.com/do-btn-blue.svg" alt="Deploy to DigitalOcean" style="width:250px;"/>
 </a>
 
-Leave environment variables blank and click next. Pick the basic or pro plan. One 512 MB RAM | 1 vCPU is fine to start with. Click Launch. Now copy [app-platform.yaml](https://gitlab.com/glitchtip/glitchtip/-/blob/master/app-platform.yaml) to your local computer. Edit the following
+- Edit environment variables and set SECRET_KEY to a random string. Edit EMAIL_URL (or delete if just testing).
+- Set worker containers to just 1.
+- One 512 MB RAM | 1 vCPU is fine to start with.
+- Click Create app.
+
+Next you must create a "Caching" managed database, which is redis/valkey. You can either do so via the web interface or through yaml.
+Call it "glitchtip-redis" and ensure it's in the same region as your app.
+
+If you want to use yaml, you can copy [app-platform.yaml](https://gitlab.com/glitchtip/glitchtip/-/blob/master/app-platform.yaml) to your local computer. Edit the following
 
 ### Name and region
 
