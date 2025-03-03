@@ -73,11 +73,11 @@ function handler(req, res) {
 export default withSentry(handler);
 ```
 
-## How to set up client tunnel to avoid ad blockers
+## How to set up client tunnel
 
-Ad blockers often block error reporting to external services. To solve this, you need to set up a client tunnel through your own API route.
+Sometimes client side error reporting could be blocked by 3rd party tools. To solve this, you need to set up a client tunnel through your own API route.
 
-Automatic API route injection is turned off for self-hosted versions of Sentry (including GlitchTip). You must set up the endpoint with a tunnel yourself. This is only needed for client as server and edge errors will be sent from serverside avoiding this issue.
+You must set up the endpoint with a tunnel yourself. This is only needed for client as server and edge errors will be sent from serverside avoiding this issue.
 
 ### Steps to create a tunnel:
 
