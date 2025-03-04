@@ -48,7 +48,6 @@ export class MainNavComponent {
   private userService = inject(UserService);
 
   activeOrganizationSlug = this.organizationsService.activeOrganizationSlug;
-  activeOrganizationLoaded = this.organizationsService.activeOrganizationLoaded;
   /* TODO: Add primary color to mat-sidenav
   https://stackoverflow.com/questions/54248944/angular-6-7-how-to-apply-default-theme-color-to-mat-sidenav-background */
   activeOrganization = this.organizationsService.activeOrganization;
