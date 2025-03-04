@@ -1,4 +1,11 @@
-import { computed, inject, Injectable, resource, signal } from "@angular/core";
+import {
+  computed,
+  inject,
+  Injectable,
+  resource,
+  ResourceStatus,
+  signal,
+} from "@angular/core";
 import { client } from "./api";
 import { toObservable } from "@angular/core/rxjs-interop";
 import { interval, takeUntil, takeWhile } from "rxjs";
@@ -50,7 +57,9 @@ export class OrganizationsService {
   organizationsCount = computed(() => this.organizations.length);
   activeOrganization = computed(() => this.activeOrganizationResource.value());
   activeOrganizationLoaded = computed(() =>
-    this.activeOrganizationResource.hasValue()
+    [ResourceStatus.Resolved, ResourceStatus.Local].includes(
+      this.activeOrganizationResource.status()
+    )
   );
   activeOrganizationProjects = computed(
     () => this.activeOrganization()?.projects || []
@@ -58,7 +67,9 @@ export class OrganizationsService {
   projectsCount = computed(() => this.activeOrganizationProjects().length);
   initialLoad = computed(
     () =>
-      this.organizationsResource.hasValue() && this.activeOrganizationLoaded()
+      [ResourceStatus.Resolved, ResourceStatus.Local].includes(
+        this.organizationsResource.status()
+      ) && this.activeOrganizationLoaded()
   );
 
   // For compatibility, remove when possible
