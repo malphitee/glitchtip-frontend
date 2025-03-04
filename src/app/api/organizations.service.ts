@@ -56,10 +56,8 @@ export class OrganizationsService {
   organizations = computed(() => this.organizationsResource.value() || []);
   organizationsCount = computed(() => this.organizations.length);
   activeOrganization = computed(() => this.activeOrganizationResource.value());
-  activeOrganizationLoaded = computed(() =>
-    [ResourceStatus.Resolved, ResourceStatus.Local].includes(
-      this.activeOrganizationResource.status()
-    )
+  activeOrganizationLoaded = computed(
+    () => this.activeOrganizationResource.status() >= ResourceStatus.Resolved
   );
   activeOrganizationProjects = computed(
     () => this.activeOrganization()?.projects || []
@@ -67,9 +65,8 @@ export class OrganizationsService {
   projectsCount = computed(() => this.activeOrganizationProjects().length);
   initialLoad = computed(
     () =>
-      [ResourceStatus.Resolved, ResourceStatus.Local].includes(
-        this.organizationsResource.status()
-      ) && this.activeOrganizationLoaded()
+      this.organizationsResource.status() >= ResourceStatus.Resolved &&
+      this.activeOrganizationLoaded()
   );
 
   // For compatibility, remove when possible
