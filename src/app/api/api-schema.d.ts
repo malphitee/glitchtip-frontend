@@ -973,6 +973,115 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/0/stripe/products/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Stripe Products */
+        get: operations["apps_stripe_api_list_stripe_products"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/0/stripe/subscriptions/{organization_slug}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Stripe Subscription */
+        get: operations["apps_stripe_api_get_stripe_subscription"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/0/stripe/organizations/{organization_slug}/create-stripe-subscription-checkout/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create Stripe Session
+         * @description Create Stripe Checkout, send to client for redirecting to Stripe
+         *     See https://stripe.com/docs/api/checkout/sessions/create
+         */
+        post: operations["apps_stripe_api_create_stripe_session"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/0/stripe/organizations/{organization_slug}/create-billing-portal/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Stripe Billing Portal Session
+         * @description See https://stripe.com/docs/billing/subscriptions/integrating-self-serve-portal
+         */
+        post: operations["apps_stripe_api_stripe_billing_portal_session"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/0/stripe/subscriptions/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Stripe Create Subscription */
+        post: operations["apps_stripe_api_stripe_create_subscription"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/0/stripe/subscriptions/{organization_slug}/events_count/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Subscription Events Count */
+        get: operations["apps_stripe_api_subscription_events_count"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/0/organizations/{organization_slug}/artifactbundle/assemble/": {
         parameters: {
             query?: never;
@@ -1560,115 +1669,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/0/subscriptions/{organization_slug}/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get Subscription */
-        get: operations["apps_djstripe_ext_api_get_subscription"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/0/subscriptions/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Create Subscription */
-        post: operations["apps_djstripe_ext_api_create_subscription"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/0/subscriptions/{organization_slug}/events_count/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get Subscription Events Count */
-        get: operations["apps_djstripe_ext_api_get_subscription_events_count"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/0/organizations/{organization_slug}/create-billing-portal/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Stripe Billing Portal
-         * @description See https://stripe.com/docs/billing/subscriptions/integrating-self-serve-portal
-         */
-        post: operations["apps_djstripe_ext_api_stripe_billing_portal"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/0/organizations/{organization_slug}/create-stripe-subscription-checkout/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Create Stripe Subscription Checkout
-         * @description Create Stripe Checkout, send to client for redirecting to Stripe
-         *     See https://stripe.com/docs/api/checkout/sessions/create
-         */
-        post: operations["apps_djstripe_ext_api_create_stripe_subscription_checkout"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/0/products/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List Products */
-        get: operations["apps_djstripe_ext_api_list_products"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1705,6 +1705,8 @@ export interface components {
             serverTimeZone: string;
             /** Usenewsocialcallbacks */
             useNewSocialCallbacks: boolean;
+            /** Glitchtipinstancename */
+            glitchtipInstanceName: string | null;
         };
         /** SocialAppSchema */
         SocialAppSchema: {
@@ -3143,6 +3145,8 @@ export interface components {
              * @description The name of the organization
              */
             name: string;
+            /** Id */
+            id: string;
             /**
              * Created
              * Format: date-time
@@ -3178,8 +3182,6 @@ export interface components {
              * @default false
              */
             require2fa: boolean;
-            /** ID */
-            id?: number | null;
             /**
              * Slug
              * @description The name in all lowercase, suitable for URL identification
@@ -3205,6 +3207,8 @@ export interface components {
              * @description The name of the organization
              */
             name: string;
+            /** Id */
+            id: string;
             /**
              * Created
              * Format: date-time
@@ -3240,8 +3244,6 @@ export interface components {
              * @default false
              */
             require2fa: boolean;
-            /** Id */
-            id: number;
             /**
              * Slug
              * @description The name in all lowercase, suitable for URL identification
@@ -3793,6 +3795,87 @@ export interface components {
              */
             end: string;
         };
+        /** StripeNestedPriceSchema */
+        StripeNestedPriceSchema: {
+            /** Stripeid */
+            stripeID: string;
+            /** Price */
+            price: string;
+        };
+        /** StripeProductExpandedPriceSchema */
+        StripeProductExpandedPriceSchema: {
+            /** Stripeid */
+            stripeID: string;
+            defaultPrice: components["schemas"]["StripeNestedPriceSchema"];
+            /** Name */
+            name: string;
+            /** Description */
+            description: string;
+            /** Events */
+            events: number;
+        };
+        /** StripeProductSchema */
+        StripeProductSchema: {
+            /** Stripeid */
+            stripeID: string;
+            /** Name */
+            name: string;
+            /** Description */
+            description: string;
+            /** Events */
+            events: number;
+            /** Default Price */
+            default_price_id?: string | null;
+        };
+        /** StripeSubscriptionSchema */
+        StripeSubscriptionSchema: {
+            /** Stripeid */
+            stripeID: string;
+            product: components["schemas"]["StripeProductSchema"];
+            price: components["schemas"]["StripeNestedPriceSchema"];
+            /**
+             * Created
+             * Format: date-time
+             */
+            created: string;
+            /**
+             * Current Period Start
+             * Format: date-time
+             */
+            currentPeriodStart: string;
+            /**
+             * Current Period End
+             * Format: date-time
+             */
+            currentPeriodEnd: string;
+            /** Status */
+            status?: string | null;
+        };
+        /** StripeSessionSchema */
+        StripeSessionSchema: {
+            /** Id */
+            id: string;
+        };
+        /** PriceIDSchema */
+        PriceIDSchema: {
+            /** Price */
+            price: string;
+        };
+        /** CreateSubscriptionResponse */
+        CreateSubscriptionResponse: {
+            /** Price */
+            price: string;
+            /** Organization */
+            organization: number;
+            subscription: components["schemas"]["StripeSubscriptionSchema"];
+        };
+        /** SubscriptionIn */
+        SubscriptionIn: {
+            /** Price */
+            price: string;
+            /** Organization */
+            organization: number;
+        };
         /** ArtifactBundleAssembleIn */
         ArtifactBundleAssembleIn: {
             /** Checksum */
@@ -4284,310 +4367,6 @@ export interface components {
             email: string | null;
             /** Comments */
             comments: string | null;
-        };
-        /** PriceSchema */
-        PriceSchema: {
-            product: components["schemas"]["ProductSchema"];
-            /** Id */
-            id: string;
-            /**
-             * Nickname
-             * @description A brief description of the plan, hidden from customers.
-             */
-            nickname?: string | null;
-            /**
-             * Currency
-             * @description Three-letter ISO currency code
-             */
-            currency: string;
-            /**
-             * Unit Amount
-             * @description The unit amount in cents to be charged, represented as a whole integer if possible. Null if a sub-cent precision is required.
-             */
-            unit_amount?: number | null;
-            /**
-             * Metadata
-             * @description A set of key/value pairs that you can attach to an object. It can be useful for storing additional information about an object in a structured format.
-             */
-            metadata?: Record<string, unknown> | null;
-        };
-        /** ProductSchema */
-        ProductSchema: {
-            /** Id */
-            id: string;
-            /**
-             * Name
-             * @description The product's name, meant to be displayable to the customer. Applicable to both `service` and `good` types.
-             */
-            name: string;
-            /**
-             * Description
-             * @description A description of this object.
-             */
-            description?: string | null;
-            /**
-             * Type
-             * @description The type of the product. The product is either of type `good`, which is eligible for use with Orders and SKUs, or `service`, which is eligible for use with Subscriptions and Plans.
-             */
-            type: string;
-            /**
-             * Metadata
-             * @description A set of key/value pairs that you can attach to an object. It can be useful for storing additional information about an object in a structured format.
-             */
-            metadata?: Record<string, unknown> | null;
-        };
-        /** SubscriptionItemSchema */
-        SubscriptionItemSchema: {
-            price: components["schemas"]["PriceSchema"];
-            /** Id */
-            id: string;
-        };
-        /** SubscriptionSchema */
-        SubscriptionSchema: {
-            /** Items */
-            items: components["schemas"]["SubscriptionItemSchema"][];
-            /**
-             * Djstripe Created
-             * Format: date-time
-             */
-            djstripe_created: string;
-            /**
-             * Djstripe Updated
-             * Format: date-time
-             */
-            djstripe_updated: string;
-            /** Stripe Data */
-            stripe_data?: Record<string, unknown>;
-            /** ID */
-            djstripe_id?: number | null;
-            /** Id */
-            id: string;
-            /**
-             * Djstripe Owner Account
-             * @description The Stripe Account this object belongs to.
-             */
-            djstripe_owner_account?: number | null;
-            /**
-             * Livemode
-             * @description Null here indicates that the livemode status is unknown or was previously unrecorded. Otherwise, this field indicates whether this record comes from Stripe test mode or live mode operation.
-             */
-            livemode?: boolean | null;
-            /**
-             * Created
-             * @description The datetime this object was created in stripe.
-             */
-            created?: string | null;
-            /**
-             * Metadata
-             * @description A set of key/value pairs that you can attach to an object. It can be useful for storing additional information about an object in a structured format.
-             */
-            metadata?: Record<string, unknown> | null;
-            /**
-             * Description
-             * @description A description of this object.
-             */
-            description?: string | null;
-            /**
-             * Application Fee Percent
-             * @description A positive decimal that represents the fee percentage of the subscription invoice amount that will be transferred to the application owner's Stripe account each billing period.
-             */
-            application_fee_percent?: number | string | null;
-            /**
-             * Billing Cycle Anchor
-             * @description Determines the date of the first full invoice, and, for plans with `month` or `year` intervals, the day of the month for subsequent invoices.
-             */
-            billing_cycle_anchor?: string | null;
-            /**
-             * Billing Thresholds
-             * @description Define thresholds at which an invoice will be sent, and the subscription advanced to a new billing period.
-             */
-            billing_thresholds?: Record<string, unknown> | null;
-            /**
-             * Cancel At
-             * @description A date in the future at which the subscription will automatically get canceled.
-             */
-            cancel_at?: string | null;
-            /**
-             * Cancel At Period End
-             * @description If the subscription has been canceled with the ``at_period_end`` flag set to true, ``cancel_at_period_end`` on the subscription will be true. You can use this attribute to determine whether a subscription that has a status of active is scheduled to be canceled at the end of the current period.
-             * @default false
-             */
-            cancel_at_period_end: boolean;
-            /**
-             * Canceled At
-             * @description If the subscription has been canceled, the date of that cancellation. If the subscription was canceled with ``cancel_at_period_end``, canceled_at will still reflect the date of the initial cancellation request, not the end of the subscription period when the subscription is automatically moved to a canceled state.
-             */
-            canceled_at?: string | null;
-            /**
-             * Collection Method
-             * @description Either `charge_automatically`, or `send_invoice`. When charging automatically, Stripe will attempt to pay this subscription at the end of the cycle using the default source attached to the customer. When sending an invoice, Stripe will email your customer an invoice with payment instructions.
-             */
-            collection_method: string;
-            /**
-             * Current Period End
-             * Format: date-time
-             * @description End of the current period for which the subscription has been invoiced. At the end of this period, a new invoice will be created.
-             */
-            current_period_end: string;
-            /**
-             * Current Period Start
-             * Format: date-time
-             * @description Start of the current period for which the subscription has been invoiced.
-             */
-            current_period_start: string;
-            /**
-             * Customer
-             * @description The customer associated with this subscription.
-             */
-            customer: number;
-            /**
-             * Days Until Due
-             * @description Number of days a customer has to pay invoices generated by this subscription. This value will be `null` for subscriptions where `billing=charge_automatically`.
-             */
-            days_until_due?: number | null;
-            /**
-             * Default Payment Method
-             * @description The default payment method for the subscription. It must belong to the customer associated with the subscription. If not set, invoices will use the default payment method in the customer's invoice settings.
-             */
-            default_payment_method?: number | null;
-            /**
-             * Default Source
-             * @description The default payment source for the subscription. It must belong to the customer associated with the subscription and be in a chargeable state. If not set, defaults to the customer's default source.
-             */
-            default_source?: string | null;
-            /**
-             * Discount
-             * @description Describes the current discount applied to this subscription, if there is one. When billing, a discount applied to a subscription overrides a discount applied on a customer-wide basis.
-             */
-            discount?: Record<string, unknown> | null;
-            /**
-             * Ended At
-             * @description If the subscription has ended (either because it was canceled or because the customer was switched to a subscription to a new plan), the date the subscription ended.
-             */
-            ended_at?: string | null;
-            /**
-             * Latest Invoice
-             * @description The most recent invoice this subscription has generated.
-             */
-            latest_invoice?: number | null;
-            /**
-             * Next Pending Invoice Item Invoice
-             * @description Specifies the approximate timestamp on which any pending invoice items will be billed according to the schedule provided at pending_invoice_item_interval.
-             */
-            next_pending_invoice_item_invoice?: string | null;
-            /**
-             * Pause Collection
-             * @description If specified, payment collection for this subscription will be paused.
-             */
-            pause_collection?: Record<string, unknown> | null;
-            /**
-             * Pending Invoice Item Interval
-             * @description Specifies an interval for how often to bill for any pending invoice items. It is analogous to calling Create an invoice for the given subscription at the specified interval.
-             */
-            pending_invoice_item_interval?: Record<string, unknown> | null;
-            /**
-             * Pending Setup Intent
-             * @description We can use this SetupIntent to collect user authentication when creating a subscription without immediate payment or updating a subscription's payment method, allowing you to optimize for off-session payments.
-             */
-            pending_setup_intent?: number | null;
-            /**
-             * Pending Update
-             * @description If specified, pending updates that will be applied to the subscription once the latest_invoice has been paid.
-             */
-            pending_update?: Record<string, unknown> | null;
-            /**
-             * Plan
-             * @description The plan associated with this subscription. This value will be `null` for multi-plan subscriptions
-             */
-            plan?: number | null;
-            /**
-             * Proration Behavior
-             * @description Determines how to handle prorations when the billing cycle changes (e.g., when switching plans, resetting billing_cycle_anchor=now, or starting a trial), or if an item’s quantity changes
-             * @default create_prorations
-             */
-            proration_behavior: string | null;
-            /**
-             * Proration Date
-             * @description If set, the proration will be calculated as though the subscription was updated at the given time. This can be used to apply exactly the same proration that was previewed with upcoming invoice endpoint. It can also be used to implement custom proration logic, such as prorating by day instead of by second, by providing the time that you wish to use for proration calculations
-             */
-            proration_date?: string | null;
-            /**
-             * Quantity
-             * @description The quantity applied to this subscription. This value will be `null` for multi-plan subscriptions
-             */
-            quantity?: number | null;
-            /**
-             * Schedule
-             * @description The schedule associated with this subscription.
-             */
-            schedule?: number | null;
-            /**
-             * Start Date
-             * @description Date when the subscription was first created. The date might differ from the created date due to backdating.
-             */
-            start_date?: string | null;
-            /**
-             * Status
-             * @description The status of this subscription.
-             */
-            status: string;
-            /**
-             * Trial End
-             * @description If the subscription has a trial, the end of that trial.
-             */
-            trial_end?: string | null;
-            /**
-             * Trial Start
-             * @description If the subscription has a trial, the beginning of that trial.
-             */
-            trial_start?: string | null;
-        };
-        /** CreateSubscriptionResponse */
-        CreateSubscriptionResponse: {
-            /** Price */
-            price: string;
-            /** Organization */
-            organization: number;
-            subscription: components["schemas"]["SubscriptionSchema"];
-        };
-        /** SubscriptionIn */
-        SubscriptionIn: {
-            /** Price */
-            price: string;
-            /** Organization */
-            organization: number;
-        };
-        /** PriceIDSchema */
-        PriceIDSchema: {
-            /** Price */
-            price: string;
-        };
-        /** ProductPriceSchema */
-        ProductPriceSchema: {
-            /** Prices */
-            prices: components["schemas"]["PriceSchema"][];
-            /** Id */
-            id: string;
-            /**
-             * Name
-             * @description The product's name, meant to be displayable to the customer. Applicable to both `service` and `good` types.
-             */
-            name: string;
-            /**
-             * Description
-             * @description A description of this object.
-             */
-            description?: string | null;
-            /**
-             * Type
-             * @description The type of the product. The product is either of type `good`, which is eligible for use with Orders and SKUs, or `service`, which is eligible for use with Subscriptions and Plans.
-             */
-            type: string;
-            /**
-             * Metadata
-             * @description A set of key/value pairs that you can attach to an object. It can be useful for storing additional information about an object in a structured format.
-             */
-            metadata?: Record<string, unknown> | null;
         };
     };
     responses: never;
@@ -6472,6 +6251,140 @@ export interface operations {
             };
         };
     };
+    apps_stripe_api_list_stripe_products: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StripeProductExpandedPriceSchema"][];
+                };
+            };
+        };
+    };
+    apps_stripe_api_get_stripe_subscription: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                organization_slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StripeSubscriptionSchema"] | null;
+                };
+            };
+        };
+    };
+    apps_stripe_api_create_stripe_session: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                organization_slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PriceIDSchema"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StripeSessionSchema"];
+                };
+            };
+        };
+    };
+    apps_stripe_api_stripe_billing_portal_session: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                organization_slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StripeSessionSchema"];
+                };
+            };
+        };
+    };
+    apps_stripe_api_stripe_create_subscription: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SubscriptionIn"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CreateSubscriptionResponse"];
+                };
+            };
+        };
+    };
+    apps_stripe_api_subscription_events_count: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                organization_slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     apps_sourcecode_api_artifact_bundle_assemble: {
         parameters: {
             query?: never;
@@ -7871,141 +7784,6 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
-            };
-        };
-    };
-    apps_djstripe_ext_api_get_subscription: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                organization_slug: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SubscriptionSchema"] | null;
-                };
-            };
-        };
-    };
-    apps_djstripe_ext_api_create_subscription: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SubscriptionIn"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CreateSubscriptionResponse"];
-                };
-            };
-        };
-    };
-    apps_djstripe_ext_api_get_subscription_events_count: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                organization_slug: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    apps_djstripe_ext_api_stripe_billing_portal: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                organization_slug: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    apps_djstripe_ext_api_create_stripe_subscription_checkout: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                organization_slug: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["PriceIDSchema"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    apps_djstripe_ext_api_list_products: {
-        parameters: {
-            query?: {
-                /** @description Number of results to return per page. */
-                limit?: number | null;
-                /** @description The pagination cursor value. */
-                cursor?: string | null;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ProductPriceSchema"][];
-                };
             };
         };
     };
