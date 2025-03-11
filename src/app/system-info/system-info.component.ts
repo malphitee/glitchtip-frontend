@@ -30,4 +30,5 @@ export class SystemInfoComponent {
   enableUserRegistration = this.settingsService.enableUserRegistration;
   serverTimeZone = this.settingsService.serverTimeZone;
   version = this.settingsService.version;
+  instanceName = this.settingsService.instanceName;
 }

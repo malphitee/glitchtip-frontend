@@ -24,7 +24,6 @@ import { AcceptInviteService } from "../api/accept/accept-invite.service";
 import { AuthSvgComponent } from "../shared/auth-svg/auth-svg.component";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { components } from "../api/api-schema";
-import { MarkdownModule } from "ngx-markdown";
 
 type SocialApp = components["schemas"]["SocialAppSchema"];
 
@@ -38,7 +37,6 @@ type SocialApp = components["schemas"]["SocialAppSchema"];
     LoginWebAuthnComponent,
     LoadingButtonComponent,
     ReactiveFormsModule,
-    MarkdownModule,
     FormErrorComponent,
     MatFormFieldModule,
     MatInputModule,
