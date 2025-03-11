@@ -239,20 +239,8 @@ export const platforms: Platform[] = [
     name: "Objective-C",
     integrations: [
       {
-        id: "cocoa-objc",
-        name: "Objective-C",
-        type: "language",
-        link: "https://docs.sentry.io/clients/cocoa/",
-      },
-      {
         id: "cocoa",
         name: "Objective-C",
-        type: "language",
-        link: "https://docs.sentry.io/clients/cocoa/",
-      },
-      {
-        id: "cocoa-swift",
-        name: "Swift",
         type: "language",
         link: "https://docs.sentry.io/clients/cocoa/",
       },
