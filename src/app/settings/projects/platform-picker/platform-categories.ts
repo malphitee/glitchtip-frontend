@@ -29,8 +29,7 @@ const frontend = [
   "dart-flutter",
 ];
 const mobile = [
-  "cocoa-objc",
-  "cocoa-swift",
+  "cocoa",
   "java-android",
   "cordova",
   "react-native",
