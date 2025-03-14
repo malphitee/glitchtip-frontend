@@ -1705,6 +1705,8 @@ export interface components {
             serverTimeZone: string;
             /** Usenewsocialcallbacks */
             useNewSocialCallbacks: boolean;
+            /** Glitchtipinstancename */
+            glitchtipInstanceName: string | null;
         };
         /** SocialAppSchema */
         SocialAppSchema: {
