@@ -1,176 +1,159 @@
-import { computed, Injectable, inject } from "@angular/core";
+import { computed, Injectable, inject, resource } from "@angular/core";
 import { Router } from "@angular/router";
-import { EMPTY, lastValueFrom, timer } from "rxjs";
-import { catchError, delay, expand, tap, takeUntil } from "rxjs/operators";
-import { Subscription, Product, EventsCount } from "./subscriptions.interfaces";
+import { lastValueFrom } from "rxjs";
+import { tap } from "rxjs/operators";
+import { EventsCount } from "./subscriptions.interfaces";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
-import { ProductsAPIService } from "./products-api.service";
 import { SubscriptionsAPIService } from "./subscriptions-api.service";
+import { client } from "../api";
+import { OrganizationsService } from "../organizations.service";
+import { SettingsService } from "../settings.service";
 
 interface SubscriptionsState {
-  subscriptionCreationLoadingId: string | null;
-  subscription: Subscription | null;
-  subscriptionLoading: boolean;
+  billingPortalLoading: boolean;
+  billingPortalLoadingError: string;
   subscriptionLoadingTimeout: boolean;
   fromStripe: boolean;
   eventsCount: EventsCount | null;
-  products: Product[] | null;
 }
 
 const initialState: SubscriptionsState = {
-  subscriptionCreationLoadingId: null,
-  subscription: null,
-  subscriptionLoading: false,
+  billingPortalLoading: false,
+  billingPortalLoadingError: "",
   subscriptionLoadingTimeout: false,
   fromStripe: false,
   eventsCount: null,
-  products: null,
 };
 
 @Injectable({
   providedIn: "root",
 })
 export class SubscriptionsService extends StatefulService<SubscriptionsState> {
-  private productsAPIService = inject(ProductsAPIService);
+  private organizationsService = inject(OrganizationsService);
+  private settingsService = inject(SettingsService);
   private subscriptionsAPIService = inject(SubscriptionsAPIService);
   private router = inject(Router);
 
-  subscription = computed(() => this.state().subscription);
-  formattedSubscription = computed(() => {
-    const subscription = this.subscription();
-    if (!subscription?.items[0]?.price) return null;
+  stripePublicKey = this.settingsService.stripePublicKey;
 
-    const { unit_amount } = subscription.items[0].price;
-    const { name, description } = subscription.items[0].price.product;
-
-    return {
-      ...subscription,
-      mainUnitPrice: unit_amount / 100,
-      productName: name,
-      productDescription: description,
-    };
-  });
-  subscriptionLoading = computed(() => this.state().subscriptionLoading);
+  subscriptionLoading = computed(() => this.subscriptionResource.isLoading());
   subscriptionLoadingTimeout = computed(
     () => this.state().subscriptionLoadingTimeout
   );
-  subscriptionCreationLoadingId = computed(
-    () => this.state().subscriptionCreationLoadingId
-  );
-  fromStripe = computed(() => this.state().fromStripe);
+  subscriptionResource = resource({
+    request: () => ({
+      orgSlug: this.organizationsService.activeOrganizationSlug(),
+    }),
+    loader: async ({ request }) => {
+      if (!request.orgSlug) {
+        return undefined;
+      }
+
+      const { data, error } = await client.GET(
+        "/api/0/stripe/subscriptions/{organization_slug}/",
+        {
+          params: {
+            path: { organization_slug: request.orgSlug },
+          },
+        }
+      );
+      if (error) {
+        throw error;
+      }
+      return data;
+    },
+  });
+  subscription = computed(() => {
+    const subscriptionResponse = this.subscriptionResource.value();
+    if (!subscriptionResponse) {
+      return null;
+    }
+    const formattedSubscription = {
+      ...subscriptionResponse,
+      effectivePrice: +subscriptionResponse.price.price,
+    };
+    return formattedSubscription;
+  });
+
+  eventCountResource = resource({
+    request: () => ({
+      orgSlug: this.organizationsService.activeOrganizationSlug(),
+    }),
+    loader: async ({ request }) => {
+      if (!request.orgSlug) {
+        return undefined;
+      }
+
+      const { data, error } = await client.GET(
+        "/api/0/stripe/subscriptions/{organization_slug}/events_count/",
+        {
+          params: {
+            path: { organization_slug: request.orgSlug },
+          },
+        }
+      );
+      if (error) {
+        throw error;
+      }
+      return data;
+    },
+  });
+
   eventsCountWithTotal = computed(() => {
-    const state = this.state();
-    if (!state.eventsCount) return state.eventsCount;
+    const eventsCount = this.eventCountResource.value();
+    if (!eventsCount) return eventsCount;
 
     const total =
-      state.eventsCount.eventCount! +
-      state.eventsCount.transactionEventCount! +
-      state.eventsCount.uptimeCheckEventCount! +
-      state.eventsCount.fileSizeMB!;
+      eventsCount.eventCount! +
+      eventsCount.transactionEventCount! +
+      eventsCount.uptimeCheckEventCount! +
+      eventsCount.fileSizeMb!;
 
-    return { ...state.eventsCount, total };
+    return { ...eventsCount, total };
   });
+
+  billingPortalLoading = computed(() => this.state().billingPortalLoading);
+  billingPortalLoadingError = computed(
+    () => this.state().billingPortalLoadingError
+  );
+
+  fromStripe = computed(() => this.state().fromStripe);
   totalEventsAllowed = computed(() => {
     const subscription = this.subscription();
-    return subscription?.items[0]?.price?.product?.metadata?.events
-      ? parseInt(subscription.items[0].price.product.metadata.events, 10)
-      : null;
+    return subscription?.product.events || null;
   });
-  productOptions = computed(() => this.state().products);
-  formattedProductOptions = computed(() =>
-    this.productOptions()?.map((product) => ({
-      ...product,
-      name: product.name.startsWith("GlitchTip ")
-        ? product.name.slice(10)
-        : product.name,
-      mainUnitPrice: product.prices[0].unit_amount / 100,
-    }))
-  );
 
   constructor() {
     super(initialState);
   }
 
   /**
-   * Retrieve subscription for this organization
-   * @param slug Organization Slug for requested subscription
-   */
-  retrieveSubscription(slug: string) {
-    this.setSubscriptionLoadingStart();
-    lastValueFrom(
-      this.subscriptionsAPIService.retrieve(slug).pipe(
-        tap((subscription) => {
-          this.setSubscription(subscription);
-        }),
-        catchError(() => {
-          this.setSubscriptionLoadingError();
-          return EMPTY;
-        })
-      ),
-      { defaultValue: null }
-    );
-  }
-
-  /**
    * Keep trying to get subscription, for users redirected from Stripe
    * @param slug Organization Slug for requested subscription
    */
-  retrieveUntilSubscriptionOrTimeout(slug: string) {
-    this.setSubscriptionLoadingStart(true);
-    lastValueFrom(
-      this.subscriptionsAPIService.retrieve(slug).pipe(
-        expand((subscription) => {
-          if (!subscription.created) {
-            return this.subscriptionsAPIService
-              .retrieve(slug)
-              .pipe(delay(2000));
-          } else {
-            this.setSubscription(subscription);
-            return EMPTY;
-          }
-        }),
-        catchError(() => {
-          this.setSubscriptionLoadingError();
-          return EMPTY;
-        }),
-        takeUntil(this.subscriptionRetryTimer())
-      ),
-      { defaultValue: null }
-    );
-  }
-
-  /**
-   * Retrieve event count for current active subscription for this organization
-   * @param slug Organization Slug for requested subscription event count
-   */
-  retrieveSubscriptionEventCount(slug: string) {
-    lastValueFrom(
-      this.subscriptionsAPIService.retrieveEventsCount(slug).pipe(
-        tap((count) => this.setSubscriptionCount(count)),
-        catchError((error) => {
-          return EMPTY;
-        })
-      ),
-      { defaultValue: null }
-    );
-  }
-
-  /**
-   * Retrieve subscription plans
-   * productAmountSorted converts product prices to ints and sorts from low to high
-   */
-  retrieveProducts() {
-    lastValueFrom(
-      this.productsAPIService.list().pipe(
-        tap((products) => {
-          const productAmountSorted = products.sort(
-            (a, b) => a.prices[0].unit_amount - b.prices[0].unit_amount
-          );
-          this.setProducts(productAmountSorted);
-        })
-      )
-    );
-  }
+  // retrieveUntilSubscriptionOrTimeout(slug: string) {
+  //   this.setSubscriptionLoadingStart(true);
+  //   lastValueFrom(
+  //     this.subscriptionsAPIService.retrieve(slug).pipe(
+  //       expand((subscription) => {
+  //         if (!subscription.created) {
+  //           return this.subscriptionsAPIService
+  //             .retrieve(slug)
+  //             .pipe(delay(2000));
+  //         } else {
+  //           this.setSubscription(subscription);
+  //           return EMPTY;
+  //         }
+  //       }),
+  //       catchError(() => {
+  //         this.setSubscriptionLoadingError();
+  //         return EMPTY;
+  //       }),
+  //       takeUntil(this.subscriptionRetryTimer())
+  //     ),
+  //     { defaultValue: null }
+  //   );
+  // }
 
   /**
    * Retrieve Subscription and navigate to subscription page if no subscription exists
@@ -197,42 +180,57 @@ export class SubscriptionsService extends StatefulService<SubscriptionsState> {
     }
   }
 
-  private subscriptionRetryTimer() {
-    return timer(60000).pipe(
-      tap(() => {
-        this.setSubscriptionLoadingTimeout();
-      })
+  async redirectToBillingPortal() {
+    this.setBillingPortalLoadingStart();
+    const orgSlug = this.organizationsService.activeOrganizationSlug();
+    const { data, error } = await client.POST(
+      "/api/0/stripe/organizations/{organization_slug}/create-billing-portal/",
+      {
+        params: {
+          path: { organization_slug: orgSlug },
+        },
+      }
     );
+    if (error) {
+      this.setBillingPortalLoadingError(
+        "Something went wrong. Only organization owners can manage subscription settings."
+      );
+    }
+    if (data) {
+      window.location.href = data.url;
+    }
   }
 
-  private setProducts(products: Product[]) {
-    this.setState({ products });
+  // private subscriptionRetryTimer() {
+  //   return timer(60000).pipe(
+  //     tap(() => {
+  //       this.setSubscriptionLoadingTimeout();
+  //     })
+  //   );
+  // }
+
+  // private setSubscriptionLoadingStart(fromStripe: boolean = false) {
+  //   this.setState({ subscriptionLoading: true, fromStripe });
+  // }
+
+  // private setSubscriptionLoadingError() {
+  //   this.setState({ subscriptionLoading: false });
+  // }
+
+  // private setSubscriptionLoadingTimeout() {
+  //   this.setState({
+  //     subscriptionLoadingTimeout: true,
+  //   });
+  // }
+
+  setBillingPortalLoadingStart() {
+    this.setState({ billingPortalLoading: true });
   }
 
-  setSubscription(subscription: Subscription) {
+  setBillingPortalLoadingError(message: string) {
     this.setState({
-      subscription,
-      subscriptionLoading: false,
-      subscriptionCreationLoadingId: null,
+      billingPortalLoading: false,
+      billingPortalLoadingError: message,
     });
-  }
-
-  private setSubscriptionLoadingStart(fromStripe: boolean = false) {
-    this.setState({ subscriptionLoading: true, fromStripe });
-  }
-
-  private setSubscriptionLoadingError() {
-    this.setState({ subscriptionLoading: false });
-  }
-
-  private setSubscriptionLoadingTimeout() {
-    this.setState({
-      subscriptionLoading: false,
-      subscriptionLoadingTimeout: true,
-    });
-  }
-
-  private setSubscriptionCount(eventsCount: EventsCount) {
-    this.setState({ eventsCount });
   }
 }

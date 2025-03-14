@@ -13,7 +13,7 @@
         "trialing" || subscription.status === "past_due" ) { @if
         (subscription.status === "active") {
         <p class="mat-body-1">
-          @if (subscription.mainUnitPrice === 0) {
+          @if (subscription.effectivePrice === 0) {
           <ng-container i18n>You have selected the free plan. Please consider making a monthly
             <a href="https://liberapay.com/GlitchTip/donate" target="_blank">donation</a>
             to help keep open source development sustainable. Thank you for
@@ -31,8 +31,8 @@
         }
         <ng-container>
           <mat-card-subtitle i18n>Details</mat-card-subtitle>
-          <h3>{{ subscription.productName }}</h3>
-          {{ subscription.productDescription }}
+          <h3>{{ subscription.product.name }}</h3>
+          {{ subscription.product.description }}
           @if (eventsPercent(); as eventsPercent) {
           <div class="visualization">
             <div class="total-events">
@@ -67,7 +67,7 @@
                 </li>
                 <li>
                   <b class="file-size" i18n>File storage:</b>
-                  {{ count.fileSizeMB }} MB
+                  {{ count.fileSizeMb }} MB
                 </li>
                 <li i18n>Total
                   <a [routerLink]="[]" (click)="openEventInfoDialog()">events</a>
@@ -80,25 +80,25 @@
           }
           <ul>
             <li class="mat-body-1" i18n>Start date for this plan:
-              {{ subscription.start_date | date }}</li>
-            <li class="mat-body-1" i18n>Plan cost: {{ subscription.mainUnitPrice | currency }}</li>
+              {{ subscription.startDate | date }}</li>
+            <li class="mat-body-1" i18n>Plan cost: {{ subscription.effectivePrice | currency }}</li>
             <li class="mat-body-1">
               <ng-container i18n>Billing</ng-container>: @if (
-              subscription.collection_method === "charge_automatically" ) {
+              subscription.collectionMethod === "charge_automatically" ) {
               <ng-container i18n>Automatic</ng-container>
-              } @if (subscription.collection_method === "send_invoice") {
+              } @if (subscription.collectionMethod === "send_invoice") {
               <ng-container i18n>Send invoice</ng-container>
               }
             </li>
-            <li class="mat-body-1" i18n>Billing period: {{ subscription.current_period_start | date }} to
-              {{ subscription.current_period_end | date }}</li>
+            <li class="mat-body-1" i18n>Billing period: {{ subscription.currentPeriodStart | date }} to
+              {{ subscription.currentPeriodEnd | date }}</li>
           </ul>
         </ng-container>
         <p class="mat-body-1" i18n>If you have questions about your subscription, please contact us at
           <a href="mailto:{{ billingEmail }}">{{ billingEmail }}</a>.
         </p>
-        <mat-error>{{ error() }}</mat-error>
-        <button mat-flat-button color="primary" (click)="manageSubscription()" i18n>Manage Subscription</button>
+        <mat-error>{{ billingPortalLoadingError() }}</mat-error>
+        <gt-loading-button color="primary" (click)="manageSubscription()" [loading]="billingPortalLoading()" buttonText="Manage Subscription" />
         } @else {
         <p class="mat-body-1" i18n>This organization does not have an active subscription to GlitchTip.
           Pick a plan to get started.</p>
@@ -117,7 +117,7 @@
       }
     </mat-card-content>
   </mat-card>
-  } } @if ( (subscriptionLoading() == false && (subscription() ) === null) ||
+  } } @if ( (subscriptionLoading() === false && (subscription() ) === null) ||
   (subscription())!.status === "canceled" ) {
   <gt-payment></gt-payment>
   } } @else { @if ( (subscriptionLoading()) || (subscriptionLoadingTimeout()) )

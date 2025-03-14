@@ -5,7 +5,7 @@ import { Router } from "@angular/router";
 import { MonitorInput, ResponseTimeSeries } from "./uptime.interfaces";
 import { HttpErrorResponse } from "@angular/common/http";
 import { SettingsService } from "../api/settings.service";
-import { SubscriptionsService } from "../api/subscriptions/subscriptions.service";
+// import { SubscriptionsService } from "../api/subscriptions/subscriptions.service";
 import { ServerError } from "../shared/django.interfaces";
 import { OrganizationsService } from "../api/organizations.service";
 import { StatefulService } from "../shared/stateful-service/signal-state.service";
@@ -37,7 +37,7 @@ const initialState: MonitorState = {
 export class MonitorService extends StatefulService<MonitorState> {
   private organizationsService = inject(OrganizationsService);
   private settingsService = inject(SettingsService);
-  private subscriptionsService = inject(SubscriptionsService);
+  // private subscriptionsService = inject(SubscriptionsService);
   private snackBar = inject(MatSnackBar);
   private router = inject(Router);
 
@@ -149,7 +149,7 @@ export class MonitorService extends StatefulService<MonitorState> {
     if (billingEnabled) {
       const slug = this.organizationsService.activeOrganizationSlug();
       if (slug) {
-        this.subscriptionsService.retrieveSubscription(slug);
+        // this.subscriptionsService.retrieveSubscription(slug);
       }
     }
   }
