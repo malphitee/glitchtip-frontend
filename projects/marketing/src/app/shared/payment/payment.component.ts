@@ -31,7 +31,7 @@ import { DecimalPipe } from "@angular/common";
     QuestionAndAnswerComponent,
   ],
   styleUrls: [
-    "/src/app/settings/subscription/payment/payment.component.scss",
+    "../../../../../../src/app/settings/subscription/payment/payment.component.scss",
     "./payment.component.scss",
   ],
 })
