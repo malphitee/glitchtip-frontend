@@ -28,17 +28,18 @@ export class SettingsService {
   environment = computed(() => this.settings()?.environment);
   chatwootWebsiteToken = computed(() => this.settings()?.chatwootWebsiteToken);
   enableUserRegistration = computed(
-    () => this.settings()?.enableUserRegistration
+    () => this.settings()?.enableUserRegistration,
   );
   enableOrganizationCreation = computed(
-    () => this.settings()?.enableOrganizationCreation
+    () => this.settings()?.enableOrganizationCreation,
   );
   serverTimeZone = computed(() => this.settings()?.serverTimeZone);
   initialLoad = computed(() => this.settingsResource.hasValue());
   useNewSocialCallbacks = computed(
-    () => this.settings()?.useNewSocialCallbacks
+    () => this.settings()?.useNewSocialCallbacks,
   );
   version = computed(() => this.settings()?.version);
+  instanceName = computed(() => this.settings()?.glitchtipInstanceName);
 
   constructor() {
     this.refreshSettings();

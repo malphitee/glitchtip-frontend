@@ -44,9 +44,9 @@ export class ProjectListComponent implements OnInit {
     this.organizations().map((organization) => ({
       ...organization,
       projects: this.projects()?.filter(
-        (project) => project.organization.id === organization.id
+        (project) => project.organization.id.toString() === organization.id,
       ),
-    }))
+    })),
   );
 
   ngOnInit() {

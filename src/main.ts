@@ -43,6 +43,7 @@ import {
 import { CustomPreloadingStrategy } from "./app/preloadingStrategy";
 import { Observable } from "rxjs";
 import { APP_BASE_HREF } from "@angular/common";
+import { provideMarkdown } from "ngx-markdown";
 
 let snackBarDuration = 4000;
 if (window.Cypress) {
@@ -71,7 +72,7 @@ if (locale in localeMappings) {
 
 export function baseHrefInterceptor(
   req: HttpRequest<unknown>,
-  next: HttpHandlerFn
+  next: HttpHandlerFn,
 ): Observable<HttpEvent<unknown>> {
   const baseHref = inject(APP_BASE_HREF);
   const apiReq = req.clone({ url: `${baseHref.replace(/\/$/, "")}${req.url}` });
@@ -106,11 +107,12 @@ const bootstrap = () =>
         withRouterConfig({
           onSameUrlNavigation: "reload",
           paramsInheritanceStrategy: "always",
-        })
+        }),
       ),
+      provideMarkdown(),
       importProvidersFrom(
         MatSnackBarModule,
-        MicroSentryModule.forRoot({ ignoreErrors: [serverErrorsRegex] })
+        MicroSentryModule.forRoot({ ignoreErrors: [serverErrorsRegex] }),
       ),
       {
         provide: MAT_SNACK_BAR_DEFAULT_OPTIONS,
@@ -129,7 +131,7 @@ const bootstrap = () =>
           cookieName: "csrftoken",
           headerName: "X-CSRFTOKEN",
         }),
-        withInterceptors([...extraInterceptors, tokenInterceptor])
+        withInterceptors([...extraInterceptors, tokenInterceptor]),
       ),
     ],
   }).catch((err) => console.error(err));

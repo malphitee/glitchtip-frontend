@@ -24,6 +24,7 @@ import { AcceptInviteService } from "../api/accept/accept-invite.service";
 import { AuthSvgComponent } from "../shared/auth-svg/auth-svg.component";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { components } from "../api/api-schema";
+import { MarkdownModule } from "ngx-markdown";
 
 type SocialApp = components["schemas"]["SocialAppSchema"];
 
@@ -37,6 +38,7 @@ type SocialApp = components["schemas"]["SocialAppSchema"];
     LoginWebAuthnComponent,
     LoadingButtonComponent,
     ReactiveFormsModule,
+    MarkdownModule,
     FormErrorComponent,
     MatFormFieldModule,
     MatInputModule,
@@ -67,6 +69,7 @@ export class LoginComponent
       Validators.minLength(8),
     ]),
   });
+  instanceName = this.settings.instanceName;
 
   socialApps = this.settings.socialApps;
   enableUserRegistration = this.settings.enableUserRegistration;
@@ -76,10 +79,10 @@ export class LoginComponent
     const service = inject(LoginService);
 
     toObservable(service.fieldErrors).subscribe((fieldErrors) =>
-      mapFormErrors(fieldErrors, this.form)
+      mapFormErrors(fieldErrors, this.form),
     );
     super(service);
-  
+
     this.service = service;
   }
 
@@ -87,7 +90,7 @@ export class LoginComponent
     this.activatedRoute.queryParams.subscribe((params) => {
       if (params["socialLoginError"]) {
         this.snackBar.open(
-          $localize`Unknown problem using Social Authentication`
+          $localize`Unknown problem using Social Authentication`,
         );
       }
     });
@@ -108,7 +111,7 @@ export class LoginComponent
   onSubmit() {
     if (this.form.valid) {
       lastValueFrom(
-        this.service.login(this.form.value.email!, this.form.value.password!)
+        this.service.login(this.form.value.email!, this.form.value.password!),
       );
     }
   }

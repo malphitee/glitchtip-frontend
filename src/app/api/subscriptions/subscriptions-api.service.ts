@@ -15,7 +15,7 @@ export class SubscriptionsAPIService {
 
   readonly url = `${baseUrl}/subscriptions/`;
 
-  create(organizationId: number, priceId: string) {
+  create(organizationId: string, priceId: string) {
     const data = {
       organization: organizationId,
       price: priceId,
