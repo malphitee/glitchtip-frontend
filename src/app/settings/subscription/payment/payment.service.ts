@@ -146,18 +146,6 @@ export class PaymentService extends StatefulService<BillingState> {
     return null;
   }
 
-  // async createOrganization(name: string) {
-  //   const { data, error } = await client.POST("/api/0/organizations/", {
-  //     body: { name },
-  //   });
-  //   if (data) {
-  //     this.organizationsResource.update((orgs) =>
-  //       orgs ? [...orgs, data] : [data]
-  //     );
-  //   }
-  //   return { data, error };
-  // }
-
   private setSubscriptionCreationStart(subscriptionCreationLoadingId: string) {
     this.setState({ subscriptionCreationLoadingId });
   }
