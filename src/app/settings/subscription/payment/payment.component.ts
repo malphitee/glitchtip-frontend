@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, OnInit, inject } from "@angular/core";
+import { Component, ChangeDetectionStrategy, inject } from "@angular/core";
 import { environment } from "../../../../environments/environment";
 import { EventInfoComponent } from "../../../shared/event-info/event-info.component";
 import { MatDividerModule } from "@angular/material/divider";
@@ -23,7 +23,7 @@ import { OrganizationsService } from "src/app/api/organizations.service";
     DecimalPipe,
   ],
 })
-export class PaymentComponent implements OnInit {
+export class PaymentComponent {
   private organizationService = inject(OrganizationsService);
   private paymentService = inject(PaymentService);
 
@@ -31,10 +31,6 @@ export class PaymentComponent implements OnInit {
   subscriptionCreationLoadingId =
     this.paymentService.subscriptionCreationLoadingId;
   billingEmail = environment.billingEmail;
-
-  ngOnInit() {
-    this.organizationService.activeOrganizationResource.reload();
-  }
 
   onSubmit(price: Price) {
     const activeOrganization = this.organizationService.activeOrganization();

@@ -1,4 +1,4 @@
-import { computed, Injectable, inject, resource } from "@angular/core";
+import { computed, Injectable, inject, resource, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import { lastValueFrom } from "rxjs";
 import { tap } from "rxjs/operators";
@@ -6,12 +6,12 @@ import { EventsCount } from "./subscriptions.interfaces";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
 import { SubscriptionsAPIService } from "./subscriptions-api.service";
 import { client } from "../api";
-import { OrganizationsService } from "../organizations.service";
 import { SettingsService } from "../settings.service";
 
 interface SubscriptionsState {
   billingPortalLoading: boolean;
   billingPortalLoadingError: string;
+  subscriptionRefreshing: boolean;
   subscriptionLoadingTimeout: boolean;
   fromStripe: boolean;
   eventsCount: EventsCount | null;
@@ -20,6 +20,7 @@ interface SubscriptionsState {
 const initialState: SubscriptionsState = {
   billingPortalLoading: false,
   billingPortalLoadingError: "",
+  subscriptionRefreshing: false,
   subscriptionLoadingTimeout: false,
   fromStripe: false,
   eventsCount: null,
@@ -29,20 +30,17 @@ const initialState: SubscriptionsState = {
   providedIn: "root",
 })
 export class SubscriptionsService extends StatefulService<SubscriptionsState> {
-  private organizationsService = inject(OrganizationsService);
   private settingsService = inject(SettingsService);
   private subscriptionsAPIService = inject(SubscriptionsAPIService);
   private router = inject(Router);
 
   stripePublicKey = this.settingsService.stripePublicKey;
 
-  subscriptionLoading = computed(() => this.subscriptionResource.isLoading());
-  subscriptionLoadingTimeout = computed(
-    () => this.state().subscriptionLoadingTimeout
-  );
+  organizationSlug = signal<string>("");
+
   subscriptionResource = resource({
     request: () => ({
-      orgSlug: this.organizationsService.activeOrganizationSlug(),
+      orgSlug: this.organizationSlug(),
     }),
     loader: async ({ request }) => {
       if (!request.orgSlug) {
@@ -74,10 +72,18 @@ export class SubscriptionsService extends StatefulService<SubscriptionsState> {
     };
     return formattedSubscription;
   });
+  subscriptionLoading = computed(
+    () =>
+      this.subscriptionResource.isLoading() ||
+      this.state().subscriptionRefreshing
+  );
+  subscriptionLoadingTimeout = computed(
+    () => this.state().subscriptionLoadingTimeout
+  );
 
   eventCountResource = resource({
     request: () => ({
-      orgSlug: this.organizationsService.activeOrganizationSlug(),
+      orgSlug: this.organizationSlug(),
     }),
     loader: async ({ request }) => {
       if (!request.orgSlug) {
@@ -98,7 +104,6 @@ export class SubscriptionsService extends StatefulService<SubscriptionsState> {
       return data;
     },
   });
-
   eventsCountWithTotal = computed(() => {
     const eventsCount = this.eventCountResource.value();
     if (!eventsCount) return eventsCount;
@@ -116,7 +121,6 @@ export class SubscriptionsService extends StatefulService<SubscriptionsState> {
   billingPortalLoadingError = computed(
     () => this.state().billingPortalLoadingError
   );
-
   fromStripe = computed(() => this.state().fromStripe);
   totalEventsAllowed = computed(() => {
     const subscription = this.subscription();
@@ -127,33 +131,11 @@ export class SubscriptionsService extends StatefulService<SubscriptionsState> {
     super(initialState);
   }
 
-  /**
-   * Keep trying to get subscription, for users redirected from Stripe
-   * @param slug Organization Slug for requested subscription
-   */
-  // retrieveUntilSubscriptionOrTimeout(slug: string) {
-  //   this.setSubscriptionLoadingStart(true);
-  //   lastValueFrom(
-  //     this.subscriptionsAPIService.retrieve(slug).pipe(
-  //       expand((subscription) => {
-  //         if (!subscription.created) {
-  //           return this.subscriptionsAPIService
-  //             .retrieve(slug)
-  //             .pipe(delay(2000));
-  //         } else {
-  //           this.setSubscription(subscription);
-  //           return EMPTY;
-  //         }
-  //       }),
-  //       catchError(() => {
-  //         this.setSubscriptionLoadingError();
-  //         return EMPTY;
-  //       }),
-  //       takeUntil(this.subscriptionRetryTimer())
-  //     ),
-  //     { defaultValue: null }
-  //   );
-  // }
+  retrieveSubscriptionData(orgSlug: string) {
+    if (orgSlug) {
+      this.organizationSlug.set(orgSlug);
+    }
+  }
 
   /**
    * Retrieve Subscription and navigate to subscription page if no subscription exists
@@ -182,7 +164,7 @@ export class SubscriptionsService extends StatefulService<SubscriptionsState> {
 
   async redirectToBillingPortal() {
     this.setBillingPortalLoadingStart();
-    const orgSlug = this.organizationsService.activeOrganizationSlug();
+    const orgSlug = this.organizationSlug();
     const { data, error } = await client.POST(
       "/api/0/stripe/organizations/{organization_slug}/create-billing-portal/",
       {
@@ -201,36 +183,55 @@ export class SubscriptionsService extends StatefulService<SubscriptionsState> {
     }
   }
 
-  // private subscriptionRetryTimer() {
-  //   return timer(60000).pipe(
-  //     tap(() => {
-  //       this.setSubscriptionLoadingTimeout();
-  //     })
-  //   );
-  // }
+  /**
+   * Keep trying to get subscription, for users redirected from Stripe
+   */
+  refreshUntilSubscriptionOrTimeout() {
+    this.setSubscriptionRefreshingStart(true);
+    let i = 0;
+    const intervalRef = setInterval(() => {
+      this.subscriptionResource.reload();
+      if (this.subscription()) {
+        this.setSubscriptionRefreshingComplete();
+        clearInterval(intervalRef);
+      } else if (i === 2) {
+        this.setSubscriptionRefreshingTimeout();
+        clearInterval(intervalRef);
+      }
+      i++;
+    }, 2000);
+  }
 
-  // private setSubscriptionLoadingStart(fromStripe: boolean = false) {
-  //   this.setState({ subscriptionLoading: true, fromStripe });
-  // }
+  private setSubscriptionRefreshingStart(fromStripe: boolean = false) {
+    this.setState({ subscriptionRefreshing: true, fromStripe });
+  }
 
-  // private setSubscriptionLoadingError() {
-  //   this.setState({ subscriptionLoading: false });
-  // }
+  private setSubscriptionRefreshingComplete(fromStripe: boolean = false) {
+    this.setState({ subscriptionRefreshing: false });
+  }
 
-  // private setSubscriptionLoadingTimeout() {
-  //   this.setState({
-  //     subscriptionLoadingTimeout: true,
-  //   });
-  // }
+  private setSubscriptionRefreshingTimeout() {
+    this.setState({
+      subscriptionRefreshing: false,
+      subscriptionLoadingTimeout: true,
+    });
+  }
 
-  setBillingPortalLoadingStart() {
+  private setBillingPortalLoadingStart() {
     this.setState({ billingPortalLoading: true });
   }
 
-  setBillingPortalLoadingError(message: string) {
+  private setBillingPortalLoadingError(message: string) {
     this.setState({
       billingPortalLoading: false,
       billingPortalLoadingError: message,
     });
+  }
+
+  clearState() {
+    super.clearState();
+    this.organizationSlug.set("");
+    this.subscriptionResource.set(undefined);
+    this.eventCountResource.set(undefined);
   }
 }
