@@ -12,7 +12,7 @@ interface SubscriptionsState {
   billingPortalLoading: boolean;
   billingPortalLoadingError: string;
   subscriptionRefreshing: boolean;
-  subscriptionLoadingTimeout: boolean;
+  subscriptionRefreshTimeout: boolean;
   fromStripe: boolean;
   eventsCount: EventsCount | null;
 }
@@ -21,7 +21,7 @@ const initialState: SubscriptionsState = {
   billingPortalLoading: false,
   billingPortalLoadingError: "",
   subscriptionRefreshing: false,
-  subscriptionLoadingTimeout: false,
+  subscriptionRefreshTimeout: false,
   fromStripe: false,
   eventsCount: null,
 };
@@ -77,8 +77,8 @@ export class SubscriptionsService extends StatefulService<SubscriptionsState> {
       this.subscriptionResource.isLoading() ||
       this.state().subscriptionRefreshing
   );
-  subscriptionLoadingTimeout = computed(
-    () => this.state().subscriptionLoadingTimeout
+  subscriptionRefreshTimeout = computed(
+    () => this.state().subscriptionRefreshTimeout
   );
 
   eventCountResource = resource({
@@ -213,7 +213,7 @@ export class SubscriptionsService extends StatefulService<SubscriptionsState> {
   private setSubscriptionRefreshingTimeout() {
     this.setState({
       subscriptionRefreshing: false,
-      subscriptionLoadingTimeout: true,
+      subscriptionRefreshTimeout: true,
     });
   }
 

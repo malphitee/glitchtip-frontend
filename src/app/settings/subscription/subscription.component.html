@@ -5,7 +5,7 @@
       <span class="mat-subtitle-1">Redirected from Stripe</span>
     }
   </header>
-  @if (subscriptionLoading() || subscriptionLoadingTimeout()) {
+  @if (subscriptionLoading() || subscriptionRefreshTimeout()) {
     <mat-card>
       <mat-card-header></mat-card-header>
       <mat-card-content>
@@ -14,7 +14,7 @@
             <mat-spinner diameter="36"></mat-spinner>
           </div>
         }
-        @if (subscriptionLoadingTimeout()) {
+        @if (subscriptionRefreshTimeout()) {
           <div>
             GlitchTip was unable to find a subscription for your account. If you
             just signed up for a subscription on our payment platform, please
@@ -203,10 +203,7 @@
         </mat-card>
       }
     }
-    @if (
-      (subscriptionLoading() === false && subscription() === null) ||
-      subscription()!.status === "canceled"
-    ) {
+    @if (!subscription() || subscription()!.status === "canceled") {
       <gt-payment></gt-payment>
     }
   }

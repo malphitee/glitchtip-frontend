@@ -61,7 +61,7 @@ export class SubscriptionComponent implements OnDestroy, OnInit {
   fromStripe = this.service.fromStripe;
   subscription = this.service.subscription;
   subscriptionLoading = this.service.subscriptionLoading;
-  subscriptionLoadingTimeout = this.service.subscriptionLoadingTimeout;
+  subscriptionRefreshTimeout = this.service.subscriptionRefreshTimeout;
   eventsCountWithTotal = this.service.eventsCountWithTotal;
   totalEventsAllowed = this.service.totalEventsAllowed;
   activeOrganization = this.orgService.activeOrganization;
