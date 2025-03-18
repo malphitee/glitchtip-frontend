@@ -36,7 +36,6 @@ export class OrganizationsService {
   activeOrganizationResource = resource({
     request: () => ({ organization_slug: this.activeOrganizationSlug() }),
     loader: async ({ request }) => {
-      console.log("loading for some reasn")
       if (!request.organization_slug) {
         return undefined;
       }
