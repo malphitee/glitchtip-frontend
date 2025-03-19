@@ -1,12 +1,8 @@
 import { computed, Injectable, inject, resource } from "@angular/core";
-// import { MatSnackBar } from "@angular/material/snack-bar";
-// import { Router } from "@angular/router";
-// import { catchError, EMPTY, lastValueFrom, tap } from "rxjs";
-// import { SubscriptionsAPIService } from "src/app/api/subscriptions/subscriptions-api.service";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { Router } from "@angular/router";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
 import { SettingsService } from "src/app/api/settings.service";
-// import { SubscriptionsService } from "src/app/api/subscriptions/subscriptions.service";
-// import { StripeService } from "../stripe.service";
 import { client } from "src/app/api/api";
 
 import { components } from "src/app/api/api-schema";
@@ -30,12 +26,9 @@ const initialState: BillingState = {
   providedIn: "root",
 })
 export class PaymentService extends StatefulService<BillingState> {
-  // private subscriptionsService = inject(SubscriptionsService);
-  // private subscriptionsAPIService = inject(SubscriptionsAPIService);
   private settingsService = inject(SettingsService);
-  // private stripe = inject(StripeService);
-  // private snackBar = inject(MatSnackBar);
-  // private router = inject(Router);
+  private snackBar = inject(MatSnackBar);
+  private router = inject(Router);
 
   stripePublicKey = this.settingsService.stripePublicKey;
   readonly subscriptionCreationLoadingId = computed(
@@ -71,54 +64,44 @@ export class PaymentService extends StatefulService<BillingState> {
     super(initialState);
   }
 
-  // dispatchSubscriptionCreation(organization: Organization, price: Price) {
-  //   this.setSubscriptionCreationStart(price.stripeID);
-  //   if (price.price === 0) {
-  //     lastValueFrom(
-  //       this.subscriptionsAPIService.create(organization.id, price.id).pipe(
-  //         tap((resp) => {
-  //           this.subscriptionsService.setSubscription(resp.subscription);
-  //           this.router.navigate([organization.slug, "issues"]);
-  //         }),
-  //         catchError((err) => {
-  //           if (err.status === 409) {
-  //             this.setSubscriptionCreationError();
-  //             this.snackBar.open(
-  //               "This organization already has a subscription. Please reload page for latest details."
-  //             );
-  //           }
-  //           return EMPTY;
-  //         })
-  //       ),
-  //       { defaultValue: null }
-  //     );
-  //   } else {
-  //     this.stripe.redirectToSubscriptionCheckout(organization.slug, price.id);
-  //   }
-  // }
-
   dispatchSubscriptionCreation(organization: Organization, price: Price) {
     this.setSubscriptionCreationStart(price.stripeID);
     if (price.price === 0) {
-      this.createFreeSubscription(organization.id, price.stripeID);
+      this.createFreeSubscription(organization, price.stripeID);
     } else {
       this.redirectToSubscriptionCheckout(organization.slug, price.stripeID);
     }
   }
 
-  private async createFreeSubscription(orgId: string, priceId: string) {
-    const { data, error } = await client.POST("/api/0/stripe/subscriptions/", {
-      body: { organization: orgId, price: priceId },
-    });
+  private async createFreeSubscription(
+    organization: Organization,
+    priceId: string
+  ) {
+    const { data, error, response } = await client.POST(
+      "/api/0/stripe/subscriptions/",
+      {
+        body: { organization: organization.id, price: priceId },
+      }
+    );
+    if (response.status === 400) {
+      this.setSubscriptionCreationError(
+        "This organization already has a subscription. Please reload page for latest details."
+      );
+      return null;
+    }
+    if (response.status === 404) {
+      this.setSubscriptionCreationError(
+        "Only organization owners can choose subscriptions. Make sure you are authorized to perform this action."
+      );
+      return null;
+    }
     if (error) {
-      console.log(error);
-      // if (error. === 409) {
-      //   this.setSubscriptionCreationError();
-      //   this.snackBar.open(
-      //     "This organization already has a subscription. Please reload page for latest details."
-      //   );
+      this.setSubscriptionCreationError(
+        "There was an error processing your request. Please try again"
+      );
       throw error;
     }
+    this.router.navigate([organization.slug, "issues"]);
     return data;
   }
 
@@ -127,15 +110,23 @@ export class PaymentService extends StatefulService<BillingState> {
     priceId: string
   ) {
     const stripePublicKey = this.stripePublicKey();
-    const { data, error } = await client.POST(
+    const { data, error, response } = await client.POST(
       "/api/0/stripe/organizations/{organization_slug}/create-stripe-subscription-checkout/",
       {
         params: { path: { organization_slug: orgSlug } },
         body: { price: priceId },
       }
     );
+    if (response.status === 404) {
+      this.setSubscriptionCreationError(
+        "Only organization owners can choose subscriptions. Make sure you are authorized to perform this action."
+      );
+      return null;
+    }
     if (error) {
-      console.log(error);
+      this.setSubscriptionCreationError(
+        "There was an error processing your request. Please try again"
+      );
       throw error;
     }
     if (stripePublicKey) {
@@ -143,14 +134,20 @@ export class PaymentService extends StatefulService<BillingState> {
         stripe?.redirectToCheckout({ sessionId: data.id })
       );
     }
-    return null;
+    return data;
   }
 
   private setSubscriptionCreationStart(subscriptionCreationLoadingId: string) {
     this.setState({ subscriptionCreationLoadingId });
   }
 
-  // private setSubscriptionCreationError() {
-  //   this.setState({ subscriptionCreationLoadingId: null });
-  // }
+  private setSubscriptionCreationError(message: string) {
+    this.setState({ subscriptionCreationLoadingId: null });
+    this.snackBar.open(message);
+  }
+
+  clearState() {
+    super.clearState();
+    this.productsResource.set(undefined);
+  }
 }

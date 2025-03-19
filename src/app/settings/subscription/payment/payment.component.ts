@@ -1,4 +1,9 @@
-import { Component, ChangeDetectionStrategy, inject } from "@angular/core";
+import {
+  Component,
+  ChangeDetectionStrategy,
+  inject,
+  OnDestroy,
+} from "@angular/core";
 import { environment } from "../../../../environments/environment";
 import { EventInfoComponent } from "../../../shared/event-info/event-info.component";
 import { MatDividerModule } from "@angular/material/divider";
@@ -23,7 +28,7 @@ import { OrganizationsService } from "src/app/api/organizations.service";
     DecimalPipe,
   ],
 })
-export class PaymentComponent {
+export class PaymentComponent implements OnDestroy {
   private organizationService = inject(OrganizationsService);
   private paymentService = inject(PaymentService);
 
@@ -40,5 +45,9 @@ export class PaymentComponent {
         price
       );
     }
+  }
+
+  ngOnDestroy() {
+    this.paymentService.clearState();
   }
 }
