@@ -14,18 +14,18 @@ export interface Price
   price: number;
 }
 
-interface BillingState {
+export interface PaymentState {
   subscriptionCreationLoadingId: string | null;
 }
 
-const initialState: BillingState = {
+const initialState: PaymentState = {
   subscriptionCreationLoadingId: null,
 };
 
 @Injectable({
   providedIn: "root",
 })
-export class PaymentService extends StatefulService<BillingState> {
+export class PaymentService extends StatefulService<PaymentState> {
   private settingsService = inject(SettingsService);
   private snackBar = inject(MatSnackBar);
   private router = inject(Router);

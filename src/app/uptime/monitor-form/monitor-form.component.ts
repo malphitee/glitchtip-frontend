@@ -21,7 +21,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { map, Observable, of, startWith } from "rxjs";
 import { MonitorInput, MonitorType } from "../uptime.interfaces";
 import { intRegex, urlRegex } from "src/app/shared/validators";
-import { SubscriptionsService } from "src/app/api/subscriptions/subscriptions.service";
+import { SubscriptionService } from "src/app/api/subscriptions/subscription.service";
 import { EventInfoComponent } from "src/app/shared/event-info/event-info.component";
 import { MonitorService } from "../monitor.service";
 import { ServerError } from "src/app/shared/django.interfaces";
@@ -76,7 +76,7 @@ const portUrlValidators = [
 })
 export class MonitorFormComponent implements OnInit {
   private organizationsService = inject(OrganizationsService);
-  private subscriptionsService = inject(SubscriptionsService);
+  private subscriptionService = inject(SubscriptionService);
   private monitorService = inject(MonitorService);
   dialog = inject(MatDialog);
 
@@ -87,7 +87,7 @@ export class MonitorFormComponent implements OnInit {
   readonly formSubmitted = output<MonitorInput>();
 
   orgProjects$ = this.organizationsService.activeOrganizationProjects$;
-  totalEventsAllowed = this.subscriptionsService.totalEventsAllowed;
+  totalEventsAllowed = this.subscriptionService.totalEventsAllowed;
 
   intervalPerMonth$: Observable<number | null> = of(null);
 

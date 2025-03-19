@@ -2,8 +2,9 @@ import {
   Component,
   ChangeDetectionStrategy,
   inject,
-  OnDestroy,
+  OnInit,
 } from "@angular/core";
+import { StatefulComponent } from "src/app/shared/stateful-service/signal-state.component";
 import { environment } from "../../../../environments/environment";
 import { EventInfoComponent } from "../../../shared/event-info/event-info.component";
 import { MatDividerModule } from "@angular/material/divider";
@@ -11,7 +12,7 @@ import { LoadingButtonComponent } from "../../../shared/loading-button/loading-b
 import { MatIconModule } from "@angular/material/icon";
 import { MatCardModule } from "@angular/material/card";
 import { DecimalPipe } from "@angular/common";
-import { PaymentService, Price } from "./payment.service";
+import { PaymentService, PaymentState, Price } from "./payment.service";
 import { OrganizationsService } from "src/app/api/organizations.service";
 
 @Component({
@@ -28,26 +29,32 @@ import { OrganizationsService } from "src/app/api/organizations.service";
     DecimalPipe,
   ],
 })
-export class PaymentComponent implements OnDestroy {
+export class PaymentComponent
+  extends StatefulComponent<PaymentState, PaymentService>
+  implements OnInit
+{
   private organizationService = inject(OrganizationsService);
-  private paymentService = inject(PaymentService);
 
-  products = this.paymentService.products;
-  subscriptionCreationLoadingId =
-    this.paymentService.subscriptionCreationLoadingId;
+  products = this.service.products;
+  subscriptionCreationLoadingId = this.service.subscriptionCreationLoadingId;
   billingEmail = environment.billingEmail;
+
+  constructor() {
+    const service = inject(PaymentService);
+
+    super(service);
+
+    this.service = service;
+  }
+
+  ngOnInit() {
+    this.service.productsResource.reload();
+  }
 
   onSubmit(price: Price) {
     const activeOrganization = this.organizationService.activeOrganization();
     if (activeOrganization) {
-      this.paymentService.dispatchSubscriptionCreation(
-        activeOrganization,
-        price
-      );
+      this.service.dispatchSubscriptionCreation(activeOrganization, price);
     }
-  }
-
-  ngOnDestroy() {
-    this.paymentService.clearState();
   }
 }

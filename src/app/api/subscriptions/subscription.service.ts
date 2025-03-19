@@ -1,32 +1,29 @@
 import { computed, Injectable, inject, resource, signal } from "@angular/core";
 import { Router } from "@angular/router";
-import { EventsCount } from "./subscriptions.interfaces";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
 import { client } from "../api";
 import { SettingsService } from "../settings.service";
 
-interface SubscriptionsState {
+export interface SubscriptionState {
   billingPortalLoading: boolean;
   billingPortalLoadingError: string;
   subscriptionRefreshing: boolean;
   subscriptionRefreshTimeout: boolean;
   fromStripe: boolean;
-  eventsCount: EventsCount | null;
 }
 
-const initialState: SubscriptionsState = {
+const initialState: SubscriptionState = {
   billingPortalLoading: false,
   billingPortalLoadingError: "",
   subscriptionRefreshing: false,
   subscriptionRefreshTimeout: false,
   fromStripe: false,
-  eventsCount: null,
 };
 
 @Injectable({
   providedIn: "root",
 })
-export class SubscriptionsService extends StatefulService<SubscriptionsState> {
+export class SubscriptionService extends StatefulService<SubscriptionState> {
   private settingsService = inject(SettingsService);
   private router = inject(Router);
 

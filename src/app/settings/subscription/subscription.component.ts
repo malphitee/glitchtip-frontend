@@ -1,7 +1,6 @@
 import {
   Component,
   ChangeDetectionStrategy,
-  OnDestroy,
   computed,
   inject,
   input,
@@ -9,9 +8,13 @@ import {
 } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
+import { StatefulComponent } from "src/app/shared/stateful-service/signal-state.component";
 import { EventInfoComponent } from "src/app/shared/event-info/event-info.component";
 import { environment } from "../../../environments/environment";
-import { SubscriptionsService } from "src/app/api/subscriptions/subscriptions.service";
+import {
+  SubscriptionService,
+  SubscriptionState,
+} from "src/app/api/subscriptions/subscription.service";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { PaymentComponent } from "./payment/payment.component";
 import { MatButtonModule } from "@angular/material/button";
@@ -47,8 +50,10 @@ interface Percentages {
     DatePipe,
   ],
 })
-export class SubscriptionComponent implements OnDestroy, OnInit {
-  private service = inject(SubscriptionsService);
+export class SubscriptionComponent
+  extends StatefulComponent<SubscriptionState, SubscriptionService>
+  implements OnInit
+{
   private orgService = inject(OrganizationsService);
   dialog = inject(MatDialog);
 
@@ -97,6 +102,14 @@ export class SubscriptionComponent implements OnDestroy, OnInit {
       fileSize: (events?.fileSizeMb! / eventsAllowed!) * 100,
     };
   });
+
+  constructor() {
+    const service = inject(SubscriptionService);
+
+    super(service);
+
+    this.service = service;
+  }
 
   ngOnInit(): void {
     this.orgService.activeOrganizationResource.reload();
