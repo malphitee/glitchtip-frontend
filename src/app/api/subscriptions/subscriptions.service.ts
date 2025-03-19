@@ -1,10 +1,7 @@
 import { computed, Injectable, inject, resource, signal } from "@angular/core";
 import { Router } from "@angular/router";
-import { lastValueFrom } from "rxjs";
-import { tap } from "rxjs/operators";
 import { EventsCount } from "./subscriptions.interfaces";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
-import { SubscriptionsAPIService } from "./subscriptions-api.service";
 import { client } from "../api";
 import { SettingsService } from "../settings.service";
 
@@ -31,13 +28,11 @@ const initialState: SubscriptionsState = {
 })
 export class SubscriptionsService extends StatefulService<SubscriptionsState> {
   private settingsService = inject(SettingsService);
-  private subscriptionsAPIService = inject(SubscriptionsAPIService);
   private router = inject(Router);
 
   stripePublicKey = this.settingsService.stripePublicKey;
 
   organizationSlug = signal<string>("");
-
   subscriptionResource = resource({
     request: () => ({
       orgSlug: this.organizationSlug(),
@@ -46,19 +41,7 @@ export class SubscriptionsService extends StatefulService<SubscriptionsState> {
       if (!request.orgSlug) {
         return undefined;
       }
-
-      const { data, error } = await client.GET(
-        "/api/0/stripe/subscriptions/{organization_slug}/",
-        {
-          params: {
-            path: { organization_slug: request.orgSlug },
-          },
-        }
-      );
-      if (error) {
-        throw error;
-      }
-      return data;
+      return await this.getSubscriptionData(request.orgSlug);
     },
   });
   subscription = computed(() => {
@@ -140,7 +123,7 @@ export class SubscriptionsService extends StatefulService<SubscriptionsState> {
   /**
    * Retrieve Subscription and navigate to subscription page if no subscription exists
    */
-  checkIfUserHasSubscription(orgSlug: string) {
+  async checkIfUserHasSubscription(orgSlug: string) {
     const subscriptionRoute = [orgSlug, "settings", "subscription"];
     if (
       !this.router.isActive(this.router.createUrlTree(subscriptionRoute), {
@@ -150,15 +133,10 @@ export class SubscriptionsService extends StatefulService<SubscriptionsState> {
         matrixParams: "ignored",
       })
     ) {
-      lastValueFrom(
-        this.subscriptionsAPIService.retrieve(orgSlug).pipe(
-          tap((subscription) => {
-            if (subscription === null) {
-              this.router.navigate(subscriptionRoute);
-            }
-          })
-        )
-      );
+      const subscription = await this.getSubscriptionData(orgSlug);
+      if (!subscription) {
+        this.router.navigate(subscriptionRoute);
+      }
     }
   }
 
@@ -187,7 +165,7 @@ export class SubscriptionsService extends StatefulService<SubscriptionsState> {
    * Keep trying to get subscription, for users redirected from Stripe
    */
   refreshUntilSubscriptionOrTimeout() {
-    this.setSubscriptionRefreshingStart(true);
+    this.setSubscriptionRefreshingStart();
     let i = 0;
     const intervalRef = setInterval(() => {
       this.subscriptionResource.reload();
@@ -202,11 +180,26 @@ export class SubscriptionsService extends StatefulService<SubscriptionsState> {
     }, 2000);
   }
 
-  private setSubscriptionRefreshingStart(fromStripe: boolean = false) {
-    this.setState({ subscriptionRefreshing: true, fromStripe });
+  private async getSubscriptionData(orgSlug: string) {
+    const { data, error } = await client.GET(
+      "/api/0/stripe/subscriptions/{organization_slug}/",
+      {
+        params: {
+          path: { organization_slug: orgSlug },
+        },
+      }
+    );
+    if (error) {
+      throw error;
+    }
+    return data;
   }
 
-  private setSubscriptionRefreshingComplete(fromStripe: boolean = false) {
+  private setSubscriptionRefreshingStart() {
+    this.setState({ subscriptionRefreshing: true, fromStripe: true });
+  }
+
+  private setSubscriptionRefreshingComplete() {
     this.setState({ subscriptionRefreshing: false });
   }
 
