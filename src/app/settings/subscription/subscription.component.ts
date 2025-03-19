@@ -132,8 +132,4 @@ export class SubscriptionComponent
   manageSubscription() {
     this.service.redirectToBillingPortal();
   }
-
-  ngOnDestroy() {
-    this.service.clearState();
-  }
 }
