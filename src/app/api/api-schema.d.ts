@@ -3840,8 +3840,6 @@ export interface components {
             price: components["schemas"]["StripeNestedPriceSchema"];
             status: components["schemas"]["SubscriptionStatus"] | null;
             collectionMethod: components["schemas"]["CollectionMethod"];
-            /** Startdate */
-            startDate: string;
             /**
              * Created
              * Format: date-time
@@ -3857,6 +3855,11 @@ export interface components {
              * Format: date-time
              */
             currentPeriodEnd: string;
+            /**
+             * Start Date
+             * Format: date-time
+             */
+            startDate: string;
         };
         /**
          * SubscriptionStatus

@@ -322,7 +322,7 @@ export class MonitorService extends StatefulService<MonitorState> {
   }
 
   clearState() {
-    super.clearState();
+    super.clearState(); 
     this.monitorId.set(null);
     this.monitorResource.set(undefined);
   }
