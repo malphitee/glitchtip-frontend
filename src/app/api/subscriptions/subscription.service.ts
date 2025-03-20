@@ -106,6 +106,7 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
     const subscription = this.subscription();
     return subscription?.product.events || null;
   });
+  refreshTimerRef: NodeJS.Timeout | undefined = undefined;
 
   constructor() {
     super(initialState);
@@ -164,14 +165,14 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
   refreshUntilSubscriptionOrTimeout() {
     this.setSubscriptionRefreshingStart();
     let i = 0;
-    const intervalRef = setInterval(() => {
+    this.refreshTimerRef = setInterval(() => {
       this.subscriptionResource.reload();
       if (this.subscription()) {
         this.setSubscriptionRefreshingComplete();
-        clearInterval(intervalRef);
+        clearInterval(this.refreshTimerRef);
       } else if (i === 2) {
         this.setSubscriptionRefreshingTimeout();
-        clearInterval(intervalRef);
+        clearInterval(this.refreshTimerRef);
       }
       i++;
     }, 2000);
@@ -223,5 +224,6 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
     this.organizationSlug.set("");
     this.subscriptionResource.set(undefined);
     this.eventCountResource.set(undefined);
+    clearInterval(this.refreshTimerRef);
   }
 }
