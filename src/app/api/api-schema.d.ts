@@ -3814,6 +3814,11 @@ export interface components {
             /** Events */
             events: number;
         };
+        /**
+         * CollectionMethod
+         * @enum {string}
+         */
+        CollectionMethod: "charge_automatically" | "send_invoice";
         /** StripeProductSchema */
         StripeProductSchema: {
             /** Stripeid */
@@ -3833,6 +3838,8 @@ export interface components {
             stripeID: string;
             product: components["schemas"]["StripeProductSchema"];
             price: components["schemas"]["StripeNestedPriceSchema"];
+            status: components["schemas"]["SubscriptionStatus"] | null;
+            collectionMethod: components["schemas"]["CollectionMethod"];
             /**
              * Created
              * Format: date-time
@@ -3848,11 +3855,19 @@ export interface components {
              * Format: date-time
              */
             currentPeriodEnd: string;
-            /** Status */
-            status?: string | null;
+            /**
+             * Start Date
+             * Format: date-time
+             */
+            startDate: string;
         };
-        /** StripeSessionSchema */
-        StripeSessionSchema: {
+        /**
+         * SubscriptionStatus
+         * @enum {string}
+         */
+        SubscriptionStatus: "incomplete" | "incomplete_expired" | "trialing" | "active" | "past_due" | "canceled" | "unpaid" | "paused";
+        /** StripeCheckoutSessionSchema */
+        StripeCheckoutSessionSchema: {
             /** Id */
             id: string;
         };
@@ -3861,12 +3876,17 @@ export interface components {
             /** Price */
             price: string;
         };
+        /** StripePortalSessionSchema */
+        StripePortalSessionSchema: {
+            /** Url */
+            url: string;
+        };
         /** CreateSubscriptionResponse */
         CreateSubscriptionResponse: {
             /** Price */
             price: string;
             /** Organization */
-            organization: number;
+            organization: string;
             subscription: components["schemas"]["StripeSubscriptionSchema"];
         };
         /** SubscriptionIn */
@@ -3874,7 +3894,18 @@ export interface components {
             /** Price */
             price: string;
             /** Organization */
-            organization: number;
+            organization: string;
+        };
+        /** EventsCountSchema */
+        EventsCountSchema: {
+            /** Eventcount */
+            eventCount: number;
+            /** Transactioneventcount */
+            transactionEventCount: number;
+            /** Uptimecheckeventcount */
+            uptimeCheckEventCount: number;
+            /** Filesizemb */
+            fileSizeMb: number;
         };
         /** ArtifactBundleAssembleIn */
         ArtifactBundleAssembleIn: {
@@ -6314,7 +6345,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["StripeSessionSchema"];
+                    "application/json": components["schemas"]["StripeCheckoutSessionSchema"];
                 };
             };
         };
@@ -6336,7 +6367,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["StripeSessionSchema"];
+                    "application/json": components["schemas"]["StripePortalSessionSchema"];
                 };
             };
         };
@@ -6381,7 +6412,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["EventsCountSchema"];
+                };
             };
         };
     };

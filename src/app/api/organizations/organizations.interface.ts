@@ -8,7 +8,7 @@ export interface OrganizationNew {
 }
 
 export interface Organization extends OrganizationNew {
-  id: number;
+  id: string;
   dateCreated: string;
   status: OrgStatus;
   avatar: Avatar;

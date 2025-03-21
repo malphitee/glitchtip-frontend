@@ -182,7 +182,7 @@ This method is not recommended and assumes the reader knows how to deploy Django
 1. `git clone` or download the latest Django backend [release tag](https://gitlab.com/glitchtip/glitchtip-backend/-/tags). Take note of the version number.
 2. Download the latest frontend code at `wget https://gitlab.com/api/v4/projects/15449363/jobs/artifacts/<VERSION HERE>/download?job=build-assets -O assets.zip`. Replace the VERSION HERE with the same version from step 1. It must be exact, including the "v".
 3. Extract the zip file and move the `dist/glitchtip-frontend` directory to the glitchtip-backend's dist folder. If you installed glitchtip to `/opt/glitchtip` then this might look like `unzip assets.zip; mv dist/glitchtip-frontend /opt/glitchtip/dist`. Note this step involves removing the directory called "glitchtip-frontend".
-4. Create a Python virtual environment (or other preferred way to run Python). Install [Poetry](https://python-poetry.org/) and run `poetry install` to install Python dependencies.
+4. Create a Python virtual environment (or other preferred way to run Python). Install [uv](https://docs.astral.sh/uv/) and run `uv sync` to install Python dependencies.
 5. Set required [environment variables](https://glitchtip.com/documentation/install#configuration).
 6. Migrate the database with `./manage.py migrate`
 7. Collect static files `./manage.py collectstatic`

@@ -186,10 +186,8 @@
             "browserTarget": "glitchtip-frontend:build",
             "compodoc": false,
             "port": 6006,
-            "styles": [
-              "src/styles.scss",
-              ".storybook/preview-styles.scss"
-            ]
+            "experimentalZoneless": true,
+            "styles": ["src/styles.scss", ".storybook/preview-styles.scss"]
           }
         },
         "build-storybook": {
@@ -198,11 +196,9 @@
             "configDir": ".storybook",
             "browserTarget": "glitchtip-frontend:build",
             "compodoc": false,
+            "experimentalZoneless": true,
             "outputDir": "dist/storybook/glitchtip-frontend",
-            "styles": [
-              "src/styles.scss",
-              ".storybook/preview-styles.scss"
-            ]
+            "styles": ["src/styles.scss", ".storybook/preview-styles.scss"]
           }
         }
       }
@@ -224,7 +220,7 @@
             "outputPath": "dist/marketing",
             "index": "projects/marketing/src/index.html",
             "browser": "projects/marketing/src/main.ts",
-            "polyfills": ["@angular/localize/init"],
+            "polyfills": ["zone.js", "@angular/localize/init"],
             "tsConfig": "projects/marketing/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
