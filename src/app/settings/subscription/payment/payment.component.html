@@ -1,6 +1,6 @@
-@if (productOptions(); as productOptions) {
+@if (products(); as products) {
 <div class="plans mat-elevation-z1">
-  @for (product of productOptions; track product; let i = $index) {
+  @for (product of products; track product; let i = $index) {
   <mat-card>
     <mat-card-content>
       <mat-card-title>{{ product.name }}</mat-card-title>
@@ -21,14 +21,14 @@
       </ul>
       <p>
         <span class="mat-headline-4">
-          ${{ product.mainUnitPrice | number }}
+          ${{ product.defaultPrice.price | number }}
         </span>
         / month
       </p>
       <gt-loading-button
         buttonText="Select"
-        [loading]="subscriptionCreationLoadingId() === product.prices[0].id"
-        (buttonClick)="onSubmit(product.prices[0])"
+        [loading]="subscriptionCreationLoadingId() === product.defaultPrice.stripeID"
+        (buttonClick)="onSubmit(product.defaultPrice)"
       ></gt-loading-button>
     </mat-card-content>
   </mat-card>

@@ -109,7 +109,7 @@ export class NotificationsService {
   groupProjectsByOrg(projects: ProjectWithAlertStatus[]) {
     const groupedProjects = projects.reduce(
       (r: GroupedProjects, a: ProjectWithAlertStatus) => {
-        r[a.organization.id] = [...(r[a.organization.id] || []), a];
+        r[+a.organization.id] = [...(r[+a.organization.id] || []), a];
         return r;
       },
       {},

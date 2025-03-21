@@ -12,7 +12,7 @@ import {
   OrganizationLoading,
 } from "./organizations.interface";
 import { SettingsService } from "../settings.service";
-import { SubscriptionsService } from "../subscriptions/subscriptions.service";
+import { SubscriptionService } from "../subscriptions/subscription.service";
 import { TeamsService } from "../teams/teams.service";
 import { Team } from "../teams/teams.interfaces";
 import { EnvironmentsAPIService } from "../environments/environments-api.service";
@@ -64,7 +64,7 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
   private organizationAPIService = inject(OrganizationAPIService);
   private snackBar = inject(MatSnackBar);
   private settingsService = inject(SettingsService);
-  private subscriptionsService = inject(SubscriptionsService);
+  private subscriptionService = inject(SubscriptionService);
   private teamsAPIService = inject(TeamsAPIService);
   private teamsService = inject(TeamsService);
 
@@ -142,7 +142,7 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
         ),
         distinctUntilChanged((a, b) => a[1]?.id === b[1]?.id),
         tap(([_, activeOrganization]) => {
-          this.subscriptionsService.checkIfUserHasSubscription(
+          this.subscriptionService.checkIfUserHasSubscription(
             activeOrganization!.slug
           );
         })
