@@ -14,6 +14,7 @@ import { CommonModule } from "@angular/common";
 import { MatCardModule } from "@angular/material/card";
 import { lastValueFrom } from "rxjs";
 import { toObservable } from "@angular/core/rxjs-interop";
+import { MarkdownComponent } from "ngx-markdown";
 import { AuthSvgComponent } from "../shared/auth-svg/auth-svg.component";
 import { InputMatcherDirective } from "../shared/input-matcher.directive";
 import { RegisterService, RegisterState } from "./register.service";
@@ -37,6 +38,7 @@ type SocialApp = components["schemas"]["SocialAppSchema"];
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
+    MarkdownComponent,
     FormErrorComponent,
     InputMatcherDirective,
     MatButtonModule,
@@ -53,6 +55,7 @@ export class RegisterComponent
   private route = inject(ActivatedRoute);
   private acceptService = inject(AcceptInviteService);
   private settings = inject(SettingsService);
+  instanceName = this.settings.instanceName;
 
   tags = "";
   socialApps = this.settings.socialApps;
@@ -74,10 +77,10 @@ export class RegisterComponent
     const service = inject(RegisterService);
 
     toObservable(service.fieldErrors).subscribe((fieldErrors) =>
-      mapFormErrors(fieldErrors, this.form)
+      mapFormErrors(fieldErrors, this.form),
     );
     super(service);
-  
+
     this.service = service;
   }
 
@@ -90,7 +93,7 @@ export class RegisterComponent
           if (acceptInfo) {
             this.form.patchValue({ email: acceptInfo.orgUser.email });
           }
-        })
+        }),
       )
       .subscribe();
   }
@@ -122,8 +125,8 @@ export class RegisterComponent
                   this.router.navigate(["organizations", "new"]);
                 }
               }
-            })
-          )
+            }),
+          ),
       );
     }
   }

@@ -12,6 +12,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatCardModule } from "@angular/material/card";
 import { lastValueFrom } from "rxjs";
 import { toObservable } from "@angular/core/rxjs-interop";
+import { MarkdownComponent } from "ngx-markdown";
 import { FormErrorComponent } from "../shared/forms/form-error/form-error.component";
 import { LoginWebAuthnComponent } from "./login-webauthn/login-webauthn.component";
 import { LoginTotpComponent } from "./login-totp/login-totp.component";
@@ -24,7 +25,6 @@ import { AcceptInviteService } from "../api/accept/accept-invite.service";
 import { AuthSvgComponent } from "../shared/auth-svg/auth-svg.component";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { components } from "../api/api-schema";
-import { MarkdownModule } from "ngx-markdown";
 
 type SocialApp = components["schemas"]["SocialAppSchema"];
 
@@ -34,11 +34,11 @@ type SocialApp = components["schemas"]["SocialAppSchema"];
   styleUrls: ["./login.component.scss"],
   imports: [
     MatCardModule,
+    MarkdownComponent,
     LoginTotpComponent,
     LoginWebAuthnComponent,
     LoadingButtonComponent,
     ReactiveFormsModule,
-    MarkdownModule,
     FormErrorComponent,
     MatFormFieldModule,
     MatInputModule,
