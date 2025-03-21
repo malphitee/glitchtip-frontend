@@ -14,6 +14,7 @@ import { CommonModule } from "@angular/common";
 import { MatCardModule } from "@angular/material/card";
 import { lastValueFrom } from "rxjs";
 import { toObservable } from "@angular/core/rxjs-interop";
+import { MarkdownComponent } from "ngx-markdown";
 import { AuthSvgComponent } from "../shared/auth-svg/auth-svg.component";
 import { InputMatcherDirective } from "../shared/input-matcher.directive";
 import { RegisterService, RegisterState } from "./register.service";
@@ -37,6 +38,7 @@ type SocialApp = components["schemas"]["SocialAppSchema"];
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
+    MarkdownComponent,
     FormErrorComponent,
     InputMatcherDirective,
     MatButtonModule,

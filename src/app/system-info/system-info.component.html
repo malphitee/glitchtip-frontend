@@ -18,7 +18,11 @@
         <dt class="mat-body-strong">GlitchTip version</dt>
         <dd>{{ version() }}</dd>
         <dt class="mat-body-strong">GlitchTip instance name</dt>
-        <dd>{{ instanceName() }}</dd>
+        <dd>
+          <markdown class="system-info-instance-name">
+            {{ instanceName() }}
+          </markdown>
+        </dd>
       </dl>
     </mat-card-content>
   </mat-card>
