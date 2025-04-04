@@ -65,8 +65,8 @@ export class OrganizationsService {
   projectsCount = computed(() => this.activeOrganizationProjects().length);
   initialLoad = computed(
     () =>
-      this.organizationsResource.status() >= ResourceStatus.Resolved &&
-      this.activeOrganizationLoaded()
+      this.organizationsResource.status() > ResourceStatus.Loading &&
+      this.activeOrganizationResource.status() > ResourceStatus.Loading
   );
 
   // For compatibility, remove when possible
