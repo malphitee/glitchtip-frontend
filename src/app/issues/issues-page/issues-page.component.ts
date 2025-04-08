@@ -105,9 +105,7 @@ export class IssuesPageComponent implements OnInit, OnDestroy {
   };
   sorts = [
     { param: "-last_seen", display: "Last Seen" },
-    { param: "last_seen", display: "First Seen" },
-    { param: "-created", display: "Newest Creation Date" },
-    { param: "created", display: "Oldest Creation Date" },
+    { param: "first_seen", display: "First Seen" },
     { param: "-count", display: "Most Frequent" },
     { param: "count", display: "Least Frequent" },
     { param: "-priority", display: "Highest Priority" },
