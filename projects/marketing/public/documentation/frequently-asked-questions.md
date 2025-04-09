@@ -21,7 +21,7 @@ We are transparent about our data practices, and you can find detailed informati
 We self-certify our compliance and continually review our processes to ensure we meet GDPR requirements.
 
 
-### Do you hosting and support in Russia?
+### Do you offer hosting and support in Russia?
 
 At this time, we cannot offer any services to users residing in Russia.
 We use Stripe as our payment processor. US restrictions block payment processing for Russia due to the Russian invasion of Ukraine.
