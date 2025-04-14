@@ -1,4 +1,12 @@
-import { AfterViewInit, Directive, ElementRef, HostBinding, OnInit, input, inject } from "@angular/core";
+import {
+  AfterViewInit,
+  Directive,
+  ElementRef,
+  HostBinding,
+  OnInit,
+  input,
+  inject,
+} from "@angular/core";
 import Prism from "prismjs";
 import { GRAMMAR_MAPPINGS, PRISM_SUPPORTED_GRAMMAR } from "./constants";
 

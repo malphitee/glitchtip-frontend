@@ -31,7 +31,7 @@ export class PerformanceService extends PaginationStatefulService<PerformanceSta
   private organizationsService = inject(OrganizationsService);
 
   transactionGroups$ = this.getState$.pipe(
-    map((state) => state.transactionGroups)
+    map((state) => state.transactionGroups),
   );
 
   transactionGroupsDisplay$ = combineLatest([
@@ -42,14 +42,14 @@ export class PerformanceService extends PaginationStatefulService<PerformanceSta
     map(([projects, groups]) => {
       return groups.map((group) => {
         const projectSlug = projects?.find(
-          (project) => +project.id === group.project
+          (project) => +project.id === group.project,
         )?.name;
         return {
           ...group,
           projectSlug,
         };
       });
-    })
+    }),
   );
 
   errors$ = this.getState$.pipe(map((state) => state.errors));
@@ -66,7 +66,7 @@ export class PerformanceService extends PaginationStatefulService<PerformanceSta
     end: string | undefined | null,
     sort: string | undefined | null,
     environment: string | undefined | null,
-    query: string | undefined | null
+    query: string | undefined | null,
   ) {
     return this.retrieveTransactionGroups(
       orgSlug,
@@ -76,7 +76,7 @@ export class PerformanceService extends PaginationStatefulService<PerformanceSta
       end,
       sort,
       environment,
-      query
+      query,
     );
   }
 
@@ -88,7 +88,7 @@ export class PerformanceService extends PaginationStatefulService<PerformanceSta
     end?: string | null,
     sort?: string | null,
     environment?: string | null,
-    query?: string | null
+    query?: string | null,
   ) {
     this.setLoadingStart();
     return this.transactionGroupsAPIService
@@ -100,7 +100,7 @@ export class PerformanceService extends PaginationStatefulService<PerformanceSta
         catchError((err: HttpErrorResponse) => {
           this.setTransactionGroupsError(err);
           return EMPTY;
-        })
+        }),
       );
   }
 

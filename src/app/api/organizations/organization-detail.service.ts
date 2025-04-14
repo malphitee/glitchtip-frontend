@@ -70,7 +70,7 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
 
   readonly initialLoad = computed(() => this.state().initialLoad);
   readonly organizationMembers = computed(
-    () => this.state().organizationMembers
+    () => this.state().organizationMembers,
   );
 
   readonly orgHasAProject = computed(() => {
@@ -94,8 +94,8 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
     return organizationMembers.filter(
       (orgMembers) =>
         !teamMembers.find(
-          (teamMems) => orgMembers.id === teamMems.id.toString()
-        )
+          (teamMems) => orgMembers.id === teamMems.id.toString(),
+        ),
     );
   });
 
@@ -110,7 +110,7 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
   });
 
   readonly organizationEnvironments = computed(
-    () => this.state().organizationEnvironments
+    () => this.state().organizationEnvironments,
   );
 
   readonly organizationEnvironmentsProcessed = computed(() => {
@@ -120,7 +120,7 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
         ...accumulator,
         ...(!accumulator.includes(environment.name) ? [environment.name] : []),
       ],
-      [] as string[]
+      [] as string[],
     );
   });
 
@@ -138,14 +138,14 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
       .pipe(
         filter(
           ([billingEnabled, activeOrganization]) =>
-            !!billingEnabled && !!activeOrganization
+            !!billingEnabled && !!activeOrganization,
         ),
         distinctUntilChanged((a, b) => a[1]?.id === b[1]?.id),
         tap(([_, activeOrganization]) => {
           this.subscriptionService.checkIfUserHasSubscription(
-            activeOrganization!.slug
+            activeOrganization!.slug,
           );
-        })
+        }),
       )
       .subscribe();
   }
@@ -157,7 +157,7 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
       return this.organizationAPIService.update(orgSlug, data).pipe(
         tap((resp) => {
           this.updateOrgName(resp);
-        })
+        }),
       );
     }
     return EMPTY;
@@ -172,13 +172,13 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
       .then((result) => {
         if (result.response.status === 204) {
           this.organizationsService.organizationsResource.update((orgs) =>
-            orgs?.filter((org) => org.slug !== slug)
+            orgs?.filter((org) => org.slug !== slug),
           );
 
           const organizations = this.organizationsService.organizations();
           if (organizations.length) {
             this.organizationsService.setActiveOrganizationSlug(
-              organizations[0].slug
+              organizations[0].slug,
             );
           } else {
             this.organizationsService.setActiveOrganizationSlug(null);
@@ -194,7 +194,7 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
       "/api/0/organizations/{organization_slug}/members/",
       {
         params: { path: { organization_slug: orgSlug } },
-      }
+      },
     );
     if (result.data) {
       this.setActiveOrganizationMembers(result.data!);
@@ -206,7 +206,7 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
   inviteOrganizationMembers(
     emailInput: string,
     teamsInput: string[],
-    roleInput: MemberRole
+    roleInput: MemberRole,
   ) {
     const orgSlug = this.organizationsService.activeOrganizationSlug();
     const data = {
@@ -226,19 +226,19 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
       .then((result) => {
         if (result.data) {
           this.snackBar.open(
-            `An email invite has been sent to ${result.data.email}`
+            `An email invite has been sent to ${result.data.email}`,
           );
           this.router.navigate([orgSlug, "settings", "members"]);
         } else {
           if (result.response.status === 403) {
             this.setAddMemberError(
-              "Only organization members with a role of manager or owner can invite new members."
+              "Only organization members with a role of manager or owner can invite new members.",
             );
             // } else if (error.detail) {
             //   this.setAddMemberError(error.error?.detail);
           } else {
             this.setAddMemberError(
-              "There was an error processing this request."
+              "There was an error processing this request.",
             );
           }
         }
@@ -250,8 +250,8 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
       this.teamsAPIService.list(orgSlug).pipe(
         tap((resp) => {
           this.setOrganizationTeams(resp);
-        })
-      )
+        }),
+      ),
     );
   }
 
@@ -261,7 +261,7 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
       {
         params: { path: { organization_slug: orgSlug } },
         body: { slug: teamSlug },
-      }
+      },
     );
     if (result.data) {
       this.organizationsService.refreshActiveOrganization();
@@ -274,10 +274,10 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
     return this.teamsAPIService.addTeamMember(member, orgSlug, teamSlug).pipe(
       tap((team: Team) => {
         lastValueFrom(
-          this.teamsService.retrieveTeamMembers(orgSlug, team.slug)
+          this.teamsService.retrieveTeamMembers(orgSlug, team.slug),
         );
         this.retrieveOrganizationMembers(orgSlug);
-      })
+      }),
     );
   }
 
@@ -289,7 +289,7 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
         .pipe(
           tap(() => {
             this.teamsService.removeMember(memberId);
-          })
+          }),
         );
     } else {
       return EMPTY;
@@ -308,8 +308,8 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
         catchError((error: HttpErrorResponse) => {
           this.setLeaveTeamError(error);
           return EMPTY;
-        })
-      )
+        }),
+      ),
     );
   }
 
@@ -325,8 +325,8 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
         catchError((error: HttpErrorResponse) => {
           this.setJoinTeamError(error);
           return EMPTY;
-        })
-      )
+        }),
+      ),
     );
   }
 
@@ -346,7 +346,7 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
     return this.environmentsAPIService.list(orgSlug).pipe(
       tap((environments) => {
         this.setOrganizationEnvironments(environments);
-      })
+      }),
     );
   }
 

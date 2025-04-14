@@ -34,7 +34,7 @@ export class TransactionGroupDetailComponent implements OnInit, OnDestroy {
     this.transactionGroupDetailService.transactionGroupInitialLoadComplete$;
   transactionGroup$ = this.transactionGroupDetailService.transactionGroup$;
   transactionGroupIdParam$ = this.route.paramMap.pipe(
-    map((params) => params.get("transaction-group-id"))
+    map((params) => params.get("transaction-group-id")),
   );
   retrieveDetailsSubscription?: Subscription;
 
@@ -51,11 +51,11 @@ export class TransactionGroupDetailComponent implements OnInit, OnDestroy {
           if (orgSlug && groupId) {
             return this.transactionGroupDetailService.retrieveTransactionGroup(
               orgSlug,
-              parseInt(groupId)
+              parseInt(groupId),
             );
           }
           return EMPTY;
-        })
+        }),
       )
       .subscribe();
   }

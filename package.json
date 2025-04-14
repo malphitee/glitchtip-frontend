@@ -106,6 +106,7 @@
     "karma-jasmine-html-reporter": "^2.1.0",
     "ng-extract-i18n-merge": "^2.14.3",
     "openapi-typescript": "^7.6.1",
+    "prettier": "3.5.3",
     "storybook": "^8.6.4",
     "storybook-dark-mode": "^4.0.2",
     "ts-loader": "^9.2.6",

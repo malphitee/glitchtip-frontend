@@ -16,7 +16,7 @@ export class SpansAPIService extends APIBaseService {
     const http = inject(HttpClient);
 
     super(http);
-  
+
     this.http = http;
   }
 

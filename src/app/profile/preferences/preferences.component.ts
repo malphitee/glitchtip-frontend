@@ -65,7 +65,7 @@ export class PreferencesComponent implements OnInit {
     }),
     theme: new FormControl(
       "",
-      autocompleteStringValidator(["system", "light", "dark"])
+      autocompleteStringValidator(["system", "light", "dark"]),
     ),
   });
   filteredOptions?: Observable<string[]>;
@@ -79,7 +79,7 @@ export class PreferencesComponent implements OnInit {
     this.serverTimeZone$
       .pipe(
         filter((serverTimeZone) => !!serverTimeZone),
-        take(1)
+        take(1),
       )
       .subscribe((serverTimeZone) => {
         this.defaultTimeZone = this.defaultTimeZone + ` \(${serverTimeZone}\)`;
@@ -106,7 +106,7 @@ export class PreferencesComponent implements OnInit {
     });
     this.filteredOptions = this.form.controls["timeZone"].valueChanges.pipe(
       startWith(""),
-      map((value) => this._filter(value || ""))
+      map((value) => this._filter(value || "")),
     );
   }
 
@@ -114,7 +114,7 @@ export class PreferencesComponent implements OnInit {
     const filterValue = value.toLowerCase().replace(/\s/g, "_");
 
     return this.timeZones.filter((option) =>
-      option.toLowerCase().includes(filterValue)
+      option.toLowerCase().includes(filterValue),
     );
   }
 

@@ -2,50 +2,52 @@
   <mat-card-header class="card-header">
     <mat-card-title i18n>Members</mat-card-title>
     @if ((userTeamRole$ | async) !== "member") {
-    <mat-form-field appearance="outline" data-cy="team-member-select">
-      <mat-label i18n>Add Member</mat-label>
-      <mat-select (selectionChange)="addTeamMember()" [formControl]="member">
-        @if ((filteredAddTeamMembers()).length) { @for ( orgMember of
-        filteredAddTeamMembers(); track orgMember ) {
-        <mat-option [value]="orgMember">
-          {{ orgMember.email }}
-        </mat-option>
-        } } @else {
-        <mat-option disabled i18n>No members</mat-option>
+      <mat-form-field appearance="outline" data-cy="team-member-select">
+        <mat-label i18n>Add Member</mat-label>
+        <mat-select (selectionChange)="addTeamMember()" [formControl]="member">
+          @if (filteredAddTeamMembers().length) {
+            @for (orgMember of filteredAddTeamMembers(); track orgMember) {
+              <mat-option [value]="orgMember">
+                {{ orgMember.email }}
+              </mat-option>
+            }
+          } @else {
+            <mat-option disabled i18n>No members</mat-option>
+          }
+        </mat-select>
+        @if (addMemberError) {
+          <mat-error>{{ addMemberError }}</mat-error>
         }
-      </mat-select>
-      @if (addMemberError) {
-      <mat-error>{{ addMemberError }}</mat-error>
-      }
-    </mat-form-field>
+      </mat-form-field>
     }
   </mat-card-header>
   <mat-divider></mat-divider>
   <mat-card-content>
     @if ((teamMembers$ | async)?.length === 0) {
-    <p class="center-text" i18n>This team doesn't have any members</p>
+      <p class="center-text" i18n>This team doesn't have any members</p>
     } @else {
-    <ul data-test-list class="member-list">
-      @if (removeMemberError) {
-      <mat-error class="center-text">{{ removeMemberError }}</mat-error>
-      } @for (teamMember of teamMembers$ | async; track teamMember) {
-      <li class="member-list-item">
-        <a
-          mat-line
-          [routerLink]="['../', 'members', teamMember.id]"
-          [relativeTo]="route.parent?.parent"
-          >{{ teamMember.email }}</a
-        >
-        <gt-loading-button
-          buttonText="Remove"
-          buttonStyle="stroked"
-          [loading]="selectedTeamMember === teamMember.id"
-          (buttonClick)="removeTeamMember(teamMember.id, teamMember.email)"
-          id="remove-team-member"
-        ></gt-loading-button>
-      </li>
-      }
-    </ul>
+      <ul data-test-list class="member-list">
+        @if (removeMemberError) {
+          <mat-error class="center-text">{{ removeMemberError }}</mat-error>
+        }
+        @for (teamMember of teamMembers$ | async; track teamMember) {
+          <li class="member-list-item">
+            <a
+              mat-line
+              [routerLink]="['../', 'members', teamMember.id]"
+              [relativeTo]="route.parent?.parent"
+              >{{ teamMember.email }}</a
+            >
+            <gt-loading-button
+              buttonText="Remove"
+              buttonStyle="stroked"
+              [loading]="selectedTeamMember === teamMember.id"
+              (buttonClick)="removeTeamMember(teamMember.id, teamMember.email)"
+              id="remove-team-member"
+            ></gt-loading-button>
+          </li>
+        }
+      </ul>
     }
   </mat-card-content>
 </mat-card>

@@ -3,7 +3,7 @@ import {
   ChangeDetectionStrategy,
   Input,
   input,
-  output
+  output,
 } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";

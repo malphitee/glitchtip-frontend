@@ -25,10 +25,12 @@ import { MatSelectChange, MatSelectModule } from "@angular/material/select";
 export class DataFilterBarComponent {
   @Input() dateForm?: FormGroup;
   @Input() sortForm?: FormGroup;
-  readonly sorts = input<{
-    param: string;
-    display: string;
-}[]>();
+  readonly sorts = input<
+    {
+      param: string;
+      display: string;
+    }[]
+  >();
   @Input() environmentForm?: FormGroup;
   @Input() searchForm?: FormGroup;
   readonly organizationEnvironments = input<string[]>([]);

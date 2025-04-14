@@ -81,7 +81,7 @@ export class SetNewPasswordComponent extends StatefulComponent<
       mapFormErrors(fieldErrors, this.form),
     );
     super(service);
-  
+
     this.service = service;
   }
 

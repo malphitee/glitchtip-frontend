@@ -68,24 +68,24 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
 
   readonly issue$ = this.getState$.pipe(map((state) => state.issue));
   readonly issueInitialLoadComplete$ = this.getState$.pipe(
-    map((state) => state.issueInitialLoadComplete)
+    map((state) => state.issueInitialLoadComplete),
   );
   readonly event$ = this.getState$.pipe(map((state) => state.event));
   readonly tags$ = this.getState$.pipe(
-    map((state) => state.tags && this.tagsWithPercent(state.tags))
+    map((state) => state.tags && this.tagsWithPercent(state.tags)),
   );
   readonly eventInitialLoadComplete$ = this.getState$.pipe(
-    map((state) => state.eventInitialLoadComplete)
+    map((state) => state.eventInitialLoadComplete),
   );
   readonly isReversed$ = this.getState$.pipe(map((state) => state.isReversed));
   readonly showShowMore$ = this.getState$.pipe(
-    map((state) => state.showShowMore)
+    map((state) => state.showShowMore),
   );
   readonly hasNextEvent$ = this.event$.pipe(
-    map((event) => event && event.nextEventID !== null)
+    map((event) => event && event.nextEventID !== null),
   );
   readonly hasPreviousEvent$ = this.event$.pipe(
-    map((event) => event && event.previousEventID !== null)
+    map((event) => event && event.previousEventID !== null),
   );
   readonly nextEventUrl$ = combineLatest([
     this.organization.activeOrganizationSlug$,
@@ -97,7 +97,7 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
         return this.eventUrl(orgSlug, issue, event.nextEventID);
       }
       return null;
-    })
+    }),
   );
   readonly previousEventUrl$ = combineLatest([
     this.organization.activeOrganizationSlug$,
@@ -109,33 +109,33 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
         return this.eventUrl(orgSlug, issue, event.previousEventID);
       }
       return null;
-    })
+    }),
   );
   readonly eventEntryException$ = combineLatest([
     this.event$,
     this.isReversed$,
   ]).pipe(
     map(([event, isReversed]) =>
-      event ? this.reverseFrames(event, isReversed) : undefined
-    )
+      event ? this.reverseFrames(event, isReversed) : undefined,
+    ),
   );
   readonly rawStacktraceValues$ = this.event$.pipe(
-    map((event) => (event ? this.rawStacktraceValues(event) : undefined))
+    map((event) => (event ? this.rawStacktraceValues(event) : undefined)),
   );
   readonly eventEntryRequest$ = this.event$.pipe(
-    map((event) => (event ? this.entryRequestData(event) : undefined))
+    map((event) => (event ? this.entryRequestData(event) : undefined)),
   );
   readonly eventEntryCSP$ = this.event$.pipe(
-    map((event) => (event ? this.eventEntryCSP(event) : undefined))
+    map((event) => (event ? this.eventEntryCSP(event) : undefined)),
   );
   readonly eventEntryMessage$ = this.event$.pipe(
-    map((event) => (event ? this.eventEntryMessage(event) : undefined))
+    map((event) => (event ? this.eventEntryMessage(event) : undefined)),
   );
   readonly specialContexts$ = this.event$.pipe(
-    map((event) => (event ? this.specialContexts(event) : undefined))
+    map((event) => (event ? this.specialContexts(event) : undefined)),
   );
   readonly breadcrumbs$ = this.event$.pipe(
-    map((event) => (event ? this.eventEntryBreadcrumbs(event) : undefined))
+    map((event) => (event ? this.eventEntryBreadcrumbs(event) : undefined)),
   );
 
   constructor() {
@@ -151,7 +151,7 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
           this.clearIssue();
         }
         return EMPTY;
-      })
+      }),
     );
   }
 
@@ -189,7 +189,7 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
     return this.issuesAPIService.retrieveTags(id.toString(), query).pipe(
       tap((resp) => {
         this.setTags(resp);
-      })
+      }),
     );
   }
 
@@ -216,11 +216,11 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
               lastValueFrom(
                 this.issuesAPIService
                   .update(status, slug, issue.id)
-                  .pipe(tap((resp) => this.setIssueStatus(resp.status)))
+                  .pipe(tap((resp) => this.setIssueStatus(resp.status))),
               );
             }
-          })
-        )
+          }),
+        ),
       );
     }
   }
@@ -240,10 +240,10 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
         }),
         catchError((_) => {
           this.snackBar.open(
-            `There was an error deleting this issue. Please try again.`
+            `There was an error deleting this issue. Please try again.`,
           );
           return EMPTY;
-        })
+        }),
       )
       .subscribe();
   }
@@ -266,7 +266,7 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
         });
         const sumOfPercents = tagWithPercent.reduce(
           (accum, item) => accum + item.percent,
-          0
+          0,
         );
         if (sumOfPercents < 100) {
           return {
@@ -302,7 +302,7 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
           this.clearEvent();
         }
         return EMPTY;
-      })
+      }),
     );
   }
 
@@ -316,7 +316,7 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
           this.clearEvent();
         }
         return EMPTY;
-      })
+      }),
     );
   }
 
@@ -398,7 +398,7 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
 
   /* Return the breadcrumbs entry type for an event */
   private eventEntryBreadcrumbs(
-    event: EventDetail
+    event: EventDetail,
   ): BreadcrumbValueData | undefined {
     const breadcrumbs = this.getBreadcrumbs(event);
     if (breadcrumbs) {
@@ -428,7 +428,7 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
   /* Reverse frame array, nested in the event object */
   private reverseFrames(
     event: EventDetail,
-    isReversed: boolean
+    isReversed: boolean,
   ): ExceptionValueData | undefined {
     const eventException = this.getExceptionEntryData(event);
 
@@ -482,7 +482,7 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
 
   checkContextName(
     contextsObject: { [key: string]: Json },
-    defaultUnknown: string
+    defaultUnknown: string,
   ) {
     if (
       contextsObject.name !== "Other" &&
@@ -547,13 +547,13 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
             subtitle: contextsObject.version
               ? (contextsObject.version as string)
               : contextsObject.kernel_version
-              ? (contextsObject.kernel_version as string)
-              : "Unknown",
+                ? (contextsObject.kernel_version as string)
+                : "Unknown",
             key: contextsObject.version
               ? "Version"
               : contextsObject.kernel_version
-              ? "Kernel"
-              : "Version",
+                ? "Kernel"
+                : "Version",
           });
         }
         if (key === "device") {
@@ -569,13 +569,13 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
             subtitle: contextsObject.arch
               ? (contextsObject.arch as string)
               : contextsObject.model_id
-              ? (contextsObject.model_id as string)
-              : null,
+                ? (contextsObject.model_id as string)
+                : null,
             key: contextsObject.arch
               ? "Arch"
               : contextsObject.model_id
-              ? "Model"
-              : null,
+                ? "Model"
+                : null,
           });
         }
         if (key === "gpu") {
@@ -671,7 +671,7 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
   private eventUrl(
     orgSlug: string | null,
     issue: IssueDetail | null,
-    eventID: string
+    eventID: string,
   ) {
     if (orgSlug && issue) {
       return `/${orgSlug}/issues/${issue.id}/events/${eventID}`;

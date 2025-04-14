@@ -15,7 +15,7 @@ export class APITokenService extends APIBaseService {
     const http = inject(HttpClient);
 
     super(http);
-  
+
     this.http = http;
   }
 

@@ -51,11 +51,11 @@ export class OrganizationComponent implements OnInit {
             // this.organizationsService.retrieveOrganizations().toPromise();
             this.organizationsService.refreshActiveOrganization();
           }
-        })
+        }),
       )
       .toPromise();
     this.activeOrganizationDetail$.subscribe((data) =>
-      data ? this.form.patchValue({ name: data.name }) : undefined
+      data ? this.form.patchValue({ name: data.name }) : undefined,
     );
   }
 
@@ -71,20 +71,20 @@ export class OrganizationComponent implements OnInit {
         (org: Organization) => {
           this.updateLoading = false;
           this.snackBar.open(
-            `The name of your organization has been updated to ${org.name}`
+            `The name of your organization has been updated to ${org.name}`,
           );
         },
         (err) => {
           this.updateLoading = false;
           this.updateError = `${err.statusText}: ${err.status}`;
-        }
+        },
       );
   }
 
   removeOrganization(slug: string, name: string) {
     if (
       window.confirm(
-        `Are you sure you want to remove ${name}? You will permanently lose all projects and teams associated with it.`
+        `Are you sure you want to remove ${name}? You will permanently lose all projects and teams associated with it.`,
       )
     ) {
       this.deleteLoading = true;
@@ -92,7 +92,7 @@ export class OrganizationComponent implements OnInit {
         if (result.response.status === 204) {
           this.deleteLoading = false;
           this.snackBar.open(
-            `You have successfully deleted ${name} from your organizations`
+            `You have successfully deleted ${name} from your organizations`,
           );
         } else {
           this.deleteLoading = false;

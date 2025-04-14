@@ -1,4 +1,9 @@
-import { Component, ChangeDetectionStrategy, input, inject } from "@angular/core";
+import {
+  Component,
+  ChangeDetectionStrategy,
+  input,
+  inject,
+} from "@angular/core";
 import { isStacktrace } from "src/app/issues/utils";
 import { IssueDetailService } from "../../../issue-detail.service";
 import { AsyncPipe } from "@angular/common";

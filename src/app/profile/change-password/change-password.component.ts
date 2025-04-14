@@ -88,7 +88,7 @@ export class ChangePasswordComponent
     const service = inject(PasswordService);
 
     toObservable(service.fieldErrors).subscribe((fieldErrors) =>
-      mapFormErrors(fieldErrors, this.form)
+      mapFormErrors(fieldErrors, this.form),
     );
     super(service);
 
@@ -105,7 +105,7 @@ export class ChangePasswordComponent
         this.service
           .changePassword(
             this.form.value.current_password!,
-            this.form.value.new_password!
+            this.form.value.new_password!,
           )
           .pipe(
             tap(() => {
@@ -114,8 +114,8 @@ export class ChangePasswordComponent
               Object.keys(this.form.controls).forEach((key) => {
                 this.form.get(key)!.setErrors(null);
               });
-            })
-          )
+            }),
+          ),
       );
     }
   }

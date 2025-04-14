@@ -4,7 +4,7 @@ import { StatefulService } from "./signal-state.service";
 @Directive()
 export abstract class StatefulComponent<
   TState,
-  TService extends StatefulService<TState>
+  TService extends StatefulService<TState>,
 > implements OnDestroy
 {
   constructor(protected service: TService) {}

@@ -29,7 +29,7 @@ export class AcceptInviteService {
   private readonly state = new BehaviorSubject<AcceptState>(initialState);
   readonly acceptInfo$ = this.state.pipe(map((state) => state.acceptInfo));
   readonly orgSlug$ = this.acceptInfo$.pipe(
-    map((acceptInfo) => acceptInfo?.orgUser.organization.slug)
+    map((acceptInfo) => acceptInfo?.orgUser.organization.slug),
   );
   readonly alreadyInOrg$ = combineLatest([
     this.orgSlug$,
@@ -38,7 +38,7 @@ export class AcceptInviteService {
     map(([orgSlugToMatch, organizations]) => {
       if (orgSlugToMatch) {
         const match = organizations.find(
-          (organization) => organization.slug === orgSlugToMatch
+          (organization) => organization.slug === orgSlugToMatch,
         );
         if (match) {
           return true;
@@ -47,7 +47,7 @@ export class AcceptInviteService {
       } else {
         return false;
       }
-    })
+    }),
   );
   private readonly url = baseUrl + "/accept/";
 
@@ -68,7 +68,7 @@ export class AcceptInviteService {
           }
           this.router.navigate(["/"]);
           return EMPTY;
-        })
+        }),
       )
       .subscribe();
   }
@@ -77,9 +77,9 @@ export class AcceptInviteService {
     this.postAcceptInvite(memberId, token)
       .pipe(
         tap((response: AcceptAPIResponse) => {
-          this.organizationsService.reload()
+          this.organizationsService.reload();
           this.snackBar.open(
-            `You have been added to ${response.orgUser.organization.name}.`
+            `You have been added to ${response.orgUser.organization.name}.`,
           );
           this.router.navigate(["/"]);
         }),
@@ -104,7 +104,7 @@ export class AcceptInviteService {
             this.snackBar.open(error.error?.detail);
           }
           return EMPTY;
-        })
+        }),
       )
       .subscribe();
   }
@@ -118,7 +118,7 @@ export class AcceptInviteService {
       `${this.url}${memberId}/${token}/`,
       {
         acceptInvite: true,
-      }
+      },
     );
   }
 

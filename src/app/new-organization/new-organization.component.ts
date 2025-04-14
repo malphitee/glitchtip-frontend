@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, signal, inject } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  signal,
+  inject,
+} from "@angular/core";
 import {
   FormGroup,
   FormControl,
@@ -49,7 +54,7 @@ export class NewOrganizationsComponent {
   ]).pipe(
     map(([user, orgCount, enableOrgCreation]) => {
       return enableOrgCreation || user?.isSuperuser || orgCount === 0;
-    })
+    }),
   );
 
   contextLoaded$ = combineLatest([
@@ -59,7 +64,7 @@ export class NewOrganizationsComponent {
   ]).pipe(
     map(([settingsLoaded, orgsLoaded, user]) => {
       return settingsLoaded && orgsLoaded && !!user;
-    })
+    }),
   );
 
   loading = false;

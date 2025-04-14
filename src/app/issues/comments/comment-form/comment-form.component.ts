@@ -31,7 +31,7 @@ export class CommentFormComponent implements OnInit {
   readonly commentSubmitted = output<{
     text: string;
     id?: number;
-}>();
+  }>();
   readonly cancelUpdate = output<number>();
 
   commentForm = new FormGroup({

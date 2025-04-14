@@ -159,7 +159,7 @@ export function timedeltaToMS(value: string) {
 }
 
 export function normalizeProjectParams(
-  projects: string | string[] | undefined | null
+  projects: string | string[] | undefined | null,
 ) {
   if (Array.isArray(projects)) {
     return projects.map((id) => parseInt(id, 10));
@@ -229,7 +229,7 @@ export function getCSRFToken() {
 
 export function refreshInterval(
   initialDelaysInSeconds: number[],
-  repeatIntervalInSeconds: number
+  repeatIntervalInSeconds: number,
 ) {
   const toMilliseconds = (seconds: number) => seconds * 1000;
   const initialDelays = initialDelaysInSeconds.map(toMilliseconds);
@@ -237,8 +237,8 @@ export function refreshInterval(
 
   return concat(
     ...initialDelays.map((delay) =>
-      of(null).pipe(delayWhen(() => interval(delay)))
+      of(null).pipe(delayWhen(() => interval(delay))),
     ),
-    interval(repeatInterval)
+    interval(repeatInterval),
   ).pipe(repeat());
 }

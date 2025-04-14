@@ -28,7 +28,7 @@ function validateEmails(emails: string) {
       .map((email) =>
         Validators.email({
           value: email.replace(/\s/g, ""),
-        } as AbstractControl)
+        } as AbstractControl),
       )
       .find((email) => email !== null) === undefined
   );
@@ -100,7 +100,7 @@ export class NewMemberComponent implements OnInit, OnDestroy {
         this.organizationsService.inviteOrganizationMembers(
           email.replace(/\s/g, ""),
           teams!,
-          role! as any
+          role! as any,
         );
       });
     }

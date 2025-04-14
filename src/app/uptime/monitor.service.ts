@@ -60,7 +60,7 @@ export class MonitorService extends StatefulService<MonitorState> {
               monitor_id: request.monitorId,
             },
           },
-        }
+        },
       );
       return data;
     },
@@ -83,7 +83,7 @@ export class MonitorService extends StatefulService<MonitorState> {
               project_slug: request.projectSlug,
             },
           },
-        }
+        },
       );
       return data;
     },
@@ -94,10 +94,10 @@ export class MonitorService extends StatefulService<MonitorState> {
   deleteLoading = computed(() => this.state().deleteLoading);
   error = computed(() => this.state().error);
   uptimeAlertCount = computed(
-    () => this.monitorUptimeAlertsResource.value()?.length || 0
+    () => this.monitorUptimeAlertsResource.value()?.length || 0,
   );
   alertCountLoading = computed(() =>
-    this.monitorUptimeAlertsResource.isLoading()
+    this.monitorUptimeAlertsResource.isLoading(),
   );
   activeMonitor = computed(() => this.monitorResource.value());
 
@@ -105,7 +105,7 @@ export class MonitorService extends StatefulService<MonitorState> {
     const projects = this.organizationsService.activeOrganizationProjects();
     const monitor = this.activeMonitor();
     return projects?.find(
-      (project) => project.id === monitor?.projectID?.toString()
+      (project) => project.id === monitor?.projectID?.toString(),
     )?.slug;
   });
 
@@ -223,7 +223,7 @@ export class MonitorService extends StatefulService<MonitorState> {
               monitor_id: monitorId,
             },
           },
-        }
+        },
       )
       .then((result) => {
         if (result.response.ok) {
@@ -233,7 +233,7 @@ export class MonitorService extends StatefulService<MonitorState> {
         } else {
           this.setDeleteMonitorError();
           this.snackBar.open(
-            `There was an error deleting this issue. Please try again.`
+            `There was an error deleting this issue. Please try again.`,
           );
         }
       });
@@ -269,7 +269,7 @@ export class MonitorService extends StatefulService<MonitorState> {
           name: input[0].isUp ? "Up" : "Down",
           series: [],
         },
-      ] as ResponseTimeSeries[]
+      ] as ResponseTimeSeries[],
     );
   }
 
@@ -322,7 +322,7 @@ export class MonitorService extends StatefulService<MonitorState> {
   }
 
   clearState() {
-    super.clearState(); 
+    super.clearState();
     this.monitorId.set(null);
     this.monitorResource.set(undefined);
   }

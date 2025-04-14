@@ -1,4 +1,9 @@
-import { Component, ChangeDetectionStrategy, OnDestroy, inject } from "@angular/core";
+import {
+  Component,
+  ChangeDetectionStrategy,
+  OnDestroy,
+  inject,
+} from "@angular/core";
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { map } from "rxjs/operators";
 import { combineLatest } from "rxjs";

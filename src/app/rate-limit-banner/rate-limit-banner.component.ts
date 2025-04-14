@@ -24,7 +24,7 @@ export class RateLimitBannerComponent {
   private organizationsService = inject(OrganizationsService);
 
   eventThrottleRate$ = this.organizationsService.activeOrganization$.pipe(
-    map((activeOrganization) => activeOrganization?.eventThrottleRate)
+    map((activeOrganization) => activeOrganization?.eventThrottleRate),
   );
   activeOrgSlug$ = this.organizationsService.activeOrganizationSlug$;
   bannerVisible = true;

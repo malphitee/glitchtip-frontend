@@ -1,4 +1,9 @@
-import { Component, OnInit, ChangeDetectionStrategy, inject } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  ChangeDetectionStrategy,
+  inject,
+} from "@angular/core";
 import { NotificationsService } from "./notifications.service";
 import { NotificationStatus } from "./notifications.interface";
 import { RouterLink } from "@angular/router";

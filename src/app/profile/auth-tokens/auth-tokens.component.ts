@@ -37,7 +37,7 @@ export class AuthTokensComponent
     const service = inject(AuthTokensService);
 
     super(service);
-  
+
     this.service = service;
   }
 

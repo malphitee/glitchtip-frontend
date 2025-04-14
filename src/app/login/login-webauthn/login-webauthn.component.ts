@@ -1,4 +1,9 @@
-import { Component, ChangeDetectionStrategy, OnInit, inject } from "@angular/core";
+import {
+  Component,
+  ChangeDetectionStrategy,
+  OnInit,
+  inject,
+} from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatButtonModule } from "@angular/material/button";

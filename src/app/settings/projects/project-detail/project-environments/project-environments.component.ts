@@ -1,4 +1,9 @@
-import { Component, ChangeDetectionStrategy, OnDestroy, inject } from "@angular/core";
+import {
+  Component,
+  ChangeDetectionStrategy,
+  OnDestroy,
+  inject,
+} from "@angular/core";
 import { ProjectEnvironment } from "src/app/api/organizations/organizations.interface";
 import { ProjectEnvironmentsService } from "./project-environments.service";
 import { LoadingButtonComponent } from "../../../../shared/loading-button/loading-button.component";

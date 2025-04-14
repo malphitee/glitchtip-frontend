@@ -9,7 +9,7 @@ import {
 import { AuthService } from "./auth.service";
 
 export const alreadyLoggedInGuard: CanActivateFn = (
-  next: ActivatedRouteSnapshot
+  next: ActivatedRouteSnapshot,
 ): boolean | UrlTree => {
   const authService = inject(AuthService);
   if (authService.loggedInGuard()) {
@@ -20,7 +20,7 @@ export const alreadyLoggedInGuard: CanActivateFn = (
 
 export const loggedInGuard: CanActivateFn = (
   next: ActivatedRouteSnapshot,
-  state: RouterStateSnapshot
+  state: RouterStateSnapshot,
 ): boolean | UrlTree => {
   const authService = inject(AuthService);
   if (authService.loggedInGuard()) {
@@ -29,6 +29,6 @@ export const loggedInGuard: CanActivateFn = (
   return createUrlTreeFromSnapshot(
     next,
     ["/", "login"],
-    state.url !== "/" ? { next: state.url } : {}
+    state.url !== "/" ? { next: state.url } : {},
   );
 };

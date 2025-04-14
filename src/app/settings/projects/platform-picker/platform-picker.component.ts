@@ -5,7 +5,7 @@ import {
   ViewChild,
   ElementRef,
   HostListener,
-  input
+  input,
 } from "@angular/core";
 import {
   MatExpansionPanel,

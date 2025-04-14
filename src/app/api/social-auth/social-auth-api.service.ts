@@ -7,7 +7,6 @@ import { Injectable, inject } from "@angular/core";
 export class SocialAuthAPIService {
   protected http = inject(HttpClient);
 
-
   disconnect(account: string, provider: string) {
     return this.http.request(
       "delete",
