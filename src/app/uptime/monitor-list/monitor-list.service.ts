@@ -42,12 +42,12 @@ export class MonitorListService extends PaginationStatefulService<MonitorListSta
         if (result.data) {
           this.setStateAndPagination(
             { monitors: result.data as any },
-            result.response as any
+            result.response as any,
           );
         } else {
           this.setGetMonitorsError();
           this.snackBar.open(
-            "There was an error retrieving your uptime monitors. Please try again."
+            "There was an error retrieving your uptime monitors. Please try again.",
           );
         }
       });

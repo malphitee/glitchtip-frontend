@@ -1,4 +1,12 @@
-import { Component, ChangeDetectionStrategy, ViewChild, OnInit, HostListener, ElementRef, inject } from "@angular/core";
+import {
+  Component,
+  ChangeDetectionStrategy,
+  ViewChild,
+  OnInit,
+  HostListener,
+  ElementRef,
+  inject,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { MatDatepickerModule } from "@angular/material/datepicker";
@@ -57,7 +65,7 @@ export class ProjectFilterBarComponent implements OnInit {
       const normalizedParams = normalizeProjectParams(params.project);
       this.selectedProjectIds.next(normalizedParams);
       return normalizedParams;
-    })
+    }),
   );
 
   appliedProjectIds?: number[];
@@ -80,11 +88,11 @@ export class ProjectFilterBarComponent implements OnInit {
           return ids
             .map(
               (id) =>
-                projects?.find((project) => id.toString() === project.id)?.name
+                projects?.find((project) => id.toString() === project.id)?.name,
             )
             .join(", ");
       }
-    })
+    }),
   );
 
   selectedAndAppliedIdsAreEqual$ = combineLatest([
@@ -93,8 +101,8 @@ export class ProjectFilterBarComponent implements OnInit {
   ]).pipe(
     map(
       ([selected, applied]) =>
-        selected.sort().join(",") === applied.sort().join(",")
-    )
+        selected.sort().join(",") === applied.sort().join(","),
+    ),
   );
 
   //** Yikes delete this please */
@@ -113,14 +121,14 @@ export class ProjectFilterBarComponent implements OnInit {
     map(([projects, value]) =>
       projects
         ? projects.filter((project) =>
-            project.name.toLowerCase().includes(value.toLowerCase())
+            project.name.toLowerCase().includes(value.toLowerCase()),
           )
-        : null
-    )
+        : null,
+    ),
   );
 
   someProjectsAreSelected$ = this.appliedProjectIds$.pipe(
-    map((ids) => ids.length !== 0)
+    map((ids) => ids.length !== 0),
   );
 
   singleProjectSlug$ = combineLatest([
@@ -130,7 +138,7 @@ export class ProjectFilterBarComponent implements OnInit {
     map(([projects, ids]) => {
       if (ids.length === 1 && projects) {
         const matchedProject = projects.find(
-          (project) => project.id === ids[0].toString()
+          (project) => project.id === ids[0].toString(),
         );
         if (matchedProject) {
           return matchedProject.slug;
@@ -138,7 +146,7 @@ export class ProjectFilterBarComponent implements OnInit {
         return false;
       }
       return false;
-    })
+    }),
   );
 
   @ViewChild("expansionPanel", { static: false })
@@ -148,7 +156,7 @@ export class ProjectFilterBarComponent implements OnInit {
   filterInput?: ElementRef<HTMLInputElement>;
 
   @HostListener("document:keydown", ["$event"]) onKeydownHandler(
-    event: KeyboardEvent
+    event: KeyboardEvent,
   ) {
     if (this.expansionPanel?.expanded) {
       if (event.key === "Escape") {
@@ -172,14 +180,14 @@ export class ProjectFilterBarComponent implements OnInit {
 
   moveDown() {
     const projectButtons = Array.from(
-      document.querySelectorAll(".picker-button")
+      document.querySelectorAll(".picker-button"),
     ) as HTMLElement[];
     // If the text box is focused, go to the first item
     if (this.filterInput?.nativeElement.id === document.activeElement?.id) {
       projectButtons[0]?.focus();
     } else {
       const indexOfActive = projectButtons.findIndex(
-        (button) => button.id === document.activeElement?.id
+        (button) => button.id === document.activeElement?.id,
       );
       if (indexOfActive <= projectButtons.length - 2) {
         // If we're in the list items, go to the next list item
@@ -193,10 +201,10 @@ export class ProjectFilterBarComponent implements OnInit {
 
   moveUp() {
     const projectButtons = Array.from(
-      document.querySelectorAll(".picker-button")
+      document.querySelectorAll(".picker-button"),
     ) as HTMLElement[];
     const indexOfActive = projectButtons.findIndex(
-      (button) => button.id === document.activeElement?.id
+      (button) => button.id === document.activeElement?.id,
     );
     if (indexOfActive > 0) {
       // If we're in the list items, go to the previous list item
@@ -250,7 +258,7 @@ export class ProjectFilterBarComponent implements OnInit {
 
   closePanel() {
     this.navigate(
-      this.selectedProjectIds.getValue().map((id) => id.toString())
+      this.selectedProjectIds.getValue().map((id) => id.toString()),
     );
     this.expansionPanel?.close();
   }
@@ -264,7 +272,7 @@ export class ProjectFilterBarComponent implements OnInit {
       .pipe(
         map((params) => params["org-slug"]),
         filter((orgSlug: string) => orgSlug !== undefined),
-        tap(() => this.expansionPanel?.close())
+        tap(() => this.expansionPanel?.close()),
       )
       .subscribe();
   }

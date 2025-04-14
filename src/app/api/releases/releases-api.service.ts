@@ -15,7 +15,7 @@ export class ReleasesAPIService extends APIBaseService {
     const http = inject(HttpClient);
 
     super(http);
-  
+
     this.http = http;
   }
 

@@ -1,4 +1,9 @@
-import { Component, ChangeDetectionStrategy, OnDestroy, inject } from "@angular/core";
+import {
+  Component,
+  ChangeDetectionStrategy,
+  OnDestroy,
+  inject,
+} from "@angular/core";
 import { ActivatedRoute, RouterModule } from "@angular/router";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";

@@ -1,4 +1,9 @@
-import { Component, OnInit, ChangeDetectionStrategy, inject } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  ChangeDetectionStrategy,
+  inject,
+} from "@angular/core";
 import { IssueDetailService } from "../../issue-detail.service";
 import { MatIconModule } from "@angular/material/icon";
 import { AsyncPipe } from "@angular/common";

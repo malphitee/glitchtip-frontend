@@ -58,7 +58,7 @@ export class OrganizationFrameComponent implements OnDestroy, OnInit {
               ["../", activeOrganizationSlug, this.firstChildRoute],
               {
                 relativeTo: this.route,
-              }
+              },
             );
           }
         }
@@ -92,7 +92,7 @@ export class OrganizationFrameComponent implements OnDestroy, OnInit {
         .pipe(filter((event) => event instanceof NavigationEnd))
         .subscribe(() => {
           this.extractFirstChildRoute();
-        })
+        }),
     );
   }
 

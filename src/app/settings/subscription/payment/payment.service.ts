@@ -32,7 +32,7 @@ export class PaymentService extends StatefulService<PaymentState> {
 
   stripePublicKey = this.settingsService.stripePublicKey;
   readonly subscriptionCreationLoadingId = computed(
-    () => this.state().subscriptionCreationLoadingId
+    () => this.state().subscriptionCreationLoadingId,
   );
 
   productsResource = resource({
@@ -56,8 +56,8 @@ export class PaymentService extends StatefulService<PaymentState> {
             : product.name,
         }))
         .sort(
-          (a, b) => (a.defaultPrice.price || 0) - (b.defaultPrice.price || 0)
-        ) || []
+          (a, b) => (a.defaultPrice.price || 0) - (b.defaultPrice.price || 0),
+        ) || [],
   );
 
   constructor() {
@@ -75,29 +75,29 @@ export class PaymentService extends StatefulService<PaymentState> {
 
   private async createFreeSubscription(
     organization: Organization,
-    priceId: string
+    priceId: string,
   ) {
     const { data, error, response } = await client.POST(
       "/api/0/stripe/subscriptions/",
       {
         body: { organization: organization.id, price: priceId },
-      }
+      },
     );
     if (response.status === 400) {
       this.setSubscriptionCreationError(
-        "This organization already has a subscription. Please reload page for latest details."
+        "This organization already has a subscription. Please reload page for latest details.",
       );
       return null;
     }
     if (response.status === 404) {
       this.setSubscriptionCreationError(
-        "Only organization owners can choose subscriptions. Make sure you are authorized to perform this action."
+        "Only organization owners can choose subscriptions. Make sure you are authorized to perform this action.",
       );
       return null;
     }
     if (error) {
       this.setSubscriptionCreationError(
-        "There was an error processing your request. Please try again"
+        "There was an error processing your request. Please try again",
       );
       throw error;
     }
@@ -107,7 +107,7 @@ export class PaymentService extends StatefulService<PaymentState> {
 
   private async redirectToSubscriptionCheckout(
     orgSlug: string,
-    priceId: string
+    priceId: string,
   ) {
     const stripePublicKey = this.stripePublicKey();
     const { data, error, response } = await client.POST(
@@ -115,23 +115,23 @@ export class PaymentService extends StatefulService<PaymentState> {
       {
         params: { path: { organization_slug: orgSlug } },
         body: { price: priceId },
-      }
+      },
     );
     if (response.status === 404) {
       this.setSubscriptionCreationError(
-        "Only organization owners can choose subscriptions. Make sure you are authorized to perform this action."
+        "Only organization owners can choose subscriptions. Make sure you are authorized to perform this action.",
       );
       return null;
     }
     if (error) {
       this.setSubscriptionCreationError(
-        "There was an error processing your request. Please try again"
+        "There was an error processing your request. Please try again",
       );
       throw error;
     }
     if (stripePublicKey) {
       return loadStripe(stripePublicKey).then((stripe) =>
-        stripe?.redirectToCheckout({ sessionId: data.id })
+        stripe?.redirectToCheckout({ sessionId: data.id }),
       );
     }
     return data;

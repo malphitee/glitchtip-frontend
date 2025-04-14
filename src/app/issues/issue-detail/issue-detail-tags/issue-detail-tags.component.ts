@@ -1,4 +1,9 @@
-import { Component, ChangeDetectionStrategy, OnInit, inject } from "@angular/core";
+import {
+  Component,
+  ChangeDetectionStrategy,
+  OnInit,
+  inject,
+} from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { IssueDetailService } from "../issue-detail.service";
 import { exhaustMap, map } from "rxjs/operators";

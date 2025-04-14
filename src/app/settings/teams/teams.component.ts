@@ -38,10 +38,10 @@ export class TeamsComponent implements OnInit {
 
   activeOrganization$ = this.organizationsService.activeOrganization$;
   yourTeams$ = this.activeOrganization$.pipe(
-    map((orgDetails) => orgDetails?.teams?.filter((team) => team.isMember))
+    map((orgDetails) => orgDetails?.teams?.filter((team) => team.isMember)),
   );
   otherTeams$ = this.activeOrganization$.pipe(
-    map((orgDetails) => orgDetails?.teams?.filter((team) => !team.isMember))
+    map((orgDetails) => orgDetails?.teams?.filter((team) => !team.isMember)),
   );
   errors = this.organizationDetailService.errors;
   loading = this.organizationDetailService.loading;
@@ -57,7 +57,7 @@ export class TeamsComponent implements OnInit {
       .pipe(
         map((params) => params["org-slug"] as string),
         filter((slug) => !!slug),
-        tap((slug) => (this.orgSlug = slug))
+        tap((slug) => (this.orgSlug = slug)),
       )
       .subscribe((slug) => {
         this.teamsService.retrieveTeamsByOrg(slug).toPromise();

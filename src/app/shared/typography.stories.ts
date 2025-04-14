@@ -138,7 +138,7 @@ const iconNames = [
   "warning",
 ];
 const iconURL = `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD&#64;20..48,100..700,0..1,-50..200&icon_names=${iconNames.join(
-  ","
+  ",",
 )}`;
 export const Icons = () => ({
   template: `
@@ -155,7 +155,7 @@ export const Icons = () => ({
           <mat-icon>${icon}</mat-icon>
           <span class="icon-name">${icon}</span>
         </div>
-      `
+      `,
         )
         .join("")}
     </div>

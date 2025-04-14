@@ -62,7 +62,7 @@ export class LoginTotpComponent
     const loginService = inject(LoginService);
 
     toObservable(loginService.fieldErrors).subscribe((fieldErrors) =>
-      mapFormErrors(fieldErrors, this.form)
+      mapFormErrors(fieldErrors, this.form),
     );
     super(loginService);
     this.hasWebAuthn = loginService.hasWebAuthn;
@@ -92,7 +92,7 @@ export class LoginTotpComponent
       lastValueFrom(
         this.loginService
           .totpAuthenticate(code)
-          .pipe(tap(() => this.router.navigate(["/"])))
+          .pipe(tap(() => this.router.navigate(["/"]))),
       );
     }
   }

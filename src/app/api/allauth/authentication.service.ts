@@ -36,7 +36,6 @@ function postForm(action: string, data: JsonObject) {
 export class AuthenticationService {
   private http = inject(HttpClient);
 
-
   getAuthenticationStatus() {
     return this.http.get<AllAuthSessionResponse>(baseUrl + "/session");
   }
@@ -55,7 +54,7 @@ export class AuthenticationService {
   mfaAuthenticate(code: string) {
     return this.http.post<AllAuthSessionResponse>(
       baseUrl + "/2fa/authenticate",
-      { code }
+      { code },
     );
   }
 
@@ -73,7 +72,7 @@ export class AuthenticationService {
         headers: {
           "X-Email-Verification-Key": key,
         },
-      }
+      },
     );
   }
 
@@ -97,7 +96,7 @@ export class AuthenticationService {
 
   resetPassword(
     key: string,
-    password: string
+    password: string,
   ): Observable<AllAuthSessionResponse> {
     return this.http
       .post<AllAuthSessionResponse>(baseUrl + "/password/reset", {
@@ -111,14 +110,14 @@ export class AuthenticationService {
             return of(error.error);
           }
           return throwError(() => error);
-        })
+        }),
       );
   }
 
   providerRedirect(
     provider: string,
     callbackUrl = "/",
-    process: "login" | "connect" = "login"
+    process: "login" | "connect" = "login",
   ) {
     postForm(baseUrl + "/provider/redirect", {
       provider,
@@ -130,14 +129,14 @@ export class AuthenticationService {
 
   getWebAuthnCredentialRequest() {
     return this.http.get<GetWebAuthnCredentialRequestResponse>(
-      baseUrl + "/webauthn/authenticate"
+      baseUrl + "/webauthn/authenticate",
     );
   }
 
   perform2FAWebAuthn(credential: AuthenticationPublicKeyCredential) {
     return this.http.post<AllAuthSessionResponse>(
       baseUrl + "/webauthn/authenticate",
-      { credential }
+      { credential },
     );
   }
 }

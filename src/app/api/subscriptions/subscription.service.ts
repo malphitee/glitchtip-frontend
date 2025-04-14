@@ -55,10 +55,10 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
   subscriptionLoading = computed(
     () =>
       this.subscriptionResource.isLoading() ||
-      this.state().subscriptionRefreshing
+      this.state().subscriptionRefreshing,
   );
   subscriptionRefreshTimeout = computed(
-    () => this.state().subscriptionRefreshTimeout
+    () => this.state().subscriptionRefreshTimeout,
   );
 
   eventCountResource = resource({
@@ -76,7 +76,7 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
           params: {
             path: { organization_slug: request.orgSlug },
           },
-        }
+        },
       );
       if (error) {
         throw error;
@@ -99,7 +99,7 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
 
   billingPortalLoading = computed(() => this.state().billingPortalLoading);
   billingPortalLoadingError = computed(
-    () => this.state().billingPortalLoadingError
+    () => this.state().billingPortalLoadingError,
   );
   fromStripe = computed(() => this.state().fromStripe);
   totalEventsAllowed = computed(() => {
@@ -147,11 +147,11 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
         params: {
           path: { organization_slug: orgSlug },
         },
-      }
+      },
     );
     if (error) {
       this.setBillingPortalLoadingError(
-        "Something went wrong. Only organization owners can manage subscription settings."
+        "Something went wrong. Only organization owners can manage subscription settings.",
       );
     }
     if (data) {
@@ -185,7 +185,7 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
         params: {
           path: { organization_slug: orgSlug },
         },
-      }
+      },
     );
     if (error) {
       throw error;

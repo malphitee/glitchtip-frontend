@@ -88,7 +88,7 @@ export class NewProjectComponent implements OnInit {
       .pipe(
         map((params) => params["org-slug"] as string),
         filter((slug) => !!slug),
-        tap((slug) => (this.orgSlug = slug))
+        tap((slug) => (this.orgSlug = slug)),
       )
       .subscribe((slug) => {
         this.teamsService.retrieveTeamsByOrg(slug).toPromise();
@@ -114,7 +114,7 @@ export class NewProjectComponent implements OnInit {
             platform: this.form.value.platform ?? "",
           },
           this.form.value.team!,
-          this.orgSlug
+          this.orgSlug,
         )
         .pipe(
           tap((project) => {
@@ -125,14 +125,14 @@ export class NewProjectComponent implements OnInit {
               [this.orgService.activeOrganizationSlug(), "issues"],
               {
                 queryParams: { project: project.id },
-              }
+              },
             );
           }),
           catchError((err) => {
             this.loading = false;
             this.error = `${err.statusText}: ${err.status}`;
             return EMPTY;
-          })
+          }),
         )
         .toPromise();
     }

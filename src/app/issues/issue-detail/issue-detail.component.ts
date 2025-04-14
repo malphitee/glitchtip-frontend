@@ -1,4 +1,9 @@
-import { Component, OnInit, ChangeDetectionStrategy, inject } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  ChangeDetectionStrategy,
+  inject,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormControl, FormGroup } from "@angular/forms";
 import { ActivatedRoute, RouterModule } from "@angular/router";
@@ -62,7 +67,7 @@ export class IssueDetailComponent implements OnInit {
         default:
           return [metadata.title!, null];
       }
-    })
+    }),
   );
   issueSubtitle$ = this.issue$.pipe(
     map((issue) => {
@@ -82,14 +87,14 @@ export class IssueDetailComponent implements OnInit {
         default:
           return issue.culprit;
       }
-    })
+    }),
   );
   initialLoadComplete$ = this.issueService.issueInitialLoadComplete$;
   form = new FormGroup({
     assignee: new FormControl(""),
   });
   issueIdParam$ = this.route.paramMap.pipe(
-    map((params) => params.get("issue-id"))
+    map((params) => params.get("issue-id")),
   );
   organization$ = this.organizationsService.activeOrganization$;
   participantCountPluralMapping: { [k: string]: string } = {
@@ -107,7 +112,7 @@ export class IssueDetailComponent implements OnInit {
             return this.issueService.retrieveIssue(+issueId);
           }
           return EMPTY;
-        })
+        }),
       )
       .subscribe();
   }
@@ -131,12 +136,12 @@ export class IssueDetailComponent implements OnInit {
           if (
             id &&
             window.confirm(
-              `Are you sure you want delete this issue? You will permanently lose this issue and all associated events.`
+              `Are you sure you want delete this issue? You will permanently lose this issue and all associated events.`,
             )
           ) {
             this.issueService.deleteIssue(id.toString());
           }
-        })
+        }),
       )
       .subscribe();
   }

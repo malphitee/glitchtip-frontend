@@ -9,7 +9,6 @@ import { ProjectEnvironment } from "../organizations/organizations.interface";
 export class ProjectEnvironmentsAPIService {
   protected http = inject(HttpClient);
 
-
   list(organizationSlug: string, projectSlug: string) {
     return this.http.get<ProjectEnvironment[]>(
       this.projectEnvironmentsURL(organizationSlug, projectSlug) +

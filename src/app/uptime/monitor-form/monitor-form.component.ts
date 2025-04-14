@@ -35,7 +35,7 @@ const defaultInterval = 60;
 
 // returns a pattern error to simplify error checking in template
 export function portUrlValidator(
-  control: AbstractControl<string>
+  control: AbstractControl<string>,
 ): ValidationErrors | null {
   if (control.value.startsWith("https:")) {
     return { pattern: true };
@@ -145,7 +145,7 @@ export class MonitorFormComponent implements OnInit {
     this.intervalPerMonth$ =
       this.monitorForm.controls.interval.valueChanges.pipe(
         startWith(this.monitorSettings()?.interval ?? defaultInterval),
-        map((interval) => Math.floor(2592000 / interval))
+        map((interval) => Math.floor(2592000 / interval)),
       );
 
     const monitorSettings = this.monitorSettings();
@@ -156,7 +156,7 @@ export class MonitorFormComponent implements OnInit {
       this.formExpectedStatus.patchValue(
         monitorSettings.expectedStatus
           ? monitorSettings.expectedStatus
-          : defaultExpectedStatus
+          : defaultExpectedStatus,
       );
       this.formExpectedBody.patchValue(monitorSettings.expectedBody!);
       this.formInterval.patchValue(monitorSettings.interval);

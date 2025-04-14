@@ -21,7 +21,7 @@ export class OrganizationAPIService extends APIBaseService {
     const http = inject(HttpClient);
 
     super(http);
-  
+
     this.http = http;
   }
 
@@ -36,7 +36,7 @@ export class OrganizationAPIService extends APIBaseService {
           project.id = normalizeID(project.id);
         });
         return orgDetail;
-      })
+      }),
     );
   }
 

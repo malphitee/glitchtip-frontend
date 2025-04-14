@@ -24,7 +24,6 @@ interface RecoveryCodes {
 export class AccountService {
   private http = inject(HttpClient);
 
-
   changePassword(current_password: string, new_password: string) {
     return this.http.post<AllAuthSessionResponse>(
       baseUrl + "/password/change",

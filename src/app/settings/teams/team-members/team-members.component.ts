@@ -59,7 +59,7 @@ export class TeamMembersComponent implements OnInit {
           this.teamSlug = teamSlug;
           this.orgSlug = orgSlug;
           return { orgSlug, teamSlug };
-        })
+        }),
       )
       .subscribe(({ orgSlug, teamSlug }) => {
         if (orgSlug && teamSlug) {
@@ -84,7 +84,7 @@ export class TeamMembersComponent implements OnInit {
         (err) => {
           this.loading = false;
           this.addMemberError = `${err.statusText}: ${err.status}`;
-        }
+        },
       );
   }
 
@@ -96,13 +96,13 @@ export class TeamMembersComponent implements OnInit {
         (resp) => {
           this.selectedTeamMember = null;
           this.snackBar.open(
-            `${memberEmail} has been removed from #${resp.slug}`
+            `${memberEmail} has been removed from #${resp.slug}`,
           );
         },
         (err) => {
           this.selectedTeamMember = null;
           this.removeMemberError = `${err.statusText}: ${err.status}`;
-        }
+        },
       );
   }
 }

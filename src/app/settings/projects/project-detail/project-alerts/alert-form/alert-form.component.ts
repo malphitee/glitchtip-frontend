@@ -64,7 +64,7 @@ export class AlertFormComponent implements OnInit {
     timespanMinutes: number;
     quantity: number;
     uptime: boolean;
-}>();
+  }>();
   readonly newAlert = input<boolean | undefined>(false);
 
   timesI18nMapping = {

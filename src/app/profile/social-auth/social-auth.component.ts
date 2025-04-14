@@ -1,4 +1,9 @@
-import { Component, OnInit, ChangeDetectionStrategy, inject } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  ChangeDetectionStrategy,
+  inject,
+} from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { catchError, lastValueFrom, of, tap, throwError } from "rxjs";
 import { MatButtonModule } from "@angular/material/button";
@@ -54,7 +59,7 @@ export class SocialAuthComponent
     const service = inject(SocialAuthService);
 
     super(service);
-  
+
     this.service = service;
   }
 
@@ -69,7 +74,7 @@ export class SocialAuthComponent
     this.authenticationService.providerRedirect(
       this.account.value.provider,
       window.location.href,
-      "connect"
+      "connect",
     );
   }
 
@@ -79,7 +84,7 @@ export class SocialAuthComponent
         this.service.disconnect(id, provider, account).pipe(
           tap(() => {
             this.snackBar.open(
-              $localize`You have successfully disconnected your social auth account`
+              $localize`You have successfully disconnected your social auth account`,
             );
           }),
           catchError((err: AllAuthHttpErrorResponse) => {
@@ -89,8 +94,8 @@ export class SocialAuthComponent
             }
             this.snackBar.open(UNHANDLED_ERROR);
             return throwError(() => err);
-          })
-        )
+          }),
+        ),
       );
     } else {
       this.snackBar.open($localize`Your account has no password set up.`);

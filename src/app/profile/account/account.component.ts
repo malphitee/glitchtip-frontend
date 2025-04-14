@@ -35,7 +35,7 @@ export class AccountComponent implements OnDestroy {
   deleteUser() {
     if (
       window.confirm(
-        `Are you sure you want to delete your user account? You will permanently lose access to all organizations, projects, and teams associated with it.`
+        `Are you sure you want to delete your user account? You will permanently lose access to all organizations, projects, and teams associated with it.`,
       )
     ) {
       this.userService.deleteUser().then((result) => {

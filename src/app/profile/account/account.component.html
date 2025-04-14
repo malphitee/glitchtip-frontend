@@ -29,7 +29,7 @@
     <gt-loading-button
       data-test
       buttonText="Delete User Account"
-      [loading]="(userDeleteLoading()) === true"
+      [loading]="userDeleteLoading() === true"
       (buttonClick)="deleteUser()"
       id="delete-user"
     >

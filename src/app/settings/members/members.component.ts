@@ -49,7 +49,7 @@ export class MembersComponent implements OnInit {
     this.route.params
       .pipe(
         map((params) => params["org-slug"] as string),
-        filter((slug) => !!slug)
+        filter((slug) => !!slug),
       )
       .subscribe((slug) => {
         this.organizationDetailService.retrieveOrganizationMembers(slug);

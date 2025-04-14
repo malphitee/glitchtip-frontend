@@ -1,4 +1,9 @@
-import { Component, OnInit, ChangeDetectionStrategy, inject } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  ChangeDetectionStrategy,
+  inject,
+} from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { map } from "rxjs/operators";
 import { ConfirmEmailService } from "../../api/confirm-email/confirm-email.service";
@@ -12,7 +17,6 @@ import { ConfirmEmailService } from "../../api/confirm-email/confirm-email.servi
 export class ConfirmEmailComponent implements OnInit {
   private activatedRoute = inject(ActivatedRoute);
   private confirmEmailService = inject(ConfirmEmailService);
-
 
   ngOnInit(): void {
     this.activatedRoute.params

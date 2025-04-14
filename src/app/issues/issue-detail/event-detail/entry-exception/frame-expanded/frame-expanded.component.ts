@@ -1,5 +1,10 @@
 import { KeyValuePipe } from "@angular/common";
-import { Component, ChangeDetectionStrategy, Input, input } from "@angular/core";
+import {
+  Component,
+  ChangeDetectionStrategy,
+  Input,
+  input,
+} from "@angular/core";
 import { MatDividerModule } from "@angular/material/divider";
 import { JsonArrayOrObject, Json } from "src/app/interface-primitives";
 import { FrameContextTuple } from "src/app/issues/interfaces";

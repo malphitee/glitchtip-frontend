@@ -13,8 +13,6 @@ export class EntryDataComponent {
 
   get displayValue() {
     const value = this.value();
-    return typeof value === "object"
-      ? JSON.stringify(value)
-      : value;
+    return typeof value === "object" ? JSON.stringify(value) : value;
   }
 }

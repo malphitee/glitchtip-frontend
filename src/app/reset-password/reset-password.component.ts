@@ -57,7 +57,7 @@ export class ResetPasswordComponent extends StatefulComponent<
     const service = inject(ResetPasswordService);
 
     toObservable(service.fieldErrors).subscribe((fieldErrors) =>
-      mapFormErrors(fieldErrors, this.form)
+      mapFormErrors(fieldErrors, this.form),
     );
     super(service);
 

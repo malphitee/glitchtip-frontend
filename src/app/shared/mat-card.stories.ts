@@ -12,7 +12,7 @@ export default {
 };
 
 export const Card = () => ({
-    template: `
+  template: `
     <div class=gallery>
         <mat-card>
             <mat-card-header>
@@ -31,4 +31,4 @@ export const Card = () => ({
         </mat-card>
     </div>
     `,
-})
+});

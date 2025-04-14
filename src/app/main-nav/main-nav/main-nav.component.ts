@@ -65,19 +65,19 @@ export class MainNavComponent {
     () =>
       this.settingsService.initialLoad() &&
       this.organizationsInitialLoad() &&
-      !!this.userService.user()
+      !!this.userService.user(),
   );
 
   canCreateOrg = computed(
     () =>
       this.settingsService.enableOrganizationCreation() ||
       this.userService.user() ||
-      this.organizationsService.organizationsCount()
+      this.organizationsService.organizationsCount(),
   );
 
   logout() {
     firstValueFrom(
-      this.auth.logout().pipe(tap(() => (window.location.href = "/login")))
+      this.auth.logout().pipe(tap(() => (window.location.href = "/login"))),
     );
   }
 

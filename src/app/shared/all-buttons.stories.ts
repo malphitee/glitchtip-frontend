@@ -9,14 +9,20 @@ import { LoadingButtonComponent } from "src/app/shared/loading-button/loading-bu
 export default {
   decorators: [
     moduleMetadata({
-      imports: [MatButton, MatIconButton, MatIcon, LoadingButtonComponent, MatDivider],
+      imports: [
+        MatButton,
+        MatIconButton,
+        MatIcon,
+        LoadingButtonComponent,
+        MatDivider,
+      ],
     }),
   ],
   title: "Angular Material/Button",
 };
 
 export const AllButtons = () => ({
-    template: `
+  template: `
     <div>
     <p>
         Our buttons are mostly unmodified Angular Material components, though our loading button is a simple 
@@ -76,4 +82,4 @@ export const AllButtons = () => ({
         </div>
     </div>
     `,
-})
+});

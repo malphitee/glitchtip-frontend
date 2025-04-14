@@ -41,7 +41,7 @@ export class CommentsComponent
   commentUpdateLoading$ = this.commentsService.commentUpdateLoading$;
   user = this.userService.user;
   displayCommentCreation$ = this.comments$.pipe(
-    map((comments) => comments.length < 50)
+    map((comments) => comments.length < 50),
   );
 
   constructor(private commentsService: CommentsService) {
@@ -64,13 +64,13 @@ export class CommentsComponent
             this.commentsService.updateComment(
               +params["issue-id"],
               data.id,
-              data.text
+              data.text,
             );
           } else {
             this.commentsService.createComment(+params["issue-id"], data.text);
           }
-        })
-      )
+        }),
+      ),
     );
   }
 
@@ -88,8 +88,8 @@ export class CommentsComponent
         this.route.params.pipe(
           tap((params) => {
             this.commentsService.deleteComment(+params["issue-id"], commentId);
-          })
-        )
+          }),
+        ),
       );
   }
 }

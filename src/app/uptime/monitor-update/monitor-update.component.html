@@ -15,7 +15,7 @@
   @if (monitor(); as monitor) {
     <gt-monitor-form
       [monitorSettings]="monitor"
-      [loading]="(loading()) === true"
+      [loading]="loading() === true"
       [formError]="error()"
       (formSubmitted)="submit($event)"
     ></gt-monitor-form>
