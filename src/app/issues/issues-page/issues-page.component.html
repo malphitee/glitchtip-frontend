@@ -104,6 +104,13 @@
                   i18n
                   >Ignore</button
                 >
+                <button
+                  mat-stroked-button
+                  (click)="updateStatus('merge')"
+                  [disabled]="(numberOfSelectedIssues$ | async)! < 2 || (allResultsSelected$ | async)"
+                  i18n
+                  >Merge</button
+                >
               </div>
             </th>
             <td

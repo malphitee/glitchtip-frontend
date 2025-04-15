@@ -157,7 +157,7 @@ export interface AnnotatedRequest extends Request {
   path: string;
 }
 
-export type IssueStatus = "resolved" | "unresolved" | "ignored";
+export type IssueStatus = "resolved" | "unresolved" | "ignored" | "merge";
 
 export interface Issue {
   annotations: string[];
