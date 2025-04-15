@@ -35,9 +35,6 @@ export class SettingsService {
   );
   serverTimeZone = computed(() => this.settings()?.serverTimeZone);
   initialLoad = computed(() => this.settingsResource.hasValue());
-  useNewSocialCallbacks = computed(
-    () => this.settings()?.useNewSocialCallbacks,
-  );
   version = computed(() => this.settings()?.version);
   instanceName = computed(() => this.settings()?.glitchtipInstanceName);
 
