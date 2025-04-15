@@ -1,75 +1,46 @@
-import { Injectable, inject } from "@angular/core";
-import { map } from "rxjs/operators";
-import {
-  initialPaginationState,
-  PaginationStatefulService,
-  PaginationStatefulServiceState,
-} from "../../shared/stateful-service/pagination-stateful-service";
+import { Injectable, computed, inject, resource, signal } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { client } from "src/app/api/api";
-import { components } from "src/app/api/api-schema";
+import { OrganizationsService } from "src/app/api/organizations.service";
+import {
+  getPaginationHeaders,
+  getPaginator,
+} from "src/app/shared/pagination.utils";
 
-type MonitorDetail = components["schemas"]["MonitorDetailSchema"];
-
-export interface MonitorListState extends PaginationStatefulServiceState {
-  monitors: MonitorDetail[];
-}
-
-const initialState: MonitorListState = {
-  monitors: [],
-  pagination: initialPaginationState,
-};
-
-@Injectable({
-  providedIn: "root",
-})
-export class MonitorListService extends PaginationStatefulService<MonitorListState> {
+@Injectable()
+export class MonitorListService {
   private snackBar = inject(MatSnackBar);
-
-  monitors$ = this.getState$.pipe(map((state) => state.monitors));
-
-  constructor() {
-    super(initialState);
-  }
-
-  getMonitors(organizationSlug: string, cursor: string | null) {
-    this.setGetMonitorsStart();
-    client
-      .GET("/api/0/organizations/{organization_slug}/monitors/", {
-        params: { path: { organization_slug: organizationSlug } },
-      })
-      .then((result) => {
-        if (result.data) {
-          this.setStateAndPagination(
-            { monitors: result.data as any },
-            result.response as any,
-          );
-        } else {
-          this.setGetMonitorsError();
-          this.snackBar.open(
-            "There was an error retrieving your uptime monitors. Please try again.",
-          );
-        }
-      });
-  }
-
-  private setGetMonitorsStart() {
-    const state = this.state.getValue();
-    this.setState({
-      pagination: {
-        ...state.pagination,
-        loading: true,
-      },
-    });
-  }
-
-  private setGetMonitorsError() {
-    const state = this.state.getValue();
-    this.setState({
-      pagination: {
-        ...state.pagination,
-        loading: false,
-      },
-    });
-  }
+  private organizationsService = inject(OrganizationsService);
+  cursor = signal<string | undefined>(undefined);
+  private monitorsResource = resource({
+    request: () => ({
+      organizationSlug: this.activeOrganizationSlug(),
+      cursor: this.cursor(),
+    }),
+    // Define an async loader that retrieves data.
+    // The resource calls this function every time the `request` value changes.
+    loader: async ({ request }) => {
+      const { error, data, response } = await client.GET(
+        "/api/0/organizations/{organization_slug}/monitors/",
+        {
+          params: {
+            path: { organization_slug: request.organizationSlug },
+            query: { cursor: request.cursor },
+          },
+        },
+      );
+      if (error) {
+        this.snackBar.open(
+          $localize`There was an error retrieving your uptime monitors. Please try again.`,
+        );
+      }
+      const pagination = getPaginationHeaders(response);
+      return { data, pagination };
+    },
+  });
+  loading = computed(() => this.monitorsResource.isLoading());
+  monitors = computed(() => this.monitorsResource.value()?.data);
+  pagination = computed(() => this.monitorsResource.value()?.pagination);
+  paginator = computed(() => getPaginator(this.pagination()));
+  activeOrganizationSlug = this.organizationsService.activeOrganizationSlug;
 }

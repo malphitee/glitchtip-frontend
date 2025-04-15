@@ -1,4 +1,4 @@
-@if (paginator$ | async; as paginator) {
+@if (paginator(); as paginator) {
   <section class="l-body l-body--full-width mat-elevation-z0">
     <header class="page-header">
       <gt-list-title
@@ -15,10 +15,10 @@
         Add monitor
       </a>
     </header>
-    @if (monitors$ | async; as monitors) {
+    @if (monitors(); as monitors) {
       <div class="wrapper">
         @if (monitors.length > 0) {
-          <table mat-table [dataSource]="monitors$" class="mat-elevation-z2">
+          <table mat-table [dataSource]="monitors" class="mat-elevation-z2">
             <ng-container matColumnDef="statusColor">
               <td
                 mat-cell

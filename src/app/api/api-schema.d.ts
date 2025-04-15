@@ -570,6 +570,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/0/organizations/{organization_slug}/issues/{issue_id}/hashes/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Issue Hashes */
+        get: operations["apps_issue_events_api_hashes_list_issue_hashes"];
+        put?: never;
+        post?: never;
+        /** Delete Hash */
+        delete: operations["apps_issue_events_api_hashes_delete_hash"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/0/observability/django/": {
         parameters: {
             query?: never;
@@ -1910,9 +1928,13 @@ export interface components {
              */
             type: "cloud_resource";
             /** Cloud */
-            cloud: Record<string, unknown>;
+            cloud: {
+                [key: string]: unknown;
+            };
             /** Host */
-            host: Record<string, unknown>;
+            host: {
+                [key: string]: unknown;
+            };
         };
         /** CultureContext */
         CultureContext: {
@@ -2035,7 +2057,9 @@ export interface components {
             /** Message */
             message?: string | null;
             /** Data */
-            data?: Record<string, unknown> | null;
+            data?: {
+                [key: string]: unknown;
+            } | null;
             /**
              * Level
              * @default info
@@ -2104,7 +2128,9 @@ export interface components {
                 [key: string]: string | null;
             } | null;
             /** Extra */
-            extra?: Record<string, unknown> | null;
+            extra?: {
+                [key: string]: unknown;
+            } | null;
             /** Fingerprint */
             fingerprint?: (string | null)[] | null;
             /** Errors */
@@ -2169,15 +2195,11 @@ export interface components {
             email?: string | null;
             /** Ip Address */
             ip_address?: string | null;
-            /** Subscription */
-            subscription?: string | null;
             /** Data */
-            data?: Record<string, unknown> | null;
+            data?: {
+                [key: string]: unknown;
+            } | null;
             geo?: components["schemas"]["EventGeo"] | null;
-            /** Name */
-            name?: string | null;
-            /** Segment */
-            segment?: string | null;
         };
         /** ExceptionMechanism */
         ExceptionMechanism: {
@@ -2192,9 +2214,13 @@ export interface components {
             /** Synthetic */
             synthetic?: boolean | null;
             /** Meta */
-            meta?: Record<string, unknown> | null;
+            meta?: {
+                [key: string]: unknown;
+            } | null;
             /** Data */
-            data?: Record<string, unknown> | null;
+            data?: {
+                [key: string]: unknown;
+            } | null;
         };
         /** GPUContext */
         GPUContext: {
@@ -2245,9 +2271,13 @@ export interface components {
                 [key: string]: string | null;
             } | null;
             /** Data */
-            data?: string | Record<string, unknown> | unknown[] | unknown | null;
+            data?: string | {
+                [key: string]: unknown;
+            } | unknown[] | unknown | null;
             /** Env */
-            env?: Record<string, unknown> | null;
+            env?: {
+                [key: string]: unknown;
+            } | null;
             /** Fragment */
             fragment?: string | null;
             /** Method */
@@ -2262,7 +2292,9 @@ export interface components {
             } | null;
             /** Query String */
             query_string?: string | (string | null)[][] | {
-                [key: string]: string | Record<string, unknown> | null;
+                [key: string]: string | {
+                    [key: string]: unknown;
+                } | null;
             } | null;
         };
         /** OSContext */
@@ -2380,7 +2412,9 @@ export interface components {
             stack_start?: boolean | null;
             /** Vars */
             vars?: {
-                [key: string]: string | Record<string, unknown> | unknown[];
+                [key: string]: string | {
+                    [key: string]: unknown;
+                } | unknown[];
             } | null;
             /** Instruction Addr */
             instruction_addr?: string | null;
@@ -2403,7 +2437,9 @@ export interface components {
              */
             type: "state";
             /** State */
-            state: Record<string, unknown>;
+            state: {
+                [key: string]: unknown;
+            };
         };
         /** TraceContext */
         TraceContext: {
@@ -2427,9 +2463,13 @@ export interface components {
             /** Client Sample Rate */
             client_sample_rate?: number | null;
             /** Tags */
-            tags?: Record<string, unknown> | unknown[] | null;
+            tags?: {
+                [key: string]: unknown;
+            } | unknown[] | null;
             /** Dynamic Sampling Context */
-            dynamic_sampling_context?: Record<string, unknown> | null;
+            dynamic_sampling_context?: {
+                [key: string]: unknown;
+            } | null;
             /** Origin */
             origin?: string | null;
         };
@@ -2449,7 +2489,9 @@ export interface components {
             id?: string | null;
         };
         /** EnvelopeSchema */
-        EnvelopeSchema: Record<string, unknown>[];
+        EnvelopeSchema: {
+            [key: string]: unknown;
+        }[];
         /**
          * CSPReportSchema
          * @description https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy-Report-Only#violation_report_syntax
@@ -2655,7 +2697,9 @@ export interface components {
             /** Message */
             message?: string | null;
             /** Data */
-            data?: Record<string, unknown> | null;
+            data?: {
+                [key: string]: unknown;
+            } | null;
             /**
              * Level
              * @default info
@@ -2686,7 +2730,9 @@ export interface components {
              */
             type: "csp";
             /** Data */
-            data: Record<string, unknown>;
+            data: {
+                [key: string]: unknown;
+            };
         };
         /** ExceptionEntry */
         ExceptionEntry: {
@@ -2696,7 +2742,9 @@ export interface components {
              */
             type: "exception";
             /** Data */
-            data: Record<string, unknown>;
+            data: {
+                [key: string]: unknown;
+            };
         };
         /** IssueEventSchema */
         IssueEventSchema: {
@@ -2750,7 +2798,9 @@ export interface components {
                 [key: string]: (components["schemas"]["DeviceContext"] | components["schemas"]["OSContext"] | components["schemas"]["RuntimeContext"] | components["schemas"]["AppContext"] | components["schemas"]["BrowserContext"] | components["schemas"]["GPUContext"] | components["schemas"]["StateContext"] | components["schemas"]["CultureContext"] | components["schemas"]["CloudResourceContext"] | components["schemas"]["TraceContext"] | components["schemas"]["ReplayContext"] | components["schemas"]["ResponseContext"]) | unknown;
             } | null;
             /** Data.Extra */
-            "data.extra"?: Record<string, unknown> | null;
+            "data.extra"?: {
+                [key: string]: unknown;
+            } | null;
             /** Data.User */
             "data.user"?: unknown | null;
             /** Title */
@@ -2764,7 +2814,9 @@ export interface components {
              */
             type: "message";
             /** Data */
-            data: Record<string, unknown>;
+            data: {
+                [key: string]: unknown;
+            };
         };
         /** Request */
         Request: {
@@ -2777,9 +2829,13 @@ export interface components {
                 [key: string]: string | null;
             } | null;
             /** Data */
-            data?: string | Record<string, unknown> | unknown[] | unknown | null;
+            data?: string | {
+                [key: string]: unknown;
+            } | unknown[] | unknown | null;
             /** Env */
-            env?: Record<string, unknown> | null;
+            env?: {
+                [key: string]: unknown;
+            } | null;
             /** Fragment */
             fragment?: string | null;
             /** Method */
@@ -2854,7 +2910,9 @@ export interface components {
                 [key: string]: (components["schemas"]["DeviceContext"] | components["schemas"]["OSContext"] | components["schemas"]["RuntimeContext"] | components["schemas"]["AppContext"] | components["schemas"]["BrowserContext"] | components["schemas"]["GPUContext"] | components["schemas"]["StateContext"] | components["schemas"]["CultureContext"] | components["schemas"]["CloudResourceContext"] | components["schemas"]["TraceContext"] | components["schemas"]["ReplayContext"] | components["schemas"]["ResponseContext"]) | unknown;
             } | null;
             /** Data.Extra */
-            "data.extra"?: Record<string, unknown> | null;
+            "data.extra"?: {
+                [key: string]: unknown;
+            } | null;
             /** Data.User */
             "data.user"?: unknown | null;
             /** Title */
@@ -2916,9 +2974,13 @@ export interface components {
                 [key: string]: string;
             } | null;
             /** Data.Contexts */
-            "data.contexts"?: Record<string, unknown> | null;
+            "data.contexts"?: {
+                [key: string]: unknown;
+            } | null;
             /** Data.Sdk */
-            "data.sdk"?: Record<string, unknown> | null;
+            "data.sdk"?: {
+                [key: string]: unknown;
+            } | null;
             /** Get Type Display */
             get_type_display: string | null;
             /** Data.Request */
@@ -2926,7 +2988,9 @@ export interface components {
             /** Data.Environment */
             "data.environment"?: string | null;
             /** Data.Extra */
-            "data.extra"?: Record<string, unknown> | null;
+            "data.extra"?: {
+                [key: string]: unknown;
+            } | null;
             "data.user"?: components["schemas"]["EventUser"] | null;
             /** Title */
             title: string;
@@ -3023,7 +3087,9 @@ export interface components {
         EventStatusEnum: "unresolved" | "resolved" | "ignored";
         /** UpdateIssueSchema */
         UpdateIssueSchema: {
-            status: components["schemas"]["EventStatusEnum"];
+            status?: components["schemas"]["EventStatusEnum"] | null;
+            /** Merge */
+            merge?: number | null;
         };
         /** IssueFilters */
         IssueFilters: {
@@ -3137,6 +3203,17 @@ export interface components {
             count: number;
             /** Key */
             key: string;
+        };
+        /** IssueHashSchema */
+        IssueHashSchema: {
+            /** Id */
+            id: string;
+            latestEvent: components["schemas"]["IssueEventSchema"] | null;
+        };
+        /** IssueHashQuerySchema */
+        IssueHashQuerySchema: {
+            /** Id */
+            id: string[];
         };
         /** OrganizationSchema */
         OrganizationSchema: {
@@ -5452,6 +5529,57 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["UserReportSchema"][];
                 };
+            };
+        };
+    };
+    apps_issue_events_api_hashes_list_issue_hashes: {
+        parameters: {
+            query?: {
+                /** @description Number of results to return per page. */
+                limit?: number | null;
+                /** @description The pagination cursor value. */
+                cursor?: string | null;
+            };
+            header?: never;
+            path: {
+                organization_slug: string;
+                issue_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IssueHashSchema"][];
+                };
+            };
+        };
+    };
+    apps_issue_events_api_hashes_delete_hash: {
+        parameters: {
+            query: {
+                id: string[];
+            };
+            header?: never;
+            path: {
+                organization_slug: string;
+                issue_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Accepted */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
