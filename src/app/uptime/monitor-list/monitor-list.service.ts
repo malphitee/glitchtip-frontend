@@ -31,7 +31,7 @@ export class MonitorListService {
       );
       if (error) {
         this.snackBar.open(
-          $localize`There was an error retrieving your uptime monitors. Please try again.`,
+          $localize`There was an error retrieving your uptime monitors.`,
         );
       }
       const pagination = getPaginationHeaders(response);

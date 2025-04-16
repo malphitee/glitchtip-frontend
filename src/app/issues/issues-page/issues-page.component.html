@@ -1,4 +1,4 @@
-@if (paginator$ | async; as paginator) {
+@if (paginator(); as paginator) {
   <section class="l-body l-body--full-width mat-elevation-z0">
     <header class="page-header">
       <gt-list-title
@@ -8,11 +8,11 @@
       ></gt-list-title>
     </header>
     <gt-project-filter-bar></gt-project-filter-bar>
-    @if (issues$ | async; as issues) {
+    @if (issues(); as issues) {
       <div class="wrapper">
         <table
           mat-table
-          [dataSource]="issues$"
+          [dataSource]="issues"
           [trackBy]="trackIssues"
           class="mat-elevation-z2"
           [class.fixedLayout]="issues.length === 0"
@@ -25,10 +25,7 @@
               class="resolved-row"
               class="table-header"
             >
-              @if (
-                organizationEnvironments$ | async;
-                as organizationEnvironments
-              ) {
+              @if (organizationEnvironments(); as organizationEnvironments) {
                 <gt-data-filter-bar
                   [dateForm]="dateForm"
                   [environmentForm]="environmentForm"
@@ -49,11 +46,11 @@
             <th
               mat-header-cell
               *matHeaderCellDef
-              [class.sticky-header]="(thereAreSelectedIssues$ | async) === true"
+              [class.sticky-header]="thereAreSelectedIssues() === true"
             >
               <mat-checkbox
                 (change)="toggleSelectAllOnPage()"
-                [checked]="(areAllSelected$ | async)!"
+                [checked]="areAllSelected()"
                 [disabled]="issues.length === 0"
                 id="selectAll"
               >
@@ -78,7 +75,7 @@
               mat-header-cell
               *matHeaderCellDef
               mat-sort-header
-              [class.sticky-header]="(thereAreSelectedIssues$ | async) === true"
+              [class.sticky-header]="thereAreSelectedIssues() === true"
             >
               <div class="button-group">
                 <button
@@ -86,28 +83,30 @@
                   mat-flat-button
                   color="primary"
                   (click)="updateStatus('resolved')"
-                  [disabled]="(thereAreSelectedIssues$ | async) === false"
+                  [disabled]="thereAreSelectedIssues() === false"
                   i18n
                   >Mark as resolved</button
                 >
                 <button
                   mat-stroked-button
                   (click)="updateStatus('unresolved')"
-                  [disabled]="(thereAreSelectedIssues$ | async) === false"
+                  [disabled]="thereAreSelectedIssues() === false"
                   i18n
                   >Reopen</button
                 >
                 <button
                   mat-stroked-button
                   (click)="updateStatus('ignored')"
-                  [disabled]="(thereAreSelectedIssues$ | async) === false"
+                  [disabled]="thereAreSelectedIssues() === false"
                   i18n
                   >Ignore</button
                 >
                 <button
                   mat-stroked-button
                   (click)="updateStatus('merge')"
-                  [disabled]="(numberOfSelectedIssues$ | async)! < 2 || (allResultsSelected$ | async)"
+                  [disabled]="
+                    numberOfSelectedIssues() < 2 || allResultsSelected()
+                  "
                   i18n
                   >Merge</button
                 >
@@ -132,14 +131,14 @@
                 {{ element.count | i18nPlural: eventCountPluralMapping }}
               </div>
               <div>
-                @if ((appliedProjectCount$ | async) !== 1) {
+                @if (appliedProjectCount() !== 1) {
                   <span class="mat-caption">
                     {{ element.projectSlug }}
                   </span>
                 }
                 @if (true) {
                   <span class="mat-caption">
-                    @if ((appliedProjectCount$ | async) !== 1) {
+                    @if (appliedProjectCount() !== 1) {
                       &mdash;
                     }
                     <time
@@ -161,7 +160,7 @@
                 }
                 @if (element.type && element.type === "csp") {
                   <span class="mat-caption">
-                    @if ((appliedProjectCount$ | async) !== 1 && element.type) {
+                    @if (appliedProjectCount() !== 1 && element.type) {
                       <span> &mdash; </span>
                     }
                     {{ element.type }} report</span
@@ -177,10 +176,10 @@
               colspan="3"
               class="bulk-project-select__inner"
             >
-              @if ((showBulkSelectProject$ | async) === true) {
-                @if ((allResultsSelected$ | async) === false) {
+              @if (showBulkSelectProject() === true) {
+                @if (allResultsSelected() === false) {
                   <span class="bulk-project-select__text"
-                    >{{ numberOfSelectedIssues$ | async }} issues on this page
+                    >{{ numberOfSelectedIssues() }} issues on this page
                     selected.</span
                   >
                   <button
@@ -189,14 +188,13 @@
                     color="primary"
                     (click)="selectAllResults()"
                   >
-                    @if (searchHits$ | async; as searchHits) {
+                    @if (searchHits(); as searchHits) {
                       Select all {{ searchHits }} issues that match this query
                     }
                   </button>
                 } @else {
                   <span class="bulk-project-select__text"
-                    >All {{ searchHits$ | async }} issues are currently
-                    selected.</span
+                    >All {{ searchHits() }} issues are currently selected.</span
                   >
                   <button
                     mat-stroked-button
@@ -215,7 +213,7 @@
               *matHeaderCellDef
               mat-sort-header
               class="status-header-cell sticky-header"
-              [class.sticky-header]="(thereAreSelectedIssues$ | async) === true"
+              [class.sticky-header]="thereAreSelectedIssues() === true"
             >
               Events
             </th>
@@ -249,7 +247,7 @@
             mat-header-row
             *matHeaderRowDef="['bulkProjectSelect']"
             [class.bulk-project-select__hide]="
-              (showBulkSelectProject$ | async) === false
+              showBulkSelectProject() === false
             "
           ></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
@@ -258,8 +256,8 @@
               class="mat-cell zero-states-cell"
               [attr.colspan]="displayedColumns.length"
             >
-              @if (paginator.initialLoadComplete) {
-                <gt-issue-zero-states></gt-issue-zero-states>
+              @if (initialLoad()) {
+                <!-- <gt-issue-zero-states></gt-issue-zero-states> -->
               }
             </td>
           </tr>
