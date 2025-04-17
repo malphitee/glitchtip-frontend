@@ -6,9 +6,6 @@ import {
   inject,
 } from "@angular/core";
 import { ActivatedRoute, RouterLink } from "@angular/router";
-import { combineLatest } from "rxjs";
-import { distinctUntilChanged, filter, map, switchMap } from "rxjs/operators";
-import { CommonModule } from "@angular/common";
 import { MarkdownModule } from "ngx-markdown";
 
 import { IssuesService } from "../issues.service";
@@ -25,7 +22,7 @@ import { OrganizationsService } from "src/app/api/organizations.service";
   templateUrl: "./issue-zero-states.component.html",
   styleUrls: ["./issue-zero-states.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterLink, CopyInputComponent, MarkdownModule],
+  imports: [RouterLink, CopyInputComponent, MarkdownModule],
 })
 export class IssueZeroStatesComponent implements OnInit {
   private issuesService = inject(IssuesService);
@@ -34,29 +31,26 @@ export class IssueZeroStatesComponent implements OnInit {
   private projectsService = inject(ProjectsService);
   private activatedRoute = inject(ActivatedRoute);
 
-  loading$ = combineLatest([
-    this.issuesService.loading$,
-    this.projectsService.loading$,
-  ]).pipe(map((loads) => !loads.every((load) => !load)));
-  initialLoadComplete$ = combineLatest([
-    this.issuesService.initialLoadComplete$,
-    this.projectsService.initialLoadComplete$,
-  ]).pipe(map((loads) => loads.every((load) => !!load)));
-  displayZeroStates$ = combineLatest([
-    this.loading$,
-    this.initialLoadComplete$,
-  ]).pipe(
-    map(([loading, initialLoadComplete]) => !loading && initialLoadComplete),
+  loading = computed(
+    () => this.projectsService.loading() || this.issuesService.loading(),
+  );
+  initialLoadComplete = computed(
+    () =>
+      this.projectsService.initialLoadComplete() &&
+      this.issuesService.initialLoad(),
+  );
+  displayZeroStates = computed(
+    () => !this.loading() && this.initialLoadComplete(),
   );
   orgHasAProject = computed(
     () => this.organizationsService.projectsCount() > 0,
   );
-  projectsFromParams$ = this.activatedRoute.queryParams.pipe(
-    map((params) => normalizeProjectParams(params.project)),
-  );
-  activeOrganizationProjects$ =
-    this.organizationsService.activeOrganizationProjects$;
-  activeOrganizationSlug$ = this.organizationsService.activeOrganizationSlug$;
+  // projectsFromParams$ = this.activatedRoute.queryParams.pipe(
+  //   map((params) => normalizeProjectParams(params.project)),
+  // );
+  activeOrganizationProjects =
+    this.organizationsService.activeOrganizationProjects;
+  activeOrganizationSlug = this.organizationsService.activeOrganizationSlug;
   activeProjectID$ = combineLatest([
     this.projectsFromParams$,
     this.activeOrganizationProjects$,
