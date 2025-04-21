@@ -14,7 +14,7 @@ import { IssuesService } from "../issues.service";
 import { IssueStatus } from "../interfaces";
 import { ProjectEnvironmentsService } from "src/app/settings/projects/project-detail/project-environments/project-environments.service";
 import { DaysAgoPipe, DaysOldPipe } from "../../shared/days-ago.pipe";
-// import { IssueZeroStatesComponent } from "../issue-zero-states/issue-zero-states.component";
+import { IssueZeroStatesComponent } from "../issue-zero-states/issue-zero-states.component";
 import { ListFooterComponent } from "../../list-elements/list-footer/list-footer.component";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
@@ -26,6 +26,10 @@ import { ListTitleComponent } from "../../list-elements/list-title/list-title.co
 import { OrganizationsService } from "src/app/api/organizations.service";
 
 import type { components } from "src/app/api/api-schema";
+import {
+  stringArrAttribute,
+  stringAttribute,
+} from "src/app/shared/shared.utils";
 
 type Issue = components["schemas"]["IssueSchema"];
 
@@ -44,7 +48,7 @@ type Issue = components["schemas"]["IssueSchema"];
     MatIconModule,
     RouterLink,
     ListFooterComponent,
-    // IssueZeroStatesComponent,
+    IssueZeroStatesComponent,
     DatePipe,
     DaysAgoPipe,
     DaysOldPipe,
@@ -61,12 +65,12 @@ export class IssuesPageComponent implements OnDestroy {
   private projectEnvironmentsService = inject(ProjectEnvironmentsService);
 
   orgSlug = input.required<string>({ alias: "org-slug" });
-  cursor = input<string | string[] | undefined>();
+  cursor = input(undefined, { transform: stringAttribute });
   query = input<string | undefined>();
   start = input<string | undefined>();
   end = input<string | undefined>();
   sort = input<string | undefined>();
-  project = input<string | undefined>();
+  project = input(undefined, { transform: stringArrAttribute });
   environment = input<string | undefined>();
 
   displayedColumns: string[] = ["select", "title", "events"];

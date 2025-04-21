@@ -11,7 +11,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatTableModule } from "@angular/material/table";
 import { MatIconModule } from "@angular/material/icon";
 import { ListTitleComponent } from "src/app/list-elements/list-title/list-title.component";
-import { checkForOverflow } from "src/app/shared/shared.utils";
+import { checkForOverflow, stringAttribute } from "src/app/shared/shared.utils";
 import { ListFooterComponent } from "src/app/list-elements/list-footer/list-footer.component";
 import { TimeForPipe } from "src/app/shared/days-ago.pipe";
 import { MonitorChartComponent } from "../monitor-chart/monitor-chart.component";
@@ -38,7 +38,7 @@ import { MonitorListService } from "./monitor-list.service";
 export class MonitorListComponent {
   protected route = inject(ActivatedRoute);
   service = inject(MonitorListService);
-  cursor = input<string | string[] | undefined>();
+  cursor = input(undefined, { transform: stringAttribute });
 
   tooltipDisabled = false;
   monitors = this.service.monitors;
@@ -53,8 +53,7 @@ export class MonitorListComponent {
 
   constructor() {
     effect(() => {
-      let cursor = this.cursor();
-      this.service.cursor.set(Array.isArray(cursor) ? cursor[0] : cursor);
+      this.service.cursor.set(this.cursor());
     });
   }
 

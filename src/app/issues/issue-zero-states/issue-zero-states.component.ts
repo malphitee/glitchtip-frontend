@@ -4,16 +4,17 @@ import {
   ChangeDetectionStrategy,
   computed,
   inject,
+  input,
 } from "@angular/core";
-import { ActivatedRoute, RouterLink } from "@angular/router";
+import { RouterLink } from "@angular/router";
 import { MarkdownModule } from "ngx-markdown";
 
 import { IssuesService } from "../issues.service";
-import { normalizeProjectParams } from "src/app/shared/shared.utils";
-import { OrganizationProject } from "src/app/api/projects/projects-api.interfaces";
+// import { normalizeProjectParams } from "src/app/shared/shared.utils";
+// import { OrganizationProject } from "src/app/api/projects/projects-api.interfaces";
 import { ProjectsService } from "src/app/projects/projects.service";
-import { ProjectKeysAPIService } from "src/app/api/projects/project-keys-api.service";
-import { flattenedPlatforms } from "src/app/settings/projects/platform-picker/platforms-for-picker";
+// import { ProjectKeysAPIService } from "src/app/api/projects/project-keys-api.service";
+// import { flattenedPlatforms } from "src/app/settings/projects/platform-picker/platforms-for-picker";
 import { CopyInputComponent } from "../../shared/copy-input/copy-input.component";
 import { OrganizationsService } from "src/app/api/organizations.service";
 
@@ -25,11 +26,11 @@ import { OrganizationsService } from "src/app/api/organizations.service";
   imports: [RouterLink, CopyInputComponent, MarkdownModule],
 })
 export class IssueZeroStatesComponent implements OnInit {
+  project = input<string[]>();
   private issuesService = inject(IssuesService);
   private organizationsService = inject(OrganizationsService);
-  private projectKeysAPIService = inject(ProjectKeysAPIService);
+  // private projectKeysAPIService = inject(ProjectKeysAPIService);
   private projectsService = inject(ProjectsService);
-  private activatedRoute = inject(ActivatedRoute);
 
   loading = computed(
     () => this.projectsService.loading() || this.issuesService.loading(),
@@ -51,139 +52,149 @@ export class IssueZeroStatesComponent implements OnInit {
   activeOrganizationProjects =
     this.organizationsService.activeOrganizationProjects;
   activeOrganizationSlug = this.organizationsService.activeOrganizationSlug;
-  activeProjectID$ = combineLatest([
-    this.projectsFromParams$,
-    this.activeOrganizationProjects$,
-  ]).pipe(
-    map(([projectIDs, activeOrgProjects]) => {
-      if (projectIDs.length === 1) {
-        return projectIDs[0];
-      }
-      if (activeOrgProjects?.length === 1) {
-        return activeOrgProjects[0].id;
-      }
-      return null;
-    }),
-    distinctUntilChanged(),
-  );
-  activeProject$ = combineLatest([
-    this.projectsService.projects$,
-    this.activeProjectID$,
-  ]).pipe(
-    map(([projects, activeProjectID]) => {
-      if (projects && activeProjectID) {
-        const activeProject = projects.find(
-          (project) => project.id === activeProjectID,
-        );
-        return activeProject ? activeProject : null;
-      }
-      return null;
-    }),
-    distinctUntilChanged(),
-  );
-  showOnboarding$ = this.activeProject$.pipe(
-    map((project) => !project?.firstEvent),
-  );
-  activeProjectPlatform$ = this.activeProject$.pipe(
-    map((project) => project?.platform),
-  );
-  activeProjectSlug$ = this.activeProject$.pipe(
-    map((project) => project?.slug),
-  );
-  activeProjectPlatformName$ = this.activeProjectPlatform$.pipe(
-    map(
-      (id) => flattenedPlatforms.find((platform) => platform.id === id)?.name,
-    ),
-  );
+  // activeProjectID = computed(() => {
+  //   const activeProject = this.activeOrganizationProjects().find(
+  //     (project) => project.slug === this.activeOrganizationSlug,
+  //   );
+  //   return activeProject ? activeProject.id : null;
+  // });
+  // activeProjectID$ = combineLatest([
+  //   this.projectsFromParams$,
+  //   this.activeOrganizationProjects$,
+  // ]).pipe(
+  //   map(([projectIDs, activeOrgProjects]) => {
+  //     if (projectIDs.length === 1) {
+  //       return projectIDs[0];
+  //     }
+  //     if (activeOrgProjects?.length === 1) {
+  //       return activeOrgProjects[0].id;
+  //     }
+  //     return null;
+  //   }),
+  //   distinctUntilChanged(),
+  // );
+  // activeProject$ = combineLatest([
+  //   this.projectsService.projects$,
+  //   this.activeProjectID$,
+  // ]).pipe(
+  //   map(([projects, activeProjectID]) => {
+  //     if (projects && activeProjectID) {
+  //       const activeProject = projects.find(
+  //         (project) => project.id === activeProjectID,
+  //       );
+  //       return activeProject ? activeProject : null;
+  //     }
+  //     return null;
+  //   }),
+  //   distinctUntilChanged(),
+  // );
+  // showOnboarding$ = this.activeProject$.pipe(
+  //   map((project) => !project?.firstEvent),
+  // );
+  // activeProjectPlatform$ = this.activeProject$.pipe(
+  //   map((project) => project?.platform),
+  // );
+  // activeProjectSlug$ = this.activeProject$.pipe(
+  //   map((project) => project?.slug),
+  // );
+  // activeProjectPlatformName$ = this.activeProjectPlatform$.pipe(
+  //   map(
+  //     (id) => flattenedPlatforms.find((platform) => platform.id === id)?.name,
+  //   ),
+  // );
 
-  firstProjectKey$ = combineLatest([
-    this.organizationsService.activeOrganizationSlug$,
-    this.activeProject$,
-  ]).pipe(
-    filter(
-      ([organizationSlug, activeProject]) =>
-        !!organizationSlug && !!activeProject,
-    ),
-    distinctUntilChanged((x, y) => JSON.stringify(x) === JSON.stringify(y)),
-    switchMap(([organizationSlug, activeProject]) =>
-      this.projectKeysAPIService
-        .list(organizationSlug!, activeProject!.slug)
-        .pipe(map((keys) => keys[0])),
-    ),
-  );
-  errors$ = this.issuesService.errors$;
+  // firstProjectKey$ = combineLatest([
+  //   this.organizationsService.activeOrganizationSlug$,
+  //   this.activeProject$,
+  // ]).pipe(
+  //   filter(
+  //     ([organizationSlug, activeProject]) =>
+  //       !!organizationSlug && !!activeProject,
+  //   ),
+  //   distinctUntilChanged((x, y) => JSON.stringify(x) === JSON.stringify(y)),
+  //   switchMap(([organizationSlug, activeProject]) =>
+  //     this.projectKeysAPIService
+  //       .list(organizationSlug!, activeProject!.slug)
+  //       .pipe(map((keys) => keys[0])),
+  //   ),
+  // );
 
-  /**
-   * Corresponds to project picker/header nav/project IDs in the URL
-   * If the count is zero, we show issues from all projects
-   */
-  appliedProjectCount$ = this.projectsFromParams$.pipe(
-    map((projects) => {
-      if (Array.isArray(projects)) {
-        return projects.length;
-      }
-      return 0;
-    }),
-  );
+  // /**
+  //  * Corresponds to project picker/header nav/project IDs in the URL
+  //  * If the count is zero, we show issues from all projects
+  //  */
+  // appliedProjectCount$ = this.projectsFromParams$.pipe(
+  //   map((projects) => {
+  //     if (Array.isArray(projects)) {
+  //       return projects.length;
+  //     }
+  //     return 0;
+  //   }),
+  // );
 
-  /**
-   * Either a single project is applied with the picker, or there's only one
-   * project in the org, which is functionally similar for some things
-   */
-  singleProjectApplied$ = combineLatest([
-    this.appliedProjectCount$,
-    this.activeOrganizationProjects$,
-  ]).pipe(
-    map(
-      ([appliedProjectCount, activeOrganizationProjects]) =>
-        appliedProjectCount === 1 || activeOrganizationProjects?.length === 1,
-    ),
-  );
+  // /**
+  //  * Either a single project is applied with the picker, or there's only one
+  //  * project in the org, which is functionally similar for some things
+  //  */
+  // singleProjectApplied$ = combineLatest([
+  //   this.appliedProjectCount$,
+  //   this.activeOrganizationProjects$,
+  // ]).pipe(
+  //   map(
+  //     ([appliedProjectCount, activeOrganizationProjects]) =>
+  //       appliedProjectCount === 1 || activeOrganizationProjects?.length === 1,
+  //   ),
+  // );
 
-  projectsWhereAdminIsNotOnTheTeam$ = combineLatest([
-    this.projectsFromParams$,
-    this.activeOrganizationProjects$,
-  ]).pipe(
-    map(([projectsFromParams, activeOrgProjects]) => {
-      if (!Array.isArray(projectsFromParams)) {
-        return [];
-      }
-      const projectsMatchedFromParams: OrganizationProject[] = [];
-      projectsFromParams.forEach((projectId) => {
-        const matchedProject = activeOrgProjects?.find(
-          (project) => (project.id as any) === projectId,
-        );
-        if (matchedProject) {
-          projectsMatchedFromParams.push(matchedProject as any);
-        }
-      });
-      return projectsMatchedFromParams.filter(
-        (project) => project.isMember === false,
-      );
-    }),
-  );
+  projectsWhereAdminIsNotOnTheTeam = computed(() => {
+    const projectIds = this.project();
+    console.log("p ", projectIds);
+    return projectIds;
+  });
+  // projectsWhereAdminIsNotOnTheTeam$ = combineLatest([
+  //   this.projectsFromParams$,
+  //   this.activeOrganizationProjects$,
+  // ]).pipe(
+  //   map(([projectsFromParams, activeOrgProjects]) => {
+  //     if (!Array.isArray(projectsFromParams)) {
+  //       return [];
+  //     }
+  //     const projectsMatchedFromParams: OrganizationProject[] = [];
+  //     projectsFromParams.forEach((projectId) => {
+  //       const matchedProject = activeOrgProjects?.find(
+  //         (project) => (project.id as any) === projectId,
+  //       );
+  //       if (matchedProject) {
+  //         projectsMatchedFromParams.push(matchedProject as any);
+  //       }
+  //     });
+  //     return projectsMatchedFromParams.filter(
+  //       (project) => project.isMember === false,
+  //     );
+  //   }),
+  // );
 
-  userNotInSomeTeams$ = combineLatest([
-    this.projectsWhereAdminIsNotOnTheTeam$,
-    this.appliedProjectCount$,
-  ]).pipe(
-    map(
-      ([projectsWhereAdminIsNotOnTheTeam, appliedProjectCount]) =>
-        projectsWhereAdminIsNotOnTheTeam.length && appliedProjectCount > 1,
-    ),
-  );
+  // userNotInSomeTeams$ = combineLatest([
+  //   this.projectsWhereAdminIsNotOnTheTeam$,
+  //   this.appliedProjectCount$,
+  // ]).pipe(
+  //   map(
+  //     ([projectsWhereAdminIsNotOnTheTeam, appliedProjectCount]) =>
+  //       projectsWhereAdminIsNotOnTheTeam.length && appliedProjectCount > 1,
+  //   ),
+  // );
 
   ngOnInit() {
     this.projectsService.retrieveProjects();
     // Attempt to replace YOUR-GLITCHTIP-DSN-HERE with actual project DSN
-    this.firstProjectKey$.subscribe((project) => {
-      const dsn = project.dsn.public;
-      const elements = document.querySelectorAll("span.token.string");
-      for (const element of Array.from(elements)) {
-        if (element.textContent === '"YOUR-GLITCHTIP-DSN-HERE"') {
-          element.innerHTML = '"' + dsn + '"';
-        }
-      }
-    });
+    // this.firstProjectKey$.subscribe((project) => {
+    //   const dsn = project.dsn.public;
+    //   const elements = document.querySelectorAll("span.token.string");
+    //   for (const element of Array.from(elements)) {
+    //     if (element.textContent === '"YOUR-GLITCHTIP-DSN-HERE"') {
+    //       element.innerHTML = '"' + dsn + '"';
+    //     }
+    //   }
+    // });
   }
 }

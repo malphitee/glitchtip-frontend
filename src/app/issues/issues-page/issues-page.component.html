@@ -257,7 +257,9 @@
               [attr.colspan]="displayedColumns.length"
             >
               @if (initialLoad()) {
-                <!-- <gt-issue-zero-states></gt-issue-zero-states> -->
+                <gt-issue-zero-states
+                  [project]="project()"
+                ></gt-issue-zero-states>
               }
             </td>
           </tr>

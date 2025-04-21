@@ -158,6 +158,7 @@ export function timedeltaToMS(value: string) {
   return Math.round(milliseconds);
 }
 
+/** Deprecated */
 export function normalizeProjectParams(
   projects: string | string[] | undefined | null,
 ) {
@@ -168,6 +169,32 @@ export function normalizeProjectParams(
     return [parseInt(projects, 10)];
   }
   return [];
+}
+
+/** Normalizes a parameter to an array of strings */
+export function stringArrAttribute(
+  param: string | string[] | undefined,
+): string[] {
+  if (Array.isArray(param)) {
+    return param;
+  }
+  if (typeof param === "string") {
+    return [param];
+  }
+  return [];
+}
+
+/** Normalize parameter to a string | undefined (removing array) */
+export function stringAttribute(
+  param: string | string[] | undefined,
+): string | undefined {
+  if (Array.isArray(param)) {
+    if (param.length) {
+      return param[0];
+    }
+    return undefined;
+  }
+  return param;
 }
 
 export function parseErrorMessage(err: HttpErrorResponse): string[] {
