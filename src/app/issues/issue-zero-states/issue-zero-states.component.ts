@@ -5,16 +5,17 @@ import {
   computed,
   inject,
   input,
+  resource,
+  effect,
 } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { MarkdownModule } from "ngx-markdown";
 
 import { IssuesService } from "../issues.service";
 import { ProjectsService } from "src/app/projects/projects.service";
-// import { ProjectKeysAPIService } from "src/app/api/projects/project-keys-api.service";
-// import { flattenedPlatforms } from "src/app/settings/projects/platform-picker/platforms-for-picker";
 import { CopyInputComponent } from "../../shared/copy-input/copy-input.component";
 import { OrganizationsService } from "src/app/api/organizations.service";
+import { client } from "src/app/api/api";
 
 @Component({
   selector: "gt-issue-zero-states",
@@ -27,8 +28,34 @@ export class IssueZeroStatesComponent implements OnInit {
   project = input<string[]>();
   private issuesService = inject(IssuesService);
   private organizationsService = inject(OrganizationsService);
-  // private projectKeysAPIService = inject(ProjectKeysAPIService);
   private projectsService = inject(ProjectsService);
+
+  projectKeyResource = resource({
+    request: () => ({
+      organizationSlug: this.activeOrganizationSlug(),
+      projectSlug: this.activeProjectSlug(),
+    }),
+    loader: async ({ request }) => {
+      if (!request.organizationSlug || !request.projectSlug) {
+        return undefined;
+      }
+      const { data } = await client.GET(
+        "/api/0/projects/{organization_slug}/{project_slug}/keys/",
+        {
+          params: {
+            path: {
+              organization_slug: request.organizationSlug,
+              project_slug: request.projectSlug,
+            },
+          },
+        },
+      );
+      if (data && data.length) {
+        return data[0];
+      }
+      return undefined;
+    },
+  });
 
   loading = computed(
     () => this.projectsService.loading() || this.issuesService.loading(),
@@ -81,32 +108,7 @@ export class IssueZeroStatesComponent implements OnInit {
   activeProjectPlatform = computed(() => this.activeProject()?.platform);
   activeProjectSlug = computed(() => this.activeProject()?.slug);
   activeProjectPlatformName = computed(() => this.activeProject()?.name);
-
-  firstProjectKey = computed(() => {
-    return { dsn: { security: "", public: "" } };
-    // This is crap, make it run on a service
-    // const organizationSlug = this.activeOrganizationSlug();
-    // const activeProject = this.activeProject();
-    // if (!organizationSlug || !activeProject) {
-    //   return null;
-    // }
-    // return this.projectKeysAPIService
-    //   .list(organizationSlug, activeProject.slug)
-    //   .pipe(map((keys) => keys[0]));
-  });
-
-  // ]).pipe(
-  //   filter(
-  //     ([organizationSlug, activeProject]) =>
-  //       !!organizationSlug && !!activeProject,
-  //   ),
-  //   distinctUntilChanged((x, y) => JSON.stringify(x) === JSON.stringify(y)),
-  //   switchMap(([organizationSlug, activeProject]) =>
-  //     this.projectKeysAPIService
-  //       .list(organizationSlug!, activeProject!.slug)
-  //       .pipe(map((keys) => keys[0])),
-  //   ),
-  // );
+  firstProjectKey = computed(() => this.projectKeyResource.value());
 
   /**
    * Corresponds to project picker/header nav/project IDs in the URL
@@ -140,17 +142,22 @@ export class IssueZeroStatesComponent implements OnInit {
     );
   });
 
+  constructor() {
+    effect(() => {
+      const projectKey = this.firstProjectKey();
+      if (projectKey) {
+        const dsn = projectKey.dsn.public;
+        const elements = document.querySelectorAll("span.token.string");
+        for (const element of Array.from(elements)) {
+          if (element.textContent === '"YOUR-GLITCHTIP-DSN-HERE"') {
+            element.innerHTML = '"' + dsn + '"';
+          }
+        }
+      }
+    });
+  }
+
   ngOnInit() {
     this.projectsService.retrieveProjects();
-    // Attempt to replace YOUR-GLITCHTIP-DSN-HERE with actual project DSN
-    // this.firstProjectKey$.subscribe((project) => {
-    //   const dsn = project.dsn.public;
-    //   const elements = document.querySelectorAll("span.token.string");
-    //   for (const element of Array.from(elements)) {
-    //     if (element.textContent === '"YOUR-GLITCHTIP-DSN-HERE"') {
-    //       element.innerHTML = '"' + dsn + '"';
-    //     }
-    //   }
-    // });
   }
 }
