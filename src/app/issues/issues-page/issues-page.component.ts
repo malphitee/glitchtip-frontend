@@ -5,6 +5,7 @@ import {
   inject,
   input,
   signal,
+  effect,
 } from "@angular/core";
 import { DatePipe, I18nPluralPipe } from "@angular/common";
 import { FormControl, FormGroup } from "@angular/forms";
@@ -118,30 +119,6 @@ export class IssuesPageComponent implements OnDestroy {
     { param: "priority", display: "Lowest Priority" },
   ];
 
-  // currentQueryParams$ = combineLatest([
-  //   this.orgSlug$,
-  //   this.route.queryParamMap,
-  // ]).pipe(
-  //   map(([orgSlug, params]) => {
-  //     let query = params.get("query");
-  //     let project = normalizeProjectParams(params.getAll("project"));
-  //     return {
-  //       orgSlug,
-  //       cursor: params.get("cursor"),
-  //       query: typeof query === "string" ? query : undefined,
-  //       project,
-  //       start: params.get("start"),
-  //       end: params.get("end"),
-  //       sort: params.get("sort"),
-  //       environment: params.get("environment"),
-  //     };
-  //   }),
-  // );
-
-  // projectsFromParams$ = this.route.queryParams.pipe(
-  //   map((params) => normalizeProjectParams(params.project)),
-  // );
-
   /**
    * Corresponds to project picker/header nav/project IDs in the URL
    * If the count is zero, we show issues from all projects
@@ -186,6 +163,27 @@ export class IssuesPageComponent implements OnDestroy {
   // );
 
   constructor() {
+    effect(() => {
+      this.service.updateParams({
+        orgSlug: this.orgSlug(),
+        cursor: this.cursor(),
+        query: this.query(),
+        start: this.start(),
+        end: this.end(),
+        sort: this.sort(),
+        project: this.project(),
+        environment: this.environment(),
+      });
+      // this.service.updateParams({
+      //   cursor: this.cursor(),
+      //   query: this.query(),
+      //   start: this.start(),
+      //   end: this.end(),
+      //   sort: this.sort(),
+      //   project: this.project(),
+      //   environment: this.environment(),
+      // });
+    });
     // this.issues$.subscribe((resp) =>
     //   resp.length === 0
     //     ? this.sortForm.controls.sort.disable()

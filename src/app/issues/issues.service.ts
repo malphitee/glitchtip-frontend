@@ -4,13 +4,24 @@ import {
   computed,
   inject,
   resource,
+  signal,
 } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { IssueWithMatchingEvent } from "./interfaces";
 import { client } from "../api/api";
 import { StatefulService } from "../shared/stateful-service/signal-state.service";
-import { OrganizationsService } from "../api/organizations.service";
 import { getPaginationHeaders, getPaginator } from "../shared/pagination.utils";
+
+export interface DataParams {
+  orgSlug: string;
+  cursor?: string;
+  query?: string;
+  start?: string;
+  end?: string;
+  sort?: string;
+  project?: string[];
+  environment?: string;
+}
 
 export interface IssuesState {
   directHit?: IssueWithMatchingEvent;
@@ -26,22 +37,32 @@ const initialState: IssuesState = {
 @Injectable()
 export class IssuesService extends StatefulService<IssuesState> {
   private snackbar = inject(MatSnackBar);
-  private organizationsService = inject(OrganizationsService);
+  private params = signal<DataParams | undefined>(undefined);
 
   private issuesResource = resource({
     request: () => ({
-      organizationSlug: this.organizationsService.activeOrganizationSlug(),
-      // cursor: this.cursor(),
+      params: this.params(),
     }),
-    // Define an async loader that retrieves data.
-    // The resource calls this function every time the `request` value changes.
     loader: async ({ request }) => {
+      if (!request.params) {
+        return undefined;
+      }
       const { error, data, response } = await client.GET(
         "/api/0/organizations/{organization_slug}/issues/",
         {
           params: {
-            path: { organization_slug: request.organizationSlug },
-            // query: { cursor: request.cursor },
+            path: { organization_slug: request.params.orgSlug },
+            query: {
+              cursor: request.params.cursor,
+              query: request.params.query,
+              start: request.params.start,
+              end: request.params.end,
+              // sort,
+              project: request.params.project,
+              environment: request.params.environment
+                ? [request.params.environment]
+                : undefined,
+            },
           },
         },
       );
@@ -99,9 +120,15 @@ export class IssuesService extends StatefulService<IssuesState> {
   numberOfSelectedIssues = computed(() => this.selectedIssues().length);
   thereAreSelectedIssues = computed(() => this.numberOfSelectedIssues() > 0);
   allResultsSelected = computed(() => this.state().allResultsSelected);
+  // params = computed(() => this.state().params);
 
   constructor() {
     super(initialState);
+  }
+
+  updateParams(params: DataParams) {
+    console.log(params);
+    this.params.set(params);
   }
 
   // getIssues(
