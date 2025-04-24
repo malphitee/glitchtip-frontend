@@ -34,6 +34,31 @@ const initialState: IssuesState = {
   allResultsSelected: false,
 };
 
+type AllowedSortKey =
+  | "priority"
+  | "last_seen"
+  | "first_seen"
+  | "count"
+  | "-last_seen"
+  | "-first_seen"
+  | "-count"
+  | "-priority";
+
+const allowedSortKeys = [
+  "priority",
+  "last_seen",
+  "first_seen",
+  "count",
+  "-last_seen",
+  "-first_seen",
+  "-count",
+  "-priority",
+] as const;
+
+function isAllowedSortKey(key: string): key is AllowedSortKey {
+  return (allowedSortKeys as readonly string[]).includes(key);
+}
+
 @Injectable()
 export class IssuesService extends StatefulService<IssuesState> {
   private snackbar = inject(MatSnackBar);
@@ -47,6 +72,10 @@ export class IssuesService extends StatefulService<IssuesState> {
       if (!request.params) {
         return undefined;
       }
+      const sort: AllowedSortKey | undefined =
+        request.params.sort && isAllowedSortKey(request.params.sort)
+          ? request.params.sort
+          : undefined;
       const { error, data, response } = await client.GET(
         "/api/0/organizations/{organization_slug}/issues/",
         {
@@ -57,7 +86,7 @@ export class IssuesService extends StatefulService<IssuesState> {
               query: request.params.query,
               start: request.params.start,
               end: request.params.end,
-              // sort,
+              sort,
               project: request.params.project,
               environment: request.params.environment
                 ? [request.params.environment]
@@ -127,7 +156,6 @@ export class IssuesService extends StatefulService<IssuesState> {
   }
 
   updateParams(params: DataParams) {
-    console.log(params);
     this.params.set(params);
   }
 

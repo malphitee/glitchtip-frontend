@@ -6,6 +6,7 @@ import {
   input,
   signal,
   effect,
+  computed,
 } from "@angular/core";
 import { DatePipe, I18nPluralPipe } from "@angular/common";
 import { FormControl, FormGroup } from "@angular/forms";
@@ -123,44 +124,28 @@ export class IssuesPageComponent implements OnDestroy {
    * Corresponds to project picker/header nav/project IDs in the URL
    * If the count is zero, we show issues from all projects
    */
-  appliedProjectCount = signal(0);
-  // appliedProjectCount$ = this.projectsFromParams$.pipe(
-  //   map((projects) => {
-  //     if (Array.isArray(projects)) {
-  //       return projects.length;
-  //     }
-  //     return 0;
-  //   }),
-  // );
+  appliedProjectCount = computed(() => this.project.length);
 
-  showBulkSelectProject = signal(false);
-  // showBulkSelectProject$ = combineLatest([
-  //   this.areAllSelected$,
-  //   this.numberOfSelectedIssues$,
-  //   this.searchHits$,
-  // ]).pipe(
-  //   map(([areAllSelected, numberOfSelectIssues, searchHits]) => {
-  //     const hits = searchHits && numberOfSelectIssues < searchHits;
-  //     if (areAllSelected && hits) {
-  //       return true;
-  //     } else {
-  //       return false;
-  //     }
-  //   }),
-  // );
+  showBulkSelectProject = computed(() => {
+    const searchHits = this.searchHits();
 
-  organizationEnvironments = signal([]);
-  // organizationEnvironments$ = combineLatest([
-  //   this.appliedProjectCount$,
-  //   toObservable(
-  //     this.organizationDetailService.organizationEnvironmentsProcessed,
-  //   ),
-  //   this.projectEnvironmentsService.visibleEnvironments$,
-  // ]).pipe(
-  //   map(([appliedProjectCount, orgEnvironments, projectEnvironments]) =>
-  //     appliedProjectCount !== 1 ? orgEnvironments : projectEnvironments,
-  //   ),
-  // );
+    const hits = searchHits && this.numberOfSelectedIssues() < searchHits;
+    if (this.areAllSelected() && hits) {
+      return true;
+    }
+    return false;
+  });
+
+  organizationEnvironments = computed(() => {
+    // const appliedProjectCount = this.appliedProjectCount();
+    // const orgEnvironments =
+    //   this.organizationDetailService.organizationEnvironmentsProcessed();
+    // const projectEnvironments = this.projectEnvironmentsService.visibleEnvironments()
+    //   map(([appliedProjectCount, orgEnvironments, projectEnvironments]) =>
+    //     appliedProjectCount !== 1 ? orgEnvironments : projectEnvironments,
+    //   ),
+    return [];
+  });
 
   constructor() {
     effect(() => {
@@ -174,59 +159,17 @@ export class IssuesPageComponent implements OnDestroy {
         project: this.project(),
         environment: this.environment(),
       });
-      // this.service.updateParams({
-      //   cursor: this.cursor(),
-      //   query: this.query(),
-      //   start: this.start(),
-      //   end: this.end(),
-      //   sort: this.sort(),
-      //   project: this.project(),
-      //   environment: this.environment(),
-      // });
     });
-    // this.issues$.subscribe((resp) =>
-    //   resp.length === 0
-    //     ? this.sortForm.controls.sort.disable()
-    //     : this.sortForm.controls.sort.enable(),
-    // );
-    // this.organizationEnvironments$.subscribe((environments) =>
-    //   environments.length === 0
-    //     ? this.environmentForm.controls.environment.disable()
-    //     : this.environmentForm.controls.environment.enable(),
-    // );
-    // this.currentQueryParams$
-    //   .pipe(
-    //     switchMap((params) => {
-    //       if (params.orgSlug) {
-    //         return this.service.getIssues(
-    //           params.orgSlug,
-    //           params.cursor,
-    //           params.query,
-    //           params.project,
-    //           params.start,
-    //           params.end,
-    //           params.sort,
-    //           params.environment,
-    //         );
-    //       }
-    //       return EMPTY;
-    //     }),
-    //     takeUntilDestroyed(),
-    //   )
-    //   .subscribe();
-    // this.orgSlug$
-    //   .pipe(
-    //     switchMap((orgSlug) => {
-    //       if (orgSlug) {
-    //         return this.organizationDetailService.getOrganizationEnvironments(
-    //           orgSlug,
-    //         );
-    //       }
-    //       return EMPTY;
-    //     }),
-    //     takeUntilDestroyed(),
-    //   )
-    //   .subscribe();
+    effect(() =>
+      this.issues().length === 0
+        ? this.sortForm.controls.sort.disable()
+        : this.sortForm.controls.sort.enable(),
+    );
+    effect(() =>
+      this.organizationEnvironments().length === 0
+        ? this.environmentForm.controls.environment.disable()
+        : this.environmentForm.controls.environment.enable(),
+    );
     // combineLatest([
     //   this.orgSlug$,
     //   this.route.queryParamMap.pipe(
@@ -288,29 +231,33 @@ export class IssuesPageComponent implements OnDestroy {
     //     },
     //   );
     // });
+    effect(() => {
+      const query = this.query();
+      this.form.setValue({
+        query: query !== undefined ? query : "is:unresolved",
+      });
+    });
+    effect(() => {
+      const sort = this.sort();
+      this.sortForm.setValue({
+        sort: sort !== undefined ? sort : "-last_seen",
+      });
+    });
+    effect(() => {
+      const environment = this.environment();
+      this.environmentForm.setValue({
+        environment: environment !== undefined ? environment : "",
+      });
+    });
+    effect(() => {
+      const start = this.start();
+      const end = this.end();
+      this.dateForm.setValue({
+        startDate: start ? new Date(start.replace("Z", "")) : null,
+        endDate: end ? new Date(end.replace("Z", "")) : null,
+      });
+    });
   }
-
-  // this.route.queryParams.subscribe((_) => {
-  //   const query: string | undefined = this.route.snapshot.queryParams.query;
-  //   const start: string | undefined = this.route.snapshot.queryParams.start;
-  //   const end: string | undefined = this.route.snapshot.queryParams.end;
-  //   const sort: string | undefined = this.route.snapshot.queryParams.sort;
-  //   const environment: string | undefined =
-  //     this.route.snapshot.queryParams.environment;
-  //   this.form.setValue({
-  //     query: query !== undefined ? query : "is:unresolved",
-  //   });
-  //   this.sortForm.setValue({
-  //     sort: sort !== undefined ? sort : "-last_seen",
-  //   });
-  //   this.environmentForm.setValue({
-  //     environment: environment !== undefined ? environment : "",
-  //   });
-  //   this.dateForm.setValue({
-  //     startDate: start ? new Date(start.replace("Z", "")) : null,
-  //     endDate: end ? new Date(end.replace("Z", "")) : null,
-  //   });
-  // });
 
   ngOnDestroy() {
     this.projectEnvironmentsService.clearState();

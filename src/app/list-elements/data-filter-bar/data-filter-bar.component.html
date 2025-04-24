@@ -60,7 +60,7 @@
             (selectionChange)="sortByChanged.emit($event)"
             formControlName="sort"
           >
-            @for (sort of sorts(); track sort) {
+            @for (sort of sorts(); track sort.param) {
               <mat-option [value]="sort.param">
                 {{ sort.display }}
               </mat-option>

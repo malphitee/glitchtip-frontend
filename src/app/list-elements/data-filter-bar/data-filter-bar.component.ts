@@ -1,4 +1,4 @@
-import { CommonModule, formatDate } from "@angular/common";
+import { formatDate } from "@angular/common";
 import { Component, Input, input, output } from "@angular/core";
 import { FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
@@ -10,7 +10,6 @@ import { MatSelectChange, MatSelectModule } from "@angular/material/select";
 @Component({
   selector: "gt-data-filter-bar",
   imports: [
-    CommonModule,
     MatButtonModule,
     MatDatepickerModule,
     MatNativeDateModule,
@@ -40,8 +39,6 @@ export class DataFilterBarComponent {
   readonly filterByEnvironment = output<MatSelectChange>();
   readonly searchSubmit = output();
   readonly sortByChanged = output<MatSelectChange>();
-
-  constructor() {}
 
   convertToZTime(date: Date) {
     return formatDate(date, "yyyy-MM-ddTHH:mm:ss.SSS", "en-US") + "Z";
