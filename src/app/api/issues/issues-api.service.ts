@@ -46,40 +46,6 @@ export class IssuesAPIService extends APIBaseService {
     });
   }
 
-  bulkUpdate(
-    status: IssueStatus,
-    orgSlug: string,
-    issueIds: number[] = [],
-    projectIds: number[] = [],
-    query?: string | null,
-    start?: string | null,
-    end?: string | null,
-    environment?: string | null,
-  ) {
-    let url = this.orgIssuesUrl(orgSlug);
-    let params = new HttpParams();
-
-    issueIds.forEach((id) => {
-      params = params.append("id", id);
-    });
-    projectIds.forEach((id) => {
-      params = params.append("project", id);
-    });
-    if (query) {
-      params = params.append("query", query);
-    }
-    if (start) {
-      params = params.set("start", start);
-    }
-    if (end) {
-      params = params.set("end", end);
-    }
-    if (environment) {
-      params = params.set("environment", environment);
-    }
-    return this.http.put<UpdateStatusResponse>(url, { status }, { params });
-  }
-
   destroy(id: string) {
     return this.http.delete(this.detailURL(id));
   }

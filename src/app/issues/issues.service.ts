@@ -233,37 +233,44 @@ export class IssuesService extends StatefulService<IssuesState> {
     this.issuesResource.reload();
   }
 
-  bulkUpdateStatus(
+  async bulkUpdateStatus(
     status: IssueStatus,
     orgSlug: string,
     projectIds: string[],
     query?: string | null,
-    start?: string | null,
-    end?: string | null,
-    environment?: string | null,
+    start?: string | undefined,
+    end?: string | undefined,
+    environment?: string | undefined,
   ) {
-    //   lastValueFrom(
-    //     this.issuesAPIService
-    //       .bulkUpdate(
-    //         status,
-    //         orgSlug,
-    //         [],
-    //         projectIds,
-    //         query,
-    //         start,
-    //         end,
-    //         environment,
-    //       )
-    //       .pipe(
-    //         tap((resp) => {
-    //           this.setBulkUpdateComplete(resp.status);
-    //         }),
-    //         catchError((err: HttpErrorResponse) => {
-    //           this.snackbar.open("Error, unable to update issue");
-    //           return EMPTY;
-    //         }),
-    //       ),
-    //   );
+    if (status === "merge") {
+      return;
+    }
+    const { data, error } = await client.PUT(
+      "/api/0/organizations/{organization_slug}/issues/",
+      {
+        params: {
+          path: {
+            organization_slug: orgSlug,
+          },
+          query: {
+            id: projectIds.map((project) => parseInt(project)),
+            query,
+            start,
+            end,
+            environment: environment ? [environment] : undefined,
+          },
+        },
+        body: {
+          status,
+        },
+      },
+    );
+    if (error) {
+      this.snackbar.open($localize`Error, unable to update issue`);
+    }
+    if (data) {
+      this.setBulkUpdateComplete(status);
+    }
   }
 
   private setUpdateSelectedIssues(selectedIssues: string[]) {
@@ -318,22 +325,37 @@ export class IssuesService extends StatefulService<IssuesState> {
     issueIds: string[],
     status: IssueStatus,
   ) {
-    // const state = this.state();
-    // this.setState({
-    //   issues: state.issues.map((issue) =>
-    //     issueIds.includes(issue.id) ? { ...issue, status } : issue,
-    //   ),
-    //   selectedIssues: [],
-    // });
+    this.setState({
+      selectedIssues: [],
+    });
+    this.issuesResource.update((update) => {
+      if (update !== undefined) {
+        return {
+          ...update,
+          data: [
+            ...update.data.map((issue) =>
+              issueIds.includes(issue.id) ? { ...issue, status } : issue,
+            ),
+          ],
+        };
+      }
+      return update;
+    });
   }
 
-  // private setBulkUpdateComplete(status: IssueStatus) {
-  //   this.setState({
-  //     // issues: state.issues.map((issue) => {
-  //     //   return { ...issue, status };
-  //     // }),
-  //     selectedIssues: [],
-  //     allResultsSelected: false,
-  //   });
-  // }
+  private setBulkUpdateComplete(status: IssueStatus) {
+    this.setState({
+      selectedIssues: [],
+      allResultsSelected: false,
+    });
+    this.issuesResource.update((update) => {
+      if (update !== undefined) {
+        return {
+          ...update,
+          data: [...update.data.map((issue) => ({ ...issue, status }))],
+        };
+      }
+      return update;
+    });
+  }
 }

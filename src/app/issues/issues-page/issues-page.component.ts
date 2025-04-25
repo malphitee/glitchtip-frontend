@@ -182,27 +182,23 @@ export class IssuesPageComponent implements OnDestroy {
      * When changing from one project to another, see if there is an environment
      * in the URL. If it doesn't match a project environment, reset the URL.
      */
-    // combineLatest([
-    //   this.projectEnvironmentsService.visibleEnvironmentsLoaded$,
-    //   this.route.queryParams,
-    // ])
-    //   .pipe(
-    //     takeUntilDestroyed(),
-    //     tap(([projectEnvironments, queryParams]) => {
-    //       if (
-    //         queryParams.project &&
-    //         queryParams.environment &&
-    //         !projectEnvironments.includes(queryParams.environment)
-    //       ) {
-    //         this.environmentForm.setValue({ environment: null });
-    //         this.router.navigate([], {
-    //           queryParams: { environment: null },
-    //           queryParamsHandling: "merge",
-    //         });
-    //       }
-    //     }),
-    //   )
-    //   .subscribe();
+    effect(() => {
+      const projectEnvironments =
+        this.projectEnvironmentsService.visibleEnvironmentsLoaded();
+      const project = this.project();
+      const environment = this.environment();
+      if (
+        project &&
+        environment &&
+        !projectEnvironments.includes(environment)
+      ) {
+        this.environmentForm.setValue({ environment: null });
+        this.router.navigate([], {
+          queryParams: { environment: null },
+          queryParamsHandling: "merge",
+        });
+      }
+    });
     effect(() => {
       const query = this.query();
       this.form.setValue({
