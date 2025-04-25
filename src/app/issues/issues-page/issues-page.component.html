@@ -188,13 +188,13 @@
                     color="primary"
                     (click)="selectAllResults()"
                   >
-                    @if (searchHits(); as searchHits) {
-                      Select all {{ searchHits }} issues that match this query
+                    @if (paginator.hits) {
+                      Select all {{ paginator.hits }} issues that match this query
                     }
                   </button>
                 } @else {
                   <span class="bulk-project-select__text"
-                    >All {{ searchHits() }} issues are currently selected.</span
+                    >All {{ paginator.hits }} issues are currently selected.</span
                   >
                   <button
                     mat-stroked-button

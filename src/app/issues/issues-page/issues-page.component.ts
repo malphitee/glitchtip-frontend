@@ -4,7 +4,6 @@ import {
   OnDestroy,
   inject,
   input,
-  signal,
   effect,
   computed,
 } from "@angular/core";
@@ -73,14 +72,13 @@ export class IssuesPageComponent implements OnDestroy {
   start = input<string | undefined>();
   end = input<string | undefined>();
   sort = input<string | undefined>();
-  project = input(undefined, { transform: stringArrAttribute });
+  project = input([], { transform: stringArrAttribute });
   environment = input<string | undefined>();
 
   displayedColumns: string[] = ["select", "title", "events"];
   paginator = this.service.paginator;
   loading = this.service.loading;
   initialLoad = this.service.initialLoad;
-  searchHits = signal(1); // this.service.searchHits;
   form = new FormGroup({
     query: new FormControl(""),
   });
@@ -127,7 +125,7 @@ export class IssuesPageComponent implements OnDestroy {
   appliedProjectCount = computed(() => this.project.length);
 
   showBulkSelectProject = computed(() => {
-    const searchHits = this.searchHits();
+    const searchHits = this.paginator()?.hits;
 
     const hits = searchHits && this.numberOfSelectedIssues() < searchHits;
     if (this.areAllSelected() && hits) {
@@ -205,17 +203,6 @@ export class IssuesPageComponent implements OnDestroy {
     //     }),
     //   )
     //   .subscribe();
-    // this.searchDirectHit$.pipe(takeUntilDestroyed()).subscribe((directHit) => {
-    //   this.router.navigate(
-    //     [directHit.id, "events", directHit.matchingEventId],
-    //     {
-    //       relativeTo: this.route,
-    //       queryParams: { query: null },
-    //       queryParamsHandling: "merge",
-    //       replaceUrl: true, // so the browser back button works
-    //     },
-    //   );
-    // });
     effect(() => {
       const query = this.query();
       this.form.setValue({
@@ -282,36 +269,31 @@ export class IssuesPageComponent implements OnDestroy {
   }
 
   updateStatus(status: IssueStatus) {
-    // lastValueFrom(
-    //   combineLatest([this.allResultsSelected$, this.currentQueryParams$]).pipe(
-    //     take(1),
-    //     tap(([allResultsSelected, params]) => {
-    //       if (params.orgSlug) {
-    //         if (allResultsSelected) {
-    //           this.service.bulkUpdateStatus(
-    //             status,
-    //             params.orgSlug,
-    //             params.project,
-    //             params.query,
-    //             params.start,
-    //             params.end,
-    //             params.environment,
-    //           );
-    //         } else {
-    //           this.service.updateStatusByIssueId(params.orgSlug, status);
-    //         }
-    //       }
-    //     }),
-    //   ),
-    // );
+    const allResultsSelected = this.allResultsSelected();
+    const orgSlug = this.orgSlug();
+    if (orgSlug) {
+      if (allResultsSelected) {
+        this.service.bulkUpdateStatus(
+          status,
+          orgSlug,
+          this.project(),
+          this.query(),
+          this.start(),
+          this.end(),
+          this.environment(),
+        );
+      } else {
+        this.service.updateStatusByIssueId(orgSlug, status);
+      }
+    }
   }
 
   toggleCheck(issueId: number) {
-    // this.service.toggleSelectOne(issueId);
+    this.service.toggleSelectOne(issueId.toString());
   }
 
   toggleSelectAllOnPage() {
-    // this.service.toggleSelectAllOnPage();
+    this.service.toggleSelectAllOnPage();
   }
 
   selectAllResults() {

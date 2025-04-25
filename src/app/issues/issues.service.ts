@@ -11,6 +11,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { client } from "../api/api";
 import { StatefulService } from "../shared/stateful-service/signal-state.service";
 import { getPaginationHeaders, getPaginator } from "../shared/pagination.utils";
+import { IssueStatus } from "./interfaces";
 
 export interface DataParams {
   orgSlug: string;
@@ -142,18 +143,6 @@ export class IssuesService extends StatefulService<IssuesState> {
       projectSlug: issue.project?.slug,
     }));
   });
-  // issuesWithSelected$: Observable<IssueWithSelected[]> = combineLatest([
-  //   this.issues$,
-  //   this.selectedIssues$,
-  // ]).pipe(
-  //   map(([issues, selectedIssues]) =>
-  //     issues.map((issue) => ({
-  //       ...issue,
-  //       isSelected: selectedIssues.includes(issue.id) ? true : false,
-  //       projectSlug: issue.project?.slug,
-  //     })),
-  //   ),
-  // );
   areAllSelected = computed(() => {
     const issues = this.issues();
     return (
@@ -163,7 +152,6 @@ export class IssuesService extends StatefulService<IssuesState> {
   numberOfSelectedIssues = computed(() => this.selectedIssues().length);
   thereAreSelectedIssues = computed(() => this.numberOfSelectedIssues() > 0);
   allResultsSelected = computed(() => this.state().allResultsSelected);
-  // params = computed(() => this.state().params);
 
   constructor() {
     super(initialState);
@@ -173,39 +161,24 @@ export class IssuesService extends StatefulService<IssuesState> {
     this.params.set(params);
   }
 
-  // toggleSelectOne(issueId: number) {
-  //   lastValueFrom(
-  //     this.selectedIssues$.pipe(
-  //       take(1),
-  //       tap((selectedIssues) => {
-  //         let updatedSelection = [];
-  //         if (selectedIssues.includes(issueId)) {
-  //           updatedSelection = selectedIssues.filter(
-  //             (issue) => issue !== issueId,
-  //           );
-  //         } else {
-  //           updatedSelection = selectedIssues.concat([issueId]);
-  //         }
-  //         this.setUpdateSelectedIssues(updatedSelection);
-  //       }),
-  //     ),
-  //   );
-  // }
+  toggleSelectOne(issueId: string) {
+    const selectedIssues = this.selectedIssues();
+    let updatedSelection = [];
+    if (selectedIssues.includes(issueId)) {
+      updatedSelection = selectedIssues.filter((issue) => issue !== issueId);
+    } else {
+      updatedSelection = selectedIssues.concat([issueId]);
+    }
+    this.setUpdateSelectedIssues(updatedSelection);
+  }
 
-  // toggleSelectAllOnPage() {
-  //   lastValueFrom(
-  //     combineLatest([this.issues$, this.selectedIssues$]).pipe(
-  //       take(1),
-  //       tap(([issues, selectedIssues]) => {
-  //         if (issues.length === selectedIssues.length) {
-  //           this.setCancelAllOnPageSelection();
-  //         } else {
-  //           this.setSelectAllOnPage();
-  //         }
-  //       }),
-  //     ),
-  //   );
-  // }
+  toggleSelectAllOnPage() {
+    if (this.issues()?.length === this.selectedIssues().length) {
+      this.setCancelAllOnPageSelection();
+    } else {
+      this.setSelectAllOnPage();
+    }
+  }
 
   selectAllResults() {
     this.setAllResultsSelected();
@@ -215,45 +188,44 @@ export class IssuesService extends StatefulService<IssuesState> {
     this.setCancelAllResultsSelection();
   }
 
-  // updateStatusByIssueId(orgSlug: string, status: IssueStatus) {
-  //   if (status === "merge") {
-  //     lastValueFrom(
-  //       this.selectedIssues$.pipe(
-  //         take(1),
-  //         tap((issues) => this.mergeIssues(orgSlug, issues)),
-  //       ),
-  //     );
-  //     return;
-  //   }
+  async updateStatusByIssueId(orgSlug: string, status: IssueStatus) {
+    const issues = this.selectedIssues();
+    if (status === "merge") {
+      await this.mergeIssues(orgSlug, issues);
+    } else {
+      const { data, error } = await client.PUT(
+        "/api/0/organizations/{organization_slug}/issues/",
+        {
+          params: {
+            path: {
+              organization_slug: orgSlug,
+            },
+            query: {
+              id: issues.map((issue) => parseInt(issue)),
+            },
+          },
+          body: {
+            status,
+          },
+        },
+      );
+      if (data?.status) {
+        this.setUpdateStatusByIssueIdComplete(issues, data?.status);
+      }
+      if (error) {
+        this.snackbar.open($localize`Error, unable to update issue`);
+      }
+    }
+  }
 
-  //   lastValueFrom(
-  //     this.selectedIssues$.pipe(
-  //       take(1),
-  //       tap((issues) => {
-  //         lastValueFrom(
-  //           this.issuesAPIService.bulkUpdate(status, orgSlug, issues).pipe(
-  //             tap((resp) => {
-  //               this.setUpdateStatusByIssueIdComplete(issues, resp.status);
-  //             }),
-  //             catchError((err: HttpErrorResponse) => {
-  //               this.snackbar.open("Error, unable to update issue");
-  //               return EMPTY;
-  //             }),
-  //           ),
-  //         );
-  //       }),
-  //     ),
-  //   );
-  // }
-
-  async mergeIssues(orgSlug: string, issues: number[]) {
+  async mergeIssues(orgSlug: string, issues: string[]) {
     await client.PUT("/api/0/organizations/{organization_slug}/issues/", {
       params: {
         path: {
           organization_slug: orgSlug,
         },
         query: {
-          id: issues,
+          id: issues.map((issue) => parseInt(issue)),
         },
       },
       body: { merge: 1 },
@@ -261,61 +233,61 @@ export class IssuesService extends StatefulService<IssuesState> {
     this.issuesResource.reload();
   }
 
-  // bulkUpdateStatus(
-  //   status: IssueStatus,
-  //   orgSlug: string,
-  //   projectIds: number[],
-  //   query?: string | null,
-  //   start?: string | null,
-  //   end?: string | null,
-  //   environment?: string | null,
-  // ) {
-  //   lastValueFrom(
-  //     this.issuesAPIService
-  //       .bulkUpdate(
-  //         status,
-  //         orgSlug,
-  //         [],
-  //         projectIds,
-  //         query,
-  //         start,
-  //         end,
-  //         environment,
-  //       )
-  //       .pipe(
-  //         tap((resp) => {
-  //           this.setBulkUpdateComplete(resp.status);
-  //         }),
-  //         catchError((err: HttpErrorResponse) => {
-  //           this.snackbar.open("Error, unable to update issue");
-  //           return EMPTY;
-  //         }),
-  //       ),
-  //   );
-  // }
+  bulkUpdateStatus(
+    status: IssueStatus,
+    orgSlug: string,
+    projectIds: string[],
+    query?: string | null,
+    start?: string | null,
+    end?: string | null,
+    environment?: string | null,
+  ) {
+    //   lastValueFrom(
+    //     this.issuesAPIService
+    //       .bulkUpdate(
+    //         status,
+    //         orgSlug,
+    //         [],
+    //         projectIds,
+    //         query,
+    //         start,
+    //         end,
+    //         environment,
+    //       )
+    //       .pipe(
+    //         tap((resp) => {
+    //           this.setBulkUpdateComplete(resp.status);
+    //         }),
+    //         catchError((err: HttpErrorResponse) => {
+    //           this.snackbar.open("Error, unable to update issue");
+    //           return EMPTY;
+    //         }),
+    //       ),
+    //   );
+  }
 
-  // private setUpdateSelectedIssues(selectedIssues: number[]) {
-  //   this.setState({
-  //     selectedIssues,
-  //     allResultsSelected: false,
-  //   });
-  // }
+  private setUpdateSelectedIssues(selectedIssues: string[]) {
+    this.setState({
+      selectedIssues,
+      allResultsSelected: false,
+    });
+  }
 
-  // private setSelectAllOnPage() {
-  //   const issues = this.issues();
-  //   if (issues) {
-  //     this.setState({
-  //       selectedIssues: issues.map((issue) => issue.id),
-  //     });
-  //   }
-  // }
+  private setSelectAllOnPage() {
+    const issues = this.issues();
+    if (issues) {
+      this.setState({
+        selectedIssues: issues.map((issue) => issue.id),
+      });
+    }
+  }
 
-  // private setCancelAllOnPageSelection() {
-  //   this.setState({
-  //     selectedIssues: [],
-  //     allResultsSelected: false,
-  //   });
-  // }
+  private setCancelAllOnPageSelection() {
+    this.setState({
+      selectedIssues: [],
+      allResultsSelected: false,
+    });
+  }
 
   private setAllResultsSelected() {
     this.setState({
@@ -342,18 +314,18 @@ export class IssuesService extends StatefulService<IssuesState> {
   //   });
   // }
 
-  // private setUpdateStatusByIssueIdComplete(
-  //   issueIds: number[],
-  //   status: IssueStatus,
-  // ) {
-  //   const state = this.state.getValue();
-  //   this.setState({
-  //     issues: state.issues.map((issue) =>
-  //       issueIds.includes(issue.id) ? { ...issue, status } : issue,
-  //     ),
-  //     selectedIssues: [],
-  //   });
-  // }
+  private setUpdateStatusByIssueIdComplete(
+    issueIds: string[],
+    status: IssueStatus,
+  ) {
+    // const state = this.state();
+    // this.setState({
+    //   issues: state.issues.map((issue) =>
+    //     issueIds.includes(issue.id) ? { ...issue, status } : issue,
+    //   ),
+    //   selectedIssues: [],
+    // });
+  }
 
   // private setBulkUpdateComplete(status: IssueStatus) {
   //   this.setState({

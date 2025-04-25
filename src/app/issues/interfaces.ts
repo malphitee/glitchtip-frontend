@@ -213,15 +213,6 @@ export interface UpdateStatusResponse {
 
 // not in issues api reference, but is in issue list data
 
-export interface IssueWithSelected extends Issue {
-  isSelected: boolean;
-  projectSlug: string;
-}
-
-export interface IssueWithMatchingEvent extends Issue {
-  matchingEventId: string;
-}
-
 type StatsPeriod = "24h" | "14d" | "30d" | "";
 
 type Stats = { [StatPeriod in StatsPeriod]?: number[][] };

@@ -71,6 +71,7 @@ export function getPaginator(pagination: PaginationState | undefined) {
     hasPreviousPage: !!pagination.previousPageURL,
     nextPageParams: urlParamsToObject(pagination.nextPageURL),
     previousPageParams: urlParamsToObject(pagination.previousPageURL),
+    /** Human readable object count string that appends "+" to indicate max hits */
     count:
       pagination.hits && pagination.hits === pagination.maxHits
         ? pagination.hits.toString() + "+"
