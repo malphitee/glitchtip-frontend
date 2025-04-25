@@ -7,7 +7,7 @@ import {
   signal,
 } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { IssueWithMatchingEvent } from "./interfaces";
+import { ActivatedRoute, Router } from "@angular/router";
 import { client } from "../api/api";
 import { StatefulService } from "../shared/stateful-service/signal-state.service";
 import { getPaginationHeaders, getPaginator } from "../shared/pagination.utils";
@@ -24,7 +24,6 @@ export interface DataParams {
 }
 
 export interface IssuesState {
-  directHit?: IssueWithMatchingEvent;
   selectedIssues: string[];
   allResultsSelected: boolean;
 }
@@ -62,6 +61,8 @@ function isAllowedSortKey(key: string): key is AllowedSortKey {
 @Injectable()
 export class IssuesService extends StatefulService<IssuesState> {
   private snackbar = inject(MatSnackBar);
+  private router = inject(Router);
+  protected route = inject(ActivatedRoute);
   private params = signal<DataParams | undefined>(undefined);
 
   private issuesResource = resource({
@@ -101,6 +102,23 @@ export class IssuesService extends StatefulService<IssuesState> {
         );
       }
       const pagination = getPaginationHeaders(response);
+      if (
+        response.headers.has("x-sentry-direct-hit") &&
+        response.headers.get("x-sentry-direct-hit") === "1" &&
+        data.length &&
+        data[0].matchingEventId
+      ) {
+        const directHit = data[0];
+        this.router.navigate(
+          [directHit.id, "events", directHit.matchingEventId],
+          {
+            relativeTo: this.route,
+            queryParams: { query: null },
+            queryParamsHandling: "merge",
+            replaceUrl: true, // so the browser back button works
+          },
+        );
+      }
       return { data, pagination };
     },
   });
@@ -142,10 +160,6 @@ export class IssuesService extends StatefulService<IssuesState> {
       issues && issues.length === this.selectedIssues().length && issues.length
     );
   });
-  // readonly searchDirectHit$ = this.getState$.pipe(
-  //   map((state) => state.directHit),
-  //   filter((directHit): directHit is IssueWithMatchingEvent => !!directHit),
-  // );
   numberOfSelectedIssues = computed(() => this.selectedIssues().length);
   thereAreSelectedIssues = computed(() => this.numberOfSelectedIssues() > 0);
   allResultsSelected = computed(() => this.state().allResultsSelected);
@@ -158,48 +172,6 @@ export class IssuesService extends StatefulService<IssuesState> {
   updateParams(params: DataParams) {
     this.params.set(params);
   }
-
-  // getIssues(
-  //   organizationSlug?: string,
-  //   cursor?: string | null,
-  //   query: string | null = "is:unresolved",
-  //   project?: number[] | null,
-  //   start?: string | null,
-  //   end?: string | null,
-  //   sort?: string | null,
-  //   environment?: string | null,
-  // ) {
-  //   this.setIssuesLoading();
-  //   return this.issuesAPIService
-  //     .list(
-  //       organizationSlug,
-  //       cursor,
-  //       query,
-  //       project,
-  //       start,
-  //       end,
-  //       sort,
-  //       environment,
-  //     )
-  //     .pipe(
-  //       tap((res) => {
-  //         let directHit: IssueWithMatchingEvent | undefined;
-  //         if (
-  //           res.headers.has("x-sentry-direct-hit") &&
-  //           res.headers.get("x-sentry-direct-hit") === "1" &&
-  //           res.body![0] &&
-  //           (res.body![0] as IssueWithMatchingEvent).matchingEventId
-  //         ) {
-  //           directHit = res.body![0] as IssueWithMatchingEvent;
-  //         }
-  //         this.setStateAndPagination({ issues: res.body!, directHit }, res);
-  //       }),
-  //       catchError((err: HttpErrorResponse) => {
-  //         this.setIssuesError(err);
-  //         return EMPTY;
-  //       }),
-  //     );
-  // }
 
   // toggleSelectOne(issueId: number) {
   //   lastValueFrom(
@@ -360,7 +332,6 @@ export class IssuesService extends StatefulService<IssuesState> {
   // private setIssuesLoading() {
   //   const state = this.state.getValue();
   //   this.setState({
-  //     directHit: undefined,
   //     selectedIssues: [],
   //     allResultsSelected: false,
   //     pagination: {

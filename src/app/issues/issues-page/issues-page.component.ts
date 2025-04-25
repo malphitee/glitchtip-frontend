@@ -81,7 +81,6 @@ export class IssuesPageComponent implements OnDestroy {
   loading = this.service.loading;
   initialLoad = this.service.initialLoad;
   searchHits = signal(1); // this.service.searchHits;
-  // searchDirectHit = this.service.searchDirectHit;
   form = new FormGroup({
     query: new FormControl(""),
   });
