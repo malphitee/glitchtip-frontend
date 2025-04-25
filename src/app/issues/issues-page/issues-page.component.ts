@@ -32,6 +32,7 @@ import {
   stringArrAttribute,
   stringAttribute,
 } from "src/app/shared/shared.utils";
+import { OrganizationDetailService } from "src/app/api/organizations/organization-detail.service";
 
 type Issue = components["schemas"]["IssueSchema"];
 
@@ -63,7 +64,7 @@ export class IssuesPageComponent implements OnDestroy {
   protected router = inject(Router);
   protected route = inject(ActivatedRoute);
   private organizationsService = inject(OrganizationsService);
-  // private organizationDetailService = inject(OrganizationDetailService);
+  private organizationDetailService = inject(OrganizationDetailService);
   private projectEnvironmentsService = inject(ProjectEnvironmentsService);
 
   orgSlug = input.required<string>({ alias: "org-slug" });
@@ -136,16 +137,11 @@ export class IssuesPageComponent implements OnDestroy {
     return false;
   });
 
-  organizationEnvironments = computed(() => {
-    // const appliedProjectCount = this.appliedProjectCount();
-    // const orgEnvironments =
-    //   this.organizationDetailService.organizationEnvironmentsProcessed();
-    // const projectEnvironments = this.projectEnvironmentsService.visibleEnvironments()
-    //   map(([appliedProjectCount, orgEnvironments, projectEnvironments]) =>
-    //     appliedProjectCount !== 1 ? orgEnvironments : projectEnvironments,
-    //   ),
-    return [];
-  });
+  organizationEnvironments = computed(() =>
+    this.appliedProjectCount() !== 1
+      ? this.organizationDetailService.organizationEnvironmentsProcessed()
+      : this.projectEnvironmentsService.visibleEnvironments(),
+  );
 
   constructor() {
     effect(() => {
@@ -170,31 +166,21 @@ export class IssuesPageComponent implements OnDestroy {
         ? this.environmentForm.controls.environment.disable()
         : this.environmentForm.controls.environment.enable(),
     );
-    // combineLatest([
-    //   this.orgSlug$,
-    //   this.route.queryParamMap.pipe(
-    //     map((params) => params.getAll("project")[0]),
-    //     filter((project) => !!project),
-    //     distinctUntilChanged(),
-    //   ),
-    //   this.organizationsService.activeOrganizationProjects$,
-    // ])
-    //   .pipe(
-    //     switchMap(([orgSlug, projectId, orgProjects]) => {
-    //       const projectSlug = orgProjects?.find(
-    //         (orgProject) => orgProject.id.toString() === projectId,
-    //       )?.slug;
-    //       if (orgSlug && projectSlug) {
-    //         return this.projectEnvironmentsService.retrieveEnvironmentsWithProperties(
-    //           orgSlug,
-    //           projectSlug,
-    //         );
-    //       }
-    //       return EMPTY;
-    //     }),
-    //     takeUntilDestroyed(),
-    //   )
-    //   .subscribe();
+    effect(() => {
+      const project = this.project();
+      const firstProjectId = project ? project[0] : null;
+      const orgSlug = this.orgSlug();
+      const projectSlug = this.organizationsService
+        .activeOrganizationProjects()
+        ?.find(
+          (orgProject) => orgProject.id.toString() === firstProjectId,
+        )?.slug;
+      if (orgSlug && projectSlug) {
+        this.projectEnvironmentsService
+          .retrieveEnvironmentsWithProperties(orgSlug, projectSlug)
+          .toPromise();
+      }
+    });
     /**
      * When changing from one project to another, see if there is an environment
      * in the URL. If it doesn't match a project environment, reset the URL.
