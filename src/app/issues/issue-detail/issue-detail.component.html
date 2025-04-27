@@ -1,6 +1,6 @@
-@if ((initialLoadComplete$ | async) && (issue$ | async) === null) {
+@if (initialLoadComplete() && issue() === null) {
   <section class="l-body l-body--full-width">
-    @if (organization$ | async; as organization) {
+    @if (organization(); as organization) {
       <mat-card class="auth-form issue-404">
         <mat-card-content>
           <h1 class="mat-headline-4" i18n>Issue not found</h1>
@@ -25,13 +25,13 @@
     }
   </section>
 }
-@if (issue$ | async; as issue) {
+@if (issue(); as issue) {
   <section class="l-body l-body--full-width">
     <gt-detail-header
       [backLinkText]="'View all issues for ' + issue.project.name"
       [backLinkParams]="generateBackLink(issue.project.id)"
-      [title]="(issueTitle$ | async)!"
-      [subtitle]="issueSubtitle$ | async"
+      [title]="issueTitle()!"
+      [subtitle]="issueSubtitle()"
     >
       @if (issue?.status !== "resolved") {
         <button mat-flat-button color="primary" (click)="markResolved()">
