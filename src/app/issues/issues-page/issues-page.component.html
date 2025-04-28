@@ -24,14 +24,14 @@
             class="resolved-row"
             class="table-header"
           >
-            @if (organizationEnvironments(); as organizationEnvironments) {
+            @if (availableEnvironments(); as availableEnvironments) {
               <gt-data-filter-bar
                 [dateForm]="dateForm"
                 [environmentForm]="environmentForm"
                 [searchForm]="form"
                 [sortForm]="sortForm"
                 [sorts]="sorts"
-                [organizationEnvironments]="organizationEnvironments"
+                [organizationEnvironments]="availableEnvironments"
                 (dateFormSubmission)="onDateFormSubmit($event)"
                 (dateFormReset)="dateFormReset()"
                 (filterByEnvironment)="filterByEnvironment($event)"
@@ -252,7 +252,7 @@
           >
             @if (initialLoad()) {
               <gt-issue-zero-states
-                [project]="project()"
+                [projects]="projects()"
               ></gt-issue-zero-states>
             }
           </td>

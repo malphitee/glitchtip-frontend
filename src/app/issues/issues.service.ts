@@ -36,21 +36,17 @@ const initialState: IssuesState = {
 
 type AllowedSortKey =
   | "priority"
-  | "last_seen"
   | "first_seen"
   | "count"
   | "-last_seen"
-  | "-first_seen"
   | "-count"
   | "-priority";
 
 const allowedSortKeys = [
   "priority",
-  "last_seen",
   "first_seen",
   "count",
   "-last_seen",
-  "-first_seen",
   "-count",
   "-priority",
 ] as const;

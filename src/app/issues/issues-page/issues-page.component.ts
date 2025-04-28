@@ -73,7 +73,7 @@ export class IssuesPageComponent implements OnDestroy {
   start = input<string | undefined>();
   end = input<string | undefined>();
   sort = input<string | undefined>();
-  project = input([], { transform: stringArrAttribute });
+  projects = input([], { alias: "project", transform: stringArrAttribute });
   environment = input<string | undefined>();
 
   displayedColumns: string[] = ["select", "title", "events"];
@@ -123,7 +123,7 @@ export class IssuesPageComponent implements OnDestroy {
    * Corresponds to project picker/header nav/project IDs in the URL
    * If the count is zero, we show issues from all projects
    */
-  appliedProjectCount = computed(() => this.project().length);
+  appliedProjectCount = computed(() => this.projects().length);
 
   showBulkSelectProject = computed(() => {
     const searchHits = this.paginator()?.hits;
@@ -135,7 +135,7 @@ export class IssuesPageComponent implements OnDestroy {
     return false;
   });
 
-  organizationEnvironments = computed(() =>
+  availableEnvironments = computed(() =>
     this.appliedProjectCount() !== 1
       ? this.organizationDetailService.organizationEnvironmentsProcessed()
       : this.projectEnvironmentsService.visibleEnvironments(),
@@ -150,7 +150,7 @@ export class IssuesPageComponent implements OnDestroy {
         start: this.start(),
         end: this.end(),
         sort: this.sort(),
-        project: this.project(),
+        project: this.projects(),
         environment: this.environment(),
       });
     });
@@ -160,12 +160,12 @@ export class IssuesPageComponent implements OnDestroy {
         : this.sortForm.controls.sort.enable(),
     );
     effect(() =>
-      this.organizationEnvironments().length === 0
+      this.availableEnvironments().length === 0
         ? this.environmentForm.controls.environment.disable()
         : this.environmentForm.controls.environment.enable(),
     );
     effect(() => {
-      const project = this.project();
+      const project = this.projects();
       const firstProjectId = project ? project[0] : null;
       const orgSlug = this.orgSlug();
       const projectSlug = this.organizationsService
@@ -194,7 +194,7 @@ export class IssuesPageComponent implements OnDestroy {
     effect(() => {
       const projectEnvironments =
         this.projectEnvironmentsService.visibleEnvironmentsLoaded();
-      const project = this.project();
+      const project = this.projects();
       const environment = this.environment();
       if (
         project.length &&
@@ -281,7 +281,7 @@ export class IssuesPageComponent implements OnDestroy {
         this.service.bulkUpdateStatus(
           status,
           orgSlug,
-          this.project(),
+          this.projects(),
           this.query(),
           this.start(),
           this.end(),

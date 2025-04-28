@@ -25,7 +25,7 @@ import { client } from "src/app/api/api";
   imports: [RouterLink, CopyInputComponent, MarkdownModule],
 })
 export class IssueZeroStatesComponent implements OnInit {
-  project = input<string[]>();
+  projects = input<string[]>();
   private issuesService = inject(IssuesService);
   private organizationsService = inject(OrganizationsService);
   private projectsService = inject(ProjectsService);
@@ -75,7 +75,7 @@ export class IssueZeroStatesComponent implements OnInit {
     this.organizationsService.activeOrganizationProjects;
   activeOrganizationSlug = this.organizationsService.activeOrganizationSlug;
   activeProjectID = computed(() => {
-    const projectIDs = this.project();
+    const projectIDs = this.projects();
     const activeOrgProjects = this.activeOrganizationProjects();
 
     if (projectIDs === undefined) {
@@ -114,7 +114,7 @@ export class IssueZeroStatesComponent implements OnInit {
    * Corresponds to project picker/header nav/project IDs in the URL
    * If the count is zero, we show issues from all projects
    */
-  appliedProjectCount = computed(() => this.project()?.length || 0);
+  appliedProjectCount = computed(() => this.projects()?.length || 0);
 
   /**
    * Either a single project is applied with the picker, or there's only one
@@ -129,7 +129,7 @@ export class IssueZeroStatesComponent implements OnInit {
   });
 
   projectsWhereAdminIsNotOnTheTeam = computed(() => {
-    const projectsFromParams = this.project();
+    const projectsFromParams = this.projects();
     const activeOrganizationProjects = this.activeOrganizationProjects();
 
     if (projectsFromParams === undefined) {
