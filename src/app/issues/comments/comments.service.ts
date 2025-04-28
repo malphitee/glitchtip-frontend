@@ -140,7 +140,7 @@ export class CommentsService extends StatefulService<CommentsState> {
 
   async deleteComment(issueId: number, commentId: number) {
     this.setCommentDeleteLoadingStart(commentId);
-    const { data, error } = await client.DELETE(
+    const { error, response } = await client.DELETE(
       "/api/0/issues/{issue_id}/comments/{comment_id}/",
       {
         params: {
@@ -157,7 +157,7 @@ export class CommentsService extends StatefulService<CommentsState> {
         $localize`There was an error deleting this comment. Please try again.`,
       );
     }
-    if (data) {
+    if (response.status === 204) {
       this.setCommentDeleteComplete(commentId);
       this.issueDetailService.updateCommentCount(-1);
       this.snackbar.open("Comment deleted.");
