@@ -1721,8 +1721,6 @@ export interface components {
             version: string;
             /** Servertimezone */
             serverTimeZone: string;
-            /** Usenewsocialcallbacks */
-            useNewSocialCallbacks: boolean;
             /** Glitchtipinstancename */
             glitchtipInstanceName: string | null;
         };
@@ -2097,6 +2095,11 @@ export interface components {
             /** Platform */
             platform?: string | null;
             /**
+             * Event Id
+             * Format: uuid
+             */
+            event_id: string;
+            /**
              * Timestamp
              * Format: date-time
              */
@@ -2150,11 +2153,6 @@ export interface components {
             } | null;
             user?: components["schemas"]["EventUser"] | null;
             debug_meta?: components["schemas"]["DebugMeta"] | null;
-            /**
-             * Event Id
-             * Format: uuid
-             */
-            event_id: string;
         };
         /** EventMessage */
         EventMessage: {
@@ -2660,10 +2658,10 @@ export interface components {
              */
             type: string | null;
             /**
-             * Created
+             * Datecreated
              * Format: date-time
              */
-            created: string;
+            dateCreated: string;
             user: components["schemas"]["CommentUserSchema"] | null;
             /** ID */
             id?: number | null;

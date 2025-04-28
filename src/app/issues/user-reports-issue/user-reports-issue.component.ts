@@ -3,18 +3,19 @@ import {
   ChangeDetectionStrategy,
   OnDestroy,
   inject,
+  computed,
 } from "@angular/core";
+import { DatePipe } from "@angular/common";
 import { ActivatedRoute, RouterLink } from "@angular/router";
-import { map } from "rxjs/operators";
 import { combineLatest } from "rxjs";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatCardModule } from "@angular/material/card";
-import { CommonModule } from "@angular/common";
 import { IssueDetailService } from "../issue-detail/issue-detail.service";
 import { UserReportsService } from "src/app/api/user-reports/user-reports.service";
+import { toObservable, toSignal } from "@angular/core/rxjs-interop";
 
 @Component({
   selector: "gt-user-reports-issue",
@@ -22,7 +23,7 @@ import { UserReportsService } from "src/app/api/user-reports/user-reports.servic
   styleUrls: ["./user-reports-issue.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
+    DatePipe,
     MatCardModule,
     MatDividerModule,
     MatButtonModule,
@@ -36,13 +37,14 @@ export class UserReportsIssueComponent implements OnDestroy {
   private userReportService = inject(UserReportsService);
   protected route = inject(ActivatedRoute);
 
-  paginator$ = this.userReportService.paginator$;
-  issueId$ = this.issueService.issue$.pipe(map((issue) => issue?.id));
-  reports$ = this.userReportService.reports$;
-  errorReports$ = this.userReportService.errors$;
+  paginator = toSignal(this.userReportService.paginator$);
+  issueID = computed(() => this.issueService.issue()?.id);
+  issueID$ = toObservable(this.issueID);
+  reports = this.userReportService.reports;
+  errorReports = this.userReportService.errors;
 
   constructor() {
-    combineLatest([this.route.queryParamMap, this.issueId$]).subscribe(
+    combineLatest([this.route.queryParamMap, this.issueID$]).subscribe(
       ([queryParams, issueId]) => {
         if (issueId) {
           this.userReportService.getReportsForIssue(

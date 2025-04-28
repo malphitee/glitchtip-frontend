@@ -1,9 +1,8 @@
-import { Component, OnDestroy, OnInit, inject } from "@angular/core";
+import { Component, OnInit, computed, inject, input } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { lastValueFrom } from "rxjs";
-import { map, tap } from "rxjs/operators";
-import { StatefulBaseComponent } from "src/app/shared/stateful-service/stateful-base.component";
-import { CommentsState, CommentsService } from "./comments.service";
+import { tap } from "rxjs/operators";
+import { CommentsService } from "./comments.service";
 import { UserService } from "src/app/api/user/user.service";
 import { MarkdownModule } from "ngx-markdown";
 import { MatIconModule } from "@angular/material/icon";
@@ -11,7 +10,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatDividerModule } from "@angular/material/divider";
 import { CommentFormComponent } from "./comment-form/comment-form.component";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
-import { AsyncPipe, DatePipe } from "@angular/common";
+import { DatePipe } from "@angular/common";
 
 @Component({
   selector: "gt-comments",
@@ -24,54 +23,36 @@ import { AsyncPipe, DatePipe } from "@angular/common";
     MatButtonModule,
     MatIconModule,
     MarkdownModule,
-    AsyncPipe,
     DatePipe,
   ],
 })
-export class CommentsComponent
-  extends StatefulBaseComponent<CommentsState, CommentsService>
-  implements OnDestroy, OnInit
-{
+export class CommentsComponent implements OnInit {
   private userService = inject(UserService);
   protected route = inject(ActivatedRoute);
+  commentsService = inject(CommentsService);
 
-  comments$ = this.commentsService.commentsWithUIState$;
-  createCommentLoading$ = this.commentsService.createCommentLoading$;
-  commentsListLoading$ = this.commentsService.commentsListLoading$;
-  commentUpdateLoading$ = this.commentsService.commentUpdateLoading$;
+  comments = this.commentsService.commentsWithUIState;
+  createCommentLoading = this.commentsService.createCommentLoading;
+  commentsListLoading = this.commentsService.commentsListLoading;
+  commentUpdateLoading = this.commentsService.commentUpdateLoading;
   user = this.userService.user;
-  displayCommentCreation$ = this.comments$.pipe(
-    map((comments) => comments.length < 50),
-  );
-
-  constructor(private commentsService: CommentsService) {
-    super(commentsService);
-  }
+  displayCommentCreation = computed(() => this.comments().length < 50);
+  issueID = input.required<string>({ alias: "issue-id" });
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
       if (params["issue-id"]) {
-        this.commentsService.getComments(params["issue-id"]);
+        this.commentsService.issueID.set(params["issue-id"]);
       }
     });
   }
 
   createOrUpdateComment(data: { text: string; id?: number }) {
-    lastValueFrom(
-      this.route.params.pipe(
-        tap((params) => {
-          if (data.id) {
-            this.commentsService.updateComment(
-              +params["issue-id"],
-              data.id,
-              data.text,
-            );
-          } else {
-            this.commentsService.createComment(+params["issue-id"], data.text);
-          }
-        }),
-      ),
-    );
+    if (data.id) {
+      this.commentsService.updateComment(+this.issueID(), data.id, data.text);
+    } else {
+      this.commentsService.createComment(+this.issueID(), data.text);
+    }
   }
 
   triggerCommentUpdateMode(commentId: number) {
