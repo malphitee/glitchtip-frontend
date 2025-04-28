@@ -9,6 +9,7 @@ import {
   PaginationStatefulService,
   PaginationStatefulServiceState,
 } from "src/app/shared/stateful-service/pagination-stateful-service";
+import { toSignal } from "@angular/core/rxjs-interop";
 
 export interface UserReportsState extends PaginationStatefulServiceState {
   reports: UserReport[] | null;
@@ -29,8 +30,8 @@ export class UserReportsService extends PaginationStatefulService<UserReportsSta
 
   private readonly issuePageUrl = baseUrl + "/issues/";
 
-  reports$ = this.getState$.pipe(map((state) => state.reports));
-  errors$ = this.getState$.pipe(map((state) => state.errors));
+  reports = toSignal(this.getState$.pipe(map((state) => state.reports)));
+  errors = toSignal(this.getState$.pipe(map((state) => state.errors)));
 
   constructor() {
     super(initialState);

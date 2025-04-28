@@ -10,20 +10,20 @@ import { exhaustMap, map } from "rxjs/operators";
 import { EMPTY } from "rxjs";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatCardModule } from "@angular/material/card";
-import { NgStyle, AsyncPipe } from "@angular/common";
+import { NgStyle } from "@angular/common";
 
 @Component({
   selector: "gt-issue-detail-tags",
   templateUrl: "./issue-detail-tags.component.html",
   styleUrls: ["./issue-detail-tags.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatCardModule, NgStyle, MatTooltipModule, AsyncPipe],
+  imports: [MatCardModule, NgStyle, MatTooltipModule],
 })
 export class IssueDetailTagsComponent implements OnInit {
   private issueService = inject(IssueDetailService);
   private route = inject(ActivatedRoute);
 
-  tags$ = this.issueService.tags$;
+  tags = this.issueService.tags;
 
   issueIdParam$ = this.route.paramMap.pipe(
     map((params) => params.get("issue-id")),

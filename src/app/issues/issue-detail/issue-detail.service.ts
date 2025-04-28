@@ -74,7 +74,6 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
     const state = this.state();
     return state.tags && this.tagsWithPercent(state.tags);
   });
-  readonly tags$ = toObservable(this.tags);
   readonly eventInitialLoadComplete = computed(
     () => this.state().eventInitialLoadComplete,
   );
