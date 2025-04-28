@@ -11,6 +11,7 @@ import { DatePipe, I18nPluralPipe } from "@angular/common";
 import { FormControl, FormGroup } from "@angular/forms";
 import { MatSelectChange } from "@angular/material/select";
 import { Router, ActivatedRoute, RouterLink } from "@angular/router";
+import { lastValueFrom } from "rxjs";
 import { IssuesService } from "../issues.service";
 import { IssueStatus } from "../interfaces";
 import { ProjectEnvironmentsService } from "src/app/settings/projects/project-detail/project-environments/project-environments.service";
@@ -122,7 +123,7 @@ export class IssuesPageComponent implements OnDestroy {
    * Corresponds to project picker/header nav/project IDs in the URL
    * If the count is zero, we show issues from all projects
    */
-  appliedProjectCount = computed(() => this.project.length);
+  appliedProjectCount = computed(() => this.project().length);
 
   showBulkSelectProject = computed(() => {
     const searchHits = this.paginator()?.hits;
@@ -172,10 +173,18 @@ export class IssuesPageComponent implements OnDestroy {
         ?.find(
           (orgProject) => orgProject.id.toString() === firstProjectId,
         )?.slug;
+      if (orgSlug) {
+        lastValueFrom(
+          this.organizationDetailService.getOrganizationEnvironments(orgSlug),
+        );
+      }
       if (orgSlug && projectSlug) {
-        this.projectEnvironmentsService
-          .retrieveEnvironmentsWithProperties(orgSlug, projectSlug)
-          .toPromise();
+        lastValueFrom(
+          this.projectEnvironmentsService.retrieveEnvironmentsWithProperties(
+            orgSlug,
+            projectSlug,
+          ),
+        );
       }
     });
     /**
@@ -188,7 +197,7 @@ export class IssuesPageComponent implements OnDestroy {
       const project = this.project();
       const environment = this.environment();
       if (
-        project &&
+        project.length &&
         environment &&
         !projectEnvironments.includes(environment)
       ) {
