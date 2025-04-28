@@ -13,7 +13,7 @@ describe("Issues Page", () => {
     function () {
       cy.intercept(
         "GET",
-        "/api/0/organizations/*/issues/?query=is:unresolved"
+        "/api/0/organizations/*/issues/?query=is%3Aunresolved"
       ).as("initialIssuesRequest");
       cy.visit(`/${organization.slug}/issues`);
       cy.wait("@initialIssuesRequest");
@@ -33,7 +33,7 @@ describe("Issues Page", () => {
       );
       cy.intercept(
         "GET",
-        "/api/0/organizations/*/issues/?query=is:resolved"
+        "/api/0/organizations/*/issues/?query=is%3Aresolved"
       ).as("resolvedIssuesRequest");
       cy.get('[data-cy="list-search-field"]').clear().type("is:resolved");
       cy.get('[data-cy="list-search-form"]').submit();

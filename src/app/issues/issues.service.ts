@@ -253,7 +253,7 @@ export class IssuesService extends StatefulService<IssuesState> {
             organization_slug: orgSlug,
           },
           query: {
-            id: projectIds.map((project) => parseInt(project)),
+            project: projectIds,
             query,
             start,
             end,
@@ -307,19 +307,6 @@ export class IssuesService extends StatefulService<IssuesState> {
       allResultsSelected: false,
     });
   }
-
-  // private setIssuesLoading() {
-  //   const state = this.state.getValue();
-  //   this.setState({
-  //     selectedIssues: [],
-  //     allResultsSelected: false,
-  //     pagination: {
-  //       ...state.pagination,
-  //       initialLoadComplete: false,
-  //       loading: true,
-  //     },
-  //   });
-  // }
 
   private setUpdateStatusByIssueIdComplete(
     issueIds: string[],

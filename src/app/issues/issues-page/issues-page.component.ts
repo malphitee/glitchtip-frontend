@@ -145,7 +145,7 @@ export class IssuesPageComponent implements OnDestroy {
       this.service.updateParams({
         orgSlug: this.orgSlug(),
         cursor: this.cursor(),
-        query: this.query(),
+        query: this.query() ?? "is:unresolved",
         start: this.start(),
         end: this.end(),
         sort: this.sort(),
@@ -202,19 +202,19 @@ export class IssuesPageComponent implements OnDestroy {
     effect(() => {
       const query = this.query();
       this.form.setValue({
-        query: query !== undefined ? query : "is:unresolved",
+        query: query ?? "is:unresolved",
       });
     });
     effect(() => {
       const sort = this.sort();
       this.sortForm.setValue({
-        sort: sort !== undefined ? sort : "-last_seen",
+        sort: sort ?? "-last_seen",
       });
     });
     effect(() => {
       const environment = this.environment();
       this.environmentForm.setValue({
-        environment: environment !== undefined ? environment : "",
+        environment: environment ?? "",
       });
     });
     effect(() => {
