@@ -1,0 +1,17 @@
+<button
+    mat-stroked-button
+    (click)="unmerge()"
+    [disabled]="!allowUnmerge()"
+    i18n
+>Unmerge</button
+>
+@for (hash of hashes(); track hash.id; let i = $index) {
+    <div>
+    <mat-checkbox
+        (change)="toggleCheck(hash.id)"
+        [checked]="false"
+    ></mat-checkbox>
+    Hash: {{ hash.id }}
+    Latest Event: {{ hash.latestEvent }}
+    </div>
+}

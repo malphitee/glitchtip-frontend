@@ -72,9 +72,8 @@
               [active]="details.isActive"
               [routerLinkActiveOptions]="{ exact: true }"
               #details="routerLinkActive"
-            >
-              Event Details
-            </a>
+              i18n
+            >Event Details</a>
             <a
               mat-tab-link
               [routerLink]="['user-reports']"
@@ -91,9 +90,8 @@
                   "
                   matBadgeOverlap="false"
                   class="report-badge"
-                >
-                  User Reports
-                </span>
+                  i18n
+                >User Reports</span>
               }
               @if (issue.userReportCount === 0) {
                 User Reports
@@ -113,13 +111,21 @@
                   "
                   matBadgeOverlap="false"
                   class="report-badge"
-                >
-                  Comments
+                  i18n
+                >Comments
                 </span>
               } @else {
-                <span>Comments</span>
+                <span i18n>Comments</span>
               }
             </a>
+            <a
+              mat-tab-link
+              [routerLink]="['merged']"
+              routerLinkActive
+              [active]="merged.isActive"
+              #merged="routerLinkActive"
+              i18n
+            >Merged</a>
           </nav>
         </div>
         <mat-card-content>
