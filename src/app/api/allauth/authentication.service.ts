@@ -48,9 +48,12 @@ export class AuthenticationService {
   }
 
   login(email: string, password: string) {
-    return this.http.post<AllAuthSessionResponse>(baseUrl + "/login", {
-      email,
-      password,
+    return allauthClient.POST("/_allauth/browser/v1/auth/login", {
+      params: { path: { client: "browser" } },
+      body: {
+        email,
+        password,
+      },
     });
   }
 

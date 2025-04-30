@@ -98,7 +98,6 @@ export class SettingsService {
   }
 
   triggerPlausibleReport(orgSlug: string | undefined) {
-    console.log("report", orgSlug);
     if (window.plausible) {
       var url = window.location.href;
       url = url.replace(/\/\d+(\/|$)/g, "/<id>/");

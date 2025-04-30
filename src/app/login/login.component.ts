@@ -10,7 +10,6 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatCardModule } from "@angular/material/card";
-import { lastValueFrom } from "rxjs";
 import { toObservable } from "@angular/core/rxjs-interop";
 import { MarkdownComponent } from "ngx-markdown";
 import { FormErrorComponent } from "../shared/forms/form-error/form-error.component";
@@ -110,9 +109,7 @@ export class LoginComponent
 
   onSubmit() {
     if (this.form.valid) {
-      lastValueFrom(
-        this.service.login(this.form.value.email!, this.form.value.password!),
-      );
+      this.service.login(this.form.value.email!, this.form.value.password!);
     }
   }
 }

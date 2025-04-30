@@ -70,12 +70,12 @@ export class AuthService {
     }
   }
 
-  login(email: string, password: string) {
-    return this.authenticationService
-      .login(email, password)
-      .pipe(
-        tap((resp) => this.isAuthenticated.set(resp.meta.is_authenticated)),
-      );
+  async login(email: string, password: string) {
+    const resp = await this.authenticationService.login(email, password);
+    if (resp.data) {
+      this.isAuthenticated.set(resp.data.meta.is_authenticated);
+    }
+    return resp;
   }
 
   expireAuth() {
