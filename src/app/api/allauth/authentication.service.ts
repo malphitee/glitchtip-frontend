@@ -11,6 +11,7 @@ import { catchError, Observable, of, throwError } from "rxjs";
 import { JsonObject } from "src/app/interface-primitives";
 import { AuthenticationPublicKeyCredential } from "@github/webauthn-json/dist/types/browser-ponyfill";
 import { getCSRFToken } from "src/app/shared/shared.utils";
+import { allauthClient } from "../api";
 
 const baseUrl = allauthBase + "/auth";
 
@@ -37,7 +38,9 @@ export class AuthenticationService {
   private http = inject(HttpClient);
 
   getAuthenticationStatus() {
-    return this.http.get<AllAuthSessionResponse>(baseUrl + "/session");
+    return allauthClient.GET("/_allauth/browser/v1/auth/session", {
+      params: { path: { client: "browser" } },
+    });
   }
 
   logout() {

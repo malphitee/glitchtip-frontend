@@ -1,11 +1,4 @@
-import {
-  Injectable,
-  WritableSignal,
-  effect,
-  signal,
-  inject,
-  computed,
-} from "@angular/core";
+import { Injectable, effect, signal, inject, computed } from "@angular/core";
 import { HttpErrorResponse } from "@angular/common/http";
 import {
   EMPTY,
@@ -21,10 +14,7 @@ import {
   parseRequestOptionsFromJSON,
 } from "@github/webauthn-json/browser-ponyfill";
 import { AuthenticationService } from "./api/allauth/authentication.service";
-import {
-  AllAuthLoginNotAuthResponse,
-  AuthFlow,
-} from "./api/allauth/allauth.interfaces";
+import { AuthFlow } from "./api/allauth/allauth.interfaces";
 
 const initialIsAuthenticated = localStorage.getItem("isAuthenticated");
 
@@ -36,7 +26,7 @@ export class AuthService {
 
   readonly isAuthenticated = signal(initialIsAuthenticated === "true");
   readonly initialized = signal(false);
-  readonly mfaFlows: WritableSignal<AuthFlow[]> = signal([]);
+  readonly mfaFlows = signal<AuthFlow[]>([]);
   /**
    * Emit isAuthenticated immediately when true or else after initialized is set
    * This ensures social auth checks are done during login without delaying logged in users
@@ -59,26 +49,25 @@ export class AuthService {
     });
   }
 
-  checkServerAuthStatus() {
-    return this.authenticationService.getAuthenticationStatus().pipe(
-      tap((resp) => {
-        this.isAuthenticated.set(resp.meta.is_authenticated);
-        this.initialized.set(true);
-      }),
-      catchError((err: HttpErrorResponse) => {
-        if (err.status === 401) {
-          this.isAuthenticated.set(false);
-          const resp = err.error as AllAuthLoginNotAuthResponse;
-          if (resp.data.flows.find((flow) => flow.id === "mfa_authenticate")) {
-            this.mfaFlows.set(resp.data.flows);
-          }
-          this.initialized.set(true);
-          return of(err);
+  async checkServerAuthStatus() {
+    const { data, error } =
+      await this.authenticationService.getAuthenticationStatus();
+    if (data) {
+      this.isAuthenticated.set(data.meta.is_authenticated);
+      this.initialized.set(true);
+    }
+    if (error) {
+      if (error.status === 401) {
+        this.isAuthenticated.set(false);
+        if (error.data.flows.find((flow) => flow.id === "mfa_authenticate")) {
+          this.mfaFlows.set(error.data.flows);
         }
         this.initialized.set(true);
-        return throwError(() => new Error("Unable to check auth status"));
-      }),
-    );
+      } else {
+        this.initialized.set(true);
+        throw new Error("Unable to check auth status");
+      }
+    }
   }
 
   login(email: string, password: string) {
