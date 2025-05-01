@@ -8,7 +8,6 @@ import { RouterLink } from "@angular/router";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatButtonModule } from "@angular/material/button";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
-import { lastValueFrom } from "rxjs";
 import { LoginService } from "../login.service";
 
 @Component({
@@ -35,11 +34,11 @@ export class LoginWebAuthnComponent implements OnInit {
   }
 
   ngOnInit() {
-    lastValueFrom(this.loginService.webAuthnAuthenticate());
+    this.loginService.webAuthnAuthenticate();
   }
 
   retryAuth() {
-    lastValueFrom(this.loginService.webAuthnAuthenticate());
+    this.loginService.webAuthnAuthenticate();
   }
 
   restartLogin() {

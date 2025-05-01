@@ -1,11 +1,7 @@
 import { Injectable, computed, inject } from "@angular/core";
-import { catchError, of, tap, throwError } from "rxjs";
 import { AuthService } from "../auth.service";
 import { APIState } from "../shared/shared.interfaces";
-import {
-  AllAuthError,
-  AllAuthHttpErrorResponse,
-} from "../api/allauth/allauth.interfaces";
+import { AllAuthError } from "../api/allauth/allauth.interfaces";
 import {
   messagesLookup,
   reduceParamErrors,
@@ -38,23 +34,17 @@ export class RegisterService extends StatefulService<RegisterState> {
     super(initialState);
   }
 
-  register(email: string, password: string) {
-    this.state.set({ ...this.state(), loading: true, errors: [] });
-    this.authService.signup(email, password);
-    return this.authService.signup(email, password).pipe(
-      tap(() => this.state.set(initialState)),
-      catchError((err: AllAuthHttpErrorResponse) => {
-        this.state.set({
-          ...this.state(),
-          loading: false,
-          errors: handleAllAuthErrorResponse(err),
-        });
-        if ([400, 500].includes(err.status)) {
-          return of(undefined);
-        }
-        return throwError(() => err);
-      }),
-    );
+  async register(email: string, password: string) {
+    this.setState({ loading: true, errors: [] });
+    const response = await this.authService.signup(email, password);
+    this.state.set(initialState);
+    if (response.error) {
+      this.setState({
+        loading: false,
+        errors: handleAllAuthErrorResponse(response.error as any),
+      });
+    }
+    return response;
   }
 
   socialRegister(provider: string, callbackUrl = "/") {

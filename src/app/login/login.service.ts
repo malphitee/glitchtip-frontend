@@ -1,12 +1,7 @@
 import { Injectable, computed, inject } from "@angular/core";
-import { catchError, of, tap, throwError } from "rxjs";
 import { APIState } from "../shared/shared.interfaces";
 import { AuthService } from "../auth.service";
-import {
-  AllAuthError,
-  AllAuthHttpErrorResponse,
-  AuthFlow,
-} from "../api/allauth/allauth.interfaces";
+import { AllAuthError, AuthFlow } from "../api/allauth/allauth.interfaces";
 import {
   messagesLookup,
   reduceParamErrors,
@@ -131,32 +126,24 @@ export class LoginService extends StatefulService<LoginState> {
     this.state.update((state) => ({ ...state, preferTOTP: !state.preferTOTP }));
   }
 
-  webAuthnAuthenticate() {
-    return this.authService.webAuthnAuthenticate().pipe(
-      tap((resp) => {
-        if (resp.meta.is_authenticated) {
-          this.redirect();
-        }
-      }),
-    );
+  async webAuthnAuthenticate() {
+    const result = await this.authService.webAuthnAuthenticate();
+    if (result?.data?.meta.is_authenticated) {
+      this.redirect();
+    }
+    return result;
   }
 
-  totpAuthenticate(code: string) {
-    return this.authService.mfaAuthenticate(code).pipe(
-      tap((resp) => {
-        if (resp.meta.is_authenticated) {
-          this.redirect();
-        }
-      }),
-      catchError((err: AllAuthHttpErrorResponse) => {
-        this.setState({
-          errors: handleAllAuthErrorResponse(err),
-        });
-        if ([400, 500].includes(err.status)) {
-          return of(undefined);
-        }
-        return throwError(() => err);
-      }),
-    );
+  async totpAuthenticate(code: string) {
+    const result = await this.authService.mfaAuthenticate(code);
+    if (result.data?.meta.is_authenticated) {
+      this.redirect();
+    }
+    if (result.error) {
+      this.setState({
+        errors: handleAllAuthErrorResponse(result.error as any),
+      });
+    }
+    return result;
   }
 }

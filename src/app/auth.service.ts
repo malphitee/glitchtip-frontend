@@ -1,14 +1,4 @@
 import { Injectable, effect, signal, inject, computed } from "@angular/core";
-import { HttpErrorResponse } from "@angular/common/http";
-import {
-  EMPTY,
-  catchError,
-  exhaustMap,
-  lastValueFrom,
-  of,
-  tap,
-  throwError,
-} from "rxjs";
 import {
   get,
   parseRequestOptionsFromJSON,
@@ -83,38 +73,41 @@ export class AuthService {
   }
 
   restartLogin() {
-    lastValueFrom(this.authenticationService.logout());
+    this.authenticationService.logout();
     this.mfaFlows.set([]);
   }
 
-  mfaAuthenticate(code: string) {
-    return this.authenticationService
-      .mfaAuthenticate(code)
-      .pipe(
-        tap((resp) => this.isAuthenticated.set(resp.meta.is_authenticated)),
-      );
+  async mfaAuthenticate(code: string) {
+    const response = await this.authenticationService.mfaAuthenticate(code);
+    if (response.data) {
+      this.isAuthenticated.set(response.data.meta.is_authenticated);
+    }
+    return response;
   }
 
-  webAuthnAuthenticate() {
-    return this.authenticationService.getWebAuthnCredentialRequest().pipe(
-      exhaustMap(async (resp) => {
-        return await get(
-          parseRequestOptionsFromJSON(resp.data.request_options),
-        );
-      }),
-      exhaustMap((credential) => {
-        return this.authenticationService.perform2FAWebAuthn(credential);
-      }),
-      tap((resp) => this.isAuthenticated.set(resp.meta.is_authenticated)),
-    );
+  async webAuthnAuthenticate() {
+    const { data } =
+      await this.authenticationService.getWebAuthnCredentialRequest();
+    if (data) {
+      const parseResult = await get(
+        parseRequestOptionsFromJSON(data.data.request_options),
+      );
+      const webAuthnResult =
+        await this.authenticationService.perform2FAWebAuthn(parseResult as any);
+      if (webAuthnResult.data) {
+        this.isAuthenticated.set(webAuthnResult.data.meta.is_authenticated);
+      }
+      return webAuthnResult;
+    }
+    return;
   }
 
-  signup(email: string, password: string) {
-    return this.authenticationService
-      .signup(email, password)
-      .pipe(
-        tap((resp) => this.isAuthenticated.set(resp.meta.is_authenticated)),
-      );
+  async signup(email: string, password: string) {
+    const response = await this.authenticationService.signup(email, password);
+    if (response.data) {
+      this.isAuthenticated.set(response.data.meta.is_authenticated);
+    }
+    return response;
   }
 
   providerRedirect(
@@ -125,16 +118,15 @@ export class AuthService {
     this.authenticationService.providerRedirect(provider, callbackUrl, process);
   }
 
-  logout() {
-    return this.authenticationService.logout().pipe(
-      catchError((err: HttpErrorResponse) => {
-        this.isAuthenticated.set(false);
-        this.mfaFlows.set([]);
-        if (err.status === 401) {
-          return of(EMPTY);
-        }
-        return throwError(() => new Error("Unable to log out"));
-      }),
-    );
+  async logout() {
+    const { error } = await this.authenticationService.logout();
+    if (error) {
+      this.isAuthenticated.set(false);
+      this.mfaFlows.set([]);
+      if (error.status === 401) {
+        return;
+      }
+      throw new Error("Unable to log out");
+    }
   }
 }

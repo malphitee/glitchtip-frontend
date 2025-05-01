@@ -1,17 +1,12 @@
-import { HttpClient, HttpErrorResponse } from "@angular/common/http";
-import { Injectable, inject } from "@angular/core";
+import { Injectable } from "@angular/core";
 import { allauthBase } from "src/app/constants";
-import {
-  AllAuthGetEmailVerificationResponse,
-  AllAuthResponse,
-  AllAuthSessionResponse,
-  GetWebAuthnCredentialRequestResponse,
-} from "./allauth.interfaces";
-import { catchError, Observable, of, throwError } from "rxjs";
 import { JsonObject } from "src/app/interface-primitives";
-import { AuthenticationPublicKeyCredential } from "@github/webauthn-json/dist/types/browser-ponyfill";
 import { getCSRFToken } from "src/app/shared/shared.utils";
-import { allauthClient } from "../api";
+import { client } from "../api";
+
+import { components } from "../allauth-schema";
+
+type AuthenticateWebAuthn = components["schemas"]["WebAuthnCredential"];
 
 const baseUrl = allauthBase + "/auth";
 
@@ -35,20 +30,20 @@ function postForm(action: string, data: JsonObject) {
   providedIn: "root",
 })
 export class AuthenticationService {
-  private http = inject(HttpClient);
-
   getAuthenticationStatus() {
-    return allauthClient.GET("/_allauth/browser/v1/auth/session", {
+    return client.GET("/_allauth/browser/v1/auth/session", {
       params: { path: { client: "browser" } },
     });
   }
 
   logout() {
-    return this.http.delete<AllAuthSessionResponse>(baseUrl + "/session");
+    return client.DELETE("/_allauth/browser/v1/auth/session", {
+      params: { path: { client: "browser" } },
+    });
   }
 
   login(email: string, password: string) {
-    return allauthClient.POST("/_allauth/browser/v1/auth/login", {
+    return client.POST("/_allauth/browser/v1/auth/login", {
       params: { path: { client: "browser" } },
       body: {
         email,
@@ -58,66 +53,70 @@ export class AuthenticationService {
   }
 
   mfaAuthenticate(code: string) {
-    return this.http.post<AllAuthSessionResponse>(
-      baseUrl + "/2fa/authenticate",
-      { code },
-    );
+    return client.POST("/_allauth/browser/v1/auth/2fa/authenticate", {
+      params: { path: { client: "browser" } },
+      body: {
+        code,
+      },
+    });
   }
 
   signup(email: string, password: string) {
-    return this.http.post<AllAuthSessionResponse>(baseUrl + "/signup", {
-      email,
-      password,
+    return client.POST("/_allauth/browser/v1/auth/signup", {
+      params: { path: { client: "browser" } },
+      body: {
+        email,
+        password,
+      },
     });
   }
 
   getEmailVerificationInformation(key: string) {
-    return this.http.get<AllAuthGetEmailVerificationResponse>(
-      baseUrl + "/email/verify",
-      {
-        headers: {
+    return client.GET("/_allauth/browser/v1/auth/email/verify", {
+      params: {
+        path: { client: "browser" },
+        header: {
           "X-Email-Verification-Key": key,
         },
       },
-    );
+    });
   }
 
   verifyEmail(key: string) {
-    return this.http.post<AllAuthSessionResponse>(baseUrl + "/email/verify", {
-      key,
+    return client.POST("/_allauth/browser/v1/auth/email/verify", {
+      params: { path: { client: "browser" } },
+      body: {
+        key,
+      },
     });
   }
 
   reauthenticate(password: string) {
-    return this.http.post<AllAuthSessionResponse>(baseUrl + "/reauthenticate", {
-      password,
+    return client.POST("/_allauth/browser/v1/auth/reauthenticate", {
+      params: { path: { client: "browser" } },
+      body: {
+        password,
+      },
     });
   }
 
   requestPassword(email: string) {
-    return this.http.post<AllAuthResponse>(baseUrl + "/password/request", {
-      email,
+    return client.POST("/_allauth/browser/v1/auth/password/request", {
+      params: { path: { client: "browser" } },
+      body: {
+        email,
+      },
     });
   }
 
-  resetPassword(
-    key: string,
-    password: string,
-  ): Observable<AllAuthSessionResponse> {
-    return this.http
-      .post<AllAuthSessionResponse>(baseUrl + "/password/reset", {
+  resetPassword(key: string, password: string) {
+    return client.POST("/_allauth/browser/v1/auth/password/reset", {
+      params: { path: { client: "browser" } },
+      body: {
         key,
         password,
-      })
-      .pipe(
-        catchError((error: HttpErrorResponse) => {
-          // 401 is the normal response when ACCOUNT_LOGIN_ON_PASSWORD_RESET is false
-          if (error.status === 401) {
-            return of(error.error);
-          }
-          return throwError(() => error);
-        }),
-      );
+      },
+    });
   }
 
   providerRedirect(
@@ -134,15 +133,17 @@ export class AuthenticationService {
   }
 
   getWebAuthnCredentialRequest() {
-    return this.http.get<GetWebAuthnCredentialRequestResponse>(
-      baseUrl + "/webauthn/authenticate",
-    );
+    return client.GET("/_allauth/browser/v1/auth/webauthn/authenticate", {
+      params: { path: { client: "browser" } },
+    });
   }
 
-  perform2FAWebAuthn(credential: AuthenticationPublicKeyCredential) {
-    return this.http.post<AllAuthSessionResponse>(
-      baseUrl + "/webauthn/authenticate",
-      { credential },
-    );
+  perform2FAWebAuthn(credential: AuthenticateWebAuthn) {
+    return client.POST("/_allauth/browser/v1/auth/webauthn/authenticate", {
+      params: { path: { client: "browser" } },
+      body: {
+        credential,
+      },
+    });
   }
 }

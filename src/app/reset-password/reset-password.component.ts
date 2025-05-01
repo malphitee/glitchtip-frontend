@@ -11,7 +11,6 @@ import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatCardModule } from "@angular/material/card";
 import { toObservable } from "@angular/core/rxjs-interop";
-import { lastValueFrom } from "rxjs";
 import { SettingsService } from "../api/settings.service";
 import { LoadingButtonComponent } from "../shared/loading-button/loading-button.component";
 import {
@@ -70,7 +69,7 @@ export class ResetPasswordComponent extends StatefulComponent<
 
   onSubmit() {
     if (this.form.valid && this.form.value.email) {
-      lastValueFrom(this.service.requestPassword(this.form.value.email));
+      this.service.requestPassword(this.form.value.email);
     }
   }
 

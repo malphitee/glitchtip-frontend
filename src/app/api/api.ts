@@ -23,8 +23,5 @@ if (baseElement) {
     options["baseUrl"] = baseHref;
   }
 }
-export const client = createClient<paths>(options);
+export const client = createClient<paths & allauthPaths>(options);
 client.use(csrfMiddleware);
-
-export const allauthClient = createClient<allauthPaths>(options);
-allauthClient.use(csrfMiddleware);

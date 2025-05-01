@@ -182,7 +182,7 @@ export class MultiFactorAuthService extends StatefulService<MFAState> {
       catchError((err: AllAuthHttpErrorResponse) => {
         this.setState({
           loading: false,
-          errors: handleAllAuthErrorResponse(err),
+          errors: handleAllAuthErrorResponse(err as any),
         });
         if ([400, 500].includes(err.status)) {
           return of(undefined);

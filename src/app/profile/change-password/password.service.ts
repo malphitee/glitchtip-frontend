@@ -59,7 +59,7 @@ export class PasswordService extends StatefulService<PasswordState> {
           this.state.set({
             ...this.state(),
             loading: false,
-            errors: handleAllAuthErrorResponse(err),
+            errors: handleAllAuthErrorResponse(err as any),
           });
           if (err.status === 400) {
             return of(EMPTY);

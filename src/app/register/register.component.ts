@@ -1,18 +1,17 @@
-import { Component, OnInit, inject } from "@angular/core";
+import { Component, OnInit, inject, input } from "@angular/core";
 import {
   Validators,
   ReactiveFormsModule,
   FormGroup,
   FormControl,
 } from "@angular/forms";
-import { Router, ActivatedRoute, RouterLink } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 import { tap } from "rxjs/operators";
 import { MatButtonModule } from "@angular/material/button";
 import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { CommonModule } from "@angular/common";
 import { MatCardModule } from "@angular/material/card";
-import { lastValueFrom } from "rxjs";
 import { toObservable } from "@angular/core/rxjs-interop";
 import { MarkdownComponent } from "ngx-markdown";
 import { AuthSvgComponent } from "../shared/auth-svg/auth-svg.component";
@@ -52,10 +51,10 @@ export class RegisterComponent
 {
   protected service: RegisterService;
   private router = inject(Router);
-  private route = inject(ActivatedRoute);
   private acceptService = inject(AcceptInviteService);
   private settings = inject(SettingsService);
   instanceName = this.settings.instanceName;
+  next = input<string | undefined>();
 
   tags = "";
   socialApps = this.settings.socialApps;
@@ -110,24 +109,20 @@ export class RegisterComponent
     return this.form.get("password2");
   }
 
-  onSubmit() {
+  async onSubmit() {
     if (this.form.valid) {
-      const nextUrl = this.route.snapshot.queryParamMap.get("next");
-      lastValueFrom(
-        this.service
-          .register(this.form.value.email!, this.form.value.password!)
-          .pipe(
-            tap((resp) => {
-              if (resp?.meta.is_authenticated) {
-                if (nextUrl) {
-                  this.router.navigateByUrl(nextUrl);
-                } else {
-                  this.router.navigate(["organizations", "new"]);
-                }
-              }
-            }),
-          ),
+      const nextUrl = this.next();
+      const { data } = await this.service.register(
+        this.form.value.email!,
+        this.form.value.password!,
       );
+      if (data?.meta.is_authenticated) {
+        if (nextUrl) {
+          this.router.navigateByUrl(nextUrl);
+        } else {
+          this.router.navigate(["organizations", "new"]);
+        }
+      }
     }
   }
 
