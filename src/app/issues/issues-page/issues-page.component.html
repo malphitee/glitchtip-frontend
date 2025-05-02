@@ -104,7 +104,9 @@
                 mat-stroked-button
                 (click)="mergeSelectedIssues()"
                 [disabled]="
-                  numberOfSelectedIssues() < 2 || allResultsSelected() || multipleProjectIssuesSelected()
+                  numberOfSelectedIssues() < 2 ||
+                  allResultsSelected() ||
+                  multipleProjectIssuesSelected()
                 "
                 i18n
                 >Merge</button
