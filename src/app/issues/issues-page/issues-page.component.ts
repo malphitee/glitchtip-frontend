@@ -9,7 +9,12 @@ import {
 } from "@angular/core";
 import { DatePipe, I18nPluralPipe } from "@angular/common";
 import { FormControl, FormGroup } from "@angular/forms";
+import { MatButtonModule } from "@angular/material/button";
+import { MatCheckboxModule } from "@angular/material/checkbox";
+import { MatDialog } from "@angular/material/dialog";
+import { MatIconModule } from "@angular/material/icon";
 import { MatSelectChange } from "@angular/material/select";
+import { MatTableModule } from "@angular/material/table";
 import { Router, ActivatedRoute, RouterLink } from "@angular/router";
 import { lastValueFrom } from "rxjs";
 import { IssuesService } from "../issues.service";
@@ -18,11 +23,7 @@ import { ProjectEnvironmentsService } from "src/app/settings/projects/project-de
 import { DaysAgoPipe, DaysOldPipe } from "../../shared/days-ago.pipe";
 import { IssueZeroStatesComponent } from "../issue-zero-states/issue-zero-states.component";
 import { ListFooterComponent } from "../../list-elements/list-footer/list-footer.component";
-import { MatIconModule } from "@angular/material/icon";
-import { MatButtonModule } from "@angular/material/button";
-import { MatCheckboxModule } from "@angular/material/checkbox";
 import { DataFilterBarComponent } from "../../list-elements/data-filter-bar/data-filter-bar.component";
-import { MatTableModule } from "@angular/material/table";
 import { ProjectFilterBarComponent } from "../../list-elements/project-filter-bar/project-filter-bar.component";
 import { ListTitleComponent } from "../../list-elements/list-title/list-title.component";
 import { OrganizationsService } from "src/app/api/organizations.service";
@@ -33,6 +34,7 @@ import {
   stringAttribute,
 } from "src/app/shared/shared.utils";
 import { OrganizationDetailService } from "src/app/api/organizations/organization-detail.service";
+import { ConfirmDialogComponent } from "src/app/shared/confirm-dialog/confirm-dialog.component";
 
 type Issue = components["schemas"]["IssueSchema"];
 
@@ -60,6 +62,7 @@ type Issue = components["schemas"]["IssueSchema"];
   providers: [IssuesService],
 })
 export class IssuesPageComponent implements OnDestroy {
+  dialog = inject(MatDialog);
   protected service = inject(IssuesService);
   protected router = inject(Router);
   protected route = inject(ActivatedRoute);
@@ -99,6 +102,13 @@ export class IssuesPageComponent implements OnDestroy {
 
   issues = this.service.issuesWithSelected;
   areAllSelected = this.service.areAllSelected;
+  multipleProjectIssuesSelected = computed(() => {
+    let selectedProjects = this.issues()
+      .filter((issue) => issue.isSelected)
+      .map((issue) => issue.project.id);
+    let selectedProjectsSet = new Set(selectedProjects);
+    return selectedProjectsSet.size > 1;
+  });
   thereAreSelectedIssues = this.service.thereAreSelectedIssues;
   allResultsSelected = this.service.allResultsSelected;
   numberOfSelectedIssues = this.service.numberOfSelectedIssues;
@@ -291,6 +301,26 @@ export class IssuesPageComponent implements OnDestroy {
         this.service.updateStatusByIssueId(orgSlug, status);
       }
     }
+  }
+
+  mergeSelectedIssues() {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      restoreFocus: false,
+      height: "200px",
+      width: "350px",
+      data: {
+        title: $localize`Merge issues`,
+        message: $localize`This action will merge your selected issues into a single issue.`,
+        confirmText: $localize`Merge`,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      const orgSlug = this.orgSlug();
+      if (confirmed && orgSlug) {
+        this.service.updateStatusByIssueId(orgSlug, "merge");
+      }
+    });
   }
 
   toggleCheck(issueId: number) {

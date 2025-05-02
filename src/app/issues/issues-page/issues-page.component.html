@@ -102,9 +102,9 @@
               >
               <button
                 mat-stroked-button
-                (click)="updateStatus('merge')"
+                (click)="mergeSelectedIssues()"
                 [disabled]="
-                  numberOfSelectedIssues() < 2 || allResultsSelected()
+                  numberOfSelectedIssues() < 2 || allResultsSelected() || multipleProjectIssuesSelected()
                 "
                 i18n
                 >Merge</button
