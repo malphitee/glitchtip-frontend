@@ -36,15 +36,18 @@ export class RegisterService extends StatefulService<RegisterState> {
 
   async register(email: string, password: string) {
     this.setState({ loading: true, errors: [] });
-    const response = await this.authService.signup(email, password);
+    const { data, error, response } = await this.authService.signup(
+      email,
+      password,
+    );
     this.state.set(initialState);
-    if (response.error) {
+    if (!response.ok) {
       this.setState({
         loading: false,
-        errors: handleAllAuthErrorResponse(response.error as any),
+        errors: handleAllAuthErrorResponse(error, response),
       });
     }
-    return response;
+    return data;
   }
 
   socialRegister(provider: string, callbackUrl = "/") {

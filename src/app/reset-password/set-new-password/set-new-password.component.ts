@@ -92,7 +92,7 @@ export class SetNewPasswordComponent extends StatefulComponent<
 
   async onSubmit() {
     if (this.form.valid) {
-      const { data } = await this.service.resetPassword(
+      const data = await this.service.resetPassword(
         this.key(),
         this.form.value.password!,
       );

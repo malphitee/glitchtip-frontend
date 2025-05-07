@@ -81,25 +81,27 @@ export class LoginService extends StatefulService<LoginState> {
 
   async login(email: string, password: string) {
     this.setState({ loading: true, errors: [] });
-    const { data, error } = await this.authService.login(email, password);
+    const { data, error, response } = await this.authService.login(
+      email,
+      password,
+    );
     this.state.set(initialState);
     if (data?.meta.is_authenticated) {
       this.redirect();
+      return;
     }
-    if (error) {
-      if (error.status === 401) {
-        // Valid login, but not yet authenticated
-        this.setState({ loading: false, authFlows: error.data.flows });
-      } else {
-        this.setState({
-          loading: false,
-          errors: handleAllAuthErrorResponse(error as any),
-        });
-        if (error.status === 400 || (error.status as any) === 500) {
-          return;
-        }
-        throw error;
+    if (error?.status === 401) {
+      // Valid login, but not yet authenticated
+      this.setState({ loading: false, authFlows: error.data.flows });
+    } else {
+      this.setState({
+        loading: false,
+        errors: handleAllAuthErrorResponse(error, response),
+      });
+      if ([400, 500].includes(response.status)) {
+        return;
       }
+      throw error;
     }
   }
 
@@ -135,15 +137,14 @@ export class LoginService extends StatefulService<LoginState> {
   }
 
   async totpAuthenticate(code: string) {
-    const result = await this.authService.mfaAuthenticate(code);
-    if (result.data?.meta.is_authenticated) {
+    const { data, error, response } = await this.authService.mfaAuthenticate(code);
+    if (data?.meta.is_authenticated) {
       this.redirect();
-    }
-    if (result.error) {
+    } else {
       this.setState({
-        errors: handleAllAuthErrorResponse(result.error as any),
+        errors: handleAllAuthErrorResponse(error, response),
       });
     }
-    return result;
+    return data;
   }
 }

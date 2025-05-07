@@ -112,7 +112,7 @@ export class RegisterComponent
   async onSubmit() {
     if (this.form.valid) {
       const nextUrl = this.next();
-      const { data } = await this.service.register(
+      const data = await this.service.register(
         this.form.value.email!,
         this.form.value.password!,
       );

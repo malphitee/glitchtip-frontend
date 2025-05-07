@@ -88,8 +88,8 @@ export class LoginTotpComponent
   async onSubmit() {
     if (this.form.valid && this.code) {
       const code = this.code.value!;
-      const result = await this.loginService.totpAuthenticate(code);
-      if (result.data) {
+      const data = await this.loginService.totpAuthenticate(code);
+      if (data) {
         this.router.navigate(["/"]);
       }
     }

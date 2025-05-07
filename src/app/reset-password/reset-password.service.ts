@@ -43,30 +43,29 @@ export class ResetPasswordService extends StatefulService<ResetPasswordState> {
 
   async requestPassword(email: string) {
     this.state.set({ ...initialState, loading: true });
-    const response = await this.authenticationService.requestPassword(email);
-    if (response.data) {
+    const { data, error, response } = await this.authenticationService.requestPassword(email);
+    if (data) {
       this.setState({ success: true });
+      return
     }
-    if (response.error) {
-      this.setState({
-        loading: false,
-        errors: handleAllAuthErrorResponse(response.error as any),
-      });
-    }
+    this.setState({
+      loading: false,
+      errors: handleAllAuthErrorResponse(error, response),
+    });
   }
 
   async resetPassword(key: string, password: string) {
     this.setState({ loading: true });
-    const result = await this.authenticationService.resetPassword(
+    const { data, error, response } = await this.authenticationService.resetPassword(
       key,
       password,
     );
-    if (result.error) {
+    if (!response.ok) {
       this.setState({
         loading: false,
-        errors: handleAllAuthErrorResponse(result.error as any),
+        errors: handleAllAuthErrorResponse(error, response),
       });
     }
-    return result;
+    return data;
   }
 }
