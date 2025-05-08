@@ -1,13 +1,7 @@
 import { Injectable, computed, inject } from "@angular/core";
-import { catchError, of, tap, throwError } from "rxjs";
 import { APIState } from "../shared/shared.interfaces";
 import { AuthService } from "../auth.service";
-import {
-  AllAuthError,
-  AllAuthHttpErrorResponse,
-  AllAuthLoginNotAuthResponse,
-  AuthFlow,
-} from "../api/allauth/allauth.interfaces";
+import { AllAuthError, AuthFlow } from "../api/allauth/allauth.interfaces";
 import {
   messagesLookup,
   reduceParamErrors,
@@ -85,33 +79,30 @@ export class LoginService extends StatefulService<LoginState> {
     this.authService.restartLogin();
   }
 
-  login(email: string, password: string) {
+  async login(email: string, password: string) {
     this.setState({ loading: true, errors: [] });
-    return this.authService.login(email, password).pipe(
-      tap(() => this.state.set(initialState)),
-      tap((resp) => {
-        if (resp.meta.is_authenticated) {
-          this.redirect();
-        }
-      }),
-      catchError((err: AllAuthHttpErrorResponse) => {
-        if (err.status === 401) {
-          // Valid login, but not yet authenticated
-          const resp = err.error as AllAuthLoginNotAuthResponse;
-          this.setState({ loading: false, authFlows: resp.data.flows });
-          return of(undefined);
-        } else {
-          this.setState({
-            loading: false,
-            errors: handleAllAuthErrorResponse(err),
-          });
-          if ([400, 500].includes(err.status)) {
-            return of(undefined);
-          }
-          return throwError(() => err);
-        }
-      }),
+    const { data, error, response } = await this.authService.login(
+      email,
+      password,
     );
+    this.state.set(initialState);
+    if (data?.meta.is_authenticated) {
+      this.redirect();
+      return;
+    }
+    if (error?.status === 401) {
+      // Valid login, but not yet authenticated
+      this.setState({ loading: false, authFlows: error.data.flows });
+    } else {
+      this.setState({
+        loading: false,
+        errors: handleAllAuthErrorResponse(error, response),
+      });
+      if ([400, 500].includes(response.status)) {
+        return;
+      }
+      throw error;
+    }
   }
 
   redirect() {
@@ -137,32 +128,23 @@ export class LoginService extends StatefulService<LoginState> {
     this.state.update((state) => ({ ...state, preferTOTP: !state.preferTOTP }));
   }
 
-  webAuthnAuthenticate() {
-    return this.authService.webAuthnAuthenticate().pipe(
-      tap((resp) => {
-        if (resp.meta.is_authenticated) {
-          this.redirect();
-        }
-      }),
-    );
+  async webAuthnAuthenticate() {
+    const result = await this.authService.webAuthnAuthenticate();
+    if (result?.data?.meta.is_authenticated) {
+      this.redirect();
+    }
+    return result;
   }
 
-  totpAuthenticate(code: string) {
-    return this.authService.mfaAuthenticate(code).pipe(
-      tap((resp) => {
-        if (resp.meta.is_authenticated) {
-          this.redirect();
-        }
-      }),
-      catchError((err: AllAuthHttpErrorResponse) => {
-        this.setState({
-          errors: handleAllAuthErrorResponse(err),
-        });
-        if ([400, 500].includes(err.status)) {
-          return of(undefined);
-        }
-        return throwError(() => err);
-      }),
-    );
+  async totpAuthenticate(code: string) {
+    const { data, error, response } = await this.authService.mfaAuthenticate(code);
+    if (data?.meta.is_authenticated) {
+      this.redirect();
+    } else {
+      this.setState({
+        errors: handleAllAuthErrorResponse(error, response),
+      });
+    }
+    return data;
   }
 }

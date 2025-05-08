@@ -55,13 +55,13 @@ export class PasswordService extends StatefulService<PasswordState> {
           this.state.set({ ...initialState, success: true });
           this.userService.getUserDetails();
         }),
-        catchError((err: AllAuthHttpErrorResponse) => {
+        catchError((response: AllAuthHttpErrorResponse) => {
           this.state.set({
             ...this.state(),
             loading: false,
-            errors: handleAllAuthErrorResponse(err),
+            errors: handleAllAuthErrorResponse(response.error, response),
           });
-          if (err.status === 400) {
+          if (response.status === 400) {
             return of(EMPTY);
           }
           return throwError(() => new Error("Unable to change password"));

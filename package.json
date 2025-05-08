@@ -24,7 +24,8 @@
     "i18n-create-json": "bin/xliff-to-json/xliff-to-json src/locale/ && mv src/locale/*.json src/assets/i18n/",
     "serve:ssr:marketing": "node dist/marketing/server/server.mjs",
     "storybook": "ng run glitchtip-frontend:storybook",
-    "openapi-typescript": "openapi-typescript http://localhost:8000/api/openapi.json -o src/app/api/api-schema.d.ts --empty-objects-unknown"
+    "openapi-typescript": "openapi-typescript http://localhost:8000/api/openapi.json -o src/app/api/api-schema.d.ts --empty-objects-unknown",
+    "openapi-typescript-allauth": "openapi-typescript http://localhost:8000/_allauth/openapi.json -o src/app/api/allauth-schema.d.ts"
   },
   "dependencies": {
     "@angular/animations": "~19.2.8",

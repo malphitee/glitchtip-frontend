@@ -1,17 +1,15 @@
-import { Component, OnInit, inject } from "@angular/core";
+import { Component, OnInit, effect, inject } from "@angular/core";
 import {
   ActivatedRoute,
   NavigationEnd,
   Router,
   RouterOutlet,
 } from "@angular/router";
-import { lastValueFrom } from "rxjs";
 import { SettingsService } from "./api/settings.service";
 import { UserService } from "./api/user/user.service";
 import { setTheme } from "./shared/shared.utils";
 import { AuthService } from "./auth.service";
 import { MatIconRegistry } from "@angular/material/icon";
-import { toObservable } from "@angular/core/rxjs-interop";
 
 @Component({
   selector: "gt-root",
@@ -26,7 +24,14 @@ export class AppComponent implements OnInit {
   private userService = inject(UserService);
   private matIconRegistry = inject(MatIconRegistry);
 
-  userDetails$ = toObservable(this.userService.user);
+  constructor() {
+    effect(() =>
+      setTheme(
+        this.userService.user()?.options.preferredTheme ||
+          localStorage.getItem("theme"),
+      ),
+    );
+  }
 
   ngOnInit() {
     this.matIconRegistry.setDefaultFontSetClass("material-symbols-outlined");
@@ -39,16 +44,10 @@ export class AppComponent implements OnInit {
     });
 
     const systemTheme = matchMedia("(prefers-color-scheme: dark)");
-    this.userDetails$.subscribe((user) => {
-      setTheme(user?.options.preferredTheme || localStorage.getItem("theme"));
-    });
-    systemTheme.addEventListener("change", () => {
-      const s = this.userDetails$.subscribe((user) => {
-        setTheme(user?.options.preferredTheme);
-      });
-      s.unsubscribe();
-    });
+    systemTheme.addEventListener("change", () =>
+      setTheme(this.userService.user()?.options.preferredTheme),
+    );
 
-    lastValueFrom(this.authService.checkServerAuthStatus());
+    this.authService.checkServerAuthStatus();
   }
 }

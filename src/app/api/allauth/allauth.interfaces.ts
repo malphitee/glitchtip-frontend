@@ -3,6 +3,9 @@ import {
   CredentialCreationOptionsJSON,
   CredentialRequestOptionsJSON,
 } from "@github/webauthn-json";
+import { components } from "../allauth-schema";
+
+type Flow = components["schemas"]["Flow"];
 
 interface AllAuthUser {
   id: number;
@@ -21,12 +24,6 @@ interface AuthenticationMethod {
 
 export interface AllAuthResponse {
   status: number;
-}
-
-interface Flow {
-  id: string;
-  providers?: string[];
-  is_pending?: true;
 }
 
 interface Provider {
@@ -66,21 +63,7 @@ export interface AllAuthProvidersResponse extends AllAuthLoginResponse {
   data: ProviderAccount[];
 }
 
-type FlowID =
-  | "verify_email"
-  | "login"
-  | "signup"
-  | "provider_redirect"
-  | "provider_signup"
-  | "provider_token"
-  | "mfa_authenticate"
-  | "reauthenticate"
-  | "mfa_reauthenticate";
-
-export interface AuthFlow {
-  id: FlowID;
-  providers?: Provider[];
-  is_pending?: boolean;
+export interface AuthFlow extends Flow {
   types?: string[];
 }
 

@@ -1,9 +1,5 @@
 import { Injectable, computed, inject } from "@angular/core";
-import { catchError, of, tap, throwError } from "rxjs";
-import {
-  AllAuthError,
-  AllAuthHttpErrorResponse,
-} from "../api/allauth/allauth.interfaces";
+import { AllAuthError } from "../api/allauth/allauth.interfaces";
 import { APIState } from "../shared/shared.interfaces";
 import { AuthenticationService } from "../api/allauth/authentication.service";
 import { handleAllAuthErrorResponse } from "../api/allauth/allauth.utils";
@@ -45,38 +41,31 @@ export class ResetPasswordService extends StatefulService<ResetPasswordState> {
     super(initialState);
   }
 
-  requestPassword(email: string) {
+  async requestPassword(email: string) {
     this.state.set({ ...initialState, loading: true });
-    return this.authenticationService.requestPassword(email).pipe(
-      tap(() => {
-        this.state.set({ ...initialState, success: true });
-      }),
-      catchError((err: AllAuthHttpErrorResponse) => {
-        this.setState({
-          loading: false,
-          errors: handleAllAuthErrorResponse(err),
-        });
-        if ([400, 500].includes(err.status)) {
-          return of(undefined);
-        }
-        return throwError(() => err);
-      }),
-    );
+    const { data, error, response } = await this.authenticationService.requestPassword(email);
+    if (data) {
+      this.setState({ success: true });
+      return
+    }
+    this.setState({
+      loading: false,
+      errors: handleAllAuthErrorResponse(error, response),
+    });
   }
 
-  resetPassword(key: string, password: string) {
-    this.state.set({ ...initialState, loading: true });
-    return this.authenticationService.resetPassword(key, password).pipe(
-      catchError((err: AllAuthHttpErrorResponse) => {
-        this.setState({
-          loading: false,
-          errors: handleAllAuthErrorResponse(err),
-        });
-        if ([400, 500].includes(err.status)) {
-          return of(undefined);
-        }
-        return throwError(() => err);
-      }),
+  async resetPassword(key: string, password: string) {
+    this.setState({ loading: true });
+    const { data, error, response } = await this.authenticationService.resetPassword(
+      key,
+      password,
     );
+    if (!response.ok) {
+      this.setState({
+        loading: false,
+        errors: handleAllAuthErrorResponse(error, response),
+      });
+    }
+    return data;
   }
 }
