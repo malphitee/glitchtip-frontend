@@ -1,14 +1,14 @@
-@if ((isLoggedIn$ | async) === false) {
+@if ((isLoggedIn()) === false) {
   <div class="logo-container">
     <img src="static/assets/images/glitchtip-logo-v1.svg" alt="GlitchTip" />
   </div>
 }
 
 <mat-card
-  [class.skinnier]="(isLoggedIn$ | async) === false"
-  [class.not-skinny]="isLoggedIn$ | async"
+  [class.skinnier]="(isLoggedIn()) === false"
+  [class.not-skinny]="isLoggedIn()"
 >
-  @if (acceptInfo$ | async; as acceptInfo) {
+  @if (acceptInfo(); as acceptInfo) {
     <mat-card-content>
       <mat-card-title i18n>Organization Invite</mat-card-title>
       <p i18n
@@ -17,7 +17,7 @@
         </strong>
         so you can keep track of errors.</p
       >
-      @if (alreadyInOrg$ | async) {
+      @if (alreadyInOrg()) {
         <p i18n
           >The account you're logged into is already a part of this
           organization. You might want to
@@ -26,8 +26,8 @@
           was intended for.</p
         >
       }
-      @if (isLoggedIn$ | async) {
-        @if ((alreadyInOrg$ | async) === false) {
+      @if (isLoggedIn()) {
+        @if ((alreadyInOrg()) === false) {
           <button mat-flat-button color="primary" (click)="onSubmit()" i18n
             >Accept invitation</button
           >
@@ -42,7 +42,7 @@
             mat-flat-button
             color="primary"
             [routerLink]="['/register']"
-            [queryParams]="{ next: nextUrl$ | async }"
+            [queryParams]="{ next: nextUrl() }"
             i18n
             >Create new account</a
           >
@@ -50,7 +50,7 @@
             mat-stroked-button
             color="primary"
             [routerLink]="['/login']"
-            [queryParams]="{ next: nextUrl$ | async }"
+            [queryParams]="{ next: nextUrl() }"
             i18n
             >Log in with existing account</a
           >

@@ -20,7 +20,6 @@ import { mapFormErrors } from "../shared/forms/form.utils";
 import { StatefulComponent } from "../shared/stateful-service/signal-state.component";
 import { LoginService, LoginState } from "./login.service";
 import { SettingsService } from "../api/settings.service";
-import { AcceptInviteService } from "../api/accept/accept-invite.service";
 import { AuthSvgComponent } from "../shared/auth-svg/auth-svg.component";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { components } from "../api/api-schema";
@@ -52,7 +51,6 @@ export class LoginComponent
 {
   protected service: LoginService;
   private settings = inject(SettingsService);
-  private acceptService = inject(AcceptInviteService);
   private activatedRoute = inject(ActivatedRoute);
   private snackBar = inject(MatSnackBar);
 
@@ -72,7 +70,6 @@ export class LoginComponent
 
   socialApps = this.settings.socialApps;
   enableUserRegistration = this.settings.enableUserRegistration;
-  acceptInfo$ = this.acceptService.acceptInfo$;
 
   constructor() {
     const service = inject(LoginService);
