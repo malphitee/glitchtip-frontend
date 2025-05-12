@@ -1,5 +1,4 @@
 import { Component, OnInit, inject } from "@angular/core";
-import { StatefulBaseComponent } from "src/app/shared/stateful-service/stateful-base.component";
 import { AuthTokensService, AuthTokensState } from "./auth-tokens.service";
 import { LoadingButtonComponent } from "../../shared/loading-button/loading-button.component";
 import { CopyInputComponent } from "../../shared/copy-input/copy-input.component";
@@ -7,7 +6,7 @@ import { MatDividerModule } from "@angular/material/divider";
 import { RouterLink } from "@angular/router";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
-import { AsyncPipe } from "@angular/common";
+import { StatefulComponent } from "src/app/shared/stateful-service/signal-state.component";
 
 @Component({
   selector: "gt-auth-tokens",
@@ -20,18 +19,17 @@ import { AsyncPipe } from "@angular/common";
     MatDividerModule,
     CopyInputComponent,
     LoadingButtonComponent,
-    AsyncPipe,
   ],
 })
 export class AuthTokensComponent
-  extends StatefulBaseComponent<AuthTokensState, AuthTokensService>
+  extends StatefulComponent<AuthTokensState, AuthTokensService>
   implements OnInit
 {
   protected service: AuthTokensService;
 
-  authTokens$ = this.service.apiTokens$;
-  deleteLoading$ = this.service.deleteLoading$;
-  initialLoad$ = this.service.initialLoad$;
+  authTokens = this.service.apiTokens;
+  deleteLoading = this.service.deleteLoading;
+  initialLoad = this.service.initialLoad;
 
   constructor() {
     const service = inject(AuthTokensService);
@@ -42,10 +40,10 @@ export class AuthTokensComponent
   }
 
   ngOnInit(): void {
-    this.service.loadAuthTokens();
+    this.service.apiTokensResource.reload();
   }
 
-  deleteAuthToken(id: string) {
+  deleteAuthToken(id: number) {
     if (
       window.confirm(
         "Are you sure you want to delete this authentication token?",

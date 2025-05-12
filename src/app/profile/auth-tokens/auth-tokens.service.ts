@@ -1,17 +1,12 @@
-import { Injectable, inject } from "@angular/core";
+import { Injectable, computed, inject, resource } from "@angular/core";
 import { Router } from "@angular/router";
-import { EMPTY } from "rxjs";
-import { tap, map, catchError } from "rxjs/operators";
-import { APIToken } from "src/app/api/api-tokens/api-tokens.interfaces";
-import { APITokenService } from "src/app/api/api-tokens/api-tokens.service";
-import { StatefulService } from "src/app/shared/stateful-service/stateful-service";
+import { client } from "src/app/api/api";
+import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
 
 export interface AuthTokensState {
-  apiTokens: APIToken[];
   loading: {
-    apiTokens: boolean;
     create: boolean;
-    delete: string | null;
+    delete: number | null;
   };
   createError: string;
   createErrorLabel: string;
@@ -19,9 +14,8 @@ export interface AuthTokensState {
 }
 
 const initialState: AuthTokensState = {
-  apiTokens: [],
+  // apiTokens: [],
   loading: {
-    apiTokens: false,
     create: false,
     delete: null,
   },
@@ -30,158 +24,102 @@ const initialState: AuthTokensState = {
   createErrorScopes: "",
 };
 
+interface APITokenError {
+  detail: { type: string; loc: string[]; msg: string; ctx: any }[];
+}
+
 @Injectable({
   providedIn: "root",
 })
 export class AuthTokensService extends StatefulService<AuthTokensState> {
-  private apiTokenService = inject(APITokenService);
   private router = inject(Router);
+  apiTokensResource = resource({
+    loader: () => client.GET("/api/0/api-tokens/"),
+  });
 
-  readonly apiTokens$ = this.getState$.pipe(map((state) => state.apiTokens));
-  readonly initialLoad$ = this.getState$.pipe(
-    map((state) => state.loading.apiTokens),
-  );
-  readonly createError$ = this.getState$.pipe(
-    map((state) => state.createError),
-  );
-  readonly createErrorLabel$ = this.getState$.pipe(
-    map((state) => state.createErrorLabel),
-  );
-  readonly createErrorScopes$ = this.getState$.pipe(
-    map((state) => state.createErrorScopes),
-  );
-  readonly createLoading$ = this.getState$.pipe(
-    map((state) => state.loading.create),
-  );
-  readonly deleteLoading$ = this.getState$.pipe(
-    map((state) => state.loading.delete),
-  );
+  readonly apiTokens = computed(() => this.apiTokensResource.value()?.data);
+  readonly initialLoad = computed(() => this.apiTokensResource.hasValue());
+  readonly createError = computed(() => this.state().createError);
+  readonly createErrorLabel = computed(() => this.state().createErrorLabel);
+  readonly createErrorScopes = computed(() => this.state().createErrorScopes);
+  readonly createLoading = computed(() => this.state().loading.create);
+  readonly deleteLoading = computed(() => this.state().loading.delete);
 
   constructor() {
     super(initialState);
   }
 
-  loadAuthTokens() {
-    this.apiTokenService
-      .list()
-      .pipe(
-        tap((apiTokens) => {
-          this.setAPITokensLoading();
-          this.setAPITokens(apiTokens);
-        }),
-      )
-      .toPromise();
-  }
-
-  createAuthToken(label: string, scopes: string[]) {
+  async createAuthToken(label: string, scopes: string[]) {
     this.setCreateLoading(true);
-    this.apiTokenService
-      .create({ label, scopes })
-      // TODO handle errors
-      .pipe(
-        tap(() => {
-          this.setCreateLoading(false);
-          this.router.navigate(["/profile/auth-tokens"]);
-        }),
-        catchError((error) => {
-          this.setCreateLoading(false);
-          if (error) {
-            if (error.status === 400) {
-              if (error.error.label) {
-                error.error.label.length === 1
-                  ? this.setCreateLabelError(error.error.label[0])
-                  : this.setCreateLabelError(error.error.label.join(" "));
-              }
-              if (error.error.scopes) {
-                error.error.scopes.length === 1
-                  ? this.setCreateScopesError(error.error.scopes[0])
-                  : this.setCreateScopesError(error.error.scopes.join(" "));
-              }
-            } else {
-              this.setCreateError(`${error.statusText}: ${error.status}`);
-            }
-          }
-          return EMPTY;
-        }),
-      )
-      .toPromise();
+    const { data, error, response } = await client.POST("/api/0/api-tokens/", {
+      body: {
+        label,
+        scopes: scopes as any,
+      },
+    });
+    if (data) {
+      this.setCreateLoading(false);
+      this.router.navigate(["/profile/auth-tokens"]);
+    }
+    const statusCode = response.status;
+    if (error) {
+      const apiTokenError = (error as APITokenError).detail;
+      this.setCreateLoading(false);
+      if (statusCode === 422) {
+        if (apiTokenError[0].loc[2] === "label") {
+          this.setCreateLabelError(apiTokenError[0].msg);
+        }
+        if (apiTokenError[0].loc[2] === "scopes") {
+          this.setCreateScopesError(apiTokenError[0].msg);
+        }
+      } else {
+        this.setCreateError(`${statusCode}`);
+      }
+    }
   }
 
-  deleteAuthToken(id: string) {
+  async deleteAuthToken(id: number) {
     this.setDeleteLoading(id);
-    this.apiTokenService
-      .destroy(id)
-      .pipe(
-        tap(() => {
-          this.loadAuthTokens();
-        }),
-      )
-      .toPromise();
+    await client.DELETE(`/api/0/api-tokens/{token_id}/`, {
+      params: {
+        path: {
+          token_id: id,
+        },
+      },
+    });
+    this.apiTokensResource.reload();
   }
 
   resetCreateErrors() {
-    const state = this.state.getValue();
-    this.state.next({
-      ...state,
+    this.setState({
       createError: "",
       createErrorLabel: "",
       createErrorScopes: "",
     });
   }
 
-  private setAPITokens(apiTokens: APIToken[]) {
-    const state = this.state.getValue();
-    this.state.next({
-      ...state,
-      apiTokens,
-    });
-  }
-
-  private setAPITokensLoading() {
-    const state = this.state.getValue();
-    this.state.next({
-      ...state,
-      loading: { ...state.loading, apiTokens: true },
-    });
-  }
-
-  private setDeleteLoading(id: string) {
-    const state = this.state.getValue();
-    this.state.next({
-      ...state,
-      loading: { ...state.loading, delete: id },
+  private setDeleteLoading(id: number) {
+    this.setState({
+      loading: {
+        delete: id,
+        create: false,
+      },
     });
   }
 
   private setCreateLoading(isLoading: boolean) {
-    const state = this.state.getValue();
-    this.state.next({
-      ...state,
-      loading: { ...state.loading, create: isLoading },
-    });
+    this.setState({ loading: { create: isLoading, delete: null } });
   }
 
   private setCreateError(error: string) {
-    const state = this.state.getValue();
-    this.state.next({
-      ...state,
-      createError: error,
-    });
+    this.setState({ createError: error });
   }
 
   private setCreateLabelError(error: string) {
-    const state = this.state.getValue();
-    this.state.next({
-      ...state,
-      createErrorLabel: error,
-    });
+    this.setState({ createErrorLabel: error });
   }
 
   private setCreateScopesError(error: string) {
-    const state = this.state.getValue();
-    this.state.next({
-      ...state,
-      createErrorScopes: error,
-    });
+    this.setState({ createErrorScopes: error });
   }
 }
