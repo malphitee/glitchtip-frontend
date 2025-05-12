@@ -1749,19 +1749,19 @@ export interface components {
         };
         /** APITokenSchema */
         APITokenSchema: {
+            /** Id */
+            id: number;
+            /** Label */
+            label: string;
             /** Scopes */
             scopes: string[];
-            /** Label */
-            label?: string | null;
+            /** Token */
+            token: string;
             /**
              * Created
              * Format: date-time
              */
             created: string;
-            /** Token */
-            token?: string;
-            /** ID */
-            id?: number | null;
         };
         /** SocialAccountSchema */
         SocialAccountSchema: {
