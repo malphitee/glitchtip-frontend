@@ -1,13 +1,6 @@
-import { Injectable, inject } from "@angular/core";
+import { Injectable, computed, inject, resource } from "@angular/core";
 import { HttpErrorResponse } from "@angular/common/http";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { EMPTY } from "rxjs";
-import { tap, map, catchError, filter, first } from "rxjs/operators";
-import {
-  initialPaginationState,
-  PaginationStatefulService,
-  PaginationStatefulServiceState,
-} from "src/app/shared/stateful-service/pagination-stateful-service";
 import {
   OrganizationProject,
   ProjectDetail,
@@ -18,6 +11,8 @@ import { ProjectsAPIService } from "../../api/projects/projects-api.service";
 import { ProjectKeysAPIService } from "../../api/projects/project-keys-api.service";
 import { OrganizationProjectsAPIService } from "../../api/projects/organization-projects-api.service";
 import { ProjectTeamsAPIService } from "src/app/api/projects/project-teams-api.service";
+import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
+import { client } from "src/app/api/api";
 
 interface ProjectLoading {
   addProjectToTeam: boolean;
@@ -29,7 +24,7 @@ interface ProjectError {
   removeProjectFromTeam: string;
 }
 
-interface ProjectSettingsState extends PaginationStatefulServiceState {
+interface ProjectSettingsState {
   projects: OrganizationProject[] | null;
   projectsOnTeam: OrganizationProject[];
   projectsNotOnTeam: OrganizationProject[];
@@ -47,46 +42,53 @@ const initialState: ProjectSettingsState = {
   projectKeys: null,
   loading: { addProjectToTeam: false, removeProjectFromTeam: "" },
   errors: { addProjectToTeam: "", removeProjectFromTeam: "" },
-  pagination: initialPaginationState,
 };
 
 @Injectable({
   providedIn: "root",
 })
-export class ProjectSettingsService extends PaginationStatefulService<ProjectSettingsState> {
+export class ProjectSettingsService extends StatefulService<ProjectSettingsState> {
   private snackBar = inject(MatSnackBar);
   private projectsAPIService = inject(ProjectsAPIService);
   private projectTeamsAPIService = inject(ProjectTeamsAPIService);
   private orgProjectsAPIService = inject(OrganizationProjectsAPIService);
   private projectKeysAPIService = inject(ProjectKeysAPIService);
 
-  readonly projects$ = this.getState$.pipe(map((data) => data.projects));
-
-  readonly activeProject$ = this.getState$.pipe(
-    map((data) => data.projectDetail),
-  );
-  readonly activeProjectSlug$ = this.activeProject$.pipe(
-    map((data) => data?.slug),
-  );
-  readonly projectKeys$ = this.getState$.pipe(map((data) => data.projectKeys));
-
-  readonly projectsOnTeam$ = this.getState$.pipe(
-    map((data) => data.projectsOnTeam),
-  );
-  readonly projectsNotOnTeam$ = this.getState$.pipe(
-    map((data) => data.projectsNotOnTeam),
-  );
-  readonly addRemoveLoading$ = this.getState$.pipe(map((data) => data.loading));
-  readonly errors$ = this.getState$.pipe(map((data) => data.errors));
+  private issuesResource = resource({
+    request: () => ({}),
+    loader: async ({ request }) => {
+      const { error, data, response } = await client.GET(
+        "/api/0/teams/{organization_slug}/{team_slug}/projects",
+      );
+    },
+  });
+  readonly projects = computed(() => this.state().projects);
+  readonly activeProject = computed(() => this.state().projectDetail);
+  readonly activeProjectSlug = computed(() => this.activeProject()?.slug);
+  readonly projectKeys = computed(() => this.state().projectKeys);
+  readonly projectsOnTeam = computed(() => this.state().projectsOnTeam);
+  readonly projectsNotOnTeam = computed(() => this.state().projectsNotOnTeam);
+  readonly addRemoveLoading = computed(() => this.state().loading);
+  readonly errors = computed(() => this.state().errors);
 
   constructor() {
     super(initialState);
   }
 
-  createProject(project: ProjectNew, teamSlug: string, orgSlug: string) {
-    return this.projectsAPIService
-      .create(project, teamSlug, orgSlug)
-      .pipe(tap((newProject) => this.addOneProject(newProject)));
+  async createProject(project: ProjectNew, teamSlug: string, orgSlug: string) {
+    const { data } = await client.POST(
+      "/api/0/teams/{organization_slug}/{team_slug}/projects/",
+      {
+        params: {
+          path: {
+            organization_slug: orgSlug,
+            team_slug: teamSlug,
+          },
+        },
+        body: project as any,
+      },
+    );
+    this.addOneProject(data as any);
   }
 
   retrieveProjects(organizationSlug: string) {
