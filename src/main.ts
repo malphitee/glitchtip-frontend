@@ -23,7 +23,6 @@ import { ErrorStateMatcher } from "@angular/material/core";
 import { CustomMicroSentryErrorHandler } from "./app/custom-microsentry-error-handler";
 import { tokenInterceptor } from "./app/api/auth/token.interceptor";
 import {
-  HttpEvent,
   HttpHandlerFn,
   HttpInterceptorFn,
   HttpRequest,
@@ -41,7 +40,6 @@ import {
   withRouterConfig,
 } from "@angular/router";
 import { CustomPreloadingStrategy } from "./app/preloadingStrategy";
-import { Observable } from "rxjs";
 import { APP_BASE_HREF } from "@angular/common";
 import { provideMarkdown } from "ngx-markdown";
 
@@ -73,7 +71,7 @@ if (locale in localeMappings) {
 export function baseHrefInterceptor(
   req: HttpRequest<unknown>,
   next: HttpHandlerFn,
-): Observable<HttpEvent<unknown>> {
+) {
   const baseHref = inject(APP_BASE_HREF);
   const apiReq = req.clone({ url: `${baseHref.replace(/\/$/, "")}${req.url}` });
   return next(apiReq);

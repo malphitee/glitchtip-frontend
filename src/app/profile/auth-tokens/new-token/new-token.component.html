@@ -14,8 +14,8 @@
     <mat-divider></mat-divider>
     <mat-card-content>
       <mat-error class="server-error">
-        @if (createError$ | async) {
-          <span>{{ createError$ | async }}</span>
+        @if (createError()) {
+          <span>{{ createError() }}</span>
         }
       </mat-error>
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
@@ -61,7 +61,7 @@
           }
         </mat-error>
         <gt-loading-button
-          [loading]="(createLoading$ | async) === true"
+          [loading]="createLoading() === true"
           buttonText="Create Token"
         ></gt-loading-button>
       </form>

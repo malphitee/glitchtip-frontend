@@ -6,24 +6,22 @@ import {
   FormControl,
 } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
-import { tap } from "rxjs/operators";
 import { MatButtonModule } from "@angular/material/button";
 import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { CommonModule } from "@angular/common";
 import { MatCardModule } from "@angular/material/card";
 import { toObservable } from "@angular/core/rxjs-interop";
 import { MarkdownComponent } from "ngx-markdown";
 import { AuthSvgComponent } from "../shared/auth-svg/auth-svg.component";
 import { InputMatcherDirective } from "../shared/input-matcher.directive";
 import { RegisterService, RegisterState } from "./register.service";
-import { AcceptInviteService } from "../api/accept/accept-invite.service";
 import { SettingsService } from "../api/settings.service";
 import { getUTM } from "../shared/shared.utils";
 import { FormErrorComponent } from "../shared/forms/form-error/form-error.component";
 import { mapFormErrors } from "../shared/forms/form.utils";
 import { StatefulComponent } from "../shared/stateful-service/signal-state.component";
 import type { components } from "src/app/api/api-schema";
+import { AcceptInviteService } from "../accept/accept-invite/accept-invite.service";
 
 type SocialApp = components["schemas"]["SocialAppSchema"];
 
@@ -32,7 +30,6 @@ type SocialApp = components["schemas"]["SocialAppSchema"];
   templateUrl: "./register.component.html",
   styleUrls: ["./register.component.scss"],
   imports: [
-    CommonModule,
     MatCardModule,
     ReactiveFormsModule,
     MatFormFieldModule,
@@ -70,7 +67,7 @@ export class RegisterComponent
     ]),
   });
   formErrors = this.service.formErrors;
-  acceptInfo$ = this.acceptService.acceptInfo$;
+  acceptInfo = this.acceptService.acceptInfo;
 
   constructor() {
     const service = inject(RegisterService);
@@ -85,16 +82,10 @@ export class RegisterComponent
 
   ngOnInit() {
     this.tags = getUTM().toString();
-
-    this.acceptInfo$
-      .pipe(
-        tap((acceptInfo) => {
-          if (acceptInfo) {
-            this.form.patchValue({ email: acceptInfo.orgUser.email });
-          }
-        }),
-      )
-      .subscribe();
+    const acceptInfo = this.acceptInfo();
+    if (acceptInfo) {
+      this.form.patchValue({ email: acceptInfo.orgUser.email });
+    }
   }
 
   get email() {

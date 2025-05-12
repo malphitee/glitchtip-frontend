@@ -1,4 +1,4 @@
-@if ((initialLoad$ | async) === true) {
+@if (initialLoad() === true) {
   <ng-container class="l-body">
     <mat-card>
       <mat-card-header class="flex-space-between">
@@ -26,23 +26,19 @@
       </mat-card-header>
       <mat-divider></mat-divider>
       <mat-card-content>
-        @if ((authTokens$ | async)?.length) {
-          @for (
-            authToken of authTokens$ | async;
-            track authToken;
-            let i = $index
-          ) {
+        @if (authTokens()?.length) {
+          @for (authToken of authTokens(); track authToken; let i = $index) {
             <div class="content-wrapper">
               <h3 class="label">{{ authToken.label }}</h3>
               <div class="loading-wrapper">
                 <gt-copy-input
                   class="token"
                   placeholder="Token"
-                  [value]="authToken.token"
+                  [value]="authToken.token!"
                 ></gt-copy-input>
                 <gt-loading-button
-                  (buttonClick)="deleteAuthToken(authToken.id)"
-                  [loading]="authToken.id === (deleteLoading$ | async)"
+                  (buttonClick)="deleteAuthToken(authToken.id!)"
+                  [loading]="authToken.id === deleteLoading()"
                   buttonText="Delete"
                   buttonStyle="stroked"
                 >
@@ -60,7 +56,7 @@
                   }
                 </span>
               </p>
-              @if ((authTokens$ | async)?.length !== i + 1) {
+              @if (authTokens()?.length !== i + 1) {
                 <mat-divider></mat-divider>
               }
             </div>
