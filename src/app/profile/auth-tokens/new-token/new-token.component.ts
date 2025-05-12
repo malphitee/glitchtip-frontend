@@ -47,8 +47,6 @@ export class NewTokenComponent
 
   createLoading = this.service.createLoading;
   createError = this.service.createError;
-  createErrorLabel = this.service.createErrorLabel;
-  createErrorScopes = this.service.createErrorScopes;
 
   form: FormGroup;
   scopeOptions: string[] = [
@@ -85,7 +83,10 @@ export class NewTokenComponent
     this.service = service;
 
     this.form = this.fb.group({
-      label: new FormControl("", [Validators.required]),
+      label: new FormControl("", [
+        Validators.required,
+        Validators.maxLength(255),
+      ]),
       scopes: new FormArray([]),
     });
 
@@ -125,34 +126,9 @@ export class NewTokenComponent
       });
     }
   }
-  getLabelFieldError() {
-    const error = this.createErrorLabel();
-    if (error) {
-      return this.label.setErrors({
-        serverErrorLabel: error,
-      });
-    }
-  }
-
-  getScopesFieldError() {
-    const error = this.createErrorScopes();
-    if (error) {
-      return this.scopes.setErrors({
-        serverErrorScopes: error,
-      });
-    }
-  }
-
-  validateForm() {
-    this.validateScopes();
-    this.getLabelFieldError();
-    this.getScopesFieldError();
-  }
 
   onSubmit() {
-    this.service.resetCreateErrors();
-
-    this.validateForm();
+    this.validateScopes();
 
     if (this.form.valid) {
       const label = this.label.value;

@@ -28,8 +28,8 @@
             @if (label.errors?.required) {
               <span>Create a label for your auth token</span>
             }
-            @if (label.errors?.serverErrorLabel) {
-              <span>{{ label.errors?.serverErrorLabel }}</span>
+            @if (label.errors?.maxlength) {
+              <span>Label must be 255 characters or less</span>
             }
           </mat-error>
         </mat-form-field>
@@ -55,9 +55,6 @@
         <mat-error class="checkbox-error">
           @if (scopes.errors?.selectOne) {
             <span>Select at least one scope</span>
-          }
-          @if (scopes.errors?.serverErrorScopes) {
-            <span>{{ scopes.errors?.serverErrorScopes }}</span>
           }
         </mat-error>
         <gt-loading-button

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from "@angular/core";
+import { Component, computed, OnInit, inject } from "@angular/core";
 import { AuthTokensService, AuthTokensState } from "./auth-tokens.service";
 import { LoadingButtonComponent } from "../../shared/loading-button/loading-button.component";
 import { CopyInputComponent } from "../../shared/copy-input/copy-input.component";
@@ -27,7 +27,12 @@ export class AuthTokensComponent
 {
   protected service: AuthTokensService;
 
-  authTokens = this.service.apiTokens;
+  authTokens = computed(() =>
+    this.service.apiTokens()?.map((token) => {
+      let isLoading = this.service.deleteLoading().includes(token.id);
+      return { ...token, isLoading };
+    }),
+  );
   deleteLoading = this.service.deleteLoading;
   initialLoad = this.service.initialLoad;
 
