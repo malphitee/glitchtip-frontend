@@ -1,4 +1,5 @@
 import { Injectable, computed, inject, resource } from "@angular/core";
+import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
 import { client } from "src/app/api/api";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
@@ -20,6 +21,7 @@ const initialState: AuthTokensState = {
 })
 export class AuthTokensService extends StatefulService<AuthTokensState> {
   private router = inject(Router);
+  private snackBar = inject(MatSnackBar);
   apiTokensResource = resource({
     loader: () => client.GET("/api/0/api-tokens/"),
   });
@@ -54,15 +56,22 @@ export class AuthTokensService extends StatefulService<AuthTokensState> {
 
   async deleteAuthToken(id: number) {
     this.setDeleteLoadingStart(id);
-    await client.DELETE(`/api/0/api-tokens/{token_id}/`, {
+    const { response } = await client.DELETE(`/api/0/api-tokens/{token_id}/`, {
       params: {
         path: {
           token_id: id,
         },
       },
     });
-    this.setDeleteLoadingComplete(id);
-    this.apiTokensResource.reload();
+    if (response.ok) {
+      this.setDeleteLoadingComplete(id);
+      this.apiTokensResource.reload();
+      return;
+    }
+    this.setDeleteLoadingError(id);
+    this.snackBar.open($localize`
+      There was an error deleting your token, please try again.
+    `);
   }
 
   private setDeleteLoadingStart(id: number) {
@@ -73,6 +82,13 @@ export class AuthTokensService extends StatefulService<AuthTokensState> {
   }
 
   private setDeleteLoadingComplete(deletedId: number) {
+    let state = this.state();
+    this.setState({
+      deleteLoading: state.deleteLoading.filter((id) => id !== deletedId),
+    });
+  }
+
+  private setDeleteLoadingError(deletedId: number) {
     let state = this.state();
     this.setState({
       deleteLoading: state.deleteLoading.filter((id) => id !== deletedId),
