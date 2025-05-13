@@ -1,4 +1,4 @@
-import { Injectable, computed, inject, resource } from "@angular/core";
+import { Injectable, computed, inject, resource, signal } from "@angular/core";
 import { HttpErrorResponse } from "@angular/common/http";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import {
@@ -10,9 +10,9 @@ import {
 import { ProjectsAPIService } from "../../api/projects/projects-api.service";
 import { ProjectKeysAPIService } from "../../api/projects/project-keys-api.service";
 import { OrganizationProjectsAPIService } from "../../api/projects/organization-projects-api.service";
-import { ProjectTeamsAPIService } from "src/app/api/projects/project-teams-api.service";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
 import { client } from "src/app/api/api";
+import { getPaginationHeaders } from "src/app/shared/pagination.utils";
 
 interface ProjectLoading {
   addProjectToTeam: boolean;
@@ -50,21 +50,57 @@ const initialState: ProjectSettingsState = {
 export class ProjectSettingsService extends StatefulService<ProjectSettingsState> {
   private snackBar = inject(MatSnackBar);
   private projectsAPIService = inject(ProjectsAPIService);
-  private projectTeamsAPIService = inject(ProjectTeamsAPIService);
   private orgProjectsAPIService = inject(OrganizationProjectsAPIService);
   private projectKeysAPIService = inject(ProjectKeysAPIService);
 
-  private issuesResource = resource({
-    request: () => ({}),
+  private params = signal({ orgSlug: "", teamSlug: "" });
+  private activeProjectSlug = signal("");
+  private projectsResource = resource({
+    request: () => ({ params: this.params() }),
     loader: async ({ request }) => {
-      const { error, data, response } = await client.GET(
-        "/api/0/teams/{organization_slug}/{team_slug}/projects",
+      if (!request.params.orgSlug || !request.params.teamSlug) {
+        return undefined;
+      }
+      const { data, response } = await client.GET(
+        "/api/0/teams/{organization_slug}/{team_slug}/projects/",
+        {
+          params: {
+            path: {
+              organization_slug: request.params.orgSlug,
+              team_slug: request.params.teamSlug,
+            },
+          },
+        },
       );
+      const pagination = getPaginationHeaders(response);
+      return { data, pagination };
     },
   });
-  readonly projects = computed(() => this.state().projects);
-  readonly activeProject = computed(() => this.state().projectDetail);
-  readonly activeProjectSlug = computed(() => this.activeProject()?.slug);
+  private activeProjectResource = resource({
+    request: () => ({
+      params: this.params(),
+      activeProjectSlug: this.activeProjectSlug(),
+    }),
+    loader: async ({ request }) => {
+      if (!request.params.orgSlug || !request.activeProjectSlug) {
+        return undefined;
+      }
+      const { data } = await client.GET(
+        "/api/0/projects/{organization_slug}/{project_slug}/",
+        {
+          params: {
+            path: {
+              organization_slug: request.params.orgSlug,
+              project_slug: request.activeProjectSlug,
+            },
+          },
+        },
+      );
+      return data;
+    },
+  });
+  readonly projects = computed(() => this.projectsResource.value()?.data);
+  readonly activeProject = computed(() => this.activeProjectResource.value());
   readonly projectKeys = computed(() => this.state().projectKeys);
   readonly projectsOnTeam = computed(() => this.state().projectsOnTeam);
   readonly projectsNotOnTeam = computed(() => this.state().projectsNotOnTeam);
@@ -91,13 +127,6 @@ export class ProjectSettingsService extends StatefulService<ProjectSettingsState
     this.addOneProject(data as any);
   }
 
-  retrieveProjects(organizationSlug: string) {
-    this.orgProjectsAPIService
-      .list(organizationSlug)
-      .pipe(tap((projects) => this.setProjects(projects)))
-      .subscribe();
-  }
-
   /**
    * Calls retrieveProjectDetail with the active org slug and the slug of a
    * single project. Project comes from either the URL or the active org list
@@ -109,7 +138,6 @@ export class ProjectSettingsService extends StatefulService<ProjectSettingsState
   getProjectDetails(
     project: number[] | null,
     activeOrgProjects: OrganizationProject[] | null,
-    orgSlug: string,
   ) {
     if (activeOrgProjects) {
       let matchingProject: OrganizationProject | null = null;
@@ -123,47 +151,64 @@ export class ProjectSettingsService extends StatefulService<ProjectSettingsState
       }
 
       if (matchingProject) {
-        this.retrieveProjectDetail(orgSlug, matchingProject.slug);
+        this.activeProjectSlug.set(matchingProject.slug);
       }
     }
   }
 
-  addProjectToTeam(orgSlug: string, teamSlug: string, projectSlug: string) {
+  async addProjectToTeam(
+    orgSlug: string,
+    teamSlug: string,
+    projectSlug: string,
+  ) {
     this.setAddProjectToTeamLoading(true);
-    this.projectTeamsAPIService
-      .addProjectToTeam(orgSlug, teamSlug, projectSlug)
-      .pipe(
-        tap((resp) => {
-          this.snackBar.open(`${resp.slug} has been added to #${teamSlug}`);
-          this.setAddProjectToTeam(resp);
-        }),
-        catchError((error: HttpErrorResponse) => {
-          this.setAddProjectToTeamError(error);
-          return EMPTY;
-        }),
-      )
-      .subscribe();
+    const { data, error } = await client.POST(
+      "/api/0/projects/{organization_slug}/{project_slug}/teams/{team_slug}/",
+      {
+        params: {
+          path: {
+            organization_slug: orgSlug,
+            project_slug: projectSlug,
+            team_slug: teamSlug,
+          },
+        },
+      },
+    );
+    if (data) {
+      this.snackBar.open(`${data.slug} has been added to #${teamSlug}`);
+      this.setAddProjectToTeam(data as any);
+    }
+    if (error) {
+      this.setAddProjectToTeamError(error);
+    }
   }
 
-  removeProjectFromTeam(
+  async removeProjectFromTeam(
     orgSlug: string,
     teamSlug: string,
     projectSlug: string,
   ) {
     this.setRemoveProjectFromTeamLoading(projectSlug);
-    return this.projectTeamsAPIService
-      .removeProjectFromTeam(orgSlug, teamSlug, projectSlug)
-      .pipe(
-        tap((resp) => {
-          this.snackBar.open(`${resp.slug} has been removed from #${teamSlug}`);
-          this.setRemoveProjectFromTeam(resp);
-        }),
-        catchError((error: HttpErrorResponse) => {
-          this.setRemoveProjectFromTeamLoadingError(error);
-          return EMPTY;
-        }),
-      )
-      .subscribe();
+    const { data, error } = await client.DELETE(
+      "/api/0/projects/{organization_slug}/{project_slug}/teams/{team_slug}/",
+      {
+        params: {
+          path: {
+            organization_slug: orgSlug,
+            project_slug: projectSlug,
+            team_slug: teamSlug,
+          },
+        },
+      },
+    );
+
+    if (data) {
+      this.snackBar.open(`${data.slug} has been removed from #${teamSlug}`);
+      this.setRemoveProjectFromTeam(data as any);
+    }
+    if (error) {
+      this.setRemoveProjectFromTeamLoadingError(error);
+    }
   }
 
   retrieveProjectsOnTeam(orgSlug: string, teamSlug: string) {
