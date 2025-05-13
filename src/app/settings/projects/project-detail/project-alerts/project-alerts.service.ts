@@ -22,6 +22,7 @@ import {
 import { ProjectSettingsService } from "../../project-settings.service";
 import { StatefulService } from "src/app/shared/stateful-service/stateful-service";
 import { OrganizationsService } from "src/app/api/organizations.service";
+import { toObservable } from "@angular/core/rxjs-interop";
 
 interface NewAlertState {
   newAlertOpen: boolean;
@@ -88,6 +89,9 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
   private projectAlertsAPIService = inject(ProjectAlertsAPIService);
   private snackBar = inject(MatSnackBar);
 
+  activeProjectSlug$ = toObservable(
+    this.projectSettingsService.activeProjectSlug,
+  );
   readonly initialLoad$ = this.getState$.pipe(map((data) => data.initialLoad));
   readonly initialLoadError$ = this.getState$.pipe(
     map((data) => data.initialLoadError),
@@ -173,7 +177,7 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
   listProjectAlerts() {
     combineLatest([
       this.organizationsService.activeOrganizationSlug$,
-      this.projectSettingsService.activeProjectSlug$,
+      this.activeProjectSlug$,
     ])
       .pipe(
         take(1),
@@ -236,7 +240,7 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
     this.setNewAlertLoading();
     combineLatest([
       this.organizationsService.activeOrganizationSlug$,
-      this.projectSettingsService.activeProjectSlug$,
+      this.activeProjectSlug$,
       this.newProjectAlertRecipients$,
     ])
       .pipe(
@@ -273,7 +277,7 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
     this.setDeleteAlertLoading(id);
     combineLatest([
       this.organizationsService.activeOrganizationSlug$,
-      this.projectSettingsService.activeProjectSlug$,
+      this.activeProjectSlug$,
     ])
       .pipe(
         take(1),
@@ -315,7 +319,7 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
     };
     combineLatest([
       this.organizationsService.activeOrganizationSlug$,
-      this.projectSettingsService.activeProjectSlug$,
+      this.activeProjectSlug$,
     ])
       .pipe(
         take(1),
@@ -345,7 +349,7 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
     combineLatest([
       this.activeAlert$,
       this.organizationsService.activeOrganizationSlug$,
-      this.projectSettingsService.activeProjectSlug$,
+      this.activeProjectSlug$,
     ])
       .pipe(
         take(1),
@@ -396,7 +400,7 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
     };
     combineLatest([
       this.organizationsService.activeOrganizationSlug$,
-      this.projectSettingsService.activeProjectSlug$,
+      this.activeProjectSlug$,
     ])
       .pipe(
         take(1),

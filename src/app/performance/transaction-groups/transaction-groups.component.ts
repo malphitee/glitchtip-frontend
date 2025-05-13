@@ -82,6 +82,12 @@ export class TransactionGroupsComponent implements OnInit, OnDestroy {
     other: "# Transactions",
   };
 
+  visibleEnvironmentsLoaded$ = toObservable(
+    this.projectEnvironmentsService.visibleEnvironmentsLoaded,
+  );
+  visibleEnvironments$ = toObservable(
+    this.projectEnvironmentsService.visibleEnvironments,
+  );
   transactionGroupsDisplay$ = this.service.transactionGroupsDisplay$;
   errors$ = this.service.errors$;
   loading$ = this.service.loading$;
@@ -107,7 +113,7 @@ export class TransactionGroupsComponent implements OnInit, OnDestroy {
     toObservable(
       this.organizationDetailService.organizationEnvironmentsProcessed,
     ),
-    this.projectEnvironmentsService.visibleEnvironments$,
+    this.visibleEnvironments$,
   ]).pipe(
     map(([appliedProjectCount, orgEnvironments, projectEnvironments]) =>
       appliedProjectCount !== 1 ? orgEnvironments : projectEnvironments,
@@ -138,7 +144,7 @@ export class TransactionGroupsComponent implements OnInit, OnDestroy {
       .subscribe();
 
     this.organizationEnvironments$.subscribe((environments) =>
-      environments.length === 0
+      environments?.length === 0
         ? this.environmentForm.controls.environment.disable()
         : this.environmentForm.controls.environment.enable(),
     );
@@ -179,27 +185,24 @@ export class TransactionGroupsComponent implements OnInit, OnDestroy {
           (orgProject) => orgProject.id.toString() === projectId,
         )?.slug;
         if (orgSlug && projectSlug) {
-          return this.projectEnvironmentsService.retrieveEnvironmentsWithProperties(
-            orgSlug,
-            projectSlug,
-          );
+          // return this.projectEnvironmentsService.retrieveEnvironmentsWithProperties(
+          //   orgSlug,
+          //   projectSlug,
+          // );
         }
         return EMPTY;
       }),
       takeUntilDestroyed(),
     );
 
-    combineLatest([
-      this.projectEnvironmentsService.visibleEnvironmentsLoaded$,
-      this.route.queryParams,
-    ])
+    combineLatest([this.visibleEnvironmentsLoaded$, this.route.queryParams])
       .pipe(
         takeUntilDestroyed(),
         tap(([projectEnvironments, queryParams]) => {
           if (
             queryParams.project &&
             queryParams.environment &&
-            !projectEnvironments.includes(queryParams.environment)
+            !projectEnvironments!.includes(queryParams.environment)
           ) {
             this.environmentForm.setValue({ environment: null });
             this.router.navigate([], {

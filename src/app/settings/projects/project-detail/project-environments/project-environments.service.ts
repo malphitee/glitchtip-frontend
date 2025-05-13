@@ -1,52 +1,33 @@
-import { Injectable, computed, inject } from "@angular/core";
-import { combineLatest, EMPTY } from "rxjs";
-import { mergeMap, takeWhile, tap } from "rxjs/operators";
+import { Injectable, computed, inject, resource } from "@angular/core";
 import { ProjectEnvironment } from "src/app/api/organizations/organizations.interface";
 import { ProjectSettingsService } from "../../project-settings.service";
-import { ProjectEnvironmentsAPIService } from "src/app/api/projects/project-environments-api.service";
 import { OrganizationsService } from "src/app/api/organizations.service";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
-import { toObservable } from "@angular/core/rxjs-interop";
+import { client } from "src/app/api/api";
 
 interface ProjectsState {
-  initialLoad: boolean;
   toggleHiddenLoading: number | null;
-  error: string;
-  environments: ProjectEnvironment[];
 }
 
 const initialState: ProjectsState = {
-  initialLoad: false,
   toggleHiddenLoading: null,
-  error: "",
-  environments: [],
 };
 
 @Injectable({
   providedIn: "root",
 })
 export class ProjectEnvironmentsService extends StatefulService<ProjectsState> {
-  private projectEnvironmentsAPIService = inject(ProjectEnvironmentsAPIService);
   private organizationsService = inject(OrganizationsService);
   private projectSettingsService = inject(ProjectSettingsService);
 
-  readonly initialLoad = computed(() => this.state().initialLoad);
-  readonly initialLoad$ = toObservable(this.initialLoad);
-
+  readonly initialLoad = computed(() => this.environmentsResource.hasValue());
   readonly toggleHiddenLoading = computed(
     () => this.state().toggleHiddenLoading,
   );
-  readonly toggleHiddenLoading$ = toObservable(this.toggleHiddenLoading);
-
-  readonly error = computed(() => this.state().error);
-  readonly error$ = toObservable(this.error);
-
-  readonly environments = computed(() => this.state().environments);
-  readonly environments$ = toObservable(this.environments);
-
+  readonly environments = computed(() => this.environmentsResource.value());
   readonly sortedEnvironments = computed(() => {
     const environments = this.environments();
-    if (environments.length === 0) return null;
+    if (environments === undefined || environments.length === 0) return null;
     const visible = {
       heading: "Visible",
       environments: environments.filter(
@@ -64,103 +45,92 @@ export class ProjectEnvironmentsService extends StatefulService<ProjectsState> {
     if (hidden.environments.length > 0) sorted.push(hidden);
     return sorted;
   });
-  readonly sortedEnvironments$ = toObservable(this.sortedEnvironments);
-
   readonly visibleEnvironments = computed(() => {
-    return this.environments()
-      .filter((environment) => environment.isHidden === false)
-      .map((environment) => environment.name);
+    return (
+      this.environments()
+        ?.filter((environment) => environment.isHidden === false)
+        .map((environment) => environment.name) || []
+    );
   });
-  readonly visibleEnvironments$ = toObservable(this.visibleEnvironments);
 
   readonly visibleEnvironmentsLoaded = computed(() => {
     if (!this.initialLoad()) return [];
     return this.environments()
-      .filter((environment) => environment.isHidden === false)
+      ?.filter((environment) => environment.isHidden === false)
       .map((environment) => environment.name);
   });
-  readonly visibleEnvironmentsLoaded$ = toObservable(
-    this.visibleEnvironmentsLoaded,
-  );
+  private environmentsResource = resource({
+    request: () => ({
+      orgSlug: this.organizationsService.activeOrganizationSlug(),
+      projectSlug: this.projectSettingsService.activeProjectSlug(),
+    }),
+    loader: async ({ request }) => {
+      if (!request.orgSlug || !request.projectSlug) {
+        return undefined;
+      }
+      const { data } = await client.GET(
+        "/api/0/projects/{organization_slug}/{project_slug}/environments/",
+        {
+          params: {
+            path: {
+              organization_slug: request.orgSlug,
+              project_slug: request.projectSlug,
+            },
+          },
+        },
+      );
+      return data;
+    },
+  });
 
   constructor() {
     super(initialState);
   }
 
-  retrieveEnvironments() {
-    return combineLatest([
-      this.organizationsService.activeOrganizationSlug$,
-      this.projectSettingsService.activeProjectSlug$,
-    ]).pipe(
-      takeWhile(([orgSlug, projectSlug]) => !orgSlug || !projectSlug, true),
-      mergeMap(([orgSlug, projectSlug]) => {
-        if (orgSlug && projectSlug) {
-          return this.projectEnvironmentsAPIService
-            .list(orgSlug, projectSlug)
-            .pipe(
-              tap((environments) =>
-                this.setState({
-                  environments: this.sortEnvironments(environments),
-                  initialLoad: true,
-                }),
-              ),
-            );
-        }
-        return EMPTY;
-      }),
+  async updateEnvironment(environment: ProjectEnvironment) {
+    const orgSlug = this.organizationsService.activeOrganizationSlug();
+    const projectSlug = this.projectSettingsService.activeProjectSlug();
+
+    if (!orgSlug || !projectSlug) {
+      return;
+    }
+
+    this.setState({ toggleHiddenLoading: environment.id });
+
+    const { data } = await client.PUT(
+      "/api/0/projects/{organization_slug}/{project_slug}/environments/{name}/",
+      {
+        params: {
+          path: {
+            organization_slug: orgSlug,
+            project_slug: projectSlug,
+            name: environment.name,
+          },
+        },
+        body: environment,
+      },
     );
+    if (data) {
+      this.environmentsResource.reload();
+    }
+    this.setState({ toggleHiddenLoading: null });
+    return data;
   }
 
-  retrieveEnvironmentsWithProperties(orgSlug: string, projectSlug: string) {
-    return this.projectEnvironmentsAPIService.list(orgSlug, projectSlug).pipe(
-      tap((environments) =>
-        this.setState({
-          environments: this.sortEnvironments(environments),
-          initialLoad: true,
-        }),
-      ),
-    );
-  }
+  // Make this computed instead
+  // private sortEnvironments(environments: ProjectEnvironment[]) {
+  //   // https://stackoverflow.com/a/17387454/
+  //   return environments.sort((a, b) =>
+  //     a.isHidden === b.isHidden ? 0 : a.isHidden ? 1 : -1,
+  //   );
+  // }
 
-  updateEnvironment(environment: ProjectEnvironment) {
-    return combineLatest([
-      this.organizationsService.activeOrganizationSlug$,
-      this.projectSettingsService.activeProjectSlug$,
-    ]).pipe(
-      takeWhile(([orgSlug, projectSlug]) => !orgSlug || !projectSlug, true),
-      mergeMap(([orgSlug, projectSlug]) => {
-        if (orgSlug && projectSlug) {
-          this.setState({ toggleHiddenLoading: environment.id });
-
-          return this.projectEnvironmentsAPIService
-            .update(orgSlug, projectSlug, environment)
-            .pipe(
-              tap((updatedEnvironment) =>
-                this.setState({
-                  environments: this.updatedEnvironments(updatedEnvironment),
-                  toggleHiddenLoading: null,
-                }),
-              ),
-            );
-        }
-        return EMPTY;
-      }),
-    );
-  }
-
-  private sortEnvironments(environments: ProjectEnvironment[]) {
-    // https://stackoverflow.com/a/17387454/
-    return environments.sort((a, b) =>
-      a.isHidden === b.isHidden ? 0 : a.isHidden ? 1 : -1,
-    );
-  }
-
-  private updatedEnvironments(newEnvironment: ProjectEnvironment) {
-    const currentEnvironments = this.state().environments;
-    const environmentToReplace = currentEnvironments.findIndex(
-      (currentEnvironment) => currentEnvironment.name === newEnvironment.name,
-    );
-    currentEnvironments[environmentToReplace] = newEnvironment;
-    return this.sortEnvironments(currentEnvironments);
-  }
+  // private updatedEnvironments(newEnvironment: ProjectEnvironment) {
+  //   const currentEnvironments = this.state().environments;
+  //   const environmentToReplace = currentEnvironments.findIndex(
+  //     (currentEnvironment) => currentEnvironment.name === newEnvironment.name,
+  //   );
+  //   currentEnvironments[environmentToReplace] = newEnvironment;
+  //   return this.sortEnvironments(currentEnvironments);
+  // }
 }

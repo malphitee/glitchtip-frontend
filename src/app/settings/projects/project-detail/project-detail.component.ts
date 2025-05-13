@@ -6,11 +6,8 @@ import {
   FormGroupDirective,
   ReactiveFormsModule,
 } from "@angular/forms";
-import { Router, ActivatedRoute, RouterLink } from "@angular/router";
-import { MatSnackBar } from "@angular/material/snack-bar";
-import { filter, first, map, tap } from "rxjs/operators";
+import { RouterLink } from "@angular/router";
 import { flattenedPlatforms } from "src/app/settings/projects/platform-picker/platforms-for-picker";
-import { ProjectDetail } from "src/app/api/projects/projects-api.interfaces";
 import { ProjectSettingsService } from "../project-settings.service";
 import { MatButtonModule } from "@angular/material/button";
 import { ProjectAlertsComponent } from "./project-alerts/project-alerts.component";
@@ -22,16 +19,13 @@ import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatCardModule } from "@angular/material/card";
-import { CommonModule } from "@angular/common";
 import { DetailHeaderComponent } from "src/app/shared/detail/header/header.component";
-import { OrganizationsService } from "src/app/api/organizations.service";
 
 @Component({
   selector: "gt-project-detail",
   templateUrl: "./project-detail.component.html",
   styleUrls: ["./project-detail.component.scss"],
   imports: [
-    CommonModule,
     MatCardModule,
     MatDividerModule,
     MatFormFieldModule,
@@ -48,16 +42,12 @@ import { OrganizationsService } from "src/app/api/organizations.service";
   ],
 })
 export class ProjectDetailComponent implements OnInit, OnDestroy {
-  private activatedRoute = inject(ActivatedRoute);
-  private router = inject(Router);
   private projectsService = inject(ProjectSettingsService);
-  private snackBar = inject(MatSnackBar);
-  private orgService = inject(OrganizationsService);
 
   @ViewChild(FormGroupDirective) formDirective: FormGroupDirective | undefined;
 
-  projectKeys$ = this.projectsService.projectKeys$;
-  activeProject$ = this.projectsService.activeProject$;
+  projectKeys = this.projectsService.projectKeys;
+  activeProject = this.projectsService.activeProject;
 
   orgSlug: string | undefined;
   projectSlug: string | undefined;
@@ -93,36 +83,36 @@ export class ProjectDetailComponent implements OnInit, OnDestroy {
     flattenedPlatforms.find((platform) => platform.id === id)?.name || id;
 
   ngOnInit() {
-    this.activatedRoute.params
-      .pipe(
-        map((params) => {
-          const orgSlug: string | undefined = params["org-slug"];
-          const projectSlug: string | undefined = params["project-slug"];
-          this.orgSlug = orgSlug;
-          this.projectSlug = projectSlug;
-          return { orgSlug, projectSlug };
-        }),
-      )
-      .subscribe(({ orgSlug, projectSlug }) => {
-        if (orgSlug && projectSlug) {
-          this.projectsService.retrieveProjectDetail(orgSlug, projectSlug);
-          this.projectsService.retrieveCurrentProjectClientKeys(orgSlug);
-        }
-      });
-    this.activeProject$
-      .pipe(
-        filter((data) => !!data),
-        first(),
-        tap((data) => {
-          this.nameForm.patchValue({
-            name: data!.name,
-          });
-          this.platformForm.patchValue({
-            platform: data!.platform,
-          });
-        }),
-      )
-      .subscribe();
+    // this.activatedRoute.params
+    //   .pipe(
+    //     map((params) => {
+    //       const orgSlug: string | undefined = params["org-slug"];
+    //       const projectSlug: string | undefined = params["project-slug"];
+    //       this.orgSlug = orgSlug;
+    //       this.projectSlug = projectSlug;
+    //       return { orgSlug, projectSlug };
+    //     }),
+    //   )
+    //   .subscribe(({ orgSlug, projectSlug }) => {
+    //     if (orgSlug && projectSlug) {
+    //       // this.projectsService.retrieveProjectDetail(orgSlug, projectSlug);
+    //       this.projectsService.retrieveCurrentProjectClientKeys(orgSlug);
+    //     }
+    //   });
+    // this.activeProject$
+    //   .pipe(
+    //     filter((data) => !!data),
+    //     first(),
+    //     tap((data) => {
+    //       this.nameForm.patchValue({
+    //         name: data!.name,
+    //       });
+    //       this.platformForm.patchValue({
+    //         platform: data!.platform,
+    //       });
+    //     }),
+    //   )
+    //   .subscribe();
   }
 
   deleteProject() {
@@ -132,76 +122,74 @@ export class ProjectDetailComponent implements OnInit, OnDestroy {
       this.projectSlug
     ) {
       this.deleteLoading = true;
-      this.projectsService
-        .deleteProject(this.orgSlug, this.projectSlug)
-        .subscribe(
-          () => {
-            this.deleteLoading = false;
-            this.orgService.refreshActiveOrganization();
-            this.snackBar.open("Your project has been sucessfully deleted");
-            this.router.navigate([this.orgSlug, "settings", "projects"]);
-          },
-          (err) => {
-            this.deleteLoading = false;
-            this.deleteError = `${err.statusText}: ${err.status}`;
-          },
-        );
+      // this.projectsService
+      //   .deleteProject(this.orgSlug, this.projectSlug)
+      //   .subscribe(
+      //     () => {
+      //       this.deleteLoading = false;
+      //       this.orgService.refreshActiveOrganization();
+      //       this.snackBar.open("Your project has been sucessfully deleted");
+      //       this.router.navigate([this.orgSlug, "settings", "projects"]);
+      //     },
+      //     (err) => {
+      //       this.deleteLoading = false;
+      //       this.deleteError = `${err.statusText}: ${err.status}`;
+      //     },
+      //   );
     }
   }
 
   updateName() {
     this.updateNameLoading = true;
     if (this.nameForm.valid && this.orgSlug && this.projectSlug) {
-      this.projectsService
-        .updateProjectName(
-          this.orgSlug,
-          this.projectSlug,
-          this.nameForm.value.name!,
-        )
-        .subscribe(
-          (resp: ProjectDetail) => {
-            this.updateNameLoading = false;
-            if (this.updateNameError) {
-              this.updateNameError = "";
-            }
-            this.snackBar.open(
-              `The name of your project has been updated to ${resp.name}`,
-            );
-          },
-          (err) => {
-            this.updateNameError = `${err.statusText}: ${err.status}`;
-          },
-        );
+      this.projectsService.updateProjectName(
+        this.orgSlug,
+        this.projectSlug,
+        this.nameForm.value.name!,
+      );
+      // .subscribe(
+      //   (resp: ProjectDetail) => {
+      //     this.updateNameLoading = false;
+      //     if (this.updateNameError) {
+      //       this.updateNameError = "";
+      //     }
+      //     this.snackBar.open(
+      //       `The name of your project has been updated to ${resp.name}`,
+      //     );
+      //   },
+      //   (err) => {
+      //     this.updateNameError = `${err.statusText}: ${err.status}`;
+      //   },
+      // );
     }
   }
 
   updatePlatform(projectName: string) {
     this.updatePlatformLoading = true;
     if (this.orgSlug && this.projectSlug) {
-      this.projectsService
-        .updateProjectPlatform(
-          this.orgSlug,
-          this.projectSlug,
-          this.platformForm.value.platform ?? "",
-          projectName,
-        )
-        .subscribe(
-          (resp: ProjectDetail) => {
-            this.updatePlatformLoading = false;
-            if (this.updatePlatformError) {
-              this.updatePlatformError = "";
-            }
-            this.snackBar.open(
-              `Your project platform has been updated to ${this.getPlatformName(
-                resp.platform,
-              )}.`,
-            );
-            this.platformForm.setValue({ platform: resp.platform });
-          },
-          (err) => {
-            this.updatePlatformError = `${err.statusText}: ${err.status}`;
-          },
-        );
+      this.projectsService.updateProjectPlatform(
+        this.orgSlug,
+        this.projectSlug,
+        this.platformForm.value.platform ?? "",
+        projectName,
+      );
+      // .subscribe(
+      //   (resp: ProjectDetail) => {
+      //     this.updatePlatformLoading = false;
+      //     if (this.updatePlatformError) {
+      //       this.updatePlatformError = "";
+      //     }
+      //     this.snackBar.open(
+      //       `Your project platform has been updated to ${this.getPlatformName(
+      //         resp.platform,
+      //       )}.`,
+      //     );
+      //     this.platformForm.setValue({ platform: resp.platform });
+      //   },
+      //   (err) => {
+      //     this.updatePlatformError = `${err.statusText}: ${err.status}`;
+      //   },
+      // );
     }
   }
 }

@@ -1,4 +1,9 @@
-import { Component, OnInit, inject } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  inject,
+} from "@angular/core";
 import {
   FormGroup,
   FormControl,
@@ -6,13 +11,10 @@ import {
   ReactiveFormsModule,
 } from "@angular/forms";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
-import { MatSnackBar } from "@angular/material/snack-bar";
-import { Router, ActivatedRoute } from "@angular/router";
-import { EMPTY } from "rxjs";
-import { map, filter, tap, catchError } from "rxjs/operators";
+import { ActivatedRoute } from "@angular/router";
+import { map, filter, tap } from "rxjs/operators";
 import { TeamsService } from "src/app/api/teams/teams.service";
 import { NewTeamComponent } from "../../teams/new-team/new-team.component";
-import { ProjectSettingsService } from "../project-settings.service";
 import { LoadingButtonComponent } from "../../../shared/loading-button/loading-button.component";
 import { MatIconModule } from "@angular/material/icon";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -24,7 +26,6 @@ import { PlatformPickerComponent } from "../platform-picker/platform-picker.comp
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { AsyncPipe } from "@angular/common";
 import { MatCardModule } from "@angular/material/card";
-import { OrganizationsService } from "src/app/api/organizations.service";
 
 @Component({
   selector: "gt-new-project",
@@ -45,15 +46,16 @@ import { OrganizationsService } from "src/app/api/organizations.service";
     LoadingButtonComponent,
     AsyncPipe,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NewProjectComponent implements OnInit {
-  private orgService = inject(OrganizationsService);
-  private projectsService = inject(ProjectSettingsService);
+  // private orgService = inject(OrganizationsService);
+  // private projectsService = inject(ProjectSettingsService);
   private teamsService = inject(TeamsService);
-  private router = inject(Router);
+  // private router = inject(Router);
   private route = inject(ActivatedRoute);
   dialog = inject(MatDialog);
-  private snackBar = inject(MatSnackBar);
+  // private snackBar = inject(MatSnackBar);
 
   teams$ = this.teamsService.teams$;
   loading = false;
@@ -106,35 +108,35 @@ export class NewProjectComponent implements OnInit {
 
   onSubmit() {
     if (this.form.valid && this.orgSlug) {
-      this.loading = true;
-      this.projectsService
-        .createProject(
-          {
-            name: this.form.value.name!,
-            platform: this.form.value.platform ?? "",
-          },
-          this.form.value.team!,
-          this.orgSlug,
-        )
-        .pipe(
-          tap((project) => {
-            this.loading = false;
-            this.orgService.refreshActiveOrganization();
-            this.snackBar.open(`${project.name} has been created`);
-            this.router.navigate(
-              [this.orgService.activeOrganizationSlug(), "issues"],
-              {
-                queryParams: { project: project.id },
-              },
-            );
-          }),
-          catchError((err) => {
-            this.loading = false;
-            this.error = `${err.statusText}: ${err.status}`;
-            return EMPTY;
-          }),
-        )
-        .toPromise();
+      // this.loading = true;
+      // this.projectsService
+      //   .createProject(
+      //     {
+      //       name: this.form.value.name!,
+      //       platform: this.form.value.platform ?? "",
+      //     },
+      //     this.form.value.team!,
+      //     this.orgSlug,
+      //   )
+      //   .pipe(
+      //     tap((project) => {
+      //       this.loading = false;
+      //       this.orgService.refreshActiveOrganization();
+      //       this.snackBar.open(`${project.name} has been created`);
+      //       this.router.navigate(
+      //         [this.orgService.activeOrganizationSlug(), "issues"],
+      //         {
+      //           queryParams: { project: project.id },
+      //         },
+      //       );
+      //     }),
+      //     catchError((err) => {
+      //       this.loading = false;
+      //       this.error = `${err.statusText}: ${err.status}`;
+      //       return EMPTY;
+      //     }),
+      //   )
+      //   .toPromise();
     }
   }
 }

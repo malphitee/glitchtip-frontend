@@ -45,7 +45,7 @@ export class ProjectSettingsService extends StatefulService<ProjectSettingsState
   private snackBar = inject(MatSnackBar);
 
   private params = signal({ orgSlug: "", teamSlug: "" });
-  private activeProjectSlug = signal("");
+  activeProjectSlug = signal("");
   private projectsResource = resource({
     request: () => ({ params: this.params() }),
     loader: async ({ request }) => {

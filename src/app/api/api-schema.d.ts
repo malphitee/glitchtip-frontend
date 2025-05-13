@@ -2617,8 +2617,8 @@ export interface components {
         };
         /** EnvironmentProjectSchema */
         EnvironmentProjectSchema: {
-            /** Environment.Name */
-            "environment.name": string;
+            /** Name */
+            name: string;
             /** ID */
             id?: number | null;
             /**
@@ -3403,10 +3403,10 @@ export interface components {
             /** Scrubipaddresses */
             scrubIpAddresses: boolean;
             /**
-             * Created
+             * Datecreated
              * Format: date-time
              */
-            created: string;
+            dateCreated: string;
             /** Platform */
             platform?: string | null;
             /** First Event */
@@ -3694,10 +3694,10 @@ export interface components {
             /** Scrubipaddresses */
             scrubIpAddresses: boolean;
             /**
-             * Created
+             * Datecreated
              * Format: date-time
              */
-            created: string;
+            dateCreated: string;
             /** Platform */
             platform?: string | null;
             /** First Event */
@@ -3782,10 +3782,10 @@ export interface components {
             /** Scrubipaddresses */
             scrubIpAddresses: boolean;
             /**
-             * Created
+             * Datecreated
              * Format: date-time
              */
-            created: string;
+            dateCreated: string;
             /** Platform */
             platform?: string | null;
             /** First Event */

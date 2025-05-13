@@ -1,4 +1,4 @@
-@if (activeProject$ | async; as project) {
+@if (activeProject(); as project) {
   <section class="l-body">
     <gt-detail-header
       [title]="'Settings for ' + project.name"
@@ -87,7 +87,7 @@
         </form>
       </mat-card-content>
     </mat-card>
-    @for (projectKey of (projectKeys$ | async) || []; track projectKey) {
+    @for (projectKey of projectKeys() || []; track projectKey) {
       <mat-card>
         <mat-card-header class="vertical-card-header">
           <mat-card-title i18n>Client Keys (DSN)</mat-card-title>

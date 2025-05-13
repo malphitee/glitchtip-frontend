@@ -189,12 +189,12 @@ export class IssuesPageComponent implements OnDestroy {
         );
       }
       if (orgSlug && projectSlug) {
-        lastValueFrom(
-          this.projectEnvironmentsService.retrieveEnvironmentsWithProperties(
-            orgSlug,
-            projectSlug,
-          ),
-        );
+        // lastValueFrom(
+        //   this.projectEnvironmentsService.retrieveEnvironmentsWithProperties(
+        //     orgSlug,
+        //     projectSlug,
+        //   ),
+        // );
       }
     });
     /**
@@ -209,7 +209,7 @@ export class IssuesPageComponent implements OnDestroy {
       if (
         project.length &&
         environment &&
-        !projectEnvironments.includes(environment)
+        !projectEnvironments!.includes(environment)
       ) {
         this.environmentForm.setValue({ environment: null });
         this.router.navigate([], {
