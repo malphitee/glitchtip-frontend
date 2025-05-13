@@ -38,7 +38,7 @@
                 ></gt-copy-input>
                 <gt-loading-button
                   (buttonClick)="deleteAuthToken(authToken.id!)"
-                  [loading]="authToken.id === deleteLoading()"
+                  [loading]="authToken.isLoading"
                   buttonText="Delete"
                   buttonStyle="stroked"
                 >

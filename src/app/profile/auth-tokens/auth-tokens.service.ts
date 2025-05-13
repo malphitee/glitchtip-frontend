@@ -1,31 +1,31 @@
 import { Injectable, computed, inject, resource } from "@angular/core";
+import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
 import { client } from "src/app/api/api";
+import { UNHANDLED_ERROR } from "src/app/constants";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
 
+interface CreateErrorFields {
+  label: string;
+  scopes: string;
+}
+
 export interface AuthTokensState {
-  loading: {
-    create: boolean;
-    delete: number | null;
-  };
-  createError: string;
-  createErrorLabel: string;
-  createErrorScopes: string;
+  createLoading: boolean;
+  deleteLoading: number[];
+  createErrorFields: CreateErrorFields;
+  createErrorForm: string;
 }
 
 const initialState: AuthTokensState = {
-  // apiTokens: [],
-  loading: {
-    create: false,
-    delete: null,
-  },
-  createError: "",
-  createErrorLabel: "",
-  createErrorScopes: "",
+  createLoading: false,
+  deleteLoading: [],
+  createErrorFields: { label: "", scopes: "" },
+  createErrorForm: "",
 };
 
 interface APITokenError {
-  detail: { type: string; loc: string[]; msg: string; ctx: any }[];
+  detail: Array<{ msg: string } | { scopes: string }>;
 }
 
 @Injectable({
@@ -33,24 +33,32 @@ interface APITokenError {
 })
 export class AuthTokensService extends StatefulService<AuthTokensState> {
   private router = inject(Router);
+  private snackBar = inject(MatSnackBar);
   apiTokensResource = resource({
     loader: () => client.GET("/api/0/api-tokens/"),
   });
 
   readonly apiTokens = computed(() => this.apiTokensResource.value()?.data);
   readonly initialLoad = computed(() => this.apiTokensResource.hasValue());
-  readonly createError = computed(() => this.state().createError);
-  readonly createErrorLabel = computed(() => this.state().createErrorLabel);
-  readonly createErrorScopes = computed(() => this.state().createErrorScopes);
-  readonly createLoading = computed(() => this.state().loading.create);
-  readonly deleteLoading = computed(() => this.state().loading.delete);
+  readonly createErrorFields = computed(() => {
+    let errorFields: { [key: string]: string[] } = {};
+    Object.entries(this.state().createErrorFields).forEach(([key, value]) => {
+      if (value) {
+        errorFields[key] = [value];
+      }
+    });
+    return errorFields
+  });
+  readonly createErrorForm = computed(() => this.state().createErrorForm);
+  readonly createLoading = computed(() => this.state().createLoading);
+  readonly deleteLoading = computed(() => this.state().deleteLoading);
 
   constructor() {
     super(initialState);
   }
 
   async createAuthToken(label: string, scopes: string[]) {
-    this.setCreateLoading(true);
+    this.setCreateLoadingStart();
     const { data, error, response } = await client.POST("/api/0/api-tokens/", {
       body: {
         label,
@@ -58,68 +66,90 @@ export class AuthTokensService extends StatefulService<AuthTokensState> {
       },
     });
     if (data) {
-      this.setCreateLoading(false);
+      this.setCreateLoadingComplete();
       this.router.navigate(["/profile/auth-tokens"]);
+      return;
     }
+    let errorFields = { label: "", scopes: "" };
+    let errorForm = "";
     const statusCode = response.status;
     if (error) {
-      const apiTokenError = (error as APITokenError).detail;
-      this.setCreateLoading(false);
       if (statusCode === 422) {
-        if (apiTokenError[0].loc[2] === "label") {
-          this.setCreateLabelError(apiTokenError[0].msg);
+        const errorDetail = (error as APITokenError).detail[0];
+        if ("msg" in errorDetail) {
+          errorFields.label = errorDetail.msg;
         }
-        if (apiTokenError[0].loc[2] === "scopes") {
-          this.setCreateScopesError(apiTokenError[0].msg);
+        if ("scopes" in errorDetail) {
+          errorFields.scopes = errorDetail.scopes;
         }
       } else {
-        this.setCreateError(`${statusCode}`);
+        errorForm = UNHANDLED_ERROR;
       }
+      this.setCreateLoadingError(errorFields, errorForm);
     }
   }
 
   async deleteAuthToken(id: number) {
-    this.setDeleteLoading(id);
-    await client.DELETE(`/api/0/api-tokens/{token_id}/`, {
+    this.setDeleteLoadingStart(id);
+    const { response } = await client.DELETE(`/api/0/api-tokens/{token_id}/`, {
       params: {
         path: {
           token_id: id,
         },
       },
     });
-    this.apiTokensResource.reload();
+    if (response.ok) {
+      this.setDeleteLoadingComplete(id);
+      this.apiTokensResource.reload();
+      return;
+    }
+    this.setDeleteLoadingError(id);
+    this.snackBar.open($localize`
+      There was an error deleting your token, please try again.
+    `);
   }
 
-  resetCreateErrors() {
+  private setDeleteLoadingStart(id: number) {
+    let state = this.state();
     this.setState({
-      createError: "",
-      createErrorLabel: "",
-      createErrorScopes: "",
+      deleteLoading: state.deleteLoading.concat([id]),
     });
   }
 
-  private setDeleteLoading(id: number) {
+  private setDeleteLoadingComplete(deletedId: number) {
+    let state = this.state();
     this.setState({
-      loading: {
-        delete: id,
-        create: false,
-      },
+      deleteLoading: state.deleteLoading.filter((id) => id !== deletedId),
     });
   }
 
-  private setCreateLoading(isLoading: boolean) {
-    this.setState({ loading: { create: isLoading, delete: null } });
+  private setDeleteLoadingError(deletedId: number) {
+    let state = this.state();
+    this.setState({
+      deleteLoading: state.deleteLoading.filter((id) => id !== deletedId),
+    });
   }
 
-  private setCreateError(error: string) {
-    this.setState({ createError: error });
+  private setCreateLoadingStart() {
+    this.setState({
+      createLoading: true,
+      createErrorFields: initialState.createErrorFields,
+      createErrorForm: "",
+    });
   }
 
-  private setCreateLabelError(error: string) {
-    this.setState({ createErrorLabel: error });
+  private setCreateLoadingComplete() {
+    this.setState({ createLoading: false });
   }
 
-  private setCreateScopesError(error: string) {
-    this.setState({ createErrorScopes: error });
+  private setCreateLoadingError(
+    createErrorFields: CreateErrorFields,
+    createErrorForm: string,
+  ) {
+    this.setState({
+      createErrorFields,
+      createErrorForm,
+      createLoading: false,
+    });
   }
 }

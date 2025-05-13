@@ -7,6 +7,7 @@ import {
   FormArray,
   FormBuilder,
 } from "@angular/forms";
+import { toObservable } from "@angular/core/rxjs-interop";
 import { MatCheckbox, MatCheckboxModule } from "@angular/material/checkbox";
 import { AuthTokensService, AuthTokensState } from "../auth-tokens.service";
 import { LoadingButtonComponent } from "../../../shared/loading-button/loading-button.component";
@@ -18,6 +19,7 @@ import { RouterLink } from "@angular/router";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
 import { StatefulComponent } from "src/app/shared/stateful-service/signal-state.component";
+import { mapFormErrors } from "src/app/shared/forms/form.utils";
 
 @Component({
   selector: "gt-new-token",
@@ -46,9 +48,7 @@ export class NewTokenComponent
   @ViewChild("selectAllCheckbox") selectAllCheckbox?: MatCheckbox;
 
   createLoading = this.service.createLoading;
-  createError = this.service.createError;
-  createErrorLabel = this.service.createErrorLabel;
-  createErrorScopes = this.service.createErrorScopes;
+  createErrorForm = this.service.createErrorForm;
 
   form: FormGroup;
   scopeOptions: string[] = [
@@ -85,12 +85,19 @@ export class NewTokenComponent
     this.service = service;
 
     this.form = this.fb.group({
-      label: new FormControl("", [Validators.required]),
+      label: new FormControl("", [
+        Validators.required,
+        Validators.maxLength(255),
+      ]),
       scopes: new FormArray([]),
     });
 
     /* Set scopeOptions to scopes FormArray **/
     this.scopeOptions.forEach(() => this.scopes.push(new FormControl(false)));
+
+    toObservable(service.createErrorFields).subscribe((fieldErrors) =>
+      mapFormErrors(fieldErrors, this.form),
+    );
   }
 
   ngOnInit(): void {
@@ -125,34 +132,9 @@ export class NewTokenComponent
       });
     }
   }
-  getLabelFieldError() {
-    const error = this.createErrorLabel();
-    if (error) {
-      return this.label.setErrors({
-        serverErrorLabel: error,
-      });
-    }
-  }
-
-  getScopesFieldError() {
-    const error = this.createErrorScopes();
-    if (error) {
-      return this.scopes.setErrors({
-        serverErrorScopes: error,
-      });
-    }
-  }
-
-  validateForm() {
-    this.validateScopes();
-    this.getLabelFieldError();
-    this.getScopesFieldError();
-  }
 
   onSubmit() {
-    this.service.resetCreateErrors();
-
-    this.validateForm();
+    this.validateScopes();
 
     if (this.form.valid) {
       const label = this.label.value;
