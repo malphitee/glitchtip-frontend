@@ -14,8 +14,8 @@
     <mat-divider></mat-divider>
     <mat-card-content>
       <mat-error class="server-error">
-        @if (createError()) {
-          <span>{{ createError() }}</span>
+        @if (createErrorForm()) {
+          <span>{{ createErrorForm() }}</span>
         }
       </mat-error>
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
@@ -30,6 +30,9 @@
             }
             @if (label.errors?.maxlength) {
               <span>Label must be 255 characters or less</span>
+            }
+            @if (label.errors?.serverError) {
+              <span>{{ label.errors?.serverError }}</span>
             }
           </mat-error>
         </mat-form-field>
@@ -56,6 +59,9 @@
           @if (scopes.errors?.selectOne) {
             <span>Select at least one scope</span>
           }
+          @if (scopes.errors?.serverError) {
+              <span>{{ scopes.errors?.serverError }}</span>
+            }
         </mat-error>
         <gt-loading-button
           [loading]="createLoading() === true"
