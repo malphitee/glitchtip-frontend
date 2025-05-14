@@ -48,7 +48,7 @@ export class TeamSettingsComponent implements OnInit {
     slug: new FormControl("", [Validators.required]),
   });
   routeSlugs$ = this.route.paramMap.pipe(
-    map((params) => [params.get("org-slug"), params.get("team-slug")])
+    map((params) => [params.get("org-slug"), params.get("team-slug")]),
   );
 
   ngOnInit(): void {
@@ -59,7 +59,7 @@ export class TeamSettingsComponent implements OnInit {
             this.teamsService.retrieveSingleTeam(orgSlug, teamSlug);
             this.form.patchValue({ slug: teamSlug });
           }
-        })
+        }),
       )
       .subscribe();
   }
@@ -77,7 +77,7 @@ export class TeamSettingsComponent implements OnInit {
                 this.organizationsService.updateTeam(resp.id, resp.slug);
               });
           }
-        })
+        }),
       )
       .toPromise();
   }
@@ -92,7 +92,7 @@ export class TeamSettingsComponent implements OnInit {
                 .deleteTeam(orgSlug, teamSlug)
                 .then(() => this.organizationsService.deleteTeam(teamSlug));
             }
-          })
+          }),
         )
         .toPromise();
     }

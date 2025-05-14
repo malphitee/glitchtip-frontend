@@ -1,17 +1,21 @@
-import { Component, ChangeDetectionStrategy, OnDestroy, inject } from "@angular/core";
+import {
+  Component,
+  ChangeDetectionStrategy,
+  inject,
+  input,
+  effect,
+} from "@angular/core";
 import { ActivatedRoute, RouterModule } from "@angular/router";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatTableModule } from "@angular/material/table";
 import { MatIconModule } from "@angular/material/icon";
-import { CommonModule } from "@angular/common";
 import { ListTitleComponent } from "src/app/list-elements/list-title/list-title.component";
-import { checkForOverflow } from "src/app/shared/shared.utils";
+import { checkForOverflow, stringAttribute } from "src/app/shared/shared.utils";
 import { ListFooterComponent } from "src/app/list-elements/list-footer/list-footer.component";
 import { TimeForPipe } from "src/app/shared/days-ago.pipe";
 import { MonitorChartComponent } from "../monitor-chart/monitor-chart.component";
 import { MonitorListService } from "./monitor-list.service";
-import { combineLatest } from "rxjs";
 
 @Component({
   selector: "gt-monitor-list",
@@ -19,7 +23,6 @@ import { combineLatest } from "rxjs";
   styleUrls: ["./monitor-list.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     RouterModule,
     ListFooterComponent,
     TimeForPipe,
@@ -30,14 +33,17 @@ import { combineLatest } from "rxjs";
     MatIconModule,
     ListTitleComponent,
   ],
+  providers: [MonitorListService],
 })
-export class MonitorListComponent implements OnDestroy {
+export class MonitorListComponent {
   protected route = inject(ActivatedRoute);
   service = inject(MonitorListService);
+  cursor = input(undefined, { transform: stringAttribute });
 
   tooltipDisabled = false;
-  monitors$ = this.service.monitors$;
-  paginator$ = this.service.paginator$;
+  monitors = this.service.monitors;
+  paginator = this.service.paginator;
+  loading = this.service.loading;
   displayedColumns: string[] = [
     "statusColor",
     "name-and-url",
@@ -46,21 +52,12 @@ export class MonitorListComponent implements OnDestroy {
   ];
 
   constructor() {
-    combineLatest([this.route.paramMap, this.route.queryParamMap]).subscribe(
-      ([params, queryParams]) => {
-        const orgSlug = params.get("org-slug");
-        if (orgSlug) {
-          this.service.getMonitors(orgSlug, queryParams.get("cursor"));
-        }
-      },
-    );
+    effect(() => {
+      this.service.cursor.set(this.cursor());
+    });
   }
 
   checkIfTooltipIsNecessary($event: Event) {
     this.tooltipDisabled = checkForOverflow($event);
-  }
-
-  ngOnDestroy(): void {
-    this.service.clearState();
   }
 }

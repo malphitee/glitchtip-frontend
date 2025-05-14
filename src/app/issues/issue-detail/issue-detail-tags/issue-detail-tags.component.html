@@ -1,8 +1,8 @@
-@if ((tags$ | async)?.length) {
+@if (tags()?.length) {
   <mat-card>
     <mat-card-content>
       <h3 class="mat-body-strong">Tags</h3>
-      @for (tag of tags$ | async; track tag) {
+      @for (tag of tags(); track tag.key) {
         <p class="top-value mat-caption">
           <span class="key">{{ tag.key }}</span>
           <span>
@@ -11,7 +11,7 @@
         </p>
         <div>
           <div class="bars">
-            @for (topValue of tag.topValues; track topValue) {
+            @for (topValue of tag.topValues; track topValue.name) {
               <span
                 class="bar"
                 [ngStyle]="{

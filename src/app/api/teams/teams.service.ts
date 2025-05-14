@@ -42,7 +42,7 @@ export class TeamsService {
   readonly teams$ = this.getState$.pipe(map((state) => state.teams));
   readonly team$ = this.getState$.pipe(map((data) => data.team));
   readonly teamMembers$ = this.getState$.pipe(
-    map((state) => state.teamMembers)
+    map((state) => state.teamMembers),
   );
   readonly loading$ = this.getState$.pipe(map((data) => data.loading));
   readonly errors$ = this.getState$.pipe(map((data) => data.errors));
@@ -53,10 +53,10 @@ export class TeamsService {
   ]).pipe(
     map(([teamMembers, userEmail]) => {
       const activeTeamMember = teamMembers.find(
-        (teamMember) => teamMember.email === userEmail
+        (teamMember) => teamMember.email === userEmail,
       );
       return activeTeamMember?.role;
-    })
+    }),
   );
 
   retrieveTeamsByOrg(orgSlug: string) {
@@ -69,7 +69,7 @@ export class TeamsService {
     lastValueFrom(
       this.teamsAPIService
         .retrieve(orgSlug, teamSlug)
-        .pipe(tap((resp) => this.setSingleTeam(resp)))
+        .pipe(tap((resp) => this.setSingleTeam(resp))),
     );
   }
 
@@ -97,7 +97,7 @@ export class TeamsService {
       catchError((error: HttpErrorResponse) => {
         this.setUpdateTeamSlugError(error);
         return EMPTY;
-      })
+      }),
     );
   }
 
@@ -107,7 +107,7 @@ export class TeamsService {
       "/api/0/teams/{organization_slug}/{team_slug}/",
       {
         params: { path: { organization_slug: orgSlug, team_slug: teamSlug } },
-      }
+      },
     );
     this.setDeleteTeamLoading(false);
     if (result.error) {

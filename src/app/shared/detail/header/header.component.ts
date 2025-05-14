@@ -18,12 +18,9 @@ import { MatButtonModule } from "@angular/material/button";
 export class DetailHeaderComponent {
   readonly backLinkParams = input<{
     [key: string]: string | number;
-}>({});
+  }>({});
   readonly backLinkText = input("");
-  readonly title = input<string | [
-    string,
-    string | null
-]>("");
+  readonly title = input<string | [string, string | null]>("");
   readonly subtitle = input<string | null>();
 
   getTitle() {

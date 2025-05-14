@@ -10,8 +10,8 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatCardModule } from "@angular/material/card";
-import { lastValueFrom } from "rxjs";
 import { toObservable } from "@angular/core/rxjs-interop";
+import { MarkdownComponent } from "ngx-markdown";
 import { FormErrorComponent } from "../shared/forms/form-error/form-error.component";
 import { LoginWebAuthnComponent } from "./login-webauthn/login-webauthn.component";
 import { LoginTotpComponent } from "./login-totp/login-totp.component";
@@ -20,11 +20,9 @@ import { mapFormErrors } from "../shared/forms/form.utils";
 import { StatefulComponent } from "../shared/stateful-service/signal-state.component";
 import { LoginService, LoginState } from "./login.service";
 import { SettingsService } from "../api/settings.service";
-import { AcceptInviteService } from "../api/accept/accept-invite.service";
 import { AuthSvgComponent } from "../shared/auth-svg/auth-svg.component";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { components } from "../api/api-schema";
-import { MarkdownModule } from "ngx-markdown";
 
 type SocialApp = components["schemas"]["SocialAppSchema"];
 
@@ -34,11 +32,11 @@ type SocialApp = components["schemas"]["SocialAppSchema"];
   styleUrls: ["./login.component.scss"],
   imports: [
     MatCardModule,
+    MarkdownComponent,
     LoginTotpComponent,
     LoginWebAuthnComponent,
     LoadingButtonComponent,
     ReactiveFormsModule,
-    MarkdownModule,
     FormErrorComponent,
     MatFormFieldModule,
     MatInputModule,
@@ -53,7 +51,6 @@ export class LoginComponent
 {
   protected service: LoginService;
   private settings = inject(SettingsService);
-  private acceptService = inject(AcceptInviteService);
   private activatedRoute = inject(ActivatedRoute);
   private snackBar = inject(MatSnackBar);
 
@@ -73,7 +70,6 @@ export class LoginComponent
 
   socialApps = this.settings.socialApps;
   enableUserRegistration = this.settings.enableUserRegistration;
-  acceptInfo$ = this.acceptService.acceptInfo$;
 
   constructor() {
     const service = inject(LoginService);
@@ -110,9 +106,7 @@ export class LoginComponent
 
   onSubmit() {
     if (this.form.valid) {
-      lastValueFrom(
-        this.service.login(this.form.value.email!, this.form.value.password!),
-      );
+      this.service.login(this.form.value.email!, this.form.value.password!);
     }
   }
 }

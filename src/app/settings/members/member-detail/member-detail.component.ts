@@ -61,7 +61,7 @@ export class MemberDetailComponent implements OnInit, OnDestroy {
     this.memberDetailService.transferOrgOwnershipLoading;
   orgSlug$ = this.route.paramMap.pipe(map((params) => params.get("org-slug")));
   memberIdParam$ = this.route.paramMap.pipe(
-    map((params) => params.get("member-id"))
+    map((params) => params.get("member-id")),
   );
   routeParams$ = combineLatest([this.orgSlug$, this.memberIdParam$]);
   form = new FormGroup({
@@ -98,10 +98,10 @@ export class MemberDetailComponent implements OnInit, OnDestroy {
           if (organizationSlug && memberIdParam) {
             this.memberDetailService.retrieveMemberDetail(
               organizationSlug,
-              +memberIdParam
+              +memberIdParam,
             );
           }
-        })
+        }),
       )
       .subscribe();
   }

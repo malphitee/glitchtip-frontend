@@ -1,4 +1,15 @@
-import { Component, Input, ViewChild, ElementRef, AfterViewInit, HostListener, OnInit, ChangeDetectorRef, OnDestroy, inject } from "@angular/core";
+import {
+  Component,
+  Input,
+  ViewChild,
+  ElementRef,
+  AfterViewInit,
+  HostListener,
+  OnInit,
+  ChangeDetectorRef,
+  OnDestroy,
+  inject,
+} from "@angular/core";
 import { debounceTime, fromEvent, Subscription } from "rxjs";
 import { ResponseTimeSeries } from "../uptime.interfaces";
 import { CommonModule } from "@angular/common";

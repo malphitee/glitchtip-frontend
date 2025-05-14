@@ -60,7 +60,7 @@
             (selectionChange)="sortByChanged.emit($event)"
             formControlName="sort"
           >
-            @for (sort of sorts(); track sort) {
+            @for (sort of sorts(); track sort.param) {
               <mat-option [value]="sort.param">
                 {{ sort.display }}
               </mat-option>
@@ -98,7 +98,7 @@
         >
           <mat-form-field appearance="outline">
             <mat-label>Search</mat-label>
-            <input 
+            <input
               matInput
               type="search"
               formControlName="query"

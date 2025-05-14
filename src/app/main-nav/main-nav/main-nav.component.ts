@@ -6,8 +6,6 @@ import {
   computed,
 } from "@angular/core";
 import { MatMenuTrigger, MatMenuModule } from "@angular/material/menu";
-import { firstValueFrom } from "rxjs";
-import { tap } from "rxjs/operators";
 import { MainNavService } from "../main-nav.service";
 import { SettingsService } from "src/app/api/settings.service";
 import { UserService } from "src/app/api/user/user.service";
@@ -65,20 +63,19 @@ export class MainNavComponent {
     () =>
       this.settingsService.initialLoad() &&
       this.organizationsInitialLoad() &&
-      !!this.userService.user()
+      !!this.userService.user(),
   );
 
   canCreateOrg = computed(
     () =>
       this.settingsService.enableOrganizationCreation() ||
       this.userService.user() ||
-      this.organizationsService.organizationsCount()
+      this.organizationsService.organizationsCount(),
   );
 
-  logout() {
-    firstValueFrom(
-      this.auth.logout().pipe(tap(() => (window.location.href = "/login")))
-    );
+  async logout() {
+    await this.auth.logout();
+    window.location.href = "/login";
   }
 
   toggleSideNav() {

@@ -2,39 +2,41 @@ import {
   Component,
   ChangeDetectionStrategy,
   OnDestroy,
-  OnInit,
   inject,
+  input,
+  effect,
+  computed,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import { DatePipe, I18nPluralPipe } from "@angular/common";
 import { FormControl, FormGroup } from "@angular/forms";
+import { MatButtonModule } from "@angular/material/button";
+import { MatCheckboxModule } from "@angular/material/checkbox";
+import { MatDialog } from "@angular/material/dialog";
+import { MatIconModule } from "@angular/material/icon";
 import { MatSelectChange } from "@angular/material/select";
+import { MatTableModule } from "@angular/material/table";
 import { Router, ActivatedRoute, RouterLink } from "@angular/router";
-import { takeUntilDestroyed, toObservable } from "@angular/core/rxjs-interop";
-import { combineLatest, EMPTY, lastValueFrom } from "rxjs";
-import {
-  map,
-  filter,
-  take,
-  tap,
-  switchMap,
-  distinctUntilChanged,
-} from "rxjs/operators";
+import { lastValueFrom } from "rxjs";
 import { IssuesService } from "../issues.service";
-import { Issue, IssueStatus } from "../interfaces";
-import { normalizeProjectParams } from "src/app/shared/shared.utils";
-import { OrganizationDetailService } from "src/app/api/organizations/organization-detail.service";
+import { IssueStatus } from "../interfaces";
 import { ProjectEnvironmentsService } from "src/app/settings/projects/project-detail/project-environments/project-environments.service";
 import { DaysAgoPipe, DaysOldPipe } from "../../shared/days-ago.pipe";
 import { IssueZeroStatesComponent } from "../issue-zero-states/issue-zero-states.component";
 import { ListFooterComponent } from "../../list-elements/list-footer/list-footer.component";
-import { MatIconModule } from "@angular/material/icon";
-import { MatButtonModule } from "@angular/material/button";
-import { MatCheckboxModule } from "@angular/material/checkbox";
 import { DataFilterBarComponent } from "../../list-elements/data-filter-bar/data-filter-bar.component";
-import { MatTableModule } from "@angular/material/table";
 import { ProjectFilterBarComponent } from "../../list-elements/project-filter-bar/project-filter-bar.component";
 import { ListTitleComponent } from "../../list-elements/list-title/list-title.component";
 import { OrganizationsService } from "src/app/api/organizations.service";
+
+import type { components } from "src/app/api/api-schema";
+import {
+  stringArrAttribute,
+  stringAttribute,
+} from "src/app/shared/shared.utils";
+import { OrganizationDetailService } from "src/app/api/organizations/organization-detail.service";
+import { ConfirmDialogComponent } from "src/app/shared/confirm-dialog/confirm-dialog.component";
+
+type Issue = components["schemas"]["IssueSchema"];
 
 @Component({
   selector: "gt-issues-page",
@@ -42,7 +44,6 @@ import { OrganizationsService } from "src/app/api/organizations.service";
   styleUrls: ["./issues-page.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     ListTitleComponent,
     ProjectFilterBarComponent,
     MatTableModule,
@@ -53,11 +54,15 @@ import { OrganizationsService } from "src/app/api/organizations.service";
     RouterLink,
     ListFooterComponent,
     IssueZeroStatesComponent,
+    DatePipe,
     DaysAgoPipe,
     DaysOldPipe,
+    I18nPluralPipe,
   ],
+  providers: [IssuesService],
 })
-export class IssuesPageComponent implements OnInit, OnDestroy {
+export class IssuesPageComponent implements OnDestroy {
+  dialog = inject(MatDialog);
   protected service = inject(IssuesService);
   protected router = inject(Router);
   protected route = inject(ActivatedRoute);
@@ -65,13 +70,19 @@ export class IssuesPageComponent implements OnInit, OnDestroy {
   private organizationDetailService = inject(OrganizationDetailService);
   private projectEnvironmentsService = inject(ProjectEnvironmentsService);
 
+  orgSlug = input.required<string>({ alias: "org-slug" });
+  cursor = input(undefined, { transform: stringAttribute });
+  query = input<string | undefined>();
+  start = input<string | undefined>();
+  end = input<string | undefined>();
+  sort = input<string | undefined>();
+  projects = input([], { alias: "project", transform: stringArrAttribute });
+  environment = input<string | undefined>();
+
   displayedColumns: string[] = ["select", "title", "events"];
-  paginator$ = this.service.paginator$;
-  loading$ = this.service.getState$.pipe(
-    map((state) => state.pagination.loading)
-  );
-  searchHits$ = this.service.searchHits$;
-  searchDirectHit$ = this.service.searchDirectHit$;
+  paginator = this.service.paginator;
+  loading = this.service.loading;
+  initialLoad = this.service.initialLoad;
   form = new FormGroup({
     query: new FormControl(""),
   });
@@ -89,225 +100,145 @@ export class IssuesPageComponent implements OnInit, OnDestroy {
     endDate: new FormControl<Date | string>(""),
   });
 
-  issues$ = this.service.issuesWithSelected$;
-  areAllSelected$ = this.service.areAllSelected$;
-  thereAreSelectedIssues$ = this.service.thereAreSelectedIssues$;
-  allResultsSelected$ = this.service.allResultsSelected$;
-  numberOfSelectedIssues$ = this.service.numberOfSelectedIssues$;
-  activeOrganizationProjects$ =
-    this.organizationsService.activeOrganizationProjects$;
-  activeOrganization$ = this.organizationsService.activeOrganization$;
-  orgSlug$ = this.route.paramMap.pipe(map((params) => params.get("org-slug")));
-  errors$ = this.service.errors$;
+  issues = this.service.issuesWithSelected;
+  areAllSelected = this.service.areAllSelected;
+  multipleProjectIssuesSelected = computed(() => {
+    let selectedProjects = this.issues()
+      .filter((issue) => issue.isSelected)
+      .map((issue) => issue.project.id);
+    let selectedProjectsSet = new Set(selectedProjects);
+    return selectedProjectsSet.size > 1;
+  });
+  thereAreSelectedIssues = this.service.thereAreSelectedIssues;
+  allResultsSelected = this.service.allResultsSelected;
+  numberOfSelectedIssues = this.service.numberOfSelectedIssues;
+  activeOrganizationProjects =
+    this.organizationsService.activeOrganizationProjects;
+  activeOrganization = this.organizationsService.activeOrganization;
+  // errors = this.service.errors;
   eventCountPluralMapping: { [k: string]: string } = {
     "=1": "1 event",
     other: "# events",
   };
   sorts = [
     { param: "-last_seen", display: "Last Seen" },
-    { param: "last_seen", display: "First Seen" },
-    { param: "-created", display: "Newest Creation Date" },
-    { param: "created", display: "Oldest Creation Date" },
+    { param: "first_seen", display: "First Seen" },
     { param: "-count", display: "Most Frequent" },
     { param: "count", display: "Least Frequent" },
     { param: "-priority", display: "Highest Priority" },
     { param: "priority", display: "Lowest Priority" },
   ];
 
-  currentQueryParams$ = combineLatest([
-    this.orgSlug$,
-    this.route.queryParamMap,
-  ]).pipe(
-    map(([orgSlug, params]) => {
-      let query = params.get("query");
-      let project = normalizeProjectParams(params.getAll("project"));
-      return {
-        orgSlug,
-        cursor: params.get("cursor"),
-        query: typeof query === "string" ? query : undefined,
-        project,
-        start: params.get("start"),
-        end: params.get("end"),
-        sort: params.get("sort"),
-        environment: params.get("environment"),
-      };
-    })
-  );
-
-  projectsFromParams$ = this.route.queryParams.pipe(
-    map((params) => normalizeProjectParams(params.project))
-  );
-
   /**
    * Corresponds to project picker/header nav/project IDs in the URL
    * If the count is zero, we show issues from all projects
    */
-  appliedProjectCount$ = this.projectsFromParams$.pipe(
-    map((projects) => {
-      if (Array.isArray(projects)) {
-        return projects.length;
-      }
-      return 0;
-    })
-  );
+  appliedProjectCount = computed(() => this.projects().length);
 
-  showBulkSelectProject$ = combineLatest([
-    this.areAllSelected$,
-    this.numberOfSelectedIssues$,
-    this.searchHits$,
-  ]).pipe(
-    map(([areAllSelected, numberOfSelectIssues, searchHits]) => {
-      const hits = searchHits && numberOfSelectIssues < searchHits;
-      if (areAllSelected && hits) {
-        return true;
-      } else {
-        return false;
-      }
-    })
-  );
+  showBulkSelectProject = computed(() => {
+    const searchHits = this.paginator()?.hits;
 
-  organizationEnvironments$ = combineLatest([
-    this.appliedProjectCount$,
-    toObservable(
-      this.organizationDetailService.organizationEnvironmentsProcessed
-    ),
-    this.projectEnvironmentsService.visibleEnvironments$,
-  ]).pipe(
-    map(([appliedProjectCount, orgEnvironments, projectEnvironments]) =>
-      appliedProjectCount !== 1 ? orgEnvironments : projectEnvironments
-    )
+    const hits = searchHits && this.numberOfSelectedIssues() < searchHits;
+    if (this.areAllSelected() && hits) {
+      return true;
+    }
+    return false;
+  });
+
+  availableEnvironments = computed(() =>
+    this.appliedProjectCount() !== 1
+      ? this.organizationDetailService.organizationEnvironmentsProcessed()
+      : this.projectEnvironmentsService.visibleEnvironments(),
   );
 
   constructor() {
-    this.issues$.subscribe((resp) =>
-      resp.length === 0
+    effect(() => {
+      this.service.updateParams({
+        orgSlug: this.orgSlug(),
+        cursor: this.cursor(),
+        query: this.query() ?? "is:unresolved",
+        start: this.start(),
+        end: this.end(),
+        sort: this.sort(),
+        project: this.projects(),
+        environment: this.environment(),
+      });
+    });
+    effect(() =>
+      this.issues().length === 0
         ? this.sortForm.controls.sort.disable()
-        : this.sortForm.controls.sort.enable()
+        : this.sortForm.controls.sort.enable(),
     );
-
-    this.organizationEnvironments$.subscribe((environments) =>
-      environments.length === 0
+    effect(() =>
+      this.availableEnvironments().length === 0
         ? this.environmentForm.controls.environment.disable()
-        : this.environmentForm.controls.environment.enable()
+        : this.environmentForm.controls.environment.enable(),
     );
-
-    this.currentQueryParams$
-      .pipe(
-        switchMap((params) => {
-          if (params.orgSlug) {
-            return this.service.getIssues(
-              params.orgSlug,
-              params.cursor,
-              params.query,
-              params.project,
-              params.start,
-              params.end,
-              params.sort,
-              params.environment
-            );
-          }
-          return EMPTY;
-        }),
-        takeUntilDestroyed()
-      )
-      .subscribe();
-
-    this.orgSlug$
-      .pipe(
-        switchMap((orgSlug) => {
-          if (orgSlug) {
-            return this.organizationDetailService.getOrganizationEnvironments(
-              orgSlug
-            );
-          }
-          return EMPTY;
-        }),
-        takeUntilDestroyed()
-      )
-      .subscribe();
-
-    combineLatest([
-      this.orgSlug$,
-      this.route.queryParamMap.pipe(
-        map((params) => params.getAll("project")[0]),
-        filter((project) => !!project),
-        distinctUntilChanged()
-      ),
-      this.organizationsService.activeOrganizationProjects$,
-    ])
-      .pipe(
-        switchMap(([orgSlug, projectId, orgProjects]) => {
-          const projectSlug = orgProjects?.find(
-            (orgProject) => orgProject.id.toString() === projectId
-          )?.slug;
-          if (orgSlug && projectSlug) {
-            return this.projectEnvironmentsService.retrieveEnvironmentsWithProperties(
-              orgSlug,
-              projectSlug
-            );
-          }
-          return EMPTY;
-        }),
-        takeUntilDestroyed()
-      )
-      .subscribe();
-
+    effect(() => {
+      const project = this.projects();
+      const firstProjectId = project ? project[0] : null;
+      const orgSlug = this.orgSlug();
+      const projectSlug = this.organizationsService
+        .activeOrganizationProjects()
+        ?.find(
+          (orgProject) => orgProject.id.toString() === firstProjectId,
+        )?.slug;
+      if (orgSlug) {
+        lastValueFrom(
+          this.organizationDetailService.getOrganizationEnvironments(orgSlug),
+        );
+      }
+      if (orgSlug && projectSlug) {
+        lastValueFrom(
+          this.projectEnvironmentsService.retrieveEnvironmentsWithProperties(
+            orgSlug,
+            projectSlug,
+          ),
+        );
+      }
+    });
     /**
      * When changing from one project to another, see if there is an environment
      * in the URL. If it doesn't match a project environment, reset the URL.
      */
-    combineLatest([
-      this.projectEnvironmentsService.visibleEnvironmentsLoaded$,
-      this.route.queryParams,
-    ])
-      .pipe(
-        takeUntilDestroyed(),
-        tap(([projectEnvironments, queryParams]) => {
-          if (
-            queryParams.project &&
-            queryParams.environment &&
-            !projectEnvironments.includes(queryParams.environment)
-          ) {
-            this.environmentForm.setValue({ environment: null });
-            this.router.navigate([], {
-              queryParams: { environment: null },
-              queryParamsHandling: "merge",
-            });
-          }
-        })
-      )
-      .subscribe();
-
-    this.searchDirectHit$.pipe(takeUntilDestroyed()).subscribe((directHit) => {
-      this.router.navigate(
-        [directHit.id, "events", directHit.matchingEventId],
-        {
-          relativeTo: this.route,
-          queryParams: { query: null },
+    effect(() => {
+      const projectEnvironments =
+        this.projectEnvironmentsService.visibleEnvironmentsLoaded();
+      const project = this.projects();
+      const environment = this.environment();
+      if (
+        project.length &&
+        environment &&
+        !projectEnvironments.includes(environment)
+      ) {
+        this.environmentForm.setValue({ environment: null });
+        this.router.navigate([], {
+          queryParams: { environment: null },
           queryParamsHandling: "merge",
-          replaceUrl: true, // so the browser back button works
-        }
-      );
+        });
+      }
     });
-  }
-
-  ngOnInit() {
-    this.route.queryParams.subscribe((_) => {
-      const query: string | undefined = this.route.snapshot.queryParams.query;
-      const start: string | undefined = this.route.snapshot.queryParams.start;
-      const end: string | undefined = this.route.snapshot.queryParams.end;
-      const sort: string | undefined = this.route.snapshot.queryParams.sort;
-      const environment: string | undefined =
-        this.route.snapshot.queryParams.environment;
+    effect(() => {
+      const query = this.query();
       this.form.setValue({
-        query: query !== undefined ? query : "is:unresolved",
+        query: query ?? "is:unresolved",
       });
+    });
+    effect(() => {
+      const sort = this.sort();
       this.sortForm.setValue({
-        sort: sort !== undefined ? sort : "-last_seen",
+        sort: sort ?? "-last_seen",
       });
+    });
+    effect(() => {
+      const environment = this.environment();
       this.environmentForm.setValue({
-        environment: environment !== undefined ? environment : "",
+        environment: environment ?? "",
       });
+    });
+    effect(() => {
+      const start = this.start();
+      const end = this.end();
       this.dateForm.setValue({
         startDate: start ? new Date(start.replace("Z", "")) : null,
         endDate: end ? new Date(end.replace("Z", "")) : null,
@@ -317,10 +248,9 @@ export class IssuesPageComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.projectEnvironmentsService.clearState();
-    this.service.clearState();
   }
 
-  trackIssues(index: number, issue: Issue): number {
+  trackIssues(index: number, issue: Issue): string {
     return issue.id;
   }
 
@@ -354,32 +284,47 @@ export class IssuesPageComponent implements OnInit, OnDestroy {
   }
 
   updateStatus(status: IssueStatus) {
-    lastValueFrom(
-      combineLatest([this.allResultsSelected$, this.currentQueryParams$]).pipe(
-        take(1),
-        tap(([allResultsSelected, params]) => {
-          if (params.orgSlug) {
-            if (allResultsSelected) {
-              this.service.bulkUpdateStatus(
-                status,
-                params.orgSlug,
-                params.project,
-                params.query,
-                params.start,
-                params.end,
-                params.environment
-              );
-            } else {
-              this.service.updateStatusByIssueId(params.orgSlug, status);
-            }
-          }
-        })
-      )
-    );
+    const allResultsSelected = this.allResultsSelected();
+    const orgSlug = this.orgSlug();
+    if (orgSlug) {
+      if (allResultsSelected) {
+        this.service.bulkUpdateStatus(
+          status,
+          orgSlug,
+          this.projects(),
+          this.query(),
+          this.start(),
+          this.end(),
+          this.environment(),
+        );
+      } else {
+        this.service.updateStatusByIssueId(orgSlug, status);
+      }
+    }
+  }
+
+  mergeSelectedIssues() {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      restoreFocus: false,
+      height: "200px",
+      width: "350px",
+      data: {
+        title: $localize`Merge issues`,
+        message: $localize`This action will merge your selected issues into a single issue.`,
+        confirmText: $localize`Merge`,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      const orgSlug = this.orgSlug();
+      if (confirmed && orgSlug) {
+        this.service.updateStatusByIssueId(orgSlug, "merge");
+      }
+    });
   }
 
   toggleCheck(issueId: number) {
-    this.service.toggleSelectOne(issueId);
+    this.service.toggleSelectOne(issueId.toString());
   }
 
   toggleSelectAllOnPage() {

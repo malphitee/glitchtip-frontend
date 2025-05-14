@@ -179,15 +179,15 @@ export class MultiFactorAuthService extends StatefulService<MFAState> {
         })),
       ),
       exhaustMap(() => this.getAuthenticators()),
-      catchError((err: AllAuthHttpErrorResponse) => {
+      catchError((response: AllAuthHttpErrorResponse) => {
         this.setState({
           loading: false,
-          errors: handleAllAuthErrorResponse(err),
+          errors: handleAllAuthErrorResponse(response.error, response),
         });
-        if ([400, 500].includes(err.status)) {
+        if ([400, 500].includes(response.status)) {
           return of(undefined);
         }
-        return throwError(() => err);
+        return throwError(() => response);
       }),
     );
   }

@@ -26,7 +26,7 @@ Burke Software does not share user data with any third parties. We do rely on Di
 
 Hosted GlitchTip relies on DigitalOcean’s [Managed Kubernetes](https://www.digitalocean.com/docs/kubernetes/) and [Managed PostgreSQL](https://www.digitalocean.com/docs/databases/postgresql/) for a robust, fault tolerant platform. DigitalOcean publishes their Droplet Policies [here](https://www.digitalocean.com/docs/droplets/resources/policies/#droplet-service-level-agreement-sla). Individual services including Kubernetes Nodes, Kubernetes Pods, and Database Clusters automatically restore themselves.
 
-All hosted GlitchTip assets are deployed to DigitalOcean’s NYC1 region. Hosted GlitchTip is susceptible to region wide availability issues. DigitalOcean publishes status [here](https://status.digitalocean.com/).
+US hosted GlitchTip assets are deployed to DigitalOcean’s NYC1 region. EU hosted GlitchTip is in region FRA1. Hosted GlitchTip is susceptible to region wide availability issues. DigitalOcean publishes status [here](https://status.digitalocean.com/).
 
 Due to the nature and architecture of GlitchTip, service interruptions on GlitchTip will not lead to customer application disruptions.
 
@@ -43,12 +43,13 @@ Hosted GlitchTip infrastructure is configured using OpenTofu and is not publicly
 ## Process controls
 
 - Burke Software employees are required to utilize Single Sign On via Google Apps and Two-Factor authentication when accessing privileged hosting services including DigitalOcean and GitLab version control systems.
-- Authorization for hosting services is provisioned via Terraform in a private git repository. All permission requests are logged via git commits.
+- Authorization for hosting services is provisioned via OpenTofu in a private git repository. All permission requests are logged via git commits.
 
 ## Security policy
 
 The GlitchTip team aims to update server and browser packages at least monthly. Additionally, Django security releases are monitored and considered for hot fix release. Additional paid support guarantees are available. Email [sales@glitchtip.com](mailto:sales@glitchtip.com).
 
 Found a security vulnerability? [Open a private issue on GitLab](https://gitlab.com/glitchtip). Please do not report results of automated tools, such as dependency bots. If you believe an automated tool would be helpful, discuss on Gitter first.
+Do not post messages asking for payment, GlitchTip is an open source project.
 
 Need more information? Email us at [sales@glitchtip.com](mailto:sales@glitchtip.com)

@@ -119,9 +119,10 @@ export interface paths {
         put?: never;
         /**
          * Signup
-         * @description Whether or not `username`, `email`, or both are required depends on
-         *     the configuration of django-allauth. Additionally, if a custom signup
-         *     form is used there may be other custom properties required.
+         * @description Whether or not `username`, `email`, `phone` or combination of those are
+         *     required depends on the configuration of django-allauth. Additionally,
+         *     if a custom signup form is used there may be other custom properties
+         *     required.
          *
          */
         post: {
@@ -297,6 +298,68 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/_allauth/browser/v1/auth/phone/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Verify a phone number
+         * @description Complete the phone number verification process. Note that a status code
+         *     of 401 does not imply failure. It merely indicates that the phone number
+         *     verification was successful, yet, the user is still not signed in.
+         *
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: {
+                    /** @description Session token. Only needed when `client` is equal to `app`.
+                     *      */
+                    "X-Session-Token"?: components["parameters"]["SessionToken"];
+                };
+                path: {
+                    /** @description The type of client accessing the API. */
+                    client: components["parameters"]["Client"];
+                };
+                cookie?: never;
+            };
+            requestBody?: components["requestBodies"]["VerifyPhone"];
+            responses: {
+                200: components["responses"]["Authenticated"];
+                /** @description An input error occurred.
+                 *      */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                401: components["responses"]["Unauthenticated"];
+                /** @description Conflict. The phone verification flow is not pending.
+                 *      */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ConflictResponse"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/_allauth/browser/v1/auth/reauthenticate": {
         parameters: {
             query?: never;
@@ -359,7 +422,21 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Request password */
+        /**
+         * Request password
+         * @description Initiates the password reset procedure. Depending on whether or not
+         *     `ACCOUNT_PASSWORD_RESET_BY_CODE_ENABLED` is `True`, the procedure is
+         *     either stateless or stateful.
+         *
+         *     In case codes are used, it is stateful, and a new
+         *     `password_reset_by_code` flow is started. In this case, on a successful
+         *     password reset request, you will receive a 401 indicating the pending
+         *     status of this flow.
+         *
+         *     In case password reset is configured to use (stateless) links, you will
+         *     receive a 200 on a successful password reset request.
+         *
+         */
         post: {
             parameters: {
                 query?: never;
@@ -383,6 +460,7 @@ export interface paths {
                         "application/json": components["schemas"]["ErrorResponse"];
                     };
                 };
+                401: components["responses"]["Authentication"];
             };
         };
         delete?: never;
@@ -398,7 +476,16 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get password reset information */
+        /**
+         * Get password reset information
+         * @description Used to obtain information on and validate a password reset key.  The
+         *     key passed is either the key encoded in the password reset URL that the
+         *     user has received per email, or, the password reset code in case of
+         *     `ACCOUNT_PASSWORD_RESET_BY_CODE_ENABLED`. Note that in case of a code,
+         *     the number of requests you can make is limited (by
+         *     `ACCOUNT_PASSWORD_RESET_BY_CODE_MAX_ATTEMPTS`).
+         *
+         */
         get: {
             parameters: {
                 query?: never;
@@ -423,6 +510,16 @@ export interface paths {
                     };
                     content: {
                         "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Conflict. There is no password reset (by code) flow pending.
+                 *      */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ConflictResponse"];
                     };
                 };
             };
@@ -461,6 +558,16 @@ export interface paths {
                     };
                 };
                 401: components["responses"]["Authentication"];
+                /** @description Conflict. There is no password reset (by code) flow pending.
+                 *      */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ConflictResponse"];
+                    };
+                };
             };
         };
         delete?: never;
@@ -591,7 +698,41 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /**
+         * Provider signup information
+         * @description If, while signing up using a third-party provider account, there is
+         *     insufficient information received from the provider to automatically
+         *     complete the signup process, an additional step is needed to complete
+         *     the missing data before the user is fully signed up and authenticated.
+         *     The information available so far, such as the pending provider account,
+         *     can be retrieved via this endpoint.
+         *
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description The type of client accessing the API. */
+                    client: components["parameters"]["Client"];
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                200: components["responses"]["ProviderSignup"];
+                /** @description Conflict. The provider signup flow is not pending.
+                 *      */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ConflictResponse"];
+                    };
+                };
+            };
+        };
         put?: never;
         /**
          * Provider signup
@@ -1313,6 +1454,91 @@ export interface paths {
         };
         trace?: never;
     };
+    "/_allauth/browser/v1/account/phone": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get the phone number
+         * @description Retrieves the phone number of the account, if any. Note that while the
+         *     endpoint returns a list of phone numbers, at most one entry is returned.
+         *
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: {
+                    /** @description Session token. Only needed when `client` is equal to `app`.
+                     *      */
+                    "X-Session-Token"?: components["parameters"]["SessionToken"];
+                };
+                path: {
+                    /** @description The type of client accessing the API. */
+                    client: components["parameters"]["Client"];
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                200: components["responses"]["PhoneNumbers"];
+                401: components["responses"]["Authentication"];
+            };
+        };
+        put?: never;
+        /**
+         * Change the phone number
+         *
+         * @description Initiate the phone number change process. After posting a new phone
+         *     number, proceed with the phone verification endpoint to confirm the
+         *     change of the phone number by posting the verification code.
+         *
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: {
+                    /** @description Session token. Only needed when `client` is equal to `app`.
+                     *      */
+                    "X-Session-Token"?: components["parameters"]["SessionToken"];
+                };
+                path: {
+                    /** @description The type of client accessing the API. */
+                    client: components["parameters"]["Client"];
+                };
+                cookie?: never;
+            };
+            requestBody?: components["requestBodies"]["Phone"];
+            responses: {
+                /** @description Phone number change process initiated. */
+                202: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PhoneNumberChangeResponse"];
+                    };
+                };
+                /** @description An input error occurred. */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                401: components["responses"]["AuthenticationOrReauthentication"];
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/_allauth/browser/v1/account/authenticators": {
         parameters: {
             query?: never;
@@ -1446,6 +1672,75 @@ export interface paths {
                 401: components["responses"]["ReauthenticationRequired"];
             };
         };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/_allauth/browser/v1/account/authenticators/recovery-codes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List recovery codes
+         * @description List recovery codes.
+         *
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: {
+                    /** @description Session token. Only needed when `client` is equal to `app`.
+                     *      */
+                    "X-Session-Token"?: components["parameters"]["SessionToken"];
+                };
+                path: {
+                    /** @description The type of client accessing the API. */
+                    client: components["parameters"]["Client"];
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                200: components["responses"]["RecoveryCodes"];
+                401: components["responses"]["ReauthenticationRequired"];
+                404: components["responses"]["NotFound"];
+            };
+        };
+        put?: never;
+        /** Regenerate recovery codes */
+        post: {
+            parameters: {
+                query?: never;
+                header?: {
+                    /** @description Session token. Only needed when `client` is equal to `app`.
+                     *      */
+                    "X-Session-Token"?: components["parameters"]["SessionToken"];
+                };
+                path: {
+                    /** @description The type of client accessing the API. */
+                    client: components["parameters"]["Client"];
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description An input error occurred. */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                401: components["responses"]["ReauthenticationRequired"];
+            };
+        };
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -1695,6 +1990,7 @@ export interface components {
             is_open_for_signup: boolean;
             email_verification_by_code_enabled: boolean;
             login_by_code_enabled: boolean;
+            password_reset_by_code_enabled?: boolean;
         };
         /** @description An authentication related response.
          *      */
@@ -1718,6 +2014,30 @@ export interface components {
             /** @description The IDs of the sessions that are to be ended.
              *      */
             sessions: number[];
+        };
+        /** @description A phone number.
+         *      */
+        PhoneNumber: {
+            /** @example +314159265359 */
+            phone: string;
+            verified: boolean;
+        };
+        PhoneNumbersResponse: {
+            status: components["schemas"]["StatusOK"];
+            data: components["schemas"]["PhoneNumber"][];
+        };
+        /** @example {
+         *       "status": 202,
+         *       "data": [
+         *         {
+         *           "phone": "+314159265359",
+         *           "verified": false
+         *         }
+         *       ]
+         *     } */
+        PhoneNumberChangeResponse: {
+            status: components["schemas"]["StatusAccepted"];
+            data: components["schemas"]["PhoneNumber"][];
         };
         /** @description A response indicating reauthentication is required.
          *      */
@@ -1758,7 +2078,7 @@ export interface components {
         };
         Flow: {
             /** @enum {string} */
-            id: "verify_email" | "login" | "signup" | "provider_redirect" | "provider_signup" | "provider_token" | "mfa_authenticate" | "reauthenticate" | "mfa_reauthenticate";
+            id: "login" | "mfa_authenticate" | "mfa_reauthenticate" | "provider_redirect" | "provider_signup" | "provider_token" | "reauthenticate" | "signup" | "verify_email" | "verify_phone";
             provider?: components["schemas"]["Provider"];
             /** @enum {boolean} */
             is_pending?: true;
@@ -1801,6 +2121,9 @@ export interface components {
         };
         MFAAuthenticate: {
             code: components["schemas"]["AuthenticatorCode"];
+        };
+        MFATrust: {
+            trust: boolean;
         };
         ConfirmLoginCode: {
             code: components["schemas"]["Code"];
@@ -1846,21 +2169,19 @@ export interface components {
             email: components["schemas"]["Email"];
         };
         RequestLoginCode: {
+            phone: components["schemas"]["Phone"];
+        } | {
             email: components["schemas"]["Email"];
         };
         Reauthenticate: {
             password: components["schemas"]["Password"];
         };
-        ProviderSignup: {
+        ProviderSignup: components["schemas"]["BaseSignup"];
+        PasskeySignup: components["schemas"]["BaseSignup"];
+        BaseSignup: {
             email: components["schemas"]["Email"];
         };
-        PasskeySignup: {
-            email: components["schemas"]["Email"];
-            username?: components["schemas"]["Username"];
-        };
-        Signup: {
-            email?: components["schemas"]["Email"];
-            username?: components["schemas"]["Username"];
+        Signup: components["schemas"]["BaseSignup"] & {
             password: components["schemas"]["Password"];
         };
         /**
@@ -1875,15 +2196,25 @@ export interface components {
          * @example email@domain.org
          */
         Email: string;
+        /**
+         * @description The phone number.
+         *
+         * @example +314159265359
+         */
+        Phone: string;
         Login: {
             password: components["schemas"]["Password"];
         } | {
             username: components["schemas"]["Username"];
         } | {
             email: components["schemas"]["Email"];
+        } | {
+            phone: components["schemas"]["Phone"];
         };
         /** @enum {integer} */
         StatusOK: 200;
+        /** @enum {integer} */
+        StatusAccepted: 202;
         /**
          * @description Authenticator ID.
          *
@@ -1924,7 +2255,8 @@ export interface components {
          *                 "provider_redirect",
          *                 "provider_token"
          *               ],
-         *               "client_id": "123.apps.googleusercontent.com"
+         *               "client_id": "123.apps.googleusercontent.com",
+         *               "openid_configuration_url": "https://accounts.google.com/.well-known/openid-configuration"
          *             }
          *           ]
          *         },
@@ -1962,6 +2294,13 @@ export interface components {
              * @example 2f-c4nqd4-e07d9bc694f9f28cd4fe92569d495333
              */
             key: string;
+        };
+        VerifyPhone: {
+            /**
+             * @description The phone verification code
+             * @example 4S3H82
+             */
+            code: string;
         };
         OptionalTimestamp: components["schemas"]["Timestamp"];
         /**
@@ -2135,6 +2474,12 @@ export interface components {
              * @example 123.apps.googleusercontent.com
              */
             client_id?: string;
+            /**
+             * @description The OIDC discovery or well-known URL (in case of OAuth2 or OpenID Connect based providers)
+             *
+             * @example https://accounts.google.com/.well-known/openid-configuration
+             */
+            openid_configuration_url?: string;
             /** @description The authentication flows the provider integration supports.
              *      */
             flows: ("provider_redirect" | "provider_token")[];
@@ -2359,6 +2704,16 @@ export interface components {
                 };
             };
         };
+        /** @description List of phone numbers.
+         *      */
+        PhoneNumbers: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/json": components["schemas"]["PhoneNumbersResponse"];
+            };
+        };
         /** @description List of third-party provider accounts.
          *      */
         ProviderAccounts: {
@@ -2369,6 +2724,23 @@ export interface components {
                 "application/json": {
                     status: components["schemas"]["StatusOK"];
                     data: components["schemas"]["ProviderAccount"][];
+                };
+            };
+        };
+        /** @description Information relating to the pending provider signup.
+         *      */
+        ProviderSignup: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/json": {
+                    status: components["schemas"]["StatusOK"];
+                    data: {
+                        email: components["schemas"]["EmailAddress"][];
+                        account: components["schemas"]["ProviderAccount"];
+                        user: components["schemas"]["User"];
+                    };
                 };
             };
         };
@@ -2590,6 +2962,11 @@ export interface components {
                 "application/json": components["schemas"]["MFAAuthenticate"];
             };
         };
+        MFATrust: {
+            content: {
+                "application/json": components["schemas"]["MFATrust"];
+            };
+        };
         ConfirmLoginCode: {
             content: {
                 "application/json": components["schemas"]["ConfirmLoginCode"];
@@ -2706,6 +3083,14 @@ export interface components {
                 };
             };
         };
+        Phone: {
+            content: {
+                "application/json": {
+                    /** @example +314159265359 */
+                    phone: string;
+                };
+            };
+        };
         ResetPassword: {
             content: {
                 "application/json": components["schemas"]["ResetPassword"];
@@ -2714,6 +3099,11 @@ export interface components {
         VerifyEmail: {
             content: {
                 "application/json": components["schemas"]["VerifyEmail"];
+            };
+        };
+        VerifyPhone: {
+            content: {
+                "application/json": components["schemas"]["VerifyPhone"];
             };
         };
         UpdateWebAuthn: {

@@ -1,38 +1,7 @@
 import { HttpResponse } from "@angular/common/http";
 import { map } from "rxjs/operators";
 import { StatefulService } from "./stateful-service";
-
-export function paramsToObject(entries: URLSearchParams) {
-  const result: { [key: string]: string[] } = {};
-  entries.forEach((value, key) => {
-    result[key] ? result[key].push(value) : (result[key] = [value]);
-  });
-  return result;
-}
-
-export function urlParamsToObject(url: string | null) {
-  return url ? paramsToObject(new URLSearchParams(url.split("?")[1])) : null;
-}
-
-/**
- * Pagination info exists in a header, this parses it out for storing.
- */
-const processLinkHeader = (linkHeader: string) =>
-  linkHeader.split(",").reduce<{ [key: string]: string }>((acc, link) => {
-    // Only return results url when results are present
-    const match = link.match(/<(.*)>; rel="(\w*)"/);
-    const results = link
-      .split("; ")
-      .find((x) => x.startsWith("results"))
-      ?.includes("true");
-    if (results && match) {
-      const url = match[1];
-      const rel = match[2];
-      acc[rel] = url;
-      return acc;
-    }
-    return acc;
-  }, {});
+import { processLinkHeader, urlParamsToObject } from "../pagination.utils";
 
 export interface PaginationState {
   hits: number | null;

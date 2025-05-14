@@ -1,4 +1,9 @@
-import { Component, ChangeDetectionStrategy, inject } from "@angular/core";
+import {
+  Component,
+  ChangeDetectionStrategy,
+  inject,
+  input,
+} from "@angular/core";
 import { toObservable } from "@angular/core/rxjs-interop";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import {
@@ -11,8 +16,7 @@ import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
 
 import { MatCardModule } from "@angular/material/card";
-import { lastValueFrom } from "rxjs";
-import { exhaustMap, map, tap } from "rxjs/operators";
+import { map } from "rxjs/operators";
 import { LoadingButtonComponent } from "../../shared/loading-button/loading-button.component";
 import { InputMatcherDirective } from "../../shared/input-matcher.directive";
 import {
@@ -48,6 +52,7 @@ export class SetNewPasswordComponent extends StatefulComponent<
   private activatedRoute = inject(ActivatedRoute);
   protected service: ResetPasswordService;
   private snackBar = inject(MatSnackBar);
+  readonly key = input.required<string>();
 
   params$ = this.activatedRoute.params.pipe(
     map((params) => ({ key: params.key })),
@@ -81,28 +86,20 @@ export class SetNewPasswordComponent extends StatefulComponent<
       mapFormErrors(fieldErrors, this.form),
     );
     super(service);
-  
+
     this.service = service;
   }
 
-  onSubmit() {
+  async onSubmit() {
     if (this.form.valid) {
-      lastValueFrom(
-        this.params$.pipe(
-          exhaustMap((params) =>
-            this.service
-              .resetPassword(params.key, this.form.value.password!)
-              .pipe(
-                tap((resp) => {
-                  if (resp && resp.status === 401) {
-                    this.snackBar.open("Your password has been changed.");
-                    this.router.navigate(["/login"]);
-                  }
-                }),
-              ),
-          ),
-        ),
+      const data = await this.service.resetPassword(
+        this.key(),
+        this.form.value.password!,
       );
+      if (data) {
+        this.snackBar.open("Your password has been changed.");
+        this.router.navigate(["/login"]);
+      }
     }
   }
 }

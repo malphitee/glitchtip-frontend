@@ -1,11 +1,10 @@
 import { Injectable, inject } from "@angular/core";
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { map } from "rxjs";
+import { EMPTY, map } from "rxjs";
 import { baseUrl } from "../../constants";
 import { APIBaseService } from "../api-base.service";
 import {
   EventDetail,
-  Issue,
   IssueDetail,
   IssueStatus,
   IssueTags,
@@ -24,60 +23,12 @@ export class IssuesAPIService extends APIBaseService {
     const http = inject(HttpClient);
 
     super(http);
-  
+
     this.http = http;
   }
 
-  list(
-    organizationSlug?: string,
-    cursor?: string | null,
-    query?: string | null,
-    project?: number[] | null,
-    start?: string | null,
-    end?: string | null,
-    sort?: string | null,
-    environment?: string | null,
-  ) {
-    const url = organizationSlug
-      ? this.orgIssuesUrl(organizationSlug)
-      : this.url;
-    let httpParams = new HttpParams();
-    if (cursor) {
-      httpParams = httpParams.set("cursor", cursor);
-    }
-    if (query) {
-      httpParams = httpParams.set("query", query);
-    }
-    if (project) {
-      project.forEach((id) => {
-        httpParams = httpParams.append("project", id);
-      });
-    }
-    if (start) {
-      httpParams = httpParams.set("start", start);
-    }
-    if (end) {
-      httpParams = httpParams.set("end", end);
-    }
-    if (sort) {
-      httpParams = httpParams.set("sort", sort);
-    }
-    if (environment) {
-      httpParams = httpParams.set("environment", environment);
-    }
-    return this.http
-      .get<Issue[]>(url, {
-        observe: "response",
-        params: httpParams,
-      })
-      .pipe(
-        map((response) => {
-          response.body!.map(
-            (issue) => (issue.project.id = normalizeID(issue.project.id)),
-          );
-          return response;
-        }),
-      );
+  list(slug1?: string, slug2?: string) {
+    return EMPTY;
   }
 
   retrieve(id: string) {
@@ -93,40 +44,6 @@ export class IssuesAPIService extends APIBaseService {
     return this.http.put<UpdateStatusResponse>(this.orgIssuesUrl(orgSlug, id), {
       status,
     });
-  }
-
-  bulkUpdate(
-    status: IssueStatus,
-    orgSlug: string,
-    issueIds: number[] = [],
-    projectIds: number[] = [],
-    query?: string | null,
-    start?: string | null,
-    end?: string | null,
-    environment?: string | null,
-  ) {
-    let url = this.orgIssuesUrl(orgSlug);
-    let params = new HttpParams();
-
-    issueIds.forEach((id) => {
-      params = params.append("id", id);
-    });
-    projectIds.forEach((id) => {
-      params = params.append("project", id);
-    });
-    if (query) {
-      params = params.append("query", query);
-    }
-    if (start) {
-      params = params.set("start", start);
-    }
-    if (end) {
-      params = params.set("end", end);
-    }
-    if (environment) {
-      params = params.set("environment", environment);
-    }
-    return this.http.put<UpdateStatusResponse>(url, { status }, { params });
   }
 
   destroy(id: string) {

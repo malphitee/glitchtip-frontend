@@ -11,7 +11,6 @@ import { normalizeID } from "../shared-api.utils";
 export class ProjectTeamsAPIService {
   protected http = inject(HttpClient);
 
-
   addProjectToTeam(
     organizationSlug: string,
     teamSlug: string,

@@ -1,12 +1,16 @@
-import { Component, OnInit, ChangeDetectionStrategy, inject } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import {
+  Component,
+  OnInit,
+  ChangeDetectionStrategy,
+  inject,
+  computed,
+  input,
+} from "@angular/core";
 import { FormControl, FormGroup } from "@angular/forms";
 import { ActivatedRoute, RouterModule } from "@angular/router";
 import { MatBadgeModule } from "@angular/material/badge";
 import { MatTabsModule } from "@angular/material/tabs";
 import { MatCardModule } from "@angular/material/card";
-import { map, exhaustMap, tap } from "rxjs/operators";
-import { EMPTY, Observable } from "rxjs";
 import { DetailHeaderComponent } from "src/app/shared/detail/header/header.component";
 import { IssueDetailService } from "./issue-detail.service";
 import { DaysAgoPipe } from "../../shared/days-ago.pipe";
@@ -14,6 +18,7 @@ import { IssueDetailTagsComponent } from "./issue-detail-tags/issue-detail-tags.
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { OrganizationsService } from "src/app/api/organizations.service";
+import { DatePipe, TitleCasePipe } from "@angular/common";
 
 @Component({
   selector: "gt-issue-detail",
@@ -21,7 +26,6 @@ import { OrganizationsService } from "src/app/api/organizations.service";
   styleUrls: ["./issue-detail.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     MatCardModule,
     RouterModule,
     MatTabsModule,
@@ -29,6 +33,8 @@ import { OrganizationsService } from "src/app/api/organizations.service";
     MatIconModule,
     MatButtonModule,
     IssueDetailTagsComponent,
+    TitleCasePipe,
+    DatePipe,
     DaysAgoPipe,
     DetailHeaderComponent,
   ],
@@ -38,60 +44,62 @@ export class IssueDetailComponent implements OnInit {
   private organizationsService = inject(OrganizationsService);
   private route = inject(ActivatedRoute);
 
-  issue$ = this.issueService.issue$;
-  issueTitle$: Observable<[string, string | null]> = this.issue$.pipe(
-    map((issue) => {
-      if (issue === null || issue.metadata === null) {
-        return ["", null];
-      }
-      const metadata = issue.metadata;
-      const culprit = issue.culprit;
+  issue = this.issueService.issue;
+  issueTitle = computed(() => {
+    const issue = this.issue();
+    if (issue === null || issue.metadata === null) {
+      return ["", null] as [string, string | null];
+    }
+    const metadata = issue.metadata;
+    const culprit = issue.culprit;
 
-      switch (issue.type) {
-        case "error":
-          if (metadata.type) {
-            return [metadata.type!, culprit];
-          }
-          return [metadata.function!, culprit];
-        case "csp":
-          return [metadata.directive || "", metadata.uri || null];
-        case "expectct":
-        case "expectstaple":
-        case "hpkp":
-          return [metadata.message || "", metadata.origin || null];
-        default:
-          return [metadata.title!, null];
-      }
-    })
-  );
-  issueSubtitle$ = this.issue$.pipe(
-    map((issue) => {
-      if (issue === null || issue.metadata === null) {
+    switch (issue.type) {
+      case "error":
+        if (metadata.type) {
+          return [metadata.type!, culprit] as [string, string | null];
+        }
+        return [metadata.function!, culprit] as [string, string | null];
+      case "csp":
+        return [metadata.directive || "", metadata.uri || null] as [
+          string,
+          string | null,
+        ];
+      case "expectct":
+      case "expectstaple":
+      case "hpkp":
+        return [metadata.message || "", metadata.origin || null] as [
+          string,
+          string | null,
+        ];
+      default:
+        return [metadata.title!, null] as [string, string | null];
+    }
+  });
+  issueSubtitle = computed(() => {
+    const issue = this.issue();
+    if (issue === null || issue.metadata === null) {
+      return "";
+    }
+    const metadata = issue.metadata;
+    switch (issue.type) {
+      case "error":
+        return metadata.value;
+      case "csp":
+        return metadata.message;
+      case "expectct":
+      case "expectstaple":
+      case "hpkp":
         return "";
-      }
-      const metadata = issue.metadata;
-      switch (issue.type) {
-        case "error":
-          return metadata.value;
-        case "csp":
-          return metadata.message;
-        case "expectct":
-        case "expectstaple":
-        case "hpkp":
-          return "";
-        default:
-          return issue.culprit;
-      }
-    })
-  );
-  initialLoadComplete$ = this.issueService.issueInitialLoadComplete$;
+      default:
+        return issue.culprit;
+    }
+  });
+  initialLoadComplete = this.issueService.issueInitialLoadComplete;
   form = new FormGroup({
     assignee: new FormControl(""),
   });
-  issueIdParam$ = this.route.paramMap.pipe(
-    map((params) => params.get("issue-id"))
-  );
-  organization$ = this.organizationsService.activeOrganization$;
+  issueID = input.required<string>({ alias: "issue-id" });
+  organization = this.organizationsService.activeOrganization;
   participantCountPluralMapping: { [k: string]: string } = {
     "=0": "No Participants",
     "=1": "1 Participant",
@@ -99,17 +107,10 @@ export class IssueDetailComponent implements OnInit {
   };
 
   ngOnInit() {
-    this.issueIdParam$
-      .pipe(
-        tap(() => this.issueService.clearState()),
-        exhaustMap((issueId) => {
-          if (issueId) {
-            return this.issueService.retrieveIssue(+issueId);
-          }
-          return EMPTY;
-        })
-      )
-      .subscribe();
+    this.issueService.clearState();
+    const issueID = this.issueID();
+    // Consider moving to effect once ported to resource
+    this.issueService.retrieveIssue(+issueID).toPromise();
   }
 
   markResolved() {
@@ -125,20 +126,15 @@ export class IssueDetailComponent implements OnInit {
   }
 
   deleteIssue() {
-    this.issueIdParam$
-      .pipe(
-        tap((id) => {
-          if (
-            id &&
-            window.confirm(
-              `Are you sure you want delete this issue? You will permanently lose this issue and all associated events.`
-            )
-          ) {
-            this.issueService.deleteIssue(id.toString());
-          }
-        })
+    const id = this.issueID();
+    if (
+      id &&
+      window.confirm(
+        `Are you sure you want delete this issue? You will permanently lose this issue and all associated events.`,
       )
-      .subscribe();
+    ) {
+      this.issueService.deleteIssue(id.toString());
+    }
   }
 
   generateBackLink(projectId: number) {

@@ -5,7 +5,7 @@ import { Router } from "@angular/router";
 import { MonitorInput, ResponseTimeSeries } from "./uptime.interfaces";
 import { HttpErrorResponse } from "@angular/common/http";
 import { SettingsService } from "../api/settings.service";
-import { SubscriptionsService } from "../api/subscriptions/subscriptions.service";
+import { SubscriptionService } from "../api/subscriptions/subscription.service";
 import { ServerError } from "../shared/django.interfaces";
 import { OrganizationsService } from "../api/organizations.service";
 import { StatefulService } from "../shared/stateful-service/signal-state.service";
@@ -37,7 +37,7 @@ const initialState: MonitorState = {
 export class MonitorService extends StatefulService<MonitorState> {
   private organizationsService = inject(OrganizationsService);
   private settingsService = inject(SettingsService);
-  private subscriptionsService = inject(SubscriptionsService);
+  private subscriptionService = inject(SubscriptionService);
   private snackBar = inject(MatSnackBar);
   private router = inject(Router);
 
@@ -60,7 +60,7 @@ export class MonitorService extends StatefulService<MonitorState> {
               monitor_id: request.monitorId,
             },
           },
-        }
+        },
       );
       return data;
     },
@@ -83,7 +83,7 @@ export class MonitorService extends StatefulService<MonitorState> {
               project_slug: request.projectSlug,
             },
           },
-        }
+        },
       );
       return data;
     },
@@ -94,10 +94,10 @@ export class MonitorService extends StatefulService<MonitorState> {
   deleteLoading = computed(() => this.state().deleteLoading);
   error = computed(() => this.state().error);
   uptimeAlertCount = computed(
-    () => this.monitorUptimeAlertsResource.value()?.length || 0
+    () => this.monitorUptimeAlertsResource.value()?.length || 0,
   );
   alertCountLoading = computed(() =>
-    this.monitorUptimeAlertsResource.isLoading()
+    this.monitorUptimeAlertsResource.isLoading(),
   );
   activeMonitor = computed(() => this.monitorResource.value());
 
@@ -105,7 +105,7 @@ export class MonitorService extends StatefulService<MonitorState> {
     const projects = this.organizationsService.activeOrganizationProjects();
     const monitor = this.activeMonitor();
     return projects?.find(
-      (project) => project.id === monitor?.projectID?.toString()
+      (project) => project.id === monitor?.projectID?.toString(),
     )?.slug;
   });
 
@@ -149,7 +149,7 @@ export class MonitorService extends StatefulService<MonitorState> {
     if (billingEnabled) {
       const slug = this.organizationsService.activeOrganizationSlug();
       if (slug) {
-        this.subscriptionsService.retrieveSubscription(slug);
+        this.subscriptionService.retrieveSubscriptionData(slug);
       }
     }
   }
@@ -223,7 +223,7 @@ export class MonitorService extends StatefulService<MonitorState> {
               monitor_id: monitorId,
             },
           },
-        }
+        },
       )
       .then((result) => {
         if (result.response.ok) {
@@ -233,7 +233,7 @@ export class MonitorService extends StatefulService<MonitorState> {
         } else {
           this.setDeleteMonitorError();
           this.snackBar.open(
-            `There was an error deleting this issue. Please try again.`
+            `There was an error deleting this issue. Please try again.`,
           );
         }
       });
@@ -269,7 +269,7 @@ export class MonitorService extends StatefulService<MonitorState> {
           name: input[0].isUp ? "Up" : "Down",
           series: [],
         },
-      ] as ResponseTimeSeries[]
+      ] as ResponseTimeSeries[],
     );
   }
 
@@ -322,8 +322,8 @@ export class MonitorService extends StatefulService<MonitorState> {
   }
 
   clearState() {
-    super.clearState()
-    this.monitorId.set(null)
-    this.monitorResource.set(undefined)
+    super.clearState();
+    this.monitorId.set(null);
+    this.monitorResource.set(undefined);
   }
 }

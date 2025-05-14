@@ -23,7 +23,6 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { StatefulComponent } from "src/app/shared/stateful-service/signal-state.component";
 import { mapFormErrors } from "src/app/shared/forms/form.utils";
 import { LoginState, LoginService } from "../login.service";
-import { lastValueFrom, tap } from "rxjs";
 
 @Component({
   selector: "gt-login-totp",
@@ -62,7 +61,7 @@ export class LoginTotpComponent
     const loginService = inject(LoginService);
 
     toObservable(loginService.fieldErrors).subscribe((fieldErrors) =>
-      mapFormErrors(fieldErrors, this.form)
+      mapFormErrors(fieldErrors, this.form),
     );
     super(loginService);
     this.hasWebAuthn = loginService.hasWebAuthn;
@@ -86,14 +85,13 @@ export class LoginTotpComponent
     this.loginService.restartLogin();
   }
 
-  onSubmit() {
+  async onSubmit() {
     if (this.form.valid && this.code) {
       const code = this.code.value!;
-      lastValueFrom(
-        this.loginService
-          .totpAuthenticate(code)
-          .pipe(tap(() => this.router.navigate(["/"])))
-      );
+      const data = await this.loginService.totpAuthenticate(code);
+      if (data) {
+        this.router.navigate(["/"]);
+      }
     }
   }
 }

@@ -3,6 +3,7 @@ import createClient, {
   type Middleware,
 } from "openapi-fetch";
 import type { paths } from "./api-schema";
+import type { paths as allauthPaths } from "./allauth-schema";
 import { getCSRFToken } from "../shared/shared.utils";
 
 const csrfMiddleware: Middleware = {
@@ -22,5 +23,5 @@ if (baseElement) {
     options["baseUrl"] = baseHref;
   }
 }
-export const client = createClient<paths>(options);
+export const client = createClient<paths & allauthPaths>(options);
 client.use(csrfMiddleware);

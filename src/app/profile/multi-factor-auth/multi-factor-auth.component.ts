@@ -1,4 +1,9 @@
-import { Component, OnInit, ChangeDetectionStrategy, inject } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  ChangeDetectionStrategy,
+  inject,
+} from "@angular/core";
 
 import { lastValueFrom } from "rxjs";
 import { MultiFactorAuthService } from "./multi-factor-auth.service";

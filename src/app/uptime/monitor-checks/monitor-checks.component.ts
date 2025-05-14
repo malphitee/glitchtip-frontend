@@ -48,7 +48,7 @@ export class MonitorChecksComponent implements OnDestroy {
   readonly monitor = input.required<MonitorDetail>();
   monitorChecks$ = this.service.monitorChecks$;
   isChange$ = this.route.queryParamMap.pipe(
-    map((params) => (params.get("isChange") === "false" ? false : true))
+    map((params) => (params.get("isChange") === "false" ? false : true)),
   );
   paginator$ = this.service.paginator$;
   displayedColumns$ = this.isChange$.pipe(
@@ -58,8 +58,8 @@ export class MonitorChecksComponent implements OnDestroy {
         "reason",
         isChanged ? undefined : "responseTime",
         "startCheck",
-      ].filter((column) => !!column)
-    )
+      ].filter((column) => !!column),
+    ),
   );
 
   constructor() {
@@ -74,12 +74,12 @@ export class MonitorChecksComponent implements OnDestroy {
               orgSlug,
               monitorId,
               isChange,
-              queryParams.get("cursor")
+              queryParams.get("cursor"),
             );
           }
           return EMPTY;
         }),
-        takeUntilDestroyed()
+        takeUntilDestroyed(),
       )
       .subscribe();
   }

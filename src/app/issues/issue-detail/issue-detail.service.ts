@@ -1,16 +1,9 @@
 import { HttpErrorResponse } from "@angular/common/http";
-import { Injectable, inject } from "@angular/core";
+import { Injectable, computed, inject } from "@angular/core";
 import { Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { combineLatest, EMPTY, lastValueFrom } from "rxjs";
-import {
-  catchError,
-  filter,
-  map,
-  take,
-  tap,
-  withLatestFrom,
-} from "rxjs/operators";
+import { EMPTY, lastValueFrom } from "rxjs";
+import { catchError, filter, take, tap, withLatestFrom } from "rxjs/operators";
 import {
   IssueDetail,
   EventDetail,
@@ -30,8 +23,9 @@ import {
 import { generateIconPath } from "../../shared/shared.utils";
 import { IssuesAPIService } from "src/app/api/issues/issues-api.service";
 import { Json } from "src/app/interface-primitives";
-import { StatefulService } from "src/app/shared/stateful-service/stateful-service";
 import { OrganizationsService } from "src/app/api/organizations.service";
+import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
+import { toObservable } from "@angular/core/rxjs-interop";
 
 interface IssueDetailState {
   issue: IssueDetail | null;
@@ -66,77 +60,97 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
   private snackBar = inject(MatSnackBar);
   private router = inject(Router);
 
-  readonly issue$ = this.getState$.pipe(map((state) => state.issue));
-  readonly issueInitialLoadComplete$ = this.getState$.pipe(
-    map((state) => state.issueInitialLoadComplete)
+  readonly issue = computed(() => this.state().issue);
+  readonly issue$ = toObservable(this.issue);
+  readonly issueInitialLoadComplete = computed(
+    () => this.state().issueInitialLoadComplete,
   );
-  readonly event$ = this.getState$.pipe(map((state) => state.event));
-  readonly tags$ = this.getState$.pipe(
-    map((state) => state.tags && this.tagsWithPercent(state.tags))
+  readonly issueInitialLoadComplete$ = toObservable(
+    this.issueInitialLoadComplete,
   );
-  readonly eventInitialLoadComplete$ = this.getState$.pipe(
-    map((state) => state.eventInitialLoadComplete)
+  readonly event = computed(() => this.state().event);
+  readonly event$ = toObservable(this.event);
+  readonly tags = computed(() => {
+    const state = this.state();
+    return state.tags && this.tagsWithPercent(state.tags);
+  });
+  readonly eventInitialLoadComplete = computed(
+    () => this.state().eventInitialLoadComplete,
   );
-  readonly isReversed$ = this.getState$.pipe(map((state) => state.isReversed));
-  readonly showShowMore$ = this.getState$.pipe(
-    map((state) => state.showShowMore)
+  readonly eventInitialLoadComplete$ = toObservable(
+    this.eventInitialLoadComplete,
   );
-  readonly hasNextEvent$ = this.event$.pipe(
-    map((event) => event && event.nextEventID !== null)
+  readonly isReversed = computed(() => this.state().isReversed);
+  readonly isReversed$ = toObservable(this.isReversed);
+  readonly showShowMore = computed(() => this.state().showShowMore);
+  readonly showShowMore$ = toObservable(this.showShowMore);
+  readonly hasNextEvent = computed(
+    () => this.event() && this.event()?.nextEventID !== null,
   );
-  readonly hasPreviousEvent$ = this.event$.pipe(
-    map((event) => event && event.previousEventID !== null)
+  readonly hasNextEvent$ = toObservable(this.hasNextEvent);
+  readonly hasPreviousEvent = computed(
+    () => this.event() && this.event()?.previousEventID !== null,
   );
-  readonly nextEventUrl$ = combineLatest([
-    this.organization.activeOrganizationSlug$,
-    this.issue$,
-    this.event$,
-  ]).pipe(
-    map(([orgSlug, issue, event]) => {
-      if (event && event.nextEventID) {
-        return this.eventUrl(orgSlug, issue, event.nextEventID);
-      }
-      return null;
-    })
-  );
-  readonly previousEventUrl$ = combineLatest([
-    this.organization.activeOrganizationSlug$,
-    this.issue$,
-    this.event$,
-  ]).pipe(
-    map(([orgSlug, issue, event]) => {
-      if (event && event.previousEventID) {
-        return this.eventUrl(orgSlug, issue, event.previousEventID);
-      }
-      return null;
-    })
-  );
-  readonly eventEntryException$ = combineLatest([
-    this.event$,
-    this.isReversed$,
-  ]).pipe(
-    map(([event, isReversed]) =>
-      event ? this.reverseFrames(event, isReversed) : undefined
-    )
-  );
-  readonly rawStacktraceValues$ = this.event$.pipe(
-    map((event) => (event ? this.rawStacktraceValues(event) : undefined))
-  );
-  readonly eventEntryRequest$ = this.event$.pipe(
-    map((event) => (event ? this.entryRequestData(event) : undefined))
-  );
-  readonly eventEntryCSP$ = this.event$.pipe(
-    map((event) => (event ? this.eventEntryCSP(event) : undefined))
-  );
-  readonly eventEntryMessage$ = this.event$.pipe(
-    map((event) => (event ? this.eventEntryMessage(event) : undefined))
-  );
-  readonly specialContexts$ = this.event$.pipe(
-    map((event) => (event ? this.specialContexts(event) : undefined))
-  );
-  readonly breadcrumbs$ = this.event$.pipe(
-    map((event) => (event ? this.eventEntryBreadcrumbs(event) : undefined))
-  );
+  readonly hasPreviousEvent$ = toObservable(this.hasPreviousEvent);
+  readonly nextEventUrl = computed(() => {
+    const orgSlug = this.organization.activeOrganizationSlug();
+    const issue = this.issue();
+    const event = this.event();
+
+    if (event && event.nextEventID) {
+      return this.eventUrl(orgSlug, issue, event.nextEventID);
+    }
+    return null;
+  });
+  readonly nextEventUrl$ = toObservable(this.nextEventUrl);
+  readonly previousEventUrl = computed(() => {
+    const orgSlug = this.organization.activeOrganizationSlug();
+    const issue = this.issue();
+    const event = this.event();
+
+    if (event && event.previousEventID) {
+      return this.eventUrl(orgSlug, issue, event.previousEventID);
+    }
+    return null;
+  });
+  readonly previousEventUrl$ = toObservable(this.previousEventUrl);
+  readonly eventEntryException = computed(() => {
+    const event = this.event();
+    const isReversed = this.isReversed();
+
+    return event ? this.reverseFrames(event, isReversed) : undefined;
+  });
+  readonly eventEntryException$ = toObservable(this.eventEntryException);
+  readonly _rawStacktraceValues = computed(() => {
+    const event = this.event();
+    return event ? this.rawStacktraceValues(event) : undefined;
+  });
+  readonly rawStacktraceValues$ = toObservable(this._rawStacktraceValues);
+  readonly eventEntryRequest = computed(() => {
+    const event = this.event();
+    return event ? this.entryRequestData(event) : undefined;
+  });
+  readonly eventEntryRequest$ = toObservable(this.eventEntryRequest);
+  readonly _eventEntryCSP = computed(() => {
+    const event = this.event();
+    return event ? this.eventEntryCSP(event) : undefined;
+  });
+  readonly eventEntryCSP$ = toObservable(this._eventEntryCSP);
+  readonly _eventEntryMessage = computed(() => {
+    const event = this.event();
+    return event ? this.eventEntryMessage(event) : undefined;
+  });
+  readonly eventEntryMessage$ = toObservable(this._eventEntryMessage);
+  readonly _specialContexts = computed(() => {
+    const event = this.event();
+    return event ? this.specialContexts(event) : undefined;
+  });
+  readonly specialContexts$ = toObservable(this._specialContexts);
+  readonly breadcrumbs = computed(() => {
+    const event = this.event();
+    return event ? this.eventEntryBreadcrumbs(event) : undefined;
+  });
+  readonly breadcrumbs$ = toObservable(this.breadcrumbs);
 
   constructor() {
     super(initialState);
@@ -151,26 +165,26 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
           this.clearIssue();
         }
         return EMPTY;
-      })
+      }),
     );
   }
 
   getPreviousEvent() {
-    const state = this.state.getValue();
+    const state = this.state();
     if (state.issue && state.event && state.event.previousEventID) {
       this.retrieveEvent(state.issue.id, state.event.previousEventID);
     }
   }
 
   getNextEvent() {
-    const state = this.state.getValue();
+    const state = this.state();
     if (state.issue && state.event && state.event.nextEventID) {
       this.retrieveEvent(state.issue.id, state.event.nextEventID);
     }
   }
 
   getLatestEvent() {
-    const issue = this.state.getValue().issue;
+    const issue = this.state().issue;
     if (issue) {
       return this.retrieveLatestEvent(issue.id);
     }
@@ -178,7 +192,7 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
   }
 
   getEventByID(eventID: string) {
-    const issue = this.state.getValue().issue;
+    const issue = this.state().issue;
     if (issue) {
       return this.retrieveEvent(issue.id, eventID);
     }
@@ -189,7 +203,7 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
     return this.issuesAPIService.retrieveTags(id.toString(), query).pipe(
       tap((resp) => {
         this.setTags(resp);
-      })
+      }),
     );
   }
 
@@ -198,14 +212,11 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
   }
 
   setShowShowMore(value: boolean) {
-    this.state.next({
-      ...this.state.getValue(),
-      showShowMore: value,
-    });
+    this.setState({ showShowMore: value });
   }
 
   setStatus(status: IssueStatus) {
-    const issue = this.state.getValue().issue;
+    const issue = this.state().issue;
     if (issue) {
       lastValueFrom(
         this.organization.activeOrganizationSlug$.pipe(
@@ -216,11 +227,11 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
               lastValueFrom(
                 this.issuesAPIService
                   .update(status, slug, issue.id)
-                  .pipe(tap((resp) => this.setIssueStatus(resp.status)))
+                  .pipe(tap((resp) => this.setIssueStatus(resp.status))),
               );
             }
-          })
-        )
+          }),
+        ),
       );
     }
   }
@@ -240,10 +251,10 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
         }),
         catchError((_) => {
           this.snackBar.open(
-            `There was an error deleting this issue. Please try again.`
+            `There was an error deleting this issue. Please try again.`,
           );
           return EMPTY;
-        })
+        }),
       )
       .subscribe();
   }
@@ -266,7 +277,7 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
         });
         const sumOfPercents = tagWithPercent.reduce(
           (accum, item) => accum + item.percent,
-          0
+          0,
         );
         if (sumOfPercents < 100) {
           return {
@@ -286,10 +297,10 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
 
   /** Set local state issue state */
   private setIssueStatus(status: IssueStatus) {
-    const state = this.state.getValue();
+    const state = this.state();
     if (state.issue) {
       const issue = { ...state.issue, status };
-      this.state.next({ ...state, issue });
+      this.setState({ issue });
     }
   }
 
@@ -302,7 +313,7 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
           this.clearEvent();
         }
         return EMPTY;
-      })
+      }),
     );
   }
 
@@ -316,7 +327,7 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
           this.clearEvent();
         }
         return EMPTY;
-      })
+      }),
     );
   }
 
@@ -339,7 +350,7 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
   }
 
   private setUpdatedCommentCount(num: number) {
-    const state = this.state.getValue();
+    const state = this.state();
     if (state.issue) {
       this.setState({
         issue: {
@@ -372,7 +383,7 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
   }
 
   private toggleIsReversed() {
-    const isReversed = this.state.getValue().isReversed;
+    const isReversed = this.state().isReversed;
     this.setState({ isReversed: !isReversed });
   }
 
@@ -398,7 +409,7 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
 
   /* Return the breadcrumbs entry type for an event */
   private eventEntryBreadcrumbs(
-    event: EventDetail
+    event: EventDetail,
   ): BreadcrumbValueData | undefined {
     const breadcrumbs = this.getBreadcrumbs(event);
     if (breadcrumbs) {
@@ -428,7 +439,7 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
   /* Reverse frame array, nested in the event object */
   private reverseFrames(
     event: EventDetail,
-    isReversed: boolean
+    isReversed: boolean,
   ): ExceptionValueData | undefined {
     const eventException = this.getExceptionEntryData(event);
 
@@ -482,7 +493,7 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
 
   checkContextName(
     contextsObject: { [key: string]: Json },
-    defaultUnknown: string
+    defaultUnknown: string,
   ) {
     if (
       contextsObject.name !== "Other" &&
@@ -547,13 +558,13 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
             subtitle: contextsObject.version
               ? (contextsObject.version as string)
               : contextsObject.kernel_version
-              ? (contextsObject.kernel_version as string)
-              : "Unknown",
+                ? (contextsObject.kernel_version as string)
+                : "Unknown",
             key: contextsObject.version
               ? "Version"
               : contextsObject.kernel_version
-              ? "Kernel"
-              : "Version",
+                ? "Kernel"
+                : "Version",
           });
         }
         if (key === "device") {
@@ -569,13 +580,13 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
             subtitle: contextsObject.arch
               ? (contextsObject.arch as string)
               : contextsObject.model_id
-              ? (contextsObject.model_id as string)
-              : null,
+                ? (contextsObject.model_id as string)
+                : null,
             key: contextsObject.arch
               ? "Arch"
               : contextsObject.model_id
-              ? "Model"
-              : null,
+                ? "Model"
+                : null,
           });
         }
         if (key === "gpu") {
@@ -671,7 +682,7 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
   private eventUrl(
     orgSlug: string | null,
     issue: IssueDetail | null,
-    eventID: string
+    eventID: string,
   ) {
     if (orgSlug && issue) {
       return `/${orgSlug}/issues/${issue.id}/events/${eventID}`;

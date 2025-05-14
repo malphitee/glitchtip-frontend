@@ -6,12 +6,15 @@ import {
   Validators,
   ReactiveFormsModule,
 } from "@angular/forms";
-import { Comment } from "src/app/api/comments/comments.interfaces";
 import { MatButtonModule } from "@angular/material/button";
 import { LoadingButtonComponent } from "../../../shared/loading-button/loading-button.component";
 
 import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
+
+import { components } from "src/app/api/api-schema";
+
+type Comment = components["schemas"]["CommentSchema"];
 
 @Component({
   selector: "gt-comment-form",
@@ -31,7 +34,7 @@ export class CommentFormComponent implements OnInit {
   readonly commentSubmitted = output<{
     text: string;
     id?: number;
-}>();
+  }>();
   readonly cancelUpdate = output<number>();
 
   commentForm = new FormGroup({
@@ -55,7 +58,7 @@ export class CommentFormComponent implements OnInit {
   }
 
   emitCancelUpdate() {
-    this.cancelUpdate.emit(this.comment()!.id);
+    this.cancelUpdate.emit(this.comment()!.id!);
   }
 
   //Reset must be called on FormGroupDirective
@@ -65,7 +68,7 @@ export class CommentFormComponent implements OnInit {
       const comment = this.comment();
       this.commentSubmitted.emit({
         text: this.commentFormText.value,
-        id: comment ? comment.id : undefined,
+        id: comment ? comment.id! : undefined,
       });
       formDirective.resetForm();
     }

@@ -6,7 +6,14 @@ import {
   DatePipe,
   KeyValuePipe,
 } from "@angular/common";
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, ViewChild, inject } from "@angular/core";
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  ViewChild,
+  inject,
+} from "@angular/core";
 import { Json } from "src/app/interface-primitives";
 import { IssueDetailService } from "../../issue-detail.service";
 import { MatIconModule } from "@angular/material/icon";

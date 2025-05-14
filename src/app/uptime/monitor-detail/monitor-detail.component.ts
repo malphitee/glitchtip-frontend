@@ -101,7 +101,7 @@ export class MonitorDetailComponent
   delete() {
     if (
       window.confirm(
-        `Are you sure you want delete this monitor? You will permanently lose all associated uptime data.`
+        `Are you sure you want delete this monitor? You will permanently lose all associated uptime data.`,
       )
     ) {
       this.service.deleteMonitor();

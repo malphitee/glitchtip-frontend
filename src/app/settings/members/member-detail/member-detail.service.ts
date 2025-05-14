@@ -43,16 +43,16 @@ export class MemberDetailService extends StatefulService<MemberDetailState> {
   readonly memberTeams = computed(() => this.state().memberTeams);
   readonly availableRoles = computed(() => this.state().availableRoles);
   readonly updateMemberRoleError = computed(
-    () => this.state().updateMemberRoleError
+    () => this.state().updateMemberRoleError,
   );
   readonly updateMemberRoleLoading = computed(
-    () => this.state().updateMemberRoleLoading
+    () => this.state().updateMemberRoleLoading,
   );
   readonly transferOrgOwnershipError = computed(
-    () => this.state().transferOrgOwnershipError
+    () => this.state().transferOrgOwnershipError,
   );
   readonly transferOrgOwnershipLoading = computed(
-    () => this.state().transferOrgOwnershipLoading
+    () => this.state().transferOrgOwnershipLoading,
   );
 
   constructor() {
@@ -77,15 +77,15 @@ export class MemberDetailService extends StatefulService<MemberDetailState> {
           tap((resp) => {
             this.setUpdateMemberRole(resp);
             this.snackBar.open(
-              `Successfully updated ${resp.email}'s role to ${resp.roleName}`
+              `Successfully updated ${resp.email}'s role to ${resp.roleName}`,
             );
           }),
           catchError((error: HttpErrorResponse) => {
             this.setUpdateMemberRoleError(
-              `${error.statusText}: ${error.status}`
+              `${error.statusText}: ${error.status}`,
             );
             return EMPTY;
-          })
+          }),
         )
         .toPromise();
     } else {
@@ -105,7 +105,7 @@ export class MemberDetailService extends StatefulService<MemberDetailState> {
         .pipe(
           tap((resp) => {
             this.snackBar.open(
-              `Successfully transferred organization account ownership to ${resp.email}.`
+              `Successfully transferred organization account ownership to ${resp.email}.`,
             );
             this.setTransferOrgOwnership(resp);
           }),
@@ -116,11 +116,11 @@ export class MemberDetailService extends StatefulService<MemberDetailState> {
               this.setTransferOrgOwnershipError(err.error?.message);
             } else {
               this.setTransferOrgOwnershipError(
-                "Unable to transfer account ownership."
+                "Unable to transfer account ownership.",
               );
             }
             return EMPTY;
-          })
+          }),
         )
         .toPromise();
     } else {
@@ -133,7 +133,7 @@ export class MemberDetailService extends StatefulService<MemberDetailState> {
     return lastValueFrom(
       this.membersAPIService
         .retrieve(orgSlug, memberId)
-        .pipe(tap((memberDetail) => this.setMemberDetails(memberDetail)))
+        .pipe(tap((memberDetail) => this.setMemberDetails(memberDetail))),
     );
   }
 

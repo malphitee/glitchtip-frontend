@@ -12,7 +12,6 @@ import { UserService } from "./api/user/user.service";
 export class LoggedInComponent implements OnInit {
   private userService = inject(UserService);
 
-
   ngOnInit() {
     // this.organizationService.retrieveOrganizations().subscribe();
     this.userService.getUserDetails();

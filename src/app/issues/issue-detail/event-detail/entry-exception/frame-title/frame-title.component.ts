@@ -1,4 +1,9 @@
-import { Component, ChangeDetectionStrategy, Input, input } from "@angular/core";
+import {
+  Component,
+  ChangeDetectionStrategy,
+  Input,
+  input,
+} from "@angular/core";
 import type { Frame } from "src/app/issues/interfaces";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";

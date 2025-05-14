@@ -1,15 +1,24 @@
-import { Component, ChangeDetectionStrategy, OnDestroy, computed, inject } from "@angular/core";
-import { ActivatedRoute, RouterLink } from "@angular/router";
+import {
+  Component,
+  ChangeDetectionStrategy,
+  computed,
+  inject,
+  input,
+  OnInit,
+} from "@angular/core";
+import { RouterLink } from "@angular/router";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
-import { combineLatest, Subscription } from "rxjs";
-import { map, filter, take } from "rxjs/operators";
+import { StatefulComponent } from "src/app/shared/stateful-service/signal-state.component";
 import { EventInfoComponent } from "src/app/shared/event-info/event-info.component";
 import { environment } from "../../../environments/environment";
-import { StripeService } from "./stripe.service";
-import { SubscriptionsService } from "src/app/api/subscriptions/subscriptions.service";
+import {
+  SubscriptionService,
+  SubscriptionState,
+} from "src/app/api/subscriptions/subscription.service";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { PaymentComponent } from "./payment/payment.component";
 import { MatButtonModule } from "@angular/material/button";
+import { LoadingButtonComponent } from "src/app/shared/loading-button/loading-button.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatCardModule } from "@angular/material/card";
 import { CurrencyPipe, DatePipe } from "@angular/common";
@@ -34,27 +43,36 @@ interface Percentages {
     RouterLink,
     MatFormFieldModule,
     MatButtonModule,
+    LoadingButtonComponent,
     PaymentComponent,
     MatProgressSpinnerModule,
     CurrencyPipe,
     DatePipe,
   ],
 })
-export class SubscriptionComponent implements OnDestroy {
-  private service = inject(SubscriptionsService);
-  private route = inject(ActivatedRoute);
-  dialog = inject(MatDialog);
-  private stripe = inject(StripeService);
+export class SubscriptionComponent
+  extends StatefulComponent<SubscriptionState, SubscriptionService>
+  implements OnInit
+{
   private orgService = inject(OrganizationsService);
+  dialog = inject(MatDialog);
+
+  orgSlug = input.required<string>({ alias: "org-slug" });
+  sessionId = input<string>("", { alias: "session_id" });
+  billingPortalRedirect = input<string>("", {
+    alias: "billing_portal_redirect",
+  });
 
   fromStripe = this.service.fromStripe;
-  subscription = this.service.formattedSubscription;
+  subscription = this.service.subscription;
   subscriptionLoading = this.service.subscriptionLoading;
-  subscriptionLoadingTimeout = this.service.subscriptionLoadingTimeout;
+  subscriptionRefreshTimeout = this.service.subscriptionRefreshTimeout;
   eventsCountWithTotal = this.service.eventsCountWithTotal;
   totalEventsAllowed = this.service.totalEventsAllowed;
   activeOrganization = this.orgService.activeOrganization;
   activeOrganizationSlug = this.orgService.activeOrganizationSlug;
+  billingPortalLoading = this.service.billingPortalLoading;
+  billingPortalLoadingError = this.service.billingPortalLoadingError;
 
   promptForProject = computed(() => {
     const status = this.orgService.activeOrganizationLoaded();
@@ -71,9 +89,7 @@ export class SubscriptionComponent implements OnDestroy {
       return false;
     }
   });
-  routerSubscription: Subscription;
   billingEmail = environment.billingEmail;
-  error = this.stripe.error;
   eventsPercent = computed<Percentages>(() => {
     const eventsAllowed = this.totalEventsAllowed();
     const events = this.eventsCountWithTotal();
@@ -83,37 +99,28 @@ export class SubscriptionComponent implements OnDestroy {
       transactionEvents:
         (events?.transactionEventCount! / eventsAllowed!) * 100,
       uptimeEvents: (events?.uptimeCheckEventCount! / eventsAllowed!) * 100,
-      fileSize: (events?.fileSizeMB! / eventsAllowed!) * 100,
+      fileSize: (events?.fileSizeMb! / eventsAllowed!) * 100,
     };
   });
 
   constructor() {
-    this.routerSubscription = combineLatest([
-      this.route.params,
-      this.route.queryParams,
-    ])
-      .pipe(
-        map(([params, queryParams]) => {
-          const slug = params["org-slug"] as string;
-          const sessionId = queryParams["session_id"];
-          const redirectFromBillingPortal =
-            queryParams["billing_portal_redirect"];
-          return { slug, sessionId, redirectFromBillingPortal };
-        }),
-        filter((routerData) => !!routerData.slug),
-        take(1)
-      )
-      .subscribe((routerData) => {
-        if (routerData.sessionId) {
-          this.service.retrieveUntilSubscriptionOrTimeout(routerData.slug);
-        } else {
-          this.service.retrieveSubscription(routerData.slug);
-        }
-        if (routerData.redirectFromBillingPortal) {
-          this.orgService.repeatRefreshOrgDetail();
-        }
-        this.service.retrieveSubscriptionEventCount(routerData.slug);
-      });
+    const service = inject(SubscriptionService);
+
+    super(service);
+
+    this.service = service;
+  }
+
+  ngOnInit(): void {
+    this.orgService.activeOrganizationResource.reload();
+    this.service.retrieveSubscriptionData(this.orgSlug());
+
+    if (this.sessionId()) {
+      this.service.refreshUntilSubscriptionOrTimeout();
+    }
+    if (this.billingPortalRedirect()) {
+      this.orgService.repeatRefreshOrgDetail();
+    }
   }
 
   openEventInfoDialog() {
@@ -123,12 +130,6 @@ export class SubscriptionComponent implements OnDestroy {
   }
 
   manageSubscription() {
-    this.stripe.redirectToBillingPortal(this.activeOrganizationSlug());
-  }
-
-  ngOnDestroy() {
-    this.routerSubscription.unsubscribe();
-    this.service.clearState();
-    this.stripe.clearState();
+    this.service.redirectToBillingPortal();
   }
 }

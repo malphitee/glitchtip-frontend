@@ -1,6 +1,6 @@
-@if ((initialLoadComplete$ | async) && (issue$ | async) === null) {
+@if (initialLoadComplete() && issue() === null) {
   <section class="l-body l-body--full-width">
-    @if (organization$ | async; as organization) {
+    @if (organization(); as organization) {
       <mat-card class="auth-form issue-404">
         <mat-card-content>
           <h1 class="mat-headline-4" i18n>Issue not found</h1>
@@ -25,13 +25,13 @@
     }
   </section>
 }
-@if (issue$ | async; as issue) {
+@if (issue(); as issue) {
   <section class="l-body l-body--full-width">
     <gt-detail-header
       [backLinkText]="'View all issues for ' + issue.project.name"
       [backLinkParams]="generateBackLink(issue.project.id)"
-      [title]="(issueTitle$ | async)!"
-      [subtitle]="issueSubtitle$ | async"
+      [title]="issueTitle()!"
+      [subtitle]="issueSubtitle()"
     >
       @if (issue?.status !== "resolved") {
         <button mat-flat-button color="primary" (click)="markResolved()">
@@ -72,9 +72,8 @@
               [active]="details.isActive"
               [routerLinkActiveOptions]="{ exact: true }"
               #details="routerLinkActive"
-            >
-              Event Details
-            </a>
+              i18n
+            >Event Details</a>
             <a
               mat-tab-link
               [routerLink]="['user-reports']"
@@ -91,9 +90,8 @@
                   "
                   matBadgeOverlap="false"
                   class="report-badge"
-                >
-                  User Reports
-                </span>
+                  i18n
+                >User Reports</span>
               }
               @if (issue.userReportCount === 0) {
                 User Reports
@@ -113,13 +111,21 @@
                   "
                   matBadgeOverlap="false"
                   class="report-badge"
-                >
-                  Comments
+                  i18n
+                >Comments
                 </span>
               } @else {
-                <span>Comments</span>
+                <span i18n>Comments</span>
               }
             </a>
+            <a
+              mat-tab-link
+              [routerLink]="['merged']"
+              routerLinkActive
+              [active]="merged.isActive"
+              #merged="routerLinkActive"
+              i18n
+            >Merged</a>
           </nav>
         </div>
         <mat-card-content>

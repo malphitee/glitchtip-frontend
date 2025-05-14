@@ -33,16 +33,16 @@ export class SocialAuthService extends StatefulService<SocialAuthState> {
           return {
             ...socialAccount,
             name: socialApps.find(
-              (socialApp) => socialApp.provider === socialAccount.provider
+              (socialApp) => socialApp.provider === socialAccount.provider,
             )?.name,
           };
-        }
+        },
       );
       return {
         ...userDetails,
         identities: socialAccountsWithNames,
       };
-    })
+    }),
   );
   constructor() {
     super(initialState);
@@ -58,7 +58,7 @@ export class SocialAuthService extends StatefulService<SocialAuthState> {
       catchError((err: AllAuthHttpErrorResponse) => {
         this.setState({ loadingId: null });
         return throwError(() => err);
-      })
+      }),
     );
   }
 }

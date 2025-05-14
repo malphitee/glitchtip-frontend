@@ -158,8 +158,9 @@ export function timedeltaToMS(value: string) {
   return Math.round(milliseconds);
 }
 
+/** Deprecated */
 export function normalizeProjectParams(
-  projects: string | string[] | undefined | null
+  projects: string | string[] | undefined | null,
 ) {
   if (Array.isArray(projects)) {
     return projects.map((id) => parseInt(id, 10));
@@ -168,6 +169,32 @@ export function normalizeProjectParams(
     return [parseInt(projects, 10)];
   }
   return [];
+}
+
+/** Normalizes a parameter to an array of strings */
+export function stringArrAttribute(
+  param: string | string[] | undefined,
+): string[] {
+  if (Array.isArray(param)) {
+    return param;
+  }
+  if (typeof param === "string") {
+    return [param];
+  }
+  return [];
+}
+
+/** Normalize parameter to a string | undefined (removing array) */
+export function stringAttribute(
+  param: string | string[] | undefined,
+): string | undefined {
+  if (Array.isArray(param)) {
+    if (param.length) {
+      return param[0];
+    }
+    return undefined;
+  }
+  return param;
 }
 
 export function parseErrorMessage(err: HttpErrorResponse): string[] {
@@ -229,7 +256,7 @@ export function getCSRFToken() {
 
 export function refreshInterval(
   initialDelaysInSeconds: number[],
-  repeatIntervalInSeconds: number
+  repeatIntervalInSeconds: number,
 ) {
   const toMilliseconds = (seconds: number) => seconds * 1000;
   const initialDelays = initialDelaysInSeconds.map(toMilliseconds);
@@ -237,8 +264,8 @@ export function refreshInterval(
 
   return concat(
     ...initialDelays.map((delay) =>
-      of(null).pipe(delayWhen(() => interval(delay)))
+      of(null).pipe(delayWhen(() => interval(delay))),
     ),
-    interval(repeatInterval)
+    interval(repeatInterval),
   ).pipe(repeat());
 }

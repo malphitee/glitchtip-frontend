@@ -14,8 +14,8 @@
     <mat-divider></mat-divider>
     <mat-card-content>
       <mat-error class="server-error">
-        @if (createError$ | async) {
-          <span>{{ createError$ | async }}</span>
+        @if (createErrorForm()) {
+          <span>{{ createErrorForm() }}</span>
         }
       </mat-error>
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
@@ -28,8 +28,11 @@
             @if (label.errors?.required) {
               <span>Create a label for your auth token</span>
             }
-            @if (label.errors?.serverErrorLabel) {
-              <span>{{ label.errors?.serverErrorLabel }}</span>
+            @if (label.errors?.maxlength) {
+              <span>Label must be 255 characters or less</span>
+            }
+            @if (label.errors?.serverError) {
+              <span>{{ label.errors?.serverError }}</span>
             }
           </mat-error>
         </mat-form-field>
@@ -56,12 +59,12 @@
           @if (scopes.errors?.selectOne) {
             <span>Select at least one scope</span>
           }
-          @if (scopes.errors?.serverErrorScopes) {
-            <span>{{ scopes.errors?.serverErrorScopes }}</span>
-          }
+          @if (scopes.errors?.serverError) {
+              <span>{{ scopes.errors?.serverError }}</span>
+            }
         </mat-error>
         <gt-loading-button
-          [loading]="(createLoading$ | async) === true"
+          [loading]="createLoading() === true"
           buttonText="Create Token"
         ></gt-loading-button>
       </form>

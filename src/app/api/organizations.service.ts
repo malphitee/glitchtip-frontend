@@ -21,7 +21,7 @@ export class OrganizationsService {
   #activeOrganizationSlug = signal<string | null>(null);
   activeOrganizationSlug = computed(
     () =>
-      this.#activeOrganizationSlug() ?? this.organizations()?.[0]?.slug ?? null
+      this.#activeOrganizationSlug() ?? this.organizations()?.[0]?.slug ?? null,
   );
   organizationsResource = resource({
     request: () => ({ isAuthenticated: this.authService.isAuthenticated() }),
@@ -45,7 +45,7 @@ export class OrganizationsService {
           params: {
             path: { organization_slug: request.organization_slug },
           },
-        }
+        },
       );
       if (error) {
         throw error;
@@ -57,16 +57,16 @@ export class OrganizationsService {
   organizationsCount = computed(() => this.organizations.length);
   activeOrganization = computed(() => this.activeOrganizationResource.value());
   activeOrganizationLoaded = computed(
-    () => this.activeOrganizationResource.status() >= ResourceStatus.Resolved
+    () => this.activeOrganizationResource.status() >= ResourceStatus.Resolved,
   );
   activeOrganizationProjects = computed(
-    () => this.activeOrganization()?.projects || []
+    () => this.activeOrganization()?.projects || [],
   );
   projectsCount = computed(() => this.activeOrganizationProjects().length);
   initialLoad = computed(
     () =>
-      this.organizationsResource.status() >= ResourceStatus.Resolved &&
-      this.activeOrganizationLoaded()
+      this.organizationsResource.status() > ResourceStatus.Loading &&
+      this.activeOrganizationResource.status() > ResourceStatus.Loading,
   );
 
   // For compatibility, remove when possible
@@ -97,7 +97,7 @@ export class OrganizationsService {
     });
     if (data) {
       this.organizationsResource.update((orgs) =>
-        orgs ? [...orgs, data] : [data]
+        orgs ? [...orgs, data] : [data],
       );
     }
     return { data, error };
@@ -114,8 +114,8 @@ export class OrganizationsService {
         takeUntil(interval(2000).pipe(takeUntil(interval(12000)))),
         takeWhile(
           (org) =>
-            org?.eventThrottleRate === undefined || org.eventThrottleRate > 0
-        )
+            org?.eventThrottleRate === undefined || org.eventThrottleRate > 0,
+        ),
       )
       .subscribe(() => this.activeOrganizationResource.reload());
   }

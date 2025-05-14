@@ -61,7 +61,7 @@
       <section class="tags">
         <h2>Tags</h2>
         <ul class="pseudo-chip-list">
-          @for (tag of event.tags; track tag) {
+          @for (tag of event.tags; track tag.key) {
             <li class="pseudo-chip">
               <a
                 [routerLink]="['..']"

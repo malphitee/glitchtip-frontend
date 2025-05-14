@@ -1,4 +1,10 @@
-import { Component, ChangeDetectionStrategy, OnInit, OnDestroy, inject } from "@angular/core";
+import {
+  Component,
+  ChangeDetectionStrategy,
+  OnInit,
+  OnDestroy,
+  inject,
+} from "@angular/core";
 import { Subscription } from "rxjs";
 import { distinct, filter, tap } from "rxjs/operators";
 import { ProjectSettingsService } from "./project-settings.service";
@@ -34,7 +40,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
       .pipe(
         distinct(),
         filter((slug) => !!slug),
-        tap((slug) => this.projectSettingsService.retrieveProjects(slug!))
+        tap((slug) => this.projectSettingsService.retrieveProjects(slug!)),
       )
       .subscribe();
   }

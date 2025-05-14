@@ -1,14 +1,14 @@
-@if (paginator) {
-  <div class="footer">
-    @if (paginator.loading) {
-      <div class="spinner-container">
-        <mat-progress-spinner
-          [diameter]="33"
-          color="primary"
-          mode="indeterminate"
-        ></mat-progress-spinner>
-      </div>
-    }
+<div class="footer">
+  @if (paginator === undefined || paginator.loading) {
+    <div class="spinner-container">
+      <mat-progress-spinner
+        [diameter]="33"
+        color="primary"
+        mode="indeterminate"
+      ></mat-progress-spinner>
+    </div>
+  }
+  @if (paginator) {
     <button
       class="button-left"
       [routerLink]="[]"
@@ -30,5 +30,5 @@
     >
       <mat-icon>keyboard_arrow_right</mat-icon>
     </button>
-  </div>
-}
+  }
+</div>

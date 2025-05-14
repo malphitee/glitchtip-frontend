@@ -19,3 +19,9 @@ We are transparent about our data practices, and you can find detailed informati
 * **No AI Training:** We do not use your data to train AI models.
 * **Data Processing Agreements (DPAs):** We offer DPAs upon request, based on the Proton Mail DPA, which reflects our commitment to privacy and aligns with our internal tools.
 We self-certify our compliance and continually review our processes to ensure we meet GDPR requirements.
+
+
+### Do you offer hosting and support in Russia?
+
+At this time, we cannot offer any services to users residing in Russia.
+We use Stripe as our payment processor. US restrictions block payment processing for Russia due to the Russian invasion of Ukraine.

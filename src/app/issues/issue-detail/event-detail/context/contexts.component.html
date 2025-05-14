@@ -1,24 +1,31 @@
 <section class="grid-wrapper">
-  @for (contexts of specialContexts$ | async; track contexts.title +
-  contexts.type) {
-  <div class="wrapper">
-    @if (contexts.icon || contexts.matIcon) { @if (contexts.icon) {
-    <img class="image" [src]="contexts.icon" [alt]="contexts.icon" />
-    } @else {
-    <mat-icon class="image">{{ contexts.matIcon }}</mat-icon>
-    } } @else {
-    <mat-icon class="image">help</mat-icon>
-    }
-    <div class="spacer">
-      <p class="mat-body-strong">{{ contexts.title }}</p>
-      @if ( !contexts.title.includes("Unknown") && contexts.key &&
-      contexts.subtitle ) {
-      <p class="mat-small mat-caption">
-        <span class="bold">{{ contexts.key }}:&nbsp;</span
-        ><span class="spacer-small">{{ contexts.subtitle }}</span>
-      </p>
+  @for (
+    contexts of specialContexts$ | async;
+    track contexts.title + contexts.type
+  ) {
+    <div class="wrapper">
+      @if (contexts.icon || contexts.matIcon) {
+        @if (contexts.icon) {
+          <img class="image" [src]="contexts.icon" [alt]="contexts.icon" />
+        } @else {
+          <mat-icon class="image">{{ contexts.matIcon }}</mat-icon>
+        }
+      } @else {
+        <mat-icon class="image">help</mat-icon>
       }
+      <div class="spacer">
+        <p class="mat-body-strong">{{ contexts.title }}</p>
+        @if (
+          !contexts.title.includes("Unknown") &&
+          contexts.key &&
+          contexts.subtitle
+        ) {
+          <p class="mat-small mat-caption">
+            <span class="bold">{{ contexts.key }}:&nbsp;</span
+            ><span class="spacer-small">{{ contexts.subtitle }}</span>
+          </p>
+        }
+      </div>
     </div>
-  </div>
   }
 </section>

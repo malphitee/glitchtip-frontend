@@ -3,7 +3,7 @@ import {
   ChangeDetectionStrategy,
   Input,
   HostBinding,
-  input
+  input,
 } from "@angular/core";
 import type {
   ProjectCardButtonWithQuery,
@@ -36,12 +36,14 @@ export class ProjectCardComponent {
   readonly cardLink = input<string | unknown[]>();
   readonly cardLinkQueryParams = input<{
     [k: string]: unknown;
-}>();
+  }>();
   readonly title = input<string>();
-  readonly descriptionList = input<{
-    key: string;
-    value: string;
-}[]>();
+  readonly descriptionList = input<
+    {
+      key: string;
+      value: string;
+    }[]
+  >();
   readonly isMember = input<boolean>();
 
   @Input() primaryButton?: ProjectCardButtonWithQuery;
