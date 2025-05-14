@@ -1,4 +1,12 @@
-import { Component, OnDestroy, OnInit, ViewChild, inject } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  ViewChild,
+  effect,
+  inject,
+  input,
+} from "@angular/core";
 import {
   FormGroup,
   FormControl,
@@ -20,9 +28,11 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatCardModule } from "@angular/material/card";
 import { DetailHeaderComponent } from "src/app/shared/detail/header/header.component";
+import { ProjectDetailService } from "./project-detail.service";
 
 @Component({
   selector: "gt-project-detail",
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./project-detail.component.html",
   styleUrls: ["./project-detail.component.scss"],
   imports: [
@@ -40,17 +50,19 @@ import { DetailHeaderComponent } from "src/app/shared/detail/header/header.compo
     RouterLink,
     DetailHeaderComponent,
   ],
+  providers: [ProjectDetailService],
 })
-export class ProjectDetailComponent implements OnInit, OnDestroy {
+export class ProjectDetailComponent implements OnInit {
   private projectsService = inject(ProjectSettingsService);
+  private service = inject(ProjectDetailService);
 
   @ViewChild(FormGroupDirective) formDirective: FormGroupDirective | undefined;
 
-  projectKeys = this.projectsService.projectKeys;
-  activeProject = this.projectsService.activeProject;
+  projectKeys = this.service.projectKeys;
+  activeProject = this.service.project;
 
-  orgSlug: string | undefined;
-  projectSlug: string | undefined;
+  orgSlug = input.required<string>({ alias: "org-slug" });
+  projectSlug = input.required<string>({ alias: "project-slug" });
 
   deleteLoading = false;
   deleteError = "";
@@ -67,10 +79,6 @@ export class ProjectDetailComponent implements OnInit, OnDestroy {
     platform: new FormControl(""),
   });
 
-  ngOnDestroy() {
-    this.projectsService.clearActiveProject();
-  }
-
   get name() {
     return this.nameForm.get("name");
   }
@@ -79,47 +87,32 @@ export class ProjectDetailComponent implements OnInit, OnDestroy {
     return this.platformForm.get("platform");
   }
 
+  constructor() {
+    effect(() => {
+      const project = this.activeProject();
+      if (project) {
+        this.nameForm.patchValue({
+          name: project!.name,
+        });
+        this.platformForm.patchValue({
+          platform: project!.platform,
+        });
+      }
+    });
+  }
+
   getPlatformName = (id: string) =>
     flattenedPlatforms.find((platform) => platform.id === id)?.name || id;
 
   ngOnInit() {
-    // this.activatedRoute.params
-    //   .pipe(
-    //     map((params) => {
-    //       const orgSlug: string | undefined = params["org-slug"];
-    //       const projectSlug: string | undefined = params["project-slug"];
-    //       this.orgSlug = orgSlug;
-    //       this.projectSlug = projectSlug;
-    //       return { orgSlug, projectSlug };
-    //     }),
-    //   )
-    //   .subscribe(({ orgSlug, projectSlug }) => {
-    //     if (orgSlug && projectSlug) {
-    //       // this.projectsService.retrieveProjectDetail(orgSlug, projectSlug);
-    //       this.projectsService.retrieveCurrentProjectClientKeys(orgSlug);
-    //     }
-    //   });
-    // this.activeProject$
-    //   .pipe(
-    //     filter((data) => !!data),
-    //     first(),
-    //     tap((data) => {
-    //       this.nameForm.patchValue({
-    //         name: data!.name,
-    //       });
-    //       this.platformForm.patchValue({
-    //         platform: data!.platform,
-    //       });
-    //     }),
-    //   )
-    //   .subscribe();
+    this.service.setParams(this.orgSlug(), this.projectSlug());
   }
 
   deleteProject() {
     if (
       window.confirm("Are you sure you want to delete this project?") &&
-      this.orgSlug &&
-      this.projectSlug
+      this.orgSlug() &&
+      this.projectSlug()
     ) {
       this.deleteLoading = true;
       // this.projectsService
@@ -143,8 +136,8 @@ export class ProjectDetailComponent implements OnInit, OnDestroy {
     this.updateNameLoading = true;
     if (this.nameForm.valid && this.orgSlug && this.projectSlug) {
       this.projectsService.updateProjectName(
-        this.orgSlug,
-        this.projectSlug,
+        this.orgSlug(),
+        this.projectSlug(),
         this.nameForm.value.name!,
       );
       // .subscribe(
@@ -168,8 +161,8 @@ export class ProjectDetailComponent implements OnInit, OnDestroy {
     this.updatePlatformLoading = true;
     if (this.orgSlug && this.projectSlug) {
       this.projectsService.updateProjectPlatform(
-        this.orgSlug,
-        this.projectSlug,
+        this.orgSlug(),
+        this.projectSlug(),
         this.platformForm.value.platform ?? "",
         projectName,
       );

@@ -66,32 +66,7 @@ export class ProjectSettingsService extends StatefulService<ProjectSettingsState
       return { data, pagination };
     },
   });
-  private activeProjectResource = resource({
-    request: () => ({
-      params: this.params(),
-      activeProjectSlug: this.activeProjectSlug(),
-    }),
-    loader: async ({ request }) => {
-      if (!request.params.orgSlug || !request.activeProjectSlug) {
-        return undefined;
-      }
-      const { data } = await client.GET(
-        "/api/0/projects/{organization_slug}/{project_slug}/",
-        {
-          params: {
-            path: {
-              organization_slug: request.params.orgSlug,
-              project_slug: request.activeProjectSlug,
-            },
-          },
-        },
-      );
-      return data as ProjectOrgaizationSchema;
-    },
-  });
   readonly projects = computed(() => this.projectsResource.value()?.data);
-  readonly activeProject = computed(() => this.activeProjectResource.value());
-  readonly projectKeys = computed(() => this.state().projectKeys);
   readonly projectsOnTeam = computed(() => this.state().projectsOnTeam);
   readonly projectsNotOnTeam = computed(() => this.state().projectsNotOnTeam);
   readonly addRemoveLoading = computed(() => this.state().loading);
@@ -223,26 +198,6 @@ export class ProjectSettingsService extends StatefulService<ProjectSettingsState
     }
   }
 
-  async retrieveCurrentProjectClientKeys(organizationSlug: string) {
-    const project = this.activeProject();
-    if (project && project.slug) {
-      const { data } = await client.GET(
-        "/api/0/projects/{organization_slug}/{project_slug}/keys/",
-        {
-          params: {
-            path: {
-              organization_slug: organizationSlug,
-              project_slug: project.slug,
-            },
-          },
-        },
-      );
-      if (data) {
-        this.setKeys(data);
-      }
-    }
-  }
-
   setParams(orgSlug: string, teamSlug: string) {
     this.params.set({ orgSlug, teamSlug });
   }
@@ -365,7 +320,7 @@ export class ProjectSettingsService extends StatefulService<ProjectSettingsState
   }
 
   private setActiveProject(projectDetail: ProjectOrgaizationSchema) {
-    this.activeProjectResource.set(projectDetail);
+    // this.activeProjectResource.set(projectDetail);
   }
 
   private setRemoveProjectFromTeam(project: ProjectSchema) {
@@ -398,12 +353,5 @@ export class ProjectSettingsService extends StatefulService<ProjectSettingsState
     });
   }
 
-  private setKeys(projectKeys: ProjectKey[]) {
-    this.setState({ projectKeys });
-  }
-
-  clearActiveProject() {
-    this.activeProjectResource.destroy();
-    this.setState({ projectKeys: null });
-  }
+  clearActiveProject() {}
 }

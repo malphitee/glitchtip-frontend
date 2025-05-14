@@ -26,5 +26,5 @@ export class SettingsProjectsService {
       return { data, pagination };
     },
   });
-  projects = computed(() => this.projectsResource.value()?.data || []);
+  projects = computed(() => this.projectsResource.value()?.data);
 }

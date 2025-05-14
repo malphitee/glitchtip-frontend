@@ -6,7 +6,7 @@
     >
   </header>
   <div>
-    @if (projects().length === 0) {
+    @if (projects()?.length === 0) {
       <gt-empty-projects [activeOrgOnly]="true"></gt-empty-projects>
     }
   </div>
