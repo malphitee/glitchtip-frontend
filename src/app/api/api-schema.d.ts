@@ -3718,11 +3718,8 @@ export interface components {
             slug?: string | null;
             /** Platform */
             platform?: string | null;
-            /**
-             * Eventthrottlerate
-             * @default 0
-             */
-            eventThrottleRate: number;
+            /** Eventthrottlerate */
+            eventThrottleRate?: number | null;
         };
         /**
          * ProjectSchema

@@ -52,7 +52,7 @@ export class NewTokenComponent
 
   form: FormGroup;
   scopeOptions: string[] = [
-    "project:read",
+    "project:rread",
     "project:write",
     "project:admin",
     "project:releases",

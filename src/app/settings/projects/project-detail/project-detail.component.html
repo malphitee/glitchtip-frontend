@@ -23,8 +23,8 @@
       </mat-card-header>
       <mat-divider></mat-divider>
       <mat-card-content>
-        @if (updateNameError) {
-          <mat-error class="server-error">{{ updateNameError }}</mat-error>
+        @if (updateNameError()) {
+          <mat-error class="server-error">{{ updateNameError() }}</mat-error>
         }
         <form
           [formGroup]="nameForm"
@@ -54,9 +54,9 @@
           >
           </gt-loading-button>
         </form>
-        @if (updatePlatformError) {
+        @if (updatePlatformError()) {
           <mat-error class="server-error">
-            {{ updatePlatformError }}
+            {{ updatePlatformError() }}
           </mat-error>
         }
         <form
@@ -146,13 +146,13 @@
             >By deleting your project, you will lose all associated data. This
             cannot be undone.</p
           >
-          @if (deleteError) {
-            <mat-error>{{ deleteError }}</mat-error>
+          @if (deleteError()) {
+            <mat-error>{{ deleteError() }}</mat-error>
           }
         </div>
         <gt-loading-button
           buttonText="Delete Project"
-          [loading]="deleteLoading"
+          [loading]="deleteLoading()"
           (buttonClick)="deleteProject()"
           id="delete-project"
         >
