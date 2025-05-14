@@ -6,11 +6,11 @@ published: true
 
 ## Introducing Merge Issue Support
 
-GlitchTip now supports merging issues. Take two or more issues and merge them. When new events come in, they will stay in the same issue. You can also unmerge them in the issue detail page.
+GlitchTip now supports merging issues. Take two or more issues and merge them. When new events come in, they will stay in the same issue. You can also unmerge them on the issue detail page.
 
 ## EU server
 
-A new option for hosting is https://eu.glitchtip.com managed by Burke Software and Consulting. This server is maintained by core developers behind GlitchTip.
+A new hosted server option has been created: https://eu.glitchtip.com, managed by Burke Software and Consulting. This server is maintained by core developers behind GlitchTip.
 
 You can also run EU hosted instances via [Pikapods](https://www.pikapods.com/pods?run=glitchtip) and [elestio](https://elest.io/open-source/glitchtip).
 
@@ -18,8 +18,8 @@ You can also run EU hosted instances via [Pikapods](https://www.pikapods.com/pod
 
 Our policy is to introduce breaking changes only in major releases.
 
-- Django 5.2 requires Postgres 14+. Users of Postgres 13 must upgrade before upgrading GlitchTip. The easiest way is to us pg_dump and restore on a new Postgres 17 server.
-- No upgrades from GlitchTip 3.x. You must upgrade to a 4.x release and then 5.0. Older migration files have been removed. We aim to require this only once per year.
+- Django 5.2 requires Postgres 14+. Users of Postgres 13 must upgrade before upgrading GlitchTip. The easiest way is to use pg_dump and restore on a new Postgres 17 server.
+- No upgrades from GlitchTip 3.x. You must upgrade to a 4.x release and then to 5.0. Older migration files have been removed. We aim to require such upgrades only once per year.
 
 ## What's next?
 
@@ -27,10 +27,10 @@ We depend on contributors for features and it can be hard to predict what our us
 
 - Material Design 3 refresh
 - Issue event graphs
-- Our Helm chart has recieved some recent contributions - thanks!
-- Improved frontend contribution guide with material design, signals and openapi-fetch.
+- Our Helm chart has received some recent contributions - thanks!
+- Improved frontend contribution guide with focus on material design, signals and openapi-fetch.
 
-Add your own plans to GitLab [issues](https://gitlab.com/groups/glitchtip/-/issues). Here's some ideas to get started on development:
+Add your own plans to GitLab [issues](https://gitlab.com/groups/glitchtip/-/issues). Here are some ideas to get started on development:
 
 - [Adjust configuration options for when new users are allowed to register.](https://gitlab.com/glitchtip/glitchtip-backend/-/issues/290)
 - [Add bulk issue remove](https://gitlab.com/glitchtip/glitchtip-frontend/-/issues/210)
