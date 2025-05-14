@@ -10,8 +10,8 @@
         data-cy="create-project-form"
       >
         <div class="form-center">
-          @if (error) {
-            <mat-error>{{ error }}</mat-error>
+          @if (error()) {
+            <mat-error>{{ error() }}</mat-error>
           }
           <gt-platform-picker
             formControlName="platform"
@@ -34,7 +34,7 @@
             </mat-error>
           </mat-form-field>
           <div class="teams">
-            @if (teams$ | async; as teams) {
+            @if (teams(); as teams) {
               <mat-form-field appearance="outline">
                 <mat-select
                   (click)="teams.length ? undefined : openCreateTeamDialog()"
@@ -77,7 +77,7 @@
         </div>
         <gt-loading-button
           data-cy="create-project-submit"
-          [loading]="loading"
+          [loading]="loading()"
           buttonText="Create Project"
         >
         </gt-loading-button>

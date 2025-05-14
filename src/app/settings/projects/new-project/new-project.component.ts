@@ -2,7 +2,9 @@ import {
   ChangeDetectionStrategy,
   Component,
   OnInit,
+  effect,
   inject,
+  input,
 } from "@angular/core";
 import {
   FormGroup,
@@ -11,8 +13,6 @@ import {
   ReactiveFormsModule,
 } from "@angular/forms";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
-import { ActivatedRoute } from "@angular/router";
-import { map, filter, tap } from "rxjs/operators";
 import { TeamsService } from "src/app/api/teams/teams.service";
 import { NewTeamComponent } from "../../teams/new-team/new-team.component";
 import { LoadingButtonComponent } from "../../../shared/loading-button/loading-button.component";
@@ -24,8 +24,11 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatInputModule } from "@angular/material/input";
 import { PlatformPickerComponent } from "../platform-picker/platform-picker.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { AsyncPipe } from "@angular/common";
 import { MatCardModule } from "@angular/material/card";
+import { toSignal } from "@angular/core/rxjs-interop";
+import { NewProjectService } from "./new-project.service";
+import { Router } from "@angular/router";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 @Component({
   selector: "gt-new-project",
@@ -44,23 +47,21 @@ import { MatCardModule } from "@angular/material/card";
     MatTooltipModule,
     MatIconModule,
     LoadingButtonComponent,
-    AsyncPipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [NewProjectService],
 })
 export class NewProjectComponent implements OnInit {
-  // private orgService = inject(OrganizationsService);
-  // private projectsService = inject(ProjectSettingsService);
   private teamsService = inject(TeamsService);
-  // private router = inject(Router);
-  private route = inject(ActivatedRoute);
+  private service = inject(NewProjectService);
+  private router = inject(Router);
+  private snackBar = inject(MatSnackBar);
   dialog = inject(MatDialog);
-  // private snackBar = inject(MatSnackBar);
 
-  teams$ = this.teamsService.teams$;
-  loading = false;
-  error?: string;
-  orgSlug?: string;
+  orgSlug = input.required<string>({ alias: "org-slug" });
+  teams = toSignal(this.teamsService.teams$);
+  error = this.service.error;
+  loading = this.service.loading;
   form = new FormGroup({
     name: new FormControl("", [Validators.required, Validators.maxLength(64)]),
     platform: new FormControl(""),
@@ -68,10 +69,11 @@ export class NewProjectComponent implements OnInit {
   });
 
   constructor() {
-    this.teams$.subscribe((data) => {
-      if (data && data[0]) {
+    effect(() => {
+      const teams = this.teams();
+      if (teams?.length) {
         this.form.patchValue({
-          team: data[0].slug,
+          team: teams[0].slug,
         });
       }
     });
@@ -86,15 +88,7 @@ export class NewProjectComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.route.params
-      .pipe(
-        map((params) => params["org-slug"] as string),
-        filter((slug) => !!slug),
-        tap((slug) => (this.orgSlug = slug)),
-      )
-      .subscribe((slug) => {
-        this.teamsService.retrieveTeamsByOrg(slug).toPromise();
-      });
+    this.teamsService.retrieveTeamsByOrg(this.orgSlug()).toPromise();
   }
 
   openCreateTeamDialog() {
@@ -106,37 +100,22 @@ export class NewProjectComponent implements OnInit {
     });
   }
 
-  onSubmit() {
-    if (this.form.valid && this.orgSlug) {
-      // this.loading = true;
-      // this.projectsService
-      //   .createProject(
-      //     {
-      //       name: this.form.value.name!,
-      //       platform: this.form.value.platform ?? "",
-      //     },
-      //     this.form.value.team!,
-      //     this.orgSlug,
-      //   )
-      //   .pipe(
-      //     tap((project) => {
-      //       this.loading = false;
-      //       this.orgService.refreshActiveOrganization();
-      //       this.snackBar.open(`${project.name} has been created`);
-      //       this.router.navigate(
-      //         [this.orgService.activeOrganizationSlug(), "issues"],
-      //         {
-      //           queryParams: { project: project.id },
-      //         },
-      //       );
-      //     }),
-      //     catchError((err) => {
-      //       this.loading = false;
-      //       this.error = `${err.statusText}: ${err.status}`;
-      //       return EMPTY;
-      //     }),
-      //   )
-      //   .toPromise();
+  async onSubmit() {
+    if (this.form.valid) {
+      const data = await this.service.createProject(
+        {
+          name: this.form.value.name!,
+          platform: this.form.value.platform ?? "",
+        } as any,
+        this.form.value.team!,
+        this.orgSlug(),
+      );
+      if (data) {
+        this.snackBar.open($localize`${data.name} has been created`);
+        this.router.navigate([this.orgSlug(), "issues"], {
+          queryParams: { project: data.id },
+        });
+      }
     }
   }
 }

@@ -10,7 +10,6 @@ type ProjectKey = components["schemas"]["ProjectKeySchema"];
 type ProjectOrgaizationSchema =
   components["schemas"]["ProjectOrganizationSchema"];
 type ProjectSchema = components["schemas"]["ProjectSchema"];
-type ProjectNew = components["schemas"]["ProjectIn"];
 
 interface ProjectLoading {
   addProjectToTeam: boolean;
@@ -100,24 +99,6 @@ export class ProjectSettingsService extends StatefulService<ProjectSettingsState
 
   constructor() {
     super(initialState);
-  }
-
-  async createProject(project: ProjectNew, teamSlug: string, orgSlug: string) {
-    const { data } = await client.POST(
-      "/api/0/teams/{organization_slug}/{team_slug}/projects/",
-      {
-        params: {
-          path: {
-            organization_slug: orgSlug,
-            team_slug: teamSlug,
-          },
-        },
-        body: project,
-      },
-    );
-    if (data) {
-      this.projectsResource.reload();
-    }
   }
 
   /**
