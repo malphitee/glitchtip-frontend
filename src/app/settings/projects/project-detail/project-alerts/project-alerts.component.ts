@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, inject } from "@angular/core";
+import { Component, OnInit, ViewChild, inject, input } from "@angular/core";
 import {
   AlertRecipient,
   ProjectAlert,
@@ -7,12 +7,10 @@ import { ProjectAlertsService } from "./project-alerts.service";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
 import { NewRecipientComponent } from "./new-recipient/new-recipient.component";
 import { AlertFormComponent } from "./alert-form/alert-form.component";
-import { distinctUntilChanged } from "rxjs";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { LoadingButtonComponent } from "../../../../shared/loading-button/loading-button.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatIconModule } from "@angular/material/icon";
-import { AsyncPipe } from "@angular/common";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
@@ -31,64 +29,62 @@ import { MatCardModule } from "@angular/material/card";
     MatTooltipModule,
     LoadingButtonComponent,
     MatProgressSpinnerModule,
-    AsyncPipe,
   ],
+  providers: [ProjectAlertsService],
 })
-export class ProjectAlertsComponent implements OnInit, OnDestroy {
-  private alertsService = inject(ProjectAlertsService);
+export class ProjectAlertsComponent implements OnInit {
+  #service = inject(ProjectAlertsService);
   dialog = inject(MatDialog);
+  orgSlug = input.required<string>();
+  projectSlug = input.required<string>();
 
   @ViewChild("newAlert") newAlertRef?: AlertFormComponent;
-  projectAlerts$ = this.alertsService.projectAlerts$;
-  newProjectAlertRecipients$ = this.alertsService.newProjectAlertRecipients$;
-  initialLoad$ = this.alertsService.initialLoad$;
-  initialLoadError$ = this.alertsService.initialLoadError$;
-  removeAlertLoading$ = this.alertsService.removeAlertLoading$;
-  removeAlertError$ = this.alertsService.removeAlertError$;
-  updatePropertiesLoading$ = this.alertsService.updatePropertiesLoading$;
-  updatePropertiesError$ = this.alertsService.updatePropertiesError$;
-  deleteRecipientLoading$ = this.alertsService.deleteRecipientLoading$;
-  deleteRecipientError$ = this.alertsService.deleteRecipientError$;
-  newAlertOpen$ = this.alertsService.newAlertOpen$;
-  recipientDialogOpen$ = this.alertsService.recipientDialogOpen$;
-  newAlertLoading$ = this.alertsService.newAlertLoading$;
-  newAlertError$ = this.alertsService.newAlertError$;
+  projectAlerts = this.#service.projectAlerts;
+  newProjectAlertRecipients = this.#service.newProjectAlertRecipients;
+  initialLoad = this.#service.initialLoad;
+  initialLoadError = this.#service.initialLoadError;
+  removeAlertLoading = this.#service.removeAlertLoading;
+  removeAlertError = this.#service.removeAlertError;
+  updatePropertiesLoading = this.#service.updatePropertiesLoading;
+  updatePropertiesError = this.#service.updatePropertiesError;
+  deleteRecipientLoading = this.#service.deleteRecipientLoading;
+  deleteRecipientError = this.#service.deleteRecipientError;
+  newAlertOpen = this.#service.newAlertOpen;
+  recipientDialogOpen = this.#service.recipientDialogOpen;
+  newAlertLoading = this.#service.newAlertLoading;
+  newAlertError = this.#service.newAlertError;
 
   ngOnInit(): void {
-    this.alertsService.listProjectAlerts();
+    this.#service.setParams(this.orgSlug(), this.projectSlug());
 
-    this.recipientDialogOpen$
-      .pipe(distinctUntilChanged())
-      .subscribe((resp) => resp && this.dialog.open(NewRecipientComponent));
-  }
-
-  ngOnDestroy() {
-    this.alertsService.clearState();
+    this.recipientDialogOpen$.subscribe(
+      (resp) => resp && this.dialog.open(NewRecipientComponent),
+    );
   }
 
   openNewAlert() {
-    this.alertsService.openNewAlert();
+    this.#service.openNewAlert();
   }
 
   removeNewAlertRecipient(url: string) {
-    this.alertsService.removeNewAlertRecipient(url);
+    this.#service.removeNewAlertRecipient(url);
   }
 
   openUpdateRecipientDialog(alert: ProjectAlert) {
-    this.alertsService.openUpdateRecipientDialog(alert);
+    this.#service.openUpdateRecipientDialog(alert);
   }
 
   openCreateRecipientDialog() {
-    this.alertsService.openCreateRecipientDialog();
+    this.#service.openCreateRecipientDialog();
   }
 
   closeNewAlert() {
-    this.alertsService.closeNewAlert();
+    this.#service.closeNewAlert();
   }
 
   removeAlert(id: number) {
     if (window.confirm("Are you sure you want to remove this notification?")) {
-      this.alertsService.deleteProjectAlert(id);
+      this.#service.deleteProjectAlert(id);
     }
   }
 
@@ -101,7 +97,7 @@ export class ProjectAlertsComponent implements OnInit, OnDestroy {
     alert: ProjectAlert,
   ): void {
     if (alert.id) {
-      this.alertsService.updateAlertProperties(
+      this.#service.updateAlertProperties(
         event.timespanMinutes,
         event.quantity,
         event.uptime,
@@ -112,7 +108,7 @@ export class ProjectAlertsComponent implements OnInit, OnDestroy {
   }
 
   removeAlertRecipient(recipient: AlertRecipient, alert: ProjectAlert) {
-    this.alertsService.deleteAlertRecipient(recipient, alert);
+    this.#service.deleteAlertRecipient(recipient, alert);
   }
 
   newAlertProperties(event: {
@@ -120,7 +116,7 @@ export class ProjectAlertsComponent implements OnInit, OnDestroy {
     quantity: number;
     uptime: boolean;
   }) {
-    this.alertsService.createNewAlert(event);
+    this.#service.createNewAlert(event);
   }
 
   submitCreateAlert() {

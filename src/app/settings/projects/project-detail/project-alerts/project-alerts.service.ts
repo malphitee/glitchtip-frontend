@@ -1,28 +1,8 @@
-import { Injectable, inject } from "@angular/core";
+import { Injectable, computed, inject, signal } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { HttpErrorResponse } from "@angular/common/http";
-import { combineLatest, EMPTY } from "rxjs";
-import {
-  tap,
-  map,
-  mergeMap,
-  take,
-  catchError,
-  exhaustMap,
-  distinctUntilChanged,
-} from "rxjs/operators";
-import { ProjectAlertsAPIService } from "../../../../api/projects/project-alerts/project-alerts.service";
-import {
-  AlertRecipient,
-  NewAlertRecipient,
-  NewProjectAlert,
-  PartialProjectAlert,
-  ProjectAlert,
-} from "../../../../api/projects/project-alerts/project-alerts.interface";
 import { ProjectSettingsService } from "../../project-settings.service";
-import { StatefulService } from "src/app/shared/stateful-service/stateful-service";
 import { OrganizationsService } from "src/app/api/organizations.service";
-import { toObservable } from "@angular/core/rxjs-interop";
+import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
 
 interface NewAlertState {
   newAlertOpen: boolean;
@@ -80,97 +60,85 @@ const initialState: ProjectAlertState = {
   deleteRecipientError: null,
 };
 
-@Injectable({
-  providedIn: "root",
-})
+@Injectable()
 export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
   private organizationsService = inject(OrganizationsService);
   private projectSettingsService = inject(ProjectSettingsService);
-  private projectAlertsAPIService = inject(ProjectAlertsAPIService);
   private snackBar = inject(MatSnackBar);
 
-  activeProjectSlug$ = toObservable(
-    this.projectSettingsService.activeProjectSlug,
-  );
-  readonly initialLoad$ = this.getState$.pipe(map((data) => data.initialLoad));
-  readonly initialLoadError$ = this.getState$.pipe(
-    map((data) => data.initialLoadError),
-  );
-  readonly projectAlerts$ = this.getState$.pipe(
-    map((data) => data.projectAlerts),
-    distinctUntilChanged(),
-    map((alerts) =>
-      alerts?.map((alert) => {
-        return {
-          ...alert,
-          errorAlert: !alert.timespanMinutes && !alert.quantity ? false : true,
-        };
-      }),
-    ),
-  );
+  #params = signal({ orgSlug: "", projectSlug: "" });
+  activeProjectSlug = this.projectSettingsService.activeProjectSlug;
+  readonly initialLoad = computed(() => this.state().initialLoad);
+  readonly initialLoadError = computed(() => this.state().initialLoadError);
+  readonly projectAlerts = computed(() => {
+    const alerts = this.state().projectAlerts;
+    return alerts?.map((alert) => {
+      return {
+        ...alert,
+        errorAlert: !alert.timespanMinutes && !alert.quantity ? false : true,
+      };
+    });
+  });
 
   /** New Alert */
-  readonly newAlertOpen$ = this.getState$.pipe(
-    map((data) => data.newAlertState.newAlertOpen),
+  readonly newAlertOpen = computed(
+    () => this.state().newAlertState.newAlertOpen,
   );
-  readonly newProjectAlertRecipients$ = this.getState$.pipe(
-    map((data) => data.newAlertState.newProjectAlertRecipients),
+  readonly newProjectAlertRecipients = computed(
+    () => this.state().newAlertState.newProjectAlertRecipients,
   );
-  readonly newAlertLoading$ = this.getState$.pipe(
-    map((data) => data.newAlertState.newAlertLoading),
+  readonly newAlertLoading = computed(
+    () => this.state().newAlertState.newAlertLoading,
   );
-  readonly newAlertError$ = this.getState$.pipe(
-    map((data) => data.newAlertState.newAlertError),
+  readonly newAlertError = computed(
+    () => this.state().newAlertState.newAlertError,
   );
 
   /** Recipient Dialog */
-  readonly recipientError$ = this.getState$.pipe(
-    map((data) => data.recipientDialogState.recipientError),
+  readonly recipientError = computed(
+    () => this.state().recipientDialogState.recipientError,
   );
-  readonly recipientDialogOpen$ = this.getState$.pipe(
-    map((data) => data.recipientDialogState.recipientDialogOpen),
+  readonly recipientDialogOpen = computed(
+    () => this.state().recipientDialogState.recipientDialogOpen,
   );
-  readonly activeAlert$ = this.getState$.pipe(
-    map((data) => data.recipientDialogState.activeAlert),
+  readonly activeAlert = computed(
+    () => this.state().recipientDialogState.activeAlert,
   );
-  readonly emailSelected$ = combineLatest([
-    this.newProjectAlertRecipients$,
-    this.activeAlert$,
-  ]).pipe(
-    map(([newRecipients, activeAlert]) => {
-      if (activeAlert?.id) {
-        return activeAlert.alertRecipients.some(
-          (data) => data.recipientType === "email",
-        );
-      } else if (newRecipients !== null) {
-        return newRecipients.some((data) => data.recipientType === "email");
-      }
-      return;
-    }),
-  );
+  readonly emailSelected = computed(() => {
+    const newRecipients = this.newProjectAlertRecipients();
+    const activeAlert = this.activeAlert();
+    if (activeAlert?.id) {
+      return activeAlert.alertRecipients.some(
+        (data) => data.recipientType === "email",
+      );
+    } else if (newRecipients !== null) {
+      return newRecipients.some((data) => data.recipientType === "email");
+    }
+    return;
+  });
 
   /** Current Alerts */
-  readonly removeAlertLoading$ = this.getState$.pipe(
-    map((data) => data.removeAlertLoading),
+  readonly removeAlertLoading = computed(() => this.state().removeAlertLoading);
+  readonly removeAlertError = computed(() => this.state().removeAlertError);
+  readonly updatePropertiesLoading = computed(
+    () => this.state().updatePropertiesLoading,
   );
-  readonly removeAlertError$ = this.getState$.pipe(
-    map((data) => data.removeAlertError),
+  readonly updatePropertiesError = computed(
+    () => this.state().updatePropertiesError,
   );
-  readonly updatePropertiesLoading$ = this.getState$.pipe(
-    map((data) => data.updatePropertiesLoading),
+  readonly deleteRecipientLoading = computed(
+    () => this.state().deleteRecipientLoading,
   );
-  readonly updatePropertiesError$ = this.getState$.pipe(
-    map((data) => data.updatePropertiesError),
-  );
-  readonly deleteRecipientLoading$ = this.getState$.pipe(
-    map((data) => data.deleteRecipientLoading),
-  );
-  readonly deleteRecipientError$ = this.getState$.pipe(
-    map((data) => data.deleteRecipientError),
+  readonly deleteRecipientError = computed(
+    () => this.state().deleteRecipientError,
   );
 
   constructor() {
     super(initialState);
+  }
+
+  setParams(orgSlug: string, projectSlug: string) {
+    this.#params.set({ orgSlug, projectSlug });
   }
 
   /** Actions */
