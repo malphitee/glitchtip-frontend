@@ -110,7 +110,10 @@
         </mat-card-content>
       </mat-card>
     }
-    <gt-project-environments></gt-project-environments>
+    <gt-project-environments
+      [orgSlug]="orgSlug()"
+      [projectSlug]="projectSlug()"
+    ></gt-project-environments>
     <gt-project-alerts></gt-project-alerts>
     <mat-card>
       <mat-card-header>

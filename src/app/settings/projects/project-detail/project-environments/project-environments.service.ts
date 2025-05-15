@@ -1,7 +1,5 @@
-import { Injectable, computed, inject, resource } from "@angular/core";
+import { Injectable, computed, resource, signal } from "@angular/core";
 import { ProjectEnvironment } from "src/app/api/organizations/organizations.interface";
-import { ProjectSettingsService } from "../../project-settings.service";
-import { OrganizationsService } from "src/app/api/organizations.service";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
 import { client } from "src/app/api/api";
 
@@ -13,12 +11,9 @@ const initialState: ProjectsState = {
   toggleHiddenLoading: null,
 };
 
-@Injectable({
-  providedIn: "root",
-})
+@Injectable()
 export class ProjectEnvironmentsService extends StatefulService<ProjectsState> {
-  private organizationsService = inject(OrganizationsService);
-  private projectSettingsService = inject(ProjectSettingsService);
+  #params = signal({ orgSlug: "", projectSlug: "" });
 
   readonly initialLoad = computed(() => this.environmentsResource.hasValue());
   readonly toggleHiddenLoading = computed(
@@ -61,8 +56,8 @@ export class ProjectEnvironmentsService extends StatefulService<ProjectsState> {
   });
   private environmentsResource = resource({
     request: () => ({
-      orgSlug: this.organizationsService.activeOrganizationSlug(),
-      projectSlug: this.projectSettingsService.activeProjectSlug(),
+      orgSlug: this.#params().orgSlug,
+      projectSlug: this.#params().projectSlug,
     }),
     loader: async ({ request }) => {
       if (!request.orgSlug || !request.projectSlug) {
@@ -87,11 +82,13 @@ export class ProjectEnvironmentsService extends StatefulService<ProjectsState> {
     super(initialState);
   }
 
-  async updateEnvironment(environment: ProjectEnvironment) {
-    const orgSlug = this.organizationsService.activeOrganizationSlug();
-    const projectSlug = this.projectSettingsService.activeProjectSlug();
+  setParams(orgSlug: string, projectSlug: string) {
+    this.#params.set({ orgSlug, projectSlug });
+  }
 
-    if (!orgSlug || !projectSlug) {
+  async updateEnvironment(environment: ProjectEnvironment) {
+    const params = this.#params();
+    if (!params.orgSlug) {
       return;
     }
 
@@ -102,8 +99,8 @@ export class ProjectEnvironmentsService extends StatefulService<ProjectsState> {
       {
         params: {
           path: {
-            organization_slug: orgSlug,
-            project_slug: projectSlug,
+            organization_slug: params.orgSlug,
+            project_slug: params.projectSlug,
             name: environment.name,
           },
         },

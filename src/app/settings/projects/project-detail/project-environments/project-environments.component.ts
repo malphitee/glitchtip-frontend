@@ -1,8 +1,9 @@
 import {
   Component,
   ChangeDetectionStrategy,
-  OnDestroy,
   inject,
+  input,
+  OnInit,
 } from "@angular/core";
 import { ProjectEnvironmentsService } from "./project-environments.service";
 import { LoadingButtonComponent } from "../../../../shared/loading-button/loading-button.component";
@@ -21,20 +22,23 @@ import { MatCardModule } from "@angular/material/card";
     MatListModule,
     LoadingButtonComponent,
   ],
+  providers: [ProjectEnvironmentsService],
 })
-export class ProjectEnvironmentsComponent implements OnDestroy {
-  private environmentsService = inject(ProjectEnvironmentsService);
+export class ProjectEnvironmentsComponent implements OnInit {
+  private service = inject(ProjectEnvironmentsService);
+  orgSlug = input.required<string>();
+  projectSlug = input.required<string>();
 
-  initialLoad = this.environmentsService.initialLoad;
-  toggleHiddenloading = this.environmentsService.toggleHiddenLoading;
-  sortedEnvironments = this.environmentsService.sortedEnvironments;
+  initialLoad = this.service.initialLoad;
+  toggleHiddenloading = this.service.toggleHiddenLoading;
+  sortedEnvironments = this.service.sortedEnvironments;
 
-  ngOnDestroy(): void {
-    this.environmentsService.clearState();
+  ngOnInit(): void {
+    this.service.setParams(this.orgSlug(), this.projectSlug());
   }
 
   toggleHidden(environment: any) {
-    this.environmentsService.updateEnvironment({
+    this.service.updateEnvironment({
       ...environment,
       isHidden: !environment.isHidden,
     });
