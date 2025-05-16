@@ -2564,11 +2564,8 @@ export interface components {
         };
         /** ProjectAlertIn */
         ProjectAlertIn: {
-            /**
-             * Name
-             * @default
-             */
-            name: string;
+            /** Name */
+            name?: string | null;
             /** Alertrecipients */
             alertRecipients?: (components["schemas"]["EmailAlertRecipientIn"] | components["schemas"]["WebhookAlertRecipientIn"])[] | null;
             /** Timespan Minutes */

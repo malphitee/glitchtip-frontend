@@ -207,44 +207,38 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
     this.setRemoveNewAlertRecipient(url);
   }
 
-  createNewAlert(properties: {
+  async createNewAlert(properties: {
     timespanMinutes: number;
     quantity: number;
     uptime: boolean;
   }) {
     this.setNewAlertLoading();
-    // combineLatest([
-    //   this.organizationsService.activeOrganizationSlug$,
-    //   this.activeProjectSlug$,
-    //   this.newProjectAlertRecipients$,
-    // ])
-    //   .pipe(
-    //     take(1),
-    //     exhaustMap(([orgSlug, projectSlug, recipients]) => {
-    //       if (orgSlug && projectSlug && properties && recipients !== null) {
-    //         const data: NewProjectAlert = {
-    //           timespanMinutes: properties.timespanMinutes,
-    //           quantity: properties.quantity,
-    //           uptime: properties.uptime,
-    //           alertRecipients: recipients,
-    //         };
-    //         return this.projectAlertsAPIService
-    //           .create(data, orgSlug, projectSlug)
-    //           .pipe(
-    //             tap((resp) => {
-    //               this.setCreateAlert(resp);
-    //               this.snackBar.open(`Success! Your new alert has been added.`);
-    //             }),
-    //           );
-    //       }
-    //       return EMPTY;
-    //     }),
-    //     catchError((err: HttpErrorResponse) => {
+    const body = {
+      timespanMinutes: properties.timespanMinutes,
+      quantity: properties.quantity,
+      uptime: properties.uptime,
+      alertRecipients: this.newProjectAlertRecipients(),
+    };
+    const params = this.#params();
+    const { data } = await client.POST(
+      "/api/0/projects/{organization_slug}/{project_slug}/alerts/",
+      {
+        params: {
+          path: {
+            organization_slug: params.orgSlug,
+            project_slug: params.projectSlug,
+          },
+        },
+        body,
+      },
+    );
+    if (data) {
+      this.setCreateAlert(data);
+      this.snackBar.open(`Success! Your new alert has been added.`);
+    }
+
+    //
     //       this.setCreateAlertError(err);
-    //       return EMPTY;
-    //     }),
-    //   )
-    //   .subscribe();
   }
 
   /** Update Actions */
@@ -488,13 +482,13 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
     });
   }
 
-  // private setCreateAlert(alert: ProjectAlert) {
-  //   const state = this.state();
-  //   this.setState({
-  //     projectAlerts: state.projectAlerts?.concat([alert]),
-  //     newAlertState: initialNewAlertState,
-  //   });
-  // }
+  private setCreateAlert(alert: ProjectAlert) {
+    const state = this.state();
+    this.setState({
+      projectAlerts: state.projectAlerts?.concat([alert]),
+      newAlertState: initialNewAlertState,
+    });
+  }
 
   // private setCreateAlertError(error: any) {
   //   const newAlertState = this.state().newAlertState;
