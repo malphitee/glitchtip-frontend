@@ -148,7 +148,7 @@
               <gt-loading-button
                 [buttonText]="'Remove Alert ' + (i + 1)"
                 buttonStyle="stroked"
-                (buttonClick)="removeAlert(alert.id)"
+                (buttonClick)="removeAlert(alert.id!)"
                 [loading]="removeAlertLoading() === alert.id"
               >
               </gt-loading-button>
@@ -161,8 +161,8 @@
             <gt-alert-form
               [newAlert]="false"
               [loading]="updatePropertiesLoading() === alert.id"
-              [timespan]="alert.timespanMinutes"
-              [quantity]="alert.quantity"
+              [timespan]="alert.timespanMinutes!"
+              [quantity]="alert.quantity!"
               [uptime]="alert.uptime"
               [errorAlert]="alert.errorAlert"
               (alertSubmit)="updateProperties($event, alert)"

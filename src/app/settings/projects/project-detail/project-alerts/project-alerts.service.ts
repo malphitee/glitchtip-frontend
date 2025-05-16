@@ -1,4 +1,11 @@
-import { Injectable, computed, inject, resource, signal } from "@angular/core";
+import {
+  Injectable,
+  ResourceStatus,
+  computed,
+  inject,
+  resource,
+  signal,
+} from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
 import { components } from "src/app/api/api-schema";
@@ -22,8 +29,6 @@ interface RecipientDialogState {
 }
 
 interface ProjectAlertState {
-  initialLoad: boolean;
-  initialLoadError: string | null;
   projectAlerts: ProjectAlert[] | null;
   newAlertState: NewAlertState;
   recipientDialogState: RecipientDialogState;
@@ -50,8 +55,6 @@ const initialRecipientDialogState = {
 };
 
 const initialState: ProjectAlertState = {
-  initialLoad: false,
-  initialLoadError: null,
   projectAlerts: null,
   newAlertState: initialNewAlertState,
   recipientDialogState: initialRecipientDialogState,
@@ -75,7 +78,7 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
       if (!request.params.orgSlug) {
         return undefined;
       }
-      const { data } = await client.GET(
+      const { data, error } = await client.GET(
         "/api/0/projects/{organization_slug}/{project_slug}/alerts/",
         {
           params: {
@@ -86,11 +89,20 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
           },
         },
       );
+      if (error) {
+        throw error;
+      }
       return data;
     },
   });
-  readonly initialLoad = computed(() => this.state().initialLoad);
-  readonly initialLoadError = computed(() => this.state().initialLoadError);
+  readonly initialLoad = computed(
+    () =>
+      this.#projectAlertsResource.status() > ResourceStatus.Loading ||
+      this.#projectAlertsResource.error(),
+  );
+  readonly initialLoadError = computed(() =>
+    this.#projectAlertsResource.error(),
+  );
   readonly projectAlerts = computed(() => {
     const alerts = this.#projectAlertsResource.value();
     return alerts?.map((alert) => {
@@ -160,32 +172,6 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
 
   setParams(orgSlug: string, projectSlug: string) {
     this.#params.set({ orgSlug, projectSlug });
-  }
-
-  /** Actions */
-  listProjectAlerts() {
-    // combineLatest([
-    //   this.organizationsService.activeOrganizationSlug$,
-    //   this.activeProjectSlug$,
-    // ])
-    //   .pipe(
-    //     take(1),
-    //     exhaustMap(([orgSlug, projectSlug]) => {
-    //       if (orgSlug && projectSlug) {
-    //         return this.projectAlertsAPIService.list(orgSlug, projectSlug).pipe(
-    //           tap((projectAlerts) => {
-    //             this.setProjectAlertsList(projectAlerts);
-    //           }),
-    //           catchError((err: HttpErrorResponse) => {
-    //             this.setProjectAlertsListError(err);
-    //             return EMPTY;
-    //           }),
-    //         );
-    //       }
-    //       return EMPTY;
-    //     }),
-    //   )
-    //   .subscribe();
   }
 
   /** New Alert Actions */

@@ -2532,8 +2532,8 @@ export interface components {
         };
         /** ProjectAlertSchema */
         ProjectAlertSchema: {
-            /** Alertrecipient Set */
-            alertrecipient_set: components["schemas"]["AlertRecipientSchema"][];
+            /** Alertrecipients */
+            alertRecipients: components["schemas"]["AlertRecipientSchema"][];
             /** ID */
             id?: number | null;
             /** Name */

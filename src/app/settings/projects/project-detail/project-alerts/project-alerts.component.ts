@@ -1,11 +1,6 @@
 import { Component, OnInit, ViewChild, inject, input } from "@angular/core";
-import {
-  AlertRecipient,
-  ProjectAlert,
-} from "src/app/api/projects/project-alerts/project-alerts.interface";
 import { ProjectAlertsService } from "./project-alerts.service";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
-import { NewRecipientComponent } from "./new-recipient/new-recipient.component";
 import { AlertFormComponent } from "./alert-form/alert-form.component";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { LoadingButtonComponent } from "../../../../shared/loading-button/loading-button.component";
@@ -14,6 +9,10 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
+import { components } from "src/app/api/api-schema";
+
+type ProjectAlert = components["schemas"]["ProjectAlertSchema"];
+type AlertRecipient = components["schemas"]["AlertRecipientSchema"];
 
 @Component({
   selector: "gt-project-alerts",
@@ -57,9 +56,9 @@ export class ProjectAlertsComponent implements OnInit {
   ngOnInit(): void {
     this.#service.setParams(this.orgSlug(), this.projectSlug());
 
-    this.recipientDialogOpen$.subscribe(
-      (resp) => resp && this.dialog.open(NewRecipientComponent),
-    );
+    // this.recipientDialogOpen$.subscribe(
+    //   (resp) => resp && this.dialog.open(NewRecipientComponent),
+    // );
   }
 
   openNewAlert() {
