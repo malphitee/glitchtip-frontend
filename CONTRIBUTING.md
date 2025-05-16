@@ -157,4 +157,4 @@ export class FooComponent implements OnInit {
 
 Assuming you created a project, you should see a list of them in your browser now. However there is a bug, it will not display more than 50 foos due to pagination. See `src/app/shared/pagination.utils.ts`.
 
-This concludes our tutorial. Ask further questions at on [Gitter](https://app.gitter.im/#/room/#GlitchTip_community:gitter.im).
+This concludes our tutorial. Ask further questions on [Gitter](https://app.gitter.im/#/room/#GlitchTip_community:gitter.im).
