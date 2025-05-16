@@ -16,64 +16,145 @@ GlitchTip features an isolated backend API and this Angular single page applicat
 
 ## Frontend Coding Style and philosophy
 
-We use Angular CLI for rapid, performant development. Modules should be lazy loaded as needed. An explicit goal is to always be smaller and load JS faster than Sentry.
+We use Angular CLI for rapid, performant development. Components should be lazy loaded as needed. An explicit goal is to always be smaller and load JS faster than Sentry.
 
 - Always use component encapsulated CSS (limit use of global)
-- Use Storybook
-- Follow redux-like patterns using signals. Services should contain immutable state, pure functions, and computed function selectors. Contributors should have a basic familiarity with state management systems like redux, RXJS, and signals. See "Managing State" for details.
-  - Do not store state in components except in trivial or rapid prototyping use cases.
-- Use OnPush change detection. However very simple, isolated features maybe use Default.
+- Use Storybook for presentational components, especially new design system components
+- Follow use signal, resource, computed for state
+- Store state in a service, not the component. Use {providedIn: "root"} if service state must be shared. Otherwise provide it directly to the component.
+- Avoid RXJS unless it's truely needed
+- Use openapi-fetch instead of HttpClient
+- Use OnPush change detection
 - We don't have full test coverage. Complex functions should have unit tests. Trivial ones are acceptable without them as TypeScript checks them sufficiently. Integration tests that prove correctness of a collection of smaller functions is encouraged.
-- We use Angular Material for rapid development. A component that works today is better than a nicer custom component that might work some day.
-  - But don’t bend over backwards to use Material if it doesn’t fit the use case
+- We use Angular Material for rapid development. A component that works today is better than a nicer custom component that might work some day. But don’t bend over backwards to use Material if it doesn’t fit the use case
 
-## Managing State
+## Contribution tutorial
 
-GlitchTip uses signals (or rxjs's BehaviorSubject) to provide state to components. Use primarily signals and convert them to rxjs only when helpful. Most components should extend the following base classes:
+Let's add a new page to GlitchTip with a pretend foo API. We'll assume the foo page requires being logged in and is organization specific. We'll assume the reader already has GlitchTip running locally.
 
-**StatefulComponent** and **StatefulService**
+Create a new component and service. The component is what the user is shown in a browser while the service contains logic including API interactions. You can learn more about Angular dev [here](https://angular.dev/tutorials) but if you already know similair systems - we'll aim to get you up to speed in this tutorial.
 
-StatefulComponent clears state on ngOnDestroy. Omit it if this isn't desired.
+```bash
+ng generate component foo
+ng generate service foo
+```
 
-StatefulService provides react-like `setState` and `clearState` functions. `setState` should be used in reducer-style functions. Each such function should be responsible for setting all of the state in a service relevant to a given synchronous event.
+`src/app/foo/` now contains foo.component.html, foo.component.scss, foo.component.ts, and foo.service.ts. We're going to omit unit testing for now. But if you had a unit test, it might be named foo.service.spec.ts.
 
-A typical stateful service may look like:
+Next add the component to our router. We could lazy load a imported sub-route file with `loadChildren: () => import("./foo/routes")`. This is preferred when adding multiple nested pages. For this tutorial, we'll add just a single component. Edit `src/app/app.routes.ts`. To make the new page URL be `/<org-slug>/foo` we'll add a nested router under :org-slug
 
 ```typescript
-interface MyState {
-  foo: string;
-  loading: bool;
-  // Real code should store error states too
-}
-
-const initialState: MyState = {
-  foo: "init",
-  loading: false,
-};
-
-@Injectable({
-  providedIn: "root",
-})
-export class MyService extends StatefulService<MyState> {
-  foo = computed(() => this.state().foo);
-  constructor(myAPIService: MyAPIService) {
-    super(initialState);
-  }
-
-  getFoo() {
-    // More complex functions should be broken into a more explicit public "action" function and private "reducer" function. Simple ones can avoid such boilerplate.
-    this.setState({ loading: true });
-    console.log("direct state access", this.state());
-    // or this.state.set(initialState);
-    // Avoid calling HttpClient directly. Do not use fetch, as it won't get csrf tokens.
-    return this.myAPIService.getFoo().pipe(tap((resp) => this.setState({ foo: resp.foo, loading: false })));
-    // Add error handling in the pipe too for real code
-  }
+{
+  path: ":org-slug",
+  component: OrganizationFrameComponent,
+  children: [
+    {
+      path: "foo",
+      loadComponent: () => import("./foo/foo.component").then(c => c.FooComponent),
+      title: "Foo",
+    },
+  ]
 }
 ```
 
-HttpClient API calls should be placed in a separate API service and imported into a StatefulService instance.
+Run GlitchTip `npm start`. In your browser, go to localhost:4200/<your-org>/foo and you should see "foo works!"
 
-**PaginatedBaseComponent** extends StatefulBaseComponent and **PaginationStatefulService** extends StatefulService
+We'll assume you already added a foo API to glitchtip-backend. When the API changes, we need to update our openapi typescript spec with `npm run openapi-typescript`. To simplify the tutorial, we'll reuse the projects API and pretend it's returning our list of foos.
 
-These components/services provide helpers for managing a single paginated list in state.
+Edit `src/app/foo/foo.service.ts`
+
+```TypeScript
+import { computed, Injectable, resource, signal } from "@angular/core";
+import { client } from "../api/api";  # openapi-fetch client
+
+// This service only runs while it's FooComponent is being used
+// To share service state globally, set @Injectable({providedIn: "root"})
+@Injectable()
+export class FooService {
+  // Signals and resource store state https://angular.dev/guide/signals
+  orgSlug = signal("");  // We'll get this from the component
+  // https://angular.dev/guide/signals/resource
+  // # means private, not accessible from outside of this class.
+  #foosResource = resource({
+    // The resource will load any time our request changes, in this case when orgSlug changes
+    request: () => ({ orgSlug: this.#orgSlug() }),
+    loader: async ({ request }) => {
+      if (!request.orgSlug) {
+        return undefined;  // Return undefined to indicate the resource has not yet loaded
+      }
+      // https://openapi-ts.dev/openapi-fetch/
+      const { data, error, response } = await client.GET(
+        "/api/0/organizations/{organization_slug}/projects/",
+        {
+          params: {
+            path: { organization_slug: request.orgSlug },
+          },
+        },
+      );
+      if (response.status === 500) {
+        // Localize the error message string https://angular.dev/guide/i18n
+        throw $localize`Critical server side error`;
+      }
+      if (error) {
+        throw error;
+      }
+      return data;
+    },
+  });
+  // Use computed for any calculated value
+  foos = computed(() => this.#foosResource.value());
+  // We don't show the error in this tutorial, but you may show it via Material Snackbar or inline the page
+  foosError = computed(() => this.foosResource.error());
+  // This could show a loading spinner
+  foosLoading = computed(() => this.foosResource.isLoading());
+}
+```
+
+Next we'll provide the service to our FooComponent in `src/app/foo/foo.component.ts`
+
+```TypeScript
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  input,
+  OnInit,
+} from "@angular/core";
+import { FooService } from "./foo.service";
+
+@Component({
+  templateUrl: "./foo.component.html",
+  styleUrl: "./foo.component.scss",
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [FooService],  // Omit if providing globally (sharing state)
+})
+export class FooComponent implements OnInit {
+  // Angular router will set this, see app.routes.ts path: ":org-slug",
+  orgSlug = input.required<string>({ alias: "org-slug" });
+  service = inject(FooService);
+  foos = this.service.foos;
+  
+  // Init lifecycle hook
+  ngOnInit() {
+    // We choose to handle router logic in the component as part of presentation layer
+    // but it means we must pass it to the service
+    this.service.orgSlug.set(this.orgSlug());
+  }
+  // Most logic belongs in the service. But we may add presentation layer code here,
+  // such as a Form https://angular.dev/guide/forms/reactive-forms
+}
+```
+
+`src/app/foo/foo.component.html`
+
+```html
+<p>foo works!</p>
+
+@for (foo of foos(); track foo.id) {
+  {{ foo.name }}
+}
+```
+
+Assuming you created a project, you should see a list of them in your browser now. However there is a bug, it will not display more than 50 foos due to pagination. See `src/app/shared/pagination.utils.ts`.
+
+This concludes our tutorial. Ask further questions at on [Gitter](https://app.gitter.im/#/room/#GlitchTip_community:gitter.im).

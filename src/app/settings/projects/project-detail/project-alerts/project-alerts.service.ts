@@ -90,7 +90,7 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
         },
       );
       if (error) {
-        throw error;
+        throw $localize`There was an error loading your alerts. Try refreshing the page.`;
       }
       return data;
     },
