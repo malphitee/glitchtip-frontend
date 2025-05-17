@@ -9,7 +9,7 @@ import {
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
 import { components } from "src/app/api/api-schema";
-import { client } from "src/app/api/api";
+import { client, handleError, NinjaErrorResponse } from "src/app/api/api";
 
 type ProjectAlert = components["schemas"]["ProjectAlertSchema"];
 type AlertRecipient = components["schemas"]["AlertRecipientSchema"];
@@ -235,9 +235,10 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
     if (data) {
       this.setCreateAlert(data);
       this.snackBar.open(`Success! Your new alert has been added.`);
+      this.#projectAlertsResource.update((alerts) =>
+        alerts ? [...alerts, data] : [data],
+      );
     }
-
-    //
     //       this.setCreateAlertError(err);
   }
 
@@ -259,6 +260,10 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
     if (response.status === 204) {
       this.setDeleteProjectAlert(id);
       this.snackBar.open(`Success: Your alert has been deleted`);
+      this.#projectAlertsResource.update((alerts) =>
+        alerts ? alerts.filter((a) => a.id !== id) : [],
+      );
+      this.#projectAlertsResource.reload();
     } else if (error) {
       this.setDeleteAlertError(error, id);
     }
@@ -272,7 +277,7 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
     recipients: AlertRecipient[],
   ) {
     this.setUpdatePropertiesLoading(id);
-    const { data, error } = await client.PUT(
+    const { data, error, response } = await client.PUT(
       "/api/0/projects/{organization_slug}/{project_slug}/alerts/{alert_id}/",
       {
         params: {
@@ -294,9 +299,9 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
     if (data) {
       this.setUpdateAlertProperties(data);
       this.snackBar.open(`Success: Your alert has been updated`);
-    }
-    if (error) {
-      this.setUpdatePropertiesError(error, id);
+    } else if (error) {
+      const errors = handleError(error, response);
+      this.setUpdatePropertiesError(errors, id);
     }
   }
 
@@ -582,13 +587,13 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
     });
   }
 
-  private setUpdatePropertiesError(err: any, id: number) {
+  private setUpdatePropertiesError(err: NinjaErrorResponse, id: number) {
     const state = this.state();
     this.setState({
       updatePropertiesLoading: null,
       updatePropertiesError: {
         ...state.updatePropertiesError,
-        error: `${err.statusText} : ${err.status}`,
+        error: err.detail[0].msg,
         id,
       },
     });

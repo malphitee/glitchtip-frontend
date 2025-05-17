@@ -39,7 +39,6 @@ import { ConfirmDialogComponent } from "src/app/shared/confirm-dialog/confirm-di
 type Issue = components["schemas"]["IssueSchema"];
 
 @Component({
-  selector: "gt-issues-page",
   templateUrl: "./issues-page.component.html",
   styleUrls: ["./issues-page.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -59,7 +58,7 @@ type Issue = components["schemas"]["IssueSchema"];
     DaysOldPipe,
     I18nPluralPipe,
   ],
-  providers: [IssuesService],
+  providers: [IssuesService, ProjectEnvironmentsService],
 })
 export class IssuesPageComponent implements OnDestroy {
   dialog = inject(MatDialog);
@@ -175,26 +174,11 @@ export class IssuesPageComponent implements OnDestroy {
         : this.environmentForm.controls.environment.enable(),
     );
     effect(() => {
-      const project = this.projects();
-      const firstProjectId = project ? project[0] : null;
       const orgSlug = this.orgSlug();
-      const projectSlug = this.organizationsService
-        .activeOrganizationProjects()
-        ?.find(
-          (orgProject) => orgProject.id.toString() === firstProjectId,
-        )?.slug;
       if (orgSlug) {
         lastValueFrom(
           this.organizationDetailService.getOrganizationEnvironments(orgSlug),
         );
-      }
-      if (orgSlug && projectSlug) {
-        // lastValueFrom(
-        //   this.projectEnvironmentsService.retrieveEnvironmentsWithProperties(
-        //     orgSlug,
-        //     projectSlug,
-        //   ),
-        // );
       }
     });
     /**

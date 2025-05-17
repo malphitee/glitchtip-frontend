@@ -36,12 +36,18 @@ export function handleError(
   error: any,
   response: Response,
 ): NinjaErrorResponse {
-  if (response.status === 500) {
-    return { detail: [{ 500: SERVER_ERROR }] };
-  } else if (response.status === 422 && isNinjaErrorResponse(error)) {
-    return error;
+  switch (response.status) {
+    case 404:
+      return { detail: [{ msg: response.statusText }] };
+    case 422:
+      if (isNinjaErrorResponse(error)) {
+        return error;
+      }
+      break;
+    case 500:
+      return { detail: [{ msg: SERVER_ERROR }] };
   }
-  return { detail: [{ unhandled: UNHANDLED_ERROR }] };
+  return { detail: [{ msg: UNHANDLED_ERROR }] };
 }
 
 const csrfMiddleware: Middleware = {
