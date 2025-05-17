@@ -264,7 +264,7 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
     }
   }
 
-  updateAlertProperties(
+  async updateAlertProperties(
     newTimespan: number,
     newQuantity: number,
     uptime: boolean,
@@ -272,38 +272,32 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
     recipients: AlertRecipient[],
   ) {
     this.setUpdatePropertiesLoading(id);
-    // const data: PartialProjectAlert = {
-    //   id: id,
-    //   timespanMinutes: newTimespan,
-    //   quantity: newQuantity,
-    //   uptime,
-    //   alertRecipients: recipients,
-    // };
-    // combineLatest([
-    //   this.organizationsService.activeOrganizationSlug$,
-    //   this.activeProjectSlug$,
-    // ])
-    //   .pipe(
-    //     take(1),
-    //     mergeMap(([orgSlug, projectSlug]) => {
-    //       if (orgSlug && projectSlug) {
-    //         return this.projectAlertsAPIService
-    //           .update(id.toString(), data, orgSlug, projectSlug)
-    //           .pipe(
-    //             tap((resp) => {
-    //               this.setUpdateAlertProperties(resp);
-    //               this.snackBar.open(`Success: Your alert has been updated`);
-    //             }),
-    //           );
-    //       }
-    //       return EMPTY;
-    //     }),
-    //     catchError((err: HttpErrorResponse) => {
-    //       this.setUpdatePropertiesError(err, id);
-    //       return EMPTY;
-    //     }),
-    //   )
-    //   .subscribe();
+    const { data, error } = await client.PUT(
+      "/api/0/projects/{organization_slug}/{project_slug}/alerts/{alert_id}/",
+      {
+        params: {
+          path: {
+            organization_slug: this.#params().orgSlug,
+            project_slug: this.#params().projectSlug,
+            alert_id: id,
+          },
+        },
+        body: {
+          id: id,
+          timespanMinutes: newTimespan,
+          quantity: newQuantity,
+          uptime,
+          alertRecipients: recipients as any,
+        },
+      },
+    );
+    if (data) {
+      this.setUpdateAlertProperties(data);
+      this.snackBar.open(`Success: Your alert has been updated`);
+    }
+    if (error) {
+      this.setUpdatePropertiesError(error, id);
+    }
   }
 
   updateAlertRecipient(newRecipient: NewAlertRecipient) {
@@ -569,17 +563,17 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
     });
   }
 
-  // private setUpdateAlertProperties(updatedAlert: ProjectAlert) {
-  //   const state = this.state();
-  //   this.setState({
-  //     projectAlerts: this.findAndReplaceAlert(
-  //       state.projectAlerts,
-  //       updatedAlert,
-  //     ),
-  //     updatePropertiesLoading: null,
-  //     updatePropertiesError: null,
-  //   });
-  // }
+  private setUpdateAlertProperties(updatedAlert: ProjectAlert) {
+    const state = this.state();
+    this.setState({
+      projectAlerts: this.findAndReplaceAlert(
+        state.projectAlerts,
+        updatedAlert,
+      ),
+      updatePropertiesLoading: null,
+      updatePropertiesError: null,
+    });
+  }
 
   private setUpdatePropertiesLoading(id: number) {
     this.setState({
@@ -588,17 +582,17 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
     });
   }
 
-  // private setUpdatePropertiesError(err: any, id: number) {
-  //   const state = this.state();
-  //   this.setState({
-  //     updatePropertiesLoading: null,
-  //     updatePropertiesError: {
-  //       ...state.updatePropertiesError,
-  //       error: `${err.statusText} : ${err.status}`,
-  //       id,
-  //     },
-  //   });
-  // }
+  private setUpdatePropertiesError(err: any, id: number) {
+    const state = this.state();
+    this.setState({
+      updatePropertiesLoading: null,
+      updatePropertiesError: {
+        ...state.updatePropertiesError,
+        error: `${err.statusText} : ${err.status}`,
+        id,
+      },
+    });
+  }
 
   // private setUpdateAlertRecipientsError(err: any, id: number) {
   //   const recipientDialogState = this.state().recipientDialogState;

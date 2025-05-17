@@ -71,6 +71,9 @@ export class ProjectEnvironmentsService extends StatefulService<ProjectsState> {
               organization_slug: request.orgSlug,
               project_slug: request.projectSlug,
             },
+            query: {
+              visibility: "all",
+            },
           },
         },
       );
