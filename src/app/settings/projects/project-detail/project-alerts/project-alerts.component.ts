@@ -1,4 +1,11 @@
-import { Component, OnInit, ViewChild, inject, input } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  ViewChild,
+  effect,
+  inject,
+  input,
+} from "@angular/core";
 import { ProjectAlertsService } from "./project-alerts.service";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
 import { AlertFormComponent } from "./alert-form/alert-form.component";
@@ -10,6 +17,7 @@ import { MatDividerModule } from "@angular/material/divider";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
 import { components } from "src/app/api/api-schema";
+import { NewRecipientComponent } from "./new-recipient/new-recipient.component";
 
 type ProjectAlert = components["schemas"]["ProjectAlertSchema"];
 type AlertRecipient = components["schemas"]["AlertRecipientSchema"];
@@ -53,12 +61,15 @@ export class ProjectAlertsComponent implements OnInit {
   newAlertLoading = this.#service.newAlertLoading;
   newAlertError = this.#service.newAlertError;
 
+  constructor() {
+    effect(
+      () =>
+        this.recipientDialogOpen() && this.dialog.open(NewRecipientComponent),
+    );
+  }
+
   ngOnInit(): void {
     this.#service.setParams(this.orgSlug(), this.projectSlug());
-
-    // this.recipientDialogOpen$.subscribe(
-    //   (resp) => resp && this.dialog.open(NewRecipientComponent),
-    // );
   }
 
   openNewAlert() {

@@ -3,6 +3,7 @@ import {
   OnInit,
   ChangeDetectionStrategy,
   inject,
+  effect,
 } from "@angular/core";
 import { MatDialogRef, MatDialogModule } from "@angular/material/dialog";
 import {
@@ -18,7 +19,6 @@ import { MatButtonModule } from "@angular/material/button";
 import { LoadingButtonComponent } from "../../../../../shared/loading-button/loading-button.component";
 import { MatInputModule } from "@angular/material/input";
 import { MatOptionModule } from "@angular/material/core";
-import { CommonModule } from "@angular/common";
 import { MatSelectModule } from "@angular/material/select";
 import { MatFormFieldModule } from "@angular/material/form-field";
 
@@ -28,7 +28,6 @@ import { MatFormFieldModule } from "@angular/material/form-field";
   styleUrls: ["./new-recipient.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     MatDialogModule,
     ReactiveFormsModule,
     MatFormFieldModule,
@@ -43,9 +42,9 @@ export class NewRecipientComponent implements OnInit {
   dialogRef = inject<MatDialogRef<NewRecipientComponent>>(MatDialogRef);
   private alertsService = inject(ProjectAlertsService);
 
-  recipientDialogOpen$ = this.alertsService.recipientDialogOpen$;
-  emailSelected$ = this.alertsService.emailSelected$;
-  recipientError$ = this.alertsService.recipientError$;
+  recipientDialogOpen = this.alertsService.recipientDialogOpen;
+  emailSelected = this.alertsService.emailSelected;
+  recipientError = this.alertsService.recipientError;
 
   recipientOptions = [
     { viewValue: "Email", value: "email" },
@@ -63,9 +62,7 @@ export class NewRecipientComponent implements OnInit {
   url = this.recipientForm.get("url") as FormControl;
 
   constructor() {
-    this.recipientDialogOpen$.subscribe(
-      (resp) => !resp && this.dialogRef.close(),
-    );
+    effect(() => !this.recipientDialogOpen() && this.dialogRef.close());
   }
 
   ngOnInit(): void {
