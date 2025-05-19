@@ -4,6 +4,7 @@ import {
   ChangeDetectionStrategy,
   inject,
   effect,
+  input,
 } from "@angular/core";
 import { MatDialogRef, MatDialogModule } from "@angular/material/dialog";
 import {
@@ -13,7 +14,6 @@ import {
   ReactiveFormsModule,
 } from "@angular/forms";
 import { RecipientType } from "src/app/api/projects/project-alerts/project-alerts.interface";
-import { ProjectAlertsService } from "../project-alerts.service";
 import { urlRegex } from "src/app/shared/validators";
 import { MatButtonModule } from "@angular/material/button";
 import { LoadingButtonComponent } from "../../../../../shared/loading-button/loading-button.component";
@@ -40,11 +40,10 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 })
 export class NewRecipientComponent implements OnInit {
   dialogRef = inject<MatDialogRef<NewRecipientComponent>>(MatDialogRef);
-  private alertsService = inject(ProjectAlertsService);
 
-  recipientDialogOpen = this.alertsService.recipientDialogOpen;
-  emailSelected = this.alertsService.emailSelected;
-  recipientError = this.alertsService.recipientError;
+  recipientDialogOpen = input.required<boolean>();
+  emailSelected = input.required();
+  recipientError = input.required();
 
   recipientOptions = [
     { viewValue: "Email", value: "email" },
@@ -88,7 +87,7 @@ export class NewRecipientComponent implements OnInit {
   }
 
   closeDialog() {
-    this.alertsService.closeRecipientDialog();
+    // this.alertsService.closeRecipientDialog();
   }
 
   selectOptions(

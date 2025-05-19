@@ -13,17 +13,11 @@
       >
         <mat-label>Recipient Type</mat-label>
         <mat-select id="recipient-type" [formControl]="recipientType">
-          <mat-option
-            *ngFor="
-              let recipient of selectOptions(
-                recipientOptions,
-                emailSelected$ | async
-              )
-            "
-            [value]="recipient.value"
-          >
-            {{ recipient.viewValue }}
-          </mat-option>
+          @for (recipient of selectOptions(recipientOptions, emailSelected()); track recipient.value) {
+            <mat-option [value]="recipient.value">
+              {{ recipient.viewValue }}
+            </mat-option>
+          }
         </mat-select>
       </mat-form-field>
 
@@ -35,11 +29,13 @@
               <use xlink:href="#discord"></use>
             </svg>
             <input matInput type="url" formControlName="url" placeholder="URL" />
-            <mat-error *ngIf="url?.errors">
-              <span *ngIf="url?.errors?.required || url?.errors?.pattern"
-                >Enter a valid URL with protocol (ex. https://example.com)</span
-              >
-            </mat-error>
+            @if (url?.errors) {
+              <mat-error>
+                @if (url?.errors?.required || url?.errors?.pattern) {
+                  <span>Enter a valid URL with protocol (ex. https://example.com)</span>
+                }
+              </mat-error>
+            }
           </mat-form-field>
         }
         @case ('googlechat') {
@@ -49,11 +45,13 @@
               <use xlink:href="#googlechat"></use>
             </svg>
             <input matInput type="url" formControlName="url" placeholder="URL" />
-            <mat-error *ngIf="url?.errors">
-              <span *ngIf="url?.errors?.required || url?.errors?.pattern"
-                >Enter a valid URL with protocol (ex. https://example.com)</span
-              >
-            </mat-error>
+            @if (url?.errors) {
+              <mat-error>
+                @if (url?.errors?.required || url?.errors?.pattern) {
+                  <span>Enter a valid URL with protocol (ex. https://example.com)</span>
+                }
+              </mat-error>
+            }
           </mat-form-field>
         }
         @case ('webhook') {
@@ -66,11 +64,13 @@
             <mat-hint i18n
               >Supports Slack, Microsoft Teams, Rocket.Chat, and more</mat-hint
             >
-            <mat-error *ngIf="url?.errors">
-              <span *ngIf="url?.errors?.required || url?.errors?.pattern"
-                >Enter a valid URL with protocol (ex. https://example.com)</span
-              >
-            </mat-error>
+            @if (url?.errors) {
+              <mat-error>
+                @if (url?.errors?.required || url?.errors?.pattern) {
+                  <span>Enter a valid URL with protocol (ex. https://example.com)</span>
+                }
+              </mat-error>
+            }
           </mat-form-field>
         }
         @case ('email') {
