@@ -8,6 +8,10 @@ published: true
 
 GlitchTip now supports merging issues. Declutter your issues list by taking two or more issues and merge them. When new events come in, they will stay in the same issue. This is useful when the same root cause creates multple issues. You can also unmerge them on the issue detail page.
 
+<div style="width: 800px; max-width: 100%; margin: 0 auto;">
+    <img src="/assets/blog-images/glitchtip-5-0/issue-merge.png" alt="Screenshot of issues to be merged">
+</div>
+
 ## EU server
 
 A new hosted server option has been created: https://eu.glitchtip.com, managed by Burke Software and Consulting. This server is maintained by core developers behind GlitchTip. We'll refer to our https://app.glitchtip.com server as US hosted for now on.
