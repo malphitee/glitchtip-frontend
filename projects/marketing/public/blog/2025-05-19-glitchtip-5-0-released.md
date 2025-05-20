@@ -6,11 +6,11 @@ published: true
 
 ## Introducing Merge Issue Support
 
-GlitchTip now supports merging issues. Take two or more issues and merge them. When new events come in, they will stay in the same issue. You can also unmerge them on the issue detail page.
+GlitchTip now supports merging issues. Declutter your issues list by taking two or more issues and merge them. When new events come in, they will stay in the same issue. This is useful when the same root cause creates multple issues. You can also unmerge them on the issue detail page.
 
 ## EU server
 
-A new hosted server option has been created: https://eu.glitchtip.com, managed by Burke Software and Consulting. This server is maintained by core developers behind GlitchTip.
+A new hosted server option has been created: https://eu.glitchtip.com, managed by Burke Software and Consulting. This server is maintained by core developers behind GlitchTip. We'll refer to our https://app.glitchtip.com server as US hosted for now on.
 
 You can also run EU hosted instances via [Pikapods](https://www.pikapods.com/pods?run=glitchtip) and [elestio](https://elest.io/open-source/glitchtip).
 
@@ -18,15 +18,15 @@ You can also run EU hosted instances via [Pikapods](https://www.pikapods.com/pod
 
 Our policy is to introduce breaking changes only in major releases.
 
-- Django 5.2 requires Postgres 14+. Users of Postgres 13 must upgrade before upgrading GlitchTip. The easiest way is to use pg_dump and restore on a new Postgres 17 server.
+- Django 5.2 requires Postgres 14+. Users of Postgres 13 must upgrade before upgrading GlitchTip. The easiest way is to use pg_dump and restore on a new Postgres 14+ server. We recommend upgrading to Postgres 17 when possible.
 - No upgrades from GlitchTip 3.x. You must upgrade to a 4.x release and then to 5.0. Older migration files have been removed. We aim to require such upgrades only once per year.
 
 ## What's next?
 
-We depend on contributors for features and it can be hard to predict what our users contribute next. We do maintain a [small roadmap](https://gitlab.com/groups/glitchtip/-/roadmap?state=all&sort=START_DATE_ASC&layout=WEEKS&timeframe_range_type=CURRENT_QUARTER&progress=WEIGHT&show_progress=true&show_milestones=true&milestones_type=ALL&show_labels=false).
+We depend on contributors for features and it can be hard to predict what our users contribute next. See our development [roadmap](https://gitlab.com/groups/glitchtip/-/roadmap?state=all&sort=START_DATE_ASC&layout=WEEKS&timeframe_range_type=CURRENT_QUARTER&progress=WEIGHT&show_progress=true&show_milestones=true&milestones_type=ALL&show_labels=false).
 
-- Material Design 3 refresh
-- Issue event graphs
+- Lois ([LUARM](https://github.com/LUARM)) is working on Material Design 3 refresh.
+- Issue event graphs.
 - Our Helm chart has received some recent contributions - thanks!
 - Improved frontend contribution guide with focus on material design, signals and openapi-fetch.
 
