@@ -35,6 +35,11 @@ export class OrganizationsService {
       }
       let { data, response } = await client.GET("/api/0/organizations/", {
         signal: abortSignal,
+        params: {
+          query: {
+            limit: 100,
+          },
+        },
       });
       let cursor = getCursor(response);
       if (!cursor || !data || abortSignal.aborted) {
@@ -61,6 +66,7 @@ export class OrganizationsService {
           params: {
             query: {
               cursor,
+              limit: 100,
             },
           },
         }));

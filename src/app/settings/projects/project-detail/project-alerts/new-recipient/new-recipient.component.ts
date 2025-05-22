@@ -42,7 +42,7 @@ export class NewRecipientComponent implements OnInit {
   dialogRef = inject<MatDialogRef<NewRecipientComponent>>(MatDialogRef);
 
   recipientDialogOpen = input.required<boolean>();
-  emailSelected = input.required();
+  emailSelected = input.required<any>();
   recipientError = input.required();
 
   recipientOptions = [
@@ -101,7 +101,7 @@ export class NewRecipientComponent implements OnInit {
 
   onSubmit() {
     if (this.recipientForm.valid) {
-      this.alertsService.addAlertRecipient(this.recipientForm.value as any);
+      // this.alertsService.addAlertRecipient(this.recipientForm.value as any);
     }
   }
 }
