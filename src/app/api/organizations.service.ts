@@ -11,6 +11,10 @@ import { toObservable } from "@angular/core/rxjs-interop";
 import { interval, takeUntil, takeWhile } from "rxjs";
 import { AuthService } from "../auth.service";
 import { refreshInterval } from "../shared/shared.utils";
+import { getCursor, updateArrayById } from "../shared/pagination.utils";
+import { components } from "./api-schema";
+
+type Organization = components["schemas"]["OrganizationSchema"];
 
 @Injectable({
   providedIn: "root",
@@ -25,17 +29,64 @@ export class OrganizationsService {
   );
   organizationsResource = resource({
     request: () => ({ isAuthenticated: this.authService.isAuthenticated() }),
-    loader: async ({ request }) => {
+    loader: async ({ request, abortSignal }) => {
       if (!request.isAuthenticated) {
         return undefined;
       }
-      const { data } = await client.GET("/api/0/organizations/");
-      return data;
+      let { data, response } = await client.GET("/api/0/organizations/", {
+        signal: abortSignal,
+      });
+      let cursor = getCursor(response);
+      if (!cursor || !data || abortSignal.aborted) {
+        return data; // If one page, return early
+      }
+
+      // Get existing organizations to persist during reload
+      let allAccumulatedOrgs: Organization[] = [
+        ...(this.organizationsResource.value() || []),
+      ];
+      // Update existing organizations and add new ones
+      updateArrayById(allAccumulatedOrgs, data);
+      // Track all organization IDs from API to identify removed orgs later
+      const loadedOrgIds = new Set<string>();
+      // Add first page organization IDs
+      data?.forEach((org) => loadedOrgIds.add(org.id));
+
+      // Set causes abortSignal.aborted to be true, don't rely on it going forward
+      this.organizationsResource.set(allAccumulatedOrgs);
+      let i = 0;
+      while (cursor && i < 10) {
+        i++;
+        ({ data, response } = await client.GET("/api/0/organizations/", {
+          params: {
+            query: {
+              cursor,
+            },
+          },
+        }));
+        cursor = getCursor(response);
+        if (data) {
+          // Track organization IDs and update orgs from this page
+          data.forEach((org) => loadedOrgIds.add(org.id));
+          updateArrayById(allAccumulatedOrgs, data);
+          if (cursor) {
+            this.organizationsResource.set(allAccumulatedOrgs);
+          }
+        }
+      }
+
+      // Remove organizations that weren't found in any of the API responses
+      allAccumulatedOrgs = allAccumulatedOrgs.filter((org) =>
+        loadedOrgIds.has(org.id),
+      );
+      // Final update with removing orgs no longer present
+      this.organizationsResource.set(allAccumulatedOrgs);
+      return allAccumulatedOrgs;
     },
   });
   activeOrganizationResource = resource({
     request: () => ({ organization_slug: this.activeOrganizationSlug() }),
-    loader: async ({ request }) => {
+    loader: async ({ request, abortSignal }) => {
       if (!request.organization_slug) {
         return undefined;
       }
@@ -45,6 +96,7 @@ export class OrganizationsService {
           params: {
             path: { organization_slug: request.organization_slug },
           },
+          signal: abortSignal,
         },
       );
       if (error) {
