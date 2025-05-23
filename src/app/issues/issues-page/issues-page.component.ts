@@ -348,7 +348,7 @@ export class IssuesPageComponent implements OnDestroy {
 
   filterByEnvironment(event: MatSelectChange) {
     this.router.navigate([], {
-      queryParams: { environment: event.value },
+      queryParams: { cursor: null, environment: event.value },
       queryParamsHandling: "merge",
     });
   }
