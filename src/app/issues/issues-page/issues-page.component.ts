@@ -72,12 +72,12 @@ export class IssuesPageComponent implements OnDestroy {
 
   orgSlug = input.required<string>({ alias: "org-slug" });
   cursor = input(undefined, { transform: stringAttribute });
-  query = input<string | undefined>();
-  start = input<string | undefined>();
-  end = input<string | undefined>();
-  sort = input<string | undefined>();
+  query = input(undefined, { transform: stringAttribute });
+  start = input(undefined, { transform: stringAttribute });
+  end = input(undefined, { transform: stringAttribute });
+  sort = input(undefined, { transform: stringAttribute });
   projects = input([], { alias: "project", transform: stringArrAttribute });
-  environment = input<string | undefined>();
+  environment = input(undefined, { transform: stringAttribute });
 
   displayedColumns: string[] = ["select", "title", "events"];
   paginator = this.service.paginator;
