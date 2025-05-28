@@ -95,7 +95,7 @@ export class NewProjectComponent implements OnInit {
     this.dialog.open(NewTeamComponent, {
       maxWidth: "500px",
       data: {
-        orgSlug: this.orgSlug,
+        orgSlug: this.orgSlug(),
       },
     });
   }

@@ -1,6 +1,7 @@
 import { inject, Injectable, resource, signal } from "@angular/core";
 import { OrganizationsService } from "./organizations.service";
 import { client } from "./api";
+import { getCursor } from "../shared/pagination.utils";
 
 @Injectable({
   providedIn: "root",
@@ -17,18 +18,35 @@ export class OrganizationEnvironmentsService {
       if (!request.orgSlug || !request.load) {
         return undefined;
       }
-      let { data } = await client.GET(
+      let { data, response } = await client.GET(
         "/api/0/organizations/{organization_slug}/environments/",
         {
           signal: abortSignal,
           params: {
             path: { organization_slug: request.orgSlug },
-            query: { limit: 100 },
+            query: { limit: 200 },
           },
         },
       );
-      // Add loading >100
-      return data;
+      let cursor = getCursor(response);
+      const page1 = data;
+      if (cursor && page1 && !abortSignal.aborted) {
+        // Support up to 400 environments
+        ({ data, response } = await client.GET(
+          "/api/0/organizations/{organization_slug}/environments/",
+          {
+            signal: abortSignal,
+            params: {
+              path: { organization_slug: request.orgSlug },
+              query: { limit: 200, cursor },
+            },
+          },
+        ));
+        if (data) {
+          return page1.concat(data);
+        }
+      }
+      return page1;
     },
   });
 
