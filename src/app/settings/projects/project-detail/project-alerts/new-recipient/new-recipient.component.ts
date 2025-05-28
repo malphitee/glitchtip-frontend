@@ -3,10 +3,13 @@ import {
   OnInit,
   ChangeDetectionStrategy,
   inject,
-  effect,
-  input,
+  // effect,
 } from "@angular/core";
-import { MatDialogRef, MatDialogModule } from "@angular/material/dialog";
+import {
+  MatDialogRef,
+  MatDialogModule,
+  MAT_DIALOG_DATA,
+} from "@angular/material/dialog";
 import {
   FormGroup,
   FormControl,
@@ -23,7 +26,6 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatFormFieldModule } from "@angular/material/form-field";
 
 @Component({
-  selector: "gt-new-recipient",
   templateUrl: "./new-recipient.component.html",
   styleUrls: ["./new-recipient.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -40,10 +42,11 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 })
 export class NewRecipientComponent implements OnInit {
   dialogRef = inject<MatDialogRef<NewRecipientComponent>>(MatDialogRef);
+  data = inject(MAT_DIALOG_DATA);
 
-  recipientDialogOpen = input.required<boolean>();
-  emailSelected = input.required<any>();
-  recipientError = input.required();
+  // recipientDialogOpen = input.required<boolean>();
+  // emailSelected = input.required<any>();
+  // recipientError = input.required();
 
   recipientOptions = [
     { viewValue: "Email", value: "email" },
@@ -59,10 +62,6 @@ export class NewRecipientComponent implements OnInit {
 
   recipientType = this.recipientForm.get("recipientType") as FormControl;
   url = this.recipientForm.get("url") as FormControl;
-
-  constructor() {
-    effect(() => !this.recipientDialogOpen() && this.dialogRef.close());
-  }
 
   ngOnInit(): void {
     // Dynamically set "url" validators

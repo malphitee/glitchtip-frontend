@@ -1,11 +1,4 @@
-import {
-  Component,
-  OnInit,
-  ViewChild,
-  effect,
-  inject,
-  input,
-} from "@angular/core";
+import { Component, OnInit, ViewChild, inject, input } from "@angular/core";
 import { ProjectAlertsService } from "./project-alerts.service";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
 import { AlertFormComponent } from "./alert-form/alert-form.component";
@@ -61,13 +54,6 @@ export class ProjectAlertsComponent implements OnInit {
   newAlertLoading = this.#service.newAlertLoading;
   newAlertError = this.#service.newAlertError;
 
-  constructor() {
-    effect(
-      () =>
-        this.recipientDialogOpen() && this.dialog.open(NewRecipientComponent),
-    );
-  }
-
   ngOnInit(): void {
     this.#service.setParams(this.orgSlug(), this.projectSlug());
   }
@@ -82,10 +68,16 @@ export class ProjectAlertsComponent implements OnInit {
 
   openUpdateRecipientDialog(alert: ProjectAlert) {
     this.#service.openUpdateRecipientDialog(alert);
+    this.dialog.open(NewRecipientComponent, {
+      data: { emailSelected: this.#service.emailSelected() },
+    });
   }
 
   openCreateRecipientDialog() {
     this.#service.openCreateRecipientDialog();
+    this.dialog.open(NewRecipientComponent, {
+      data: { emailSelected: this.#service.emailSelected() },
+    });
   }
 
   closeNewAlert() {

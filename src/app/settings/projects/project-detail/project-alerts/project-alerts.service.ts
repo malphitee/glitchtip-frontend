@@ -352,13 +352,17 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
   }
 
   deleteAlertRecipient(recipientToRemove: AlertRecipient, alert: ProjectAlert) {
-    // this.setDeleteRecipientLoading(recipientToRemove.id);
-    // const data = {
-    //   ...alert,
-    //   alertRecipients: alert.alertRecipients.filter(
-    //     (currentRecipient) => currentRecipient.id !== recipientToRemove.id,
-    //   ),
-    // };
+    if (!recipientToRemove.id) {
+      return;
+    }
+    this.setDeleteRecipientLoading(recipientToRemove.id);
+    const data = {
+      ...alert,
+      alertRecipients: alert.alertRecipients.filter(
+        (currentRecipient) => currentRecipient.id !== recipientToRemove.id,
+      ),
+    };
+    console.log("delete", data);
     // combineLatest([
     //   this.organizationsService.activeOrganizationSlug$,
     //   this.activeProjectSlug$,
@@ -629,18 +633,17 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
   //   this.setState({});
   // }
 
-  // private setDeleteRecipientLoading(id: number) {
-  //   const recipientDialogState = this.state().recipientDialogState;
-  //   this.setState({
-  //     recipientDialogState: {
-  //       ...recipientDialogState,
-  //       recipientError: null,
-  //     },
-  //     deleteRecipientLoading: id,
-  //   });
-
-  //   this.setState({});
-  // }
+  private setDeleteRecipientLoading(id: number) {
+    const recipientDialogState = this.state().recipientDialogState;
+    this.setState({
+      recipientDialogState: {
+        ...recipientDialogState,
+        recipientError: null,
+      },
+      deleteRecipientLoading: id,
+    });
+    this.setState({});
+  }
 
   // private setDeleteRecipientError(err: any) {
   //   this.setState({

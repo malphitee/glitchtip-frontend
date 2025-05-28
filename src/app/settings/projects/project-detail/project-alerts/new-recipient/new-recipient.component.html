@@ -13,7 +13,10 @@
       >
         <mat-label>Recipient Type</mat-label>
         <mat-select id="recipient-type" [formControl]="recipientType">
-          @for (recipient of selectOptions(recipientOptions, emailSelected()); track recipient.value) {
+          @for (
+            recipient of selectOptions(recipientOptions, data.emailSelected);
+            track recipient.value
+          ) {
             <mat-option [value]="recipient.value">
               {{ recipient.viewValue }}
             </mat-option>
@@ -22,58 +25,82 @@
       </mat-form-field>
 
       @switch (recipientType.value) {
-        @case ('discord') {
+        @case ("discord") {
           <mat-form-field class="webhook" appearance="outline">
             <mat-label>Webhook URL</mat-label>
             <svg matPrefix class="slack">
               <use xlink:href="#discord"></use>
             </svg>
-            <input matInput type="url" formControlName="url" placeholder="URL" />
+            <input
+              matInput
+              type="url"
+              formControlName="url"
+              placeholder="URL"
+            />
             @if (url?.errors) {
               <mat-error>
                 @if (url?.errors?.required || url?.errors?.pattern) {
-                  <span>Enter a valid URL with protocol (ex. https://example.com)</span>
+                  <span
+                    >Enter a valid URL with protocol (ex.
+                    https://example.com)</span
+                  >
                 }
               </mat-error>
             }
           </mat-form-field>
         }
-        @case ('googlechat') {
+        @case ("googlechat") {
           <mat-form-field class="webhook" appearance="outline">
             <mat-label>Webhook URL</mat-label>
             <svg matPrefix class="slack">
               <use xlink:href="#googlechat"></use>
             </svg>
-            <input matInput type="url" formControlName="url" placeholder="URL" />
+            <input
+              matInput
+              type="url"
+              formControlName="url"
+              placeholder="URL"
+            />
             @if (url?.errors) {
               <mat-error>
                 @if (url?.errors?.required || url?.errors?.pattern) {
-                  <span>Enter a valid URL with protocol (ex. https://example.com)</span>
+                  <span
+                    >Enter a valid URL with protocol (ex.
+                    https://example.com)</span
+                  >
                 }
               </mat-error>
             }
           </mat-form-field>
         }
-        @case ('webhook') {
+        @case ("webhook") {
           <mat-form-field class="webhook" appearance="outline">
             <mat-label>Webhook URL</mat-label>
             <svg matPrefix class="slack">
               <use xlink:href="#webhook"></use>
             </svg>
-            <input matInput type="url" formControlName="url" placeholder="URL" />
+            <input
+              matInput
+              type="url"
+              formControlName="url"
+              placeholder="URL"
+            />
             <mat-hint i18n
               >Supports Slack, Microsoft Teams, Rocket.Chat, and more</mat-hint
             >
             @if (url?.errors) {
               <mat-error>
                 @if (url?.errors?.required || url?.errors?.pattern) {
-                  <span>Enter a valid URL with protocol (ex. https://example.com)</span>
+                  <span
+                    >Enter a valid URL with protocol (ex.
+                    https://example.com)</span
+                  >
                 }
               </mat-error>
             }
           </mat-form-field>
         }
-        @case ('email') {
+        @case ("email") {
           <p class="email">
             An email will be sent to the members of this project.<br />
             Select "Add Recipient" to continue.
@@ -84,18 +111,16 @@
         }
       }
 
-      @if (recipientError(); as error) {
+      <!-- @if (recipientError(); as error) {
         <p class="error recipients-error">
           {{ error }}
         </p>
-      }
+      } -->
     </mat-dialog-content>
     <mat-dialog-actions>
       <gt-loading-button type="submit" buttonText="Add Recipient">
       </gt-loading-button>
-      <button type="button" mat-flat-button (click)="closeDialog()">
-        Cancel
-      </button>
+      <button type="button" mat-flat-button mat-dialog-close> Cancel </button>
     </mat-dialog-actions>
   </form>
 </div>
