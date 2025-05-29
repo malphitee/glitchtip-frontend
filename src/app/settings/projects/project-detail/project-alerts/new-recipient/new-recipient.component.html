@@ -37,9 +37,9 @@
               formControlName="url"
               placeholder="URL"
             />
-            @if (url?.errors) {
+            @if (url.errors) {
               <mat-error>
-                @if (url?.errors?.required || url?.errors?.pattern) {
+                @if (url.errors.required || url.errors.pattern) {
                   <span
                     >Enter a valid URL with protocol (ex.
                     https://example.com)</span
@@ -61,9 +61,9 @@
               formControlName="url"
               placeholder="URL"
             />
-            @if (url?.errors) {
+            @if (url.errors) {
               <mat-error>
-                @if (url?.errors?.required || url?.errors?.pattern) {
+                @if (url.errors.required || url.errors.pattern) {
                   <span
                     >Enter a valid URL with protocol (ex.
                     https://example.com)</span
@@ -88,9 +88,9 @@
             <mat-hint i18n
               >Supports Slack, Microsoft Teams, Rocket.Chat, and more</mat-hint
             >
-            @if (url?.errors) {
+            @if (url.errors) {
               <mat-error>
-                @if (url?.errors?.required || url?.errors?.pattern) {
+                @if (url.errors.required || url.errors.pattern) {
                   <span
                     >Enter a valid URL with protocol (ex.
                     https://example.com)</span

@@ -68,16 +68,22 @@ export class ProjectAlertsComponent implements OnInit {
 
   openUpdateRecipientDialog(alert: ProjectAlert) {
     this.#service.openUpdateRecipientDialog(alert);
-    this.dialog.open(NewRecipientComponent, {
+    const dialogRef = this.dialog.open(NewRecipientComponent, {
       data: { emailSelected: this.#service.emailSelected() },
     });
+    dialogRef
+      .afterClosed()
+      .subscribe((result) => this.#service.addAlertRecipient(result));
   }
 
   openCreateRecipientDialog() {
     this.#service.openCreateRecipientDialog();
-    this.dialog.open(NewRecipientComponent, {
+    const dialogRef = this.dialog.open(NewRecipientComponent, {
       data: { emailSelected: this.#service.emailSelected() },
     });
+    dialogRef
+      .afterClosed()
+      .subscribe((result) => this.#service.addAlertRecipient(result));
   }
 
   closeNewAlert() {

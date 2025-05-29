@@ -3,7 +3,6 @@ import {
   OnInit,
   ChangeDetectionStrategy,
   inject,
-  // effect,
 } from "@angular/core";
 import {
   MatDialogRef,
@@ -44,10 +43,6 @@ export class NewRecipientComponent implements OnInit {
   dialogRef = inject<MatDialogRef<NewRecipientComponent>>(MatDialogRef);
   data = inject(MAT_DIALOG_DATA);
 
-  // recipientDialogOpen = input.required<boolean>();
-  // emailSelected = input.required<any>();
-  // recipientError = input.required();
-
   recipientOptions = [
     { viewValue: "Email", value: "email" },
     { viewValue: "General (slack-compatible) Webhook", value: "webhook" },
@@ -85,10 +80,6 @@ export class NewRecipientComponent implements OnInit {
     });
   }
 
-  closeDialog() {
-    // this.alertsService.closeRecipientDialog();
-  }
-
   selectOptions(
     recipientOptions: { viewValue: string; value: string }[],
     hideEmailOption?: boolean | null,
@@ -100,7 +91,7 @@ export class NewRecipientComponent implements OnInit {
 
   onSubmit() {
     if (this.recipientForm.valid) {
-      // this.alertsService.addAlertRecipient(this.recipientForm.value as any);
+      this.dialogRef.close(this.recipientForm.value);
     }
   }
 }

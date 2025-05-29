@@ -188,19 +188,13 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
     if (event.url && !event.url.startsWith("http")) {
       event.url = "https://" + event.url;
     }
-    // combineLatest([this.newProjectAlertRecipients$, this.activeAlert$])
-    //   .pipe(
-    //     take(1),
-    //     exhaustMap(([newRecipients, activeAlert]) => {
-    //       if (newRecipients !== null) {
-    //         this.setAddNewAlertRecipient(event);
-    //       } else if (activeAlert?.alertRecipients !== null) {
-    //         this.updateAlertRecipient(event);
-    //       }
-    //       return EMPTY;
-    //     }),
-    //   )
-    //   .subscribe();
+    const newRecipients = this.newProjectAlertRecipients();
+    const activeAlert = this.activeAlert();
+    if (newRecipients !== null) {
+      this.setAddNewAlertRecipient(event);
+    } else if (activeAlert?.alertRecipients !== null) {
+      this.updateAlertRecipient(event);
+    }
   }
 
   removeNewAlertRecipient(url: string) {
@@ -305,91 +299,90 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
     }
   }
 
-  updateAlertRecipient(newRecipient: NewAlertRecipient) {
-    // let activeErrorId = 0;
-    // combineLatest([
-    //   this.activeAlert$,
-    //   this.organizationsService.activeOrganizationSlug$,
-    //   this.activeProjectSlug$,
-    // ])
-    //   .pipe(
-    //     take(1),
-    //     exhaustMap(([activeAlert, orgSlug, projectSlug]) => {
-    //       if (activeAlert && orgSlug && projectSlug) {
-    //         activeErrorId = activeAlert.id;
-    //         const recipientsWithoutId: NewAlertRecipient[] =
-    //           activeAlert.alertRecipients
-    //             .map((recipient) => {
-    //               return {
-    //                 recipientType: recipient.recipientType,
-    //                 url: recipient.url,
-    //               };
-    //             })
-    //             .concat([newRecipient]);
-    //         const data = {
-    //           timespanMinutes: activeAlert.timespanMinutes,
-    //           quantity: activeAlert.quantity,
-    //           uptime: activeAlert.uptime,
-    //           alertRecipients: recipientsWithoutId,
-    //         };
-    //         return this.projectAlertsAPIService
-    //           .update(activeAlert.id.toString(), data, orgSlug, projectSlug)
-    //           .pipe(
-    //             tap((resp) => {
-    //               this.setUpdateAlertRecipients(resp.alertRecipients, resp.id);
-    //               this.snackBar.open(`Success: Your alert has been updated`);
-    //             }),
-    //           );
-    //       }
-    //       return EMPTY;
-    //     }),
-    //     catchError((err: HttpErrorResponse) => {
-    //       this.setUpdateAlertRecipientsError(err, activeErrorId);
-    //       return EMPTY;
-    //     }),
-    //   )
-    //   .subscribe();
+  async updateAlertRecipient(newRecipient: NewAlertRecipient) {
+    let activeErrorId: number = 0;
+    const activeAlert = this.activeAlert();
+    const orgSlug = this.#params().orgSlug;
+    const projectSlug = this.#params().projectSlug;
+    if (activeAlert && orgSlug && projectSlug && activeAlert.id) {
+      activeErrorId = activeAlert.id;
+      const recipientsWithoutId: NewAlertRecipient[] =
+        activeAlert.alertRecipients
+          .map((recipient) => {
+            return {
+              recipientType: recipient.recipientType,
+              url: recipient.url,
+            };
+          })
+          .concat([newRecipient]);
+      const body = {
+        timespanMinutes: activeAlert.timespanMinutes,
+        quantity: activeAlert.quantity,
+        uptime: activeAlert.uptime,
+        alertRecipients: recipientsWithoutId,
+      };
+      const { data, error } = await client.PUT(
+        "/api/0/projects/{organization_slug}/{project_slug}/alerts/{alert_id}/",
+        {
+          params: {
+            path: {
+              organization_slug: orgSlug,
+              project_slug: projectSlug,
+              alert_id: activeAlert.id,
+            },
+          },
+          body,
+        },
+      );
+      if (data?.id) {
+        this.setUpdateAlertRecipients(data.alertRecipients, data.id);
+        this.snackBar.open(`Success: Your alert has been updated`);
+        // Reload wipes unrelated edits, could improve this
+        this.#projectAlertsResource.reload();
+      }
+      if (error) {
+        this.setUpdateAlertRecipientsError(error, activeErrorId);
+      }
+    }
   }
 
-  deleteAlertRecipient(recipientToRemove: AlertRecipient, alert: ProjectAlert) {
+  async deleteAlertRecipient(
+    recipientToRemove: AlertRecipient,
+    alert: ProjectAlert,
+  ) {
     if (!recipientToRemove.id) {
       return;
     }
     this.setDeleteRecipientLoading(recipientToRemove.id);
-    const data = {
+    const body: any = {
       ...alert,
       alertRecipients: alert.alertRecipients.filter(
         (currentRecipient) => currentRecipient.id !== recipientToRemove.id,
       ),
     };
-    console.log("delete", data);
-    // combineLatest([
-    //   this.organizationsService.activeOrganizationSlug$,
-    //   this.activeProjectSlug$,
-    // ])
-    //   .pipe(
-    //     take(1),
-    //     mergeMap(([orgSlug, projectSlug]) => {
-    //       if (orgSlug && projectSlug) {
-    //         return this.projectAlertsAPIService
-    //           .update(alert.id.toString(), data, orgSlug, projectSlug)
-    //           .pipe(
-    //             tap((resp) => {
-    //               this.setUpdateAlertRecipients(resp.alertRecipients, resp.id);
-    //               this.snackBar.open(
-    //                 `Success: Your recipient has been deleted`,
-    //               );
-    //             }),
-    //           );
-    //       }
-    //       return EMPTY;
-    //     }),
-    //     catchError((err: HttpErrorResponse) => {
-    //       this.setDeleteRecipientError(err);
-    //       return EMPTY;
-    //     }),
-    //   )
-    //   .subscribe();
+    const params = this.#params();
+    if (!alert.id) {
+      return;
+    }
+    const { data, error } = await client.PUT(
+      "/api/0/projects/{organization_slug}/{project_slug}/alerts/{alert_id}/",
+      {
+        params: {
+          path: {
+            organization_slug: params.orgSlug,
+            project_slug: params.projectSlug,
+            alert_id: alert.id,
+          },
+        },
+        body,
+      },
+    );
+    if (data?.id) {
+      this.setUpdateAlertRecipients(data.alertRecipients, data.id);
+      this.snackBar.open($localize`Success: Your recipient has been deleted`);
+    } else if (error) {
+      this.setDeleteRecipientError(error);
+    }
   }
 
   openUpdateRecipientDialog(alert: ProjectAlert) {
@@ -446,21 +439,21 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
     });
   }
 
-  // private setAddNewAlertRecipient(recipient: NewAlertRecipient) {
-  //   const newAlertState = this.state().newAlertState;
-  //   const recipientDialogState = this.state().recipientDialogState;
-  //   this.setState({
-  //     newAlertState: {
-  //       ...newAlertState,
-  //       newProjectAlertRecipients:
-  //         newAlertState.newProjectAlertRecipients?.concat([recipient]) ?? null,
-  //     },
-  //     recipientDialogState: {
-  //       ...recipientDialogState,
-  //       recipientDialogOpen: false,
-  //     },
-  //   });
-  // }
+  private setAddNewAlertRecipient(recipient: NewAlertRecipient) {
+    const newAlertState = this.state().newAlertState;
+    const recipientDialogState = this.state().recipientDialogState;
+    this.setState({
+      newAlertState: {
+        ...newAlertState,
+        newProjectAlertRecipients:
+          newAlertState.newProjectAlertRecipients?.concat([recipient]) ?? null,
+      },
+      recipientDialogState: {
+        ...recipientDialogState,
+        recipientDialogOpen: false,
+      },
+    });
+  }
 
   private setRemoveNewAlertRecipient(url: string) {
     const newAlertState = this.state().newAlertState;
@@ -603,35 +596,35 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
     });
   }
 
-  // private setUpdateAlertRecipientsError(err: any, id: number) {
-  //   const recipientDialogState = this.state().recipientDialogState;
-  //   this.setState({
-  //     recipientDialogState: {
-  //       ...recipientDialogState,
-  //       recipientError: `${err.statusText} : ${err.status}`,
-  //     },
-  //   });
-  // }
+  private setUpdateAlertRecipientsError(err: any, id: number) {
+    const recipientDialogState = this.state().recipientDialogState;
+    this.setState({
+      recipientDialogState: {
+        ...recipientDialogState,
+        recipientError: `${err.statusText} : ${err.status}`,
+      },
+    });
+  }
 
-  // private setUpdateAlertRecipients(recipients: AlertRecipient[], id: number) {
-  //   const state = this.state();
-  //   const recipientDialogState = this.state().recipientDialogState;
-  //   this.setState({
-  //     projectAlerts: state.projectAlerts?.map((alert) =>
-  //       alert.id === id ? { ...alert, alertRecipients: recipients } : alert,
-  //     ),
-  //     recipientDialogState: {
-  //       ...recipientDialogState,
-  //       recipientError: null,
-  //       recipientDialogOpen: false,
-  //       activeAlert: null,
-  //     },
-  //     deleteRecipientLoading: null,
-  //     deleteRecipientError: null,
-  //   });
+  private setUpdateAlertRecipients(recipients: AlertRecipient[], id: number) {
+    const state = this.state();
+    const recipientDialogState = this.state().recipientDialogState;
+    this.setState({
+      projectAlerts: state.projectAlerts?.map((alert) =>
+        alert.id === id ? { ...alert, alertRecipients: recipients } : alert,
+      ),
+      recipientDialogState: {
+        ...recipientDialogState,
+        recipientError: null,
+        recipientDialogOpen: false,
+        activeAlert: null,
+      },
+      deleteRecipientLoading: null,
+      deleteRecipientError: null,
+    });
 
-  //   this.setState({});
-  // }
+    this.setState({});
+  }
 
   private setDeleteRecipientLoading(id: number) {
     const recipientDialogState = this.state().recipientDialogState;
@@ -645,12 +638,12 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
     this.setState({});
   }
 
-  // private setDeleteRecipientError(err: any) {
-  //   this.setState({
-  //     deleteRecipientError: `${err.statusText} : ${err.status}`,
-  //     deleteRecipientLoading: null,
-  //   });
-  // }
+  private setDeleteRecipientError(err: any) {
+    this.setState({
+      deleteRecipientError: `${err.statusText} : ${err.status}`,
+      deleteRecipientLoading: null,
+    });
+  }
 
   /** Utility Functions */
 
