@@ -75,7 +75,7 @@ export class ProjectDetailComponent implements OnInit {
   updatePlatformError = this.#service.updatePlatformError;
 
   nameForm = new FormGroup({
-    name: new FormControl("", [Validators.required, Validators.maxLength(640)]),
+    name: new FormControl("", [Validators.required, Validators.maxLength(64)]),
   });
 
   platformForm = new FormGroup({
