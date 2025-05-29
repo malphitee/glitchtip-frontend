@@ -214,7 +214,7 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
       alertRecipients: this.newProjectAlertRecipients(),
     };
     const params = this.#params();
-    const { data } = await client.POST(
+    const { data, error } = await client.POST(
       "/api/0/projects/{organization_slug}/{project_slug}/alerts/",
       {
         params: {
@@ -232,8 +232,9 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
       this.#projectAlertsResource.update((alerts) =>
         alerts ? [...alerts, data] : [data],
       );
+    } else if (error) {
+      this.setCreateAlertError(error);
     }
-    //       this.setCreateAlertError(err);
   }
 
   /** Update Actions */
@@ -397,23 +398,6 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
     this.setCloseRecipientDialog();
   }
 
-  /** Set state */
-
-  // private setProjectAlertsList(alerts: ProjectAlert[]) {
-  //   this.setState({
-  //     projectAlerts: alerts,
-  //     initialLoad: true,
-  //     initialLoadError: null,
-  //   });
-  // }
-
-  // private setProjectAlertsListError(err: any) {
-  //   this.setState({
-  //     initialLoad: true,
-  //     initialLoadError: `There was an error loading your alerts. Try refreshing the page.`,
-  //   });
-  // }
-
   /** New Alert */
 
   private setOpenNewAlert() {
@@ -486,16 +470,16 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
     });
   }
 
-  // private setCreateAlertError(error: any) {
-  //   const newAlertState = this.state().newAlertState;
-  //   this.setState({
-  //     newAlertState: {
-  //       ...newAlertState,
-  //       newAlertError: `${error.statusText} : ${error.status}`,
-  //       newAlertLoading: false,
-  //     },
-  //   });
-  // }
+  private setCreateAlertError(error: any) {
+    const newAlertState = this.state().newAlertState;
+    this.setState({
+      newAlertState: {
+        ...newAlertState,
+        newAlertError: `${error.statusText} : ${error.status}`,
+        newAlertLoading: false,
+      },
+    });
+  }
 
   private setOpenCreateRecipientDialog() {
     const recipientDialogState = this.state().recipientDialogState;
