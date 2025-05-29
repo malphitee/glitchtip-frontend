@@ -10,12 +10,12 @@ export class OrganizationEnvironmentsService {
   #orgService = inject(OrganizationsService);
   load = signal(false);
   #environmentsResource = resource({
-    request: () => ({
+    params: () => ({
       orgSlug: this.#orgService.activeOrganizationSlug(),
       load: this.load(),
     }),
-    loader: async ({ request, abortSignal }) => {
-      if (!request.orgSlug || !request.load) {
+    loader: async ({ params, abortSignal }) => {
+      if (!params.orgSlug || !params.load) {
         return undefined;
       }
       let { data, response } = await client.GET(

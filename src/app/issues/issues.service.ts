@@ -1,11 +1,4 @@
-import {
-  Injectable,
-  ResourceStatus,
-  computed,
-  inject,
-  resource,
-  signal,
-} from "@angular/core";
+import { Injectable, computed, inject, resource, signal } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { ActivatedRoute, Router } from "@angular/router";
 import { client } from "../api/api";
@@ -63,31 +56,31 @@ export class IssuesService extends StatefulService<IssuesState> {
   private params = signal<DataParams | undefined>(undefined);
 
   private issuesResource = resource({
-    request: () => ({
+    params: () => ({
       params: this.params(),
     }),
-    loader: async ({ request }) => {
-      if (!request.params) {
+    loader: async ({ params }) => {
+      if (!params.params) {
         return undefined;
       }
       const sort: AllowedSortKey | undefined =
-        request.params.sort && isAllowedSortKey(request.params.sort)
-          ? request.params.sort
+        params.params?.sort && isAllowedSortKey(params.params.sort)
+          ? params.params.sort
           : undefined;
       const { error, data, response } = await client.GET(
         "/api/0/organizations/{organization_slug}/issues/",
         {
           params: {
-            path: { organization_slug: request.params.orgSlug },
+            path: { organization_slug: params.params.orgSlug },
             query: {
-              cursor: request.params.cursor,
-              query: request.params.query,
-              start: request.params.start,
-              end: request.params.end,
+              cursor: params.params.cursor,
+              query: params.params.query,
+              start: params.params.start,
+              end: params.params.end,
               sort,
-              project: request.params.project,
-              environment: request.params.environment
-                ? [request.params.environment]
+              project: params.params.project,
+              environment: params.params.environment
+                ? [params.params.environment]
                 : undefined,
             },
           },
@@ -124,7 +117,7 @@ export class IssuesService extends StatefulService<IssuesState> {
   pagination = computed(() => this.issuesResource.value()?.pagination);
   paginator = computed(() => getPaginator(this.pagination()));
   initialLoad = computed(
-    () => this.issuesResource.status() > ResourceStatus.Loading,
+    () => !this.issuesResource.isLoading() && this.issuesResource.hasValue(),
   );
 
   selectedIssues = computed(() => this.state().selectedIssues);

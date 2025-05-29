@@ -24,18 +24,18 @@ const initialState: State = {
 export class ProjectDetailService extends StatefulService<State> {
   #params = signal({ orgSlug: "", projectSlug: "" });
   #projectKeysResource = resource({
-    request: () => ({
+    params: () => ({
       params: this.#params(),
     }),
-    loader: async ({ request }) => {
-      if (request.params.orgSlug) {
+    loader: async ({ params }) => {
+      if (params.params.orgSlug) {
         const { data } = await client.GET(
           "/api/0/projects/{organization_slug}/{project_slug}/keys/",
           {
             params: {
               path: {
-                organization_slug: request.params.orgSlug,
-                project_slug: request.params.projectSlug,
+                organization_slug: params.params.orgSlug,
+                project_slug: params.params.projectSlug,
               },
             },
           },
@@ -46,11 +46,11 @@ export class ProjectDetailService extends StatefulService<State> {
     },
   });
   #projectResource = resource({
-    request: () => ({
+    params: () => ({
       params: this.#params(),
     }),
-    loader: async ({ request }) => {
-      if (!request.params.orgSlug) {
+    loader: async ({ params }) => {
+      if (!params.params.orgSlug) {
         return undefined;
       }
       const { data } = await client.GET(
@@ -58,8 +58,8 @@ export class ProjectDetailService extends StatefulService<State> {
         {
           params: {
             path: {
-              organization_slug: request.params.orgSlug,
-              project_slug: request.params.projectSlug,
+              organization_slug: params.params.orgSlug,
+              project_slug: params.params.projectSlug,
             },
           },
         },

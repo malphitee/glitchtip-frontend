@@ -1,11 +1,4 @@
-import {
-  Injectable,
-  ResourceStatus,
-  computed,
-  inject,
-  resource,
-  signal,
-} from "@angular/core";
+import { Injectable, computed, inject, resource, signal } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
 import { components } from "src/app/api/api-schema";
@@ -73,9 +66,9 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
 
   #params = signal({ orgSlug: "", projectSlug: "" });
   #projectAlertsResource = resource({
-    request: () => ({ params: this.#params() }),
-    loader: async ({ request }) => {
-      if (!request.params.orgSlug) {
+    params: () => ({ params: this.#params() }),
+    loader: async ({ params }) => {
+      if (!params.params.orgSlug) {
         return undefined;
       }
       const { data, error } = await client.GET(
@@ -83,8 +76,8 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
         {
           params: {
             path: {
-              organization_slug: request.params.orgSlug,
-              project_slug: request.params.projectSlug,
+              organization_slug: params.params.orgSlug,
+              project_slug: params.params.projectSlug,
             },
           },
         },
@@ -97,8 +90,8 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
   });
   readonly initialLoad = computed(
     () =>
-      this.#projectAlertsResource.status() > ResourceStatus.Loading ||
-      this.#projectAlertsResource.error(),
+      this.#projectAlertsResource.status() !== "loading" ||
+      !!this.#projectAlertsResource.error(),
   );
   readonly initialLoadError = computed(() =>
     this.#projectAlertsResource.error(),

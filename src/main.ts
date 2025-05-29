@@ -3,7 +3,7 @@ import {
   ErrorHandler,
   importProvidersFrom,
   inject,
-  provideExperimentalZonelessChangeDetection,
+  provideZonelessChangeDetection,
   Provider,
 } from "@angular/core";
 import { loadTranslations } from "@angular/localize";
@@ -94,7 +94,7 @@ const bootstrap = () =>
   bootstrapApplication(AppComponent, {
     providers: [
       ...extraProviders,
-      provideExperimentalZonelessChangeDetection(),
+      provideZonelessChangeDetection(),
       provideRouter(
         routes,
         withComponentInputBinding(),

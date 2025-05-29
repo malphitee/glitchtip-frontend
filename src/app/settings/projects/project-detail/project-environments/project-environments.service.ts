@@ -55,12 +55,12 @@ export class ProjectEnvironmentsService extends StatefulService<ProjectsState> {
       .map((environment) => environment.name);
   });
   private environmentsResource = resource({
-    request: () => ({
+    params: () => ({
       orgSlug: this.#params().orgSlug,
       projectSlug: this.#params().projectSlug,
     }),
-    loader: async ({ request }) => {
-      if (!request.orgSlug || !request.projectSlug) {
+    loader: async ({ params }) => {
+      if (!params.orgSlug || !params.projectSlug) {
         return undefined;
       }
       const { data } = await client.GET(
@@ -68,8 +68,8 @@ export class ProjectEnvironmentsService extends StatefulService<ProjectsState> {
         {
           params: {
             path: {
-              organization_slug: request.orgSlug,
-              project_slug: request.projectSlug,
+              organization_slug: params.orgSlug,
+              project_slug: params.projectSlug,
             },
             query: {
               visibility: "all",

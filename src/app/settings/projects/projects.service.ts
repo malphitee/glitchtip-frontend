@@ -7,9 +7,9 @@ export class SettingsProjectsService {
   orgSlug = signal<string>("");
 
   private projectsResource = resource({
-    request: () => ({ orgSlug: this.orgSlug() }),
-    loader: async ({ request }) => {
-      if (!request.orgSlug) {
+    params: () => ({ orgSlug: this.orgSlug() }),
+    loader: async ({ params }) => {
+      if (!params.orgSlug) {
         return undefined;
       }
       const { data, response } = await client.GET(
@@ -17,7 +17,7 @@ export class SettingsProjectsService {
         {
           params: {
             path: {
-              organization_slug: request.orgSlug,
+              organization_slug: params.orgSlug,
             },
           },
         },

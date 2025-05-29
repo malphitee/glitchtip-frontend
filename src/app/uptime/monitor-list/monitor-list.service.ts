@@ -13,19 +13,19 @@ export class MonitorListService {
   private organizationsService = inject(OrganizationsService);
   cursor = signal<string | undefined>(undefined);
   private monitorsResource = resource({
-    request: () => ({
+    params: () => ({
       organizationSlug: this.activeOrganizationSlug(),
       cursor: this.cursor(),
     }),
     // Define an async loader that retrieves data.
     // The resource calls this function every time the `request` value changes.
-    loader: async ({ request }) => {
+    loader: async ({ params }) => {
       const { error, data, response } = await client.GET(
         "/api/0/organizations/{organization_slug}/monitors/",
         {
           params: {
-            path: { organization_slug: request.organizationSlug },
-            query: { cursor: request.cursor },
+            path: { organization_slug: params.organizationSlug },
+            query: { cursor: params.cursor },
           },
         },
       );

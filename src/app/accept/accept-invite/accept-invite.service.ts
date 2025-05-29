@@ -14,9 +14,9 @@ export class AcceptInviteService {
   #token = signal<string | undefined>(undefined);
 
   inviteAcceptDetail = resource({
-    request: () => ({ memberId: this.#memberId(), token: this.#token() }),
-    loader: async ({ request }) => {
-      if (!request.memberId || !request.token) {
+    params: () => ({ memberId: this.#memberId(), token: this.#token() }),
+    loader: async ({ params }) => {
+      if (!params.memberId || !params.token) {
         return undefined;
       }
       const { data, error } = await client.GET(
@@ -24,8 +24,8 @@ export class AcceptInviteService {
         {
           params: {
             path: {
-              org_user_id: request.memberId,
-              token: request.token,
+              org_user_id: params.memberId,
+              token: params.token,
             },
           },
         },

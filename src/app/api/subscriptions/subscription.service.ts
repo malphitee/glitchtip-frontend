@@ -31,14 +31,14 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
 
   organizationSlug = signal<string>("");
   subscriptionResource = resource({
-    request: () => ({
+    params: () => ({
       orgSlug: this.organizationSlug(),
     }),
-    loader: async ({ request }) => {
-      if (!request.orgSlug) {
+    loader: async ({ params }) => {
+      if (!params.orgSlug) {
         return undefined;
       }
-      return await this.getSubscriptionData(request.orgSlug);
+      return await this.getSubscriptionData(params.orgSlug);
     },
   });
   subscription = computed(() => {
@@ -62,11 +62,11 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
   );
 
   eventCountResource = resource({
-    request: () => ({
+    params: () => ({
       orgSlug: this.organizationSlug(),
     }),
-    loader: async ({ request }) => {
-      if (!request.orgSlug) {
+    loader: async ({ params }) => {
+      if (!params.orgSlug) {
         return undefined;
       }
 
@@ -74,7 +74,7 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
         "/api/0/stripe/subscriptions/{organization_slug}/events_count/",
         {
           params: {
-            path: { organization_slug: request.orgSlug },
+            path: { organization_slug: params.orgSlug },
           },
         },
       );

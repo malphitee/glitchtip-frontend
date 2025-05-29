@@ -30,16 +30,16 @@ export class CommentsService extends StatefulService<CommentsState> {
   issueID = signal<number | undefined>(undefined);
 
   private commentsResource = resource({
-    request: () => ({ issueID: this.issueID() }),
-    loader: async ({ request }) => {
-      if (!request.issueID) {
+    params: () => ({ issueID: this.issueID() }),
+    loader: async ({ params }) => {
+      if (!params.issueID) {
         return undefined;
       }
       const { data, error } = await client.GET(
         "/api/0/issues/{issue_id}/comments/",
         {
           params: {
-            path: { issue_id: request.issueID },
+            path: { issue_id: params.issueID },
           },
         },
       );

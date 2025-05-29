@@ -77,9 +77,9 @@ export class FooService {
   // # means private, not accessible from outside of this class.
   #foosResource = resource({
     // The resource will load any time our request changes, in this case when orgSlug changes
-    request: () => ({ orgSlug: this.#orgSlug() }),
-    loader: async ({ request }) => {
-      if (!request.orgSlug) {
+    params: () => ({ orgSlug: this.#orgSlug() }),
+    loader: async ({ params }) => {
+      if (!params.orgSlug) {
         return undefined;  // Return undefined to indicate the resource has not yet loaded
       }
       // https://openapi-ts.dev/openapi-fetch/
@@ -87,7 +87,7 @@ export class FooService {
         "/api/0/organizations/{organization_slug}/projects/",
         {
           params: {
-            path: { organization_slug: request.orgSlug },
+            path: { organization_slug: params.orgSlug },
           },
         },
       );

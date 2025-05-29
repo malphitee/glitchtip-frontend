@@ -31,9 +31,9 @@ export class UserService extends StatefulService<UserState> {
   authService = inject(AuthService);
 
   userResource = resource({
-    request: () => ({ isAuthenticated: this.authService.isAuthenticated() }),
-    loader: async ({ request }) => {
-      if (!request.isAuthenticated) {
+    params: () => ({ isAuthenticated: this.authService.isAuthenticated() }),
+    loader: async ({ params }) => {
+      if (!params.isAuthenticated) {
         return undefined;
       }
       const { data } = await client.GET("/api/0/users/{user_id}/", {
