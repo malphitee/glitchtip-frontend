@@ -606,8 +606,7 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
       deleteRecipientLoading: null,
       deleteRecipientError: null,
     });
-
-    this.setState({});
+    this.#projectAlertsResource.reload();
   }
 
   private setDeleteRecipientLoading(id: number) {
