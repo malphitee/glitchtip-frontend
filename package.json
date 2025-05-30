@@ -63,6 +63,7 @@
     "zone.js": "^0.15.0"
   },
   "devDependencies": {
+    "@angular-devkit/build-angular": "^20.0.0",
     "@angular-eslint/builder": "~19.6.0",
     "@angular-eslint/eslint-plugin": "~19.6.0",
     "@angular-eslint/eslint-plugin-template": "~19.6.0",
@@ -74,14 +75,11 @@
     "@angular/language-service": "~20.0.0",
     "@angular/localize": "~20.0.0",
     "@babel/core": "^7.7.2",
-    "@chromatic-com/storybook": "^3.2.5",
+    "@chromatic-com/storybook": "^4.0.0",
     "@cypress/webpack-preprocessor": "^6.0.2",
-    "@storybook/addon-essentials": "^8.6.4",
-    "@storybook/addon-interactions": "^8.6.4",
-    "@storybook/addon-onboarding": "^8.6.4",
-    "@storybook/angular": "^8.6.4",
-    "@storybook/blocks": "^8.6.4",
-    "@storybook/test": "^8.6.4",
+    "@storybook/addon-docs": "^9.0.1",
+    "@storybook/addon-onboarding": "9.0.1",
+    "@storybook/angular": "9.0.1",
     "@types/d3": "^7.4.0",
     "@types/express": "^4.17.17",
     "@types/fs-extra": "^11.0.4",
@@ -97,7 +95,7 @@
     "cypress": "^14.2.0",
     "cypress-localstorage-commands": "^2.2.7",
     "eslint": "^8.0.0",
-    "eslint-plugin-storybook": "^0.11.1",
+    "eslint-plugin-storybook": "^9.0.1",
     "jasmine-core": "^5.0.0",
     "jasmine-spec-reporter": "~7.0.0",
     "karma": "~6.4.2",
@@ -105,16 +103,44 @@
     "karma-coverage-istanbul-reporter": "~3.0.3",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "^2.1.0",
-    "ng-extract-i18n-merge": "^2.14.3",
+    "ng-extract-i18n-merge": "^2.15.0",
     "openapi-typescript": "^7.8.0",
     "prettier": "3.5.3",
-    "storybook": "^8.6.4",
-    "storybook-dark-mode": "^4.0.2",
+    "storybook": "9.0.1",
     "ts-loader": "^9.2.6",
     "ts-node": "~7.0.0",
     "typescript": "^5.8.2",
     "wait-on": "^5.3.0",
     "webpack-bundle-analyzer": "^4.10.2",
     "xliff": "^6.2.1"
+  },
+  "overrides": {
+    "ngx-markdown": {
+      "@angular/animations": "$@angular/animations",
+      "@angular/cdk": "$@angular/cdk",
+      "@angular/common": "$@angular/common",
+      "@angular/compiler": "$@angular/compiler",
+      "@angular/core": "$@angular/core",
+      "@angular/forms": "$@angular/forms",
+      "@angular/material": "$@angular/material",
+      "@angular/platform-browser": "$@angular/platform-browser",
+      "@angular/platform-browser-dynamic": "$@angular/platform-browser-dynamic",
+      "@angular/router": "$@angular/router"
+    },
+    "@swimlane/ngx-charts": {
+      "@angular/animations": "$@angular/animations",
+      "@angular/cdk": "$@angular/cdk",
+      "@angular/common": "$@angular/common",
+      "@angular/compiler": "$@angular/compiler",
+      "@angular/core": "$@angular/core",
+      "@angular/forms": "$@angular/forms",
+      "@angular/platform-browser": "$@angular/platform-browser",
+      "@angular/platform-browser-dynamic": "$@angular/platform-browser-dynamic",
+      "@angular/router": "$@angular/router"
+    },
+    "@storybook/angular": {
+      "@angular-devkit/build-angular": "$@angular-devkit/build-angular"
+    },
+    "storybook": "$storybook"
   }
 }
