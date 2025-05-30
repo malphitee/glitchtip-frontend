@@ -186,8 +186,10 @@
             "browserTarget": "glitchtip-frontend:build",
             "compodoc": false,
             "port": 6006,
-            "experimentalZoneless": true,
-            "styles": ["src/styles.scss", ".storybook/preview-styles.scss"]
+            "styles": ["src/styles.scss", ".storybook/preview-styles.scss"],
+            "stylePreprocessorOptions": {
+              "includePaths": ["src/assets/styles"]
+            }
           }
         },
         "build-storybook": {
@@ -196,7 +198,6 @@
             "configDir": ".storybook",
             "browserTarget": "glitchtip-frontend:build",
             "compodoc": false,
-            "experimentalZoneless": true,
             "outputDir": "dist/storybook/glitchtip-frontend",
             "styles": ["src/styles.scss", ".storybook/preview-styles.scss"]
           }
