@@ -1,4 +1,4 @@
-import { inject, Injectable, resource, signal } from "@angular/core";
+import { inject, Injectable, resource } from "@angular/core";
 import { OrganizationsService } from "./organizations.service";
 import { client } from "./api";
 import { getCursor } from "../shared/pagination.utils";
@@ -8,14 +8,12 @@ import { getCursor } from "../shared/pagination.utils";
 })
 export class OrganizationEnvironmentsService {
   #orgService = inject(OrganizationsService);
-  load = signal(false);
   #environmentsResource = resource({
     params: () => ({
       orgSlug: this.#orgService.activeOrganizationSlug(),
-      load: this.load(),
     }),
     loader: async ({ params, abortSignal }) => {
-      if (!params.orgSlug || !params.load) {
+      if (!params.orgSlug) {
         return undefined;
       }
       let { data, response } = await client.GET(
@@ -23,7 +21,7 @@ export class OrganizationEnvironmentsService {
         {
           signal: abortSignal,
           params: {
-            path: { organization_slug: request.orgSlug },
+            path: { organization_slug: params.orgSlug },
             query: { limit: 200 },
           },
         },
@@ -37,7 +35,7 @@ export class OrganizationEnvironmentsService {
           {
             signal: abortSignal,
             params: {
-              path: { organization_slug: request.orgSlug },
+              path: { organization_slug: params.orgSlug },
               query: { limit: 200, cursor },
             },
           },
@@ -50,8 +48,7 @@ export class OrganizationEnvironmentsService {
     },
   });
 
-  refresh() {
-    this.load.set(true);
+  reload() {
     this.#environmentsResource.reload();
   }
 }

@@ -14,7 +14,6 @@ import {
 } from "rxjs/operators";
 import { OrganizationDetailService } from "src/app/api/organizations/organization-detail.service";
 import { PerformanceService } from "../performance.service";
-import { ProjectEnvironmentsService } from "src/app/settings/projects/project-detail/project-environments/project-environments.service";
 import { normalizeProjectParams } from "src/app/shared/shared.utils";
 import { TransactionGroup } from "src/app/api/transactions/transactions.interfaces";
 import { HumanizeDurationPipe } from "../../shared/seconds-or-ms.pipe";
@@ -25,6 +24,7 @@ import { MatTableModule } from "@angular/material/table";
 import { ProjectFilterBarComponent } from "../../list-elements/project-filter-bar/project-filter-bar.component";
 import { ListTitleComponent } from "../../list-elements/list-title/list-title.component";
 import { OrganizationsService } from "src/app/api/organizations.service";
+import { OrganizationEnvironmentsService } from "src/app/api/org-environments.service";
 
 @Component({
   selector: "gt-transaction-groups",
@@ -46,7 +46,7 @@ export class TransactionGroupsComponent implements OnInit, OnDestroy {
   private organizationsService = inject(OrganizationsService);
   private organizationDetailService = inject(OrganizationDetailService);
   protected service = inject(PerformanceService);
-  private projectEnvironmentsService = inject(ProjectEnvironmentsService);
+  #environmentsService = inject(OrganizationEnvironmentsService);
   protected router = inject(Router);
   protected route = inject(ActivatedRoute);
 
@@ -83,10 +83,10 @@ export class TransactionGroupsComponent implements OnInit, OnDestroy {
   };
 
   visibleEnvironmentsLoaded$ = toObservable(
-    this.projectEnvironmentsService.visibleEnvironmentsLoaded,
+    this.#environmentsService.visibleEnvironmentsLoaded,
   );
   visibleEnvironments$ = toObservable(
-    this.projectEnvironmentsService.visibleEnvironments,
+    this.#environmentsService.visibleEnvironments,
   );
   transactionGroupsDisplay$ = this.service.transactionGroupsDisplay$;
   errors$ = this.service.errors$;
