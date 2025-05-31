@@ -1,4 +1,4 @@
-import { inject, Injectable, resource } from "@angular/core";
+import { computed, inject, Injectable, resource } from "@angular/core";
 import { OrganizationsService } from "./organizations.service";
 import { client } from "./api";
 import { getCursor } from "../shared/pagination.utils";
@@ -47,6 +47,11 @@ export class OrganizationEnvironmentsService {
       return page1;
     },
   });
+  loading = computed(() => this.#environmentsResource.isLoading());
+  orgEnvironments = computed(() => this.#environmentsResource.value() || []);
+  orgEnvironmentNames = computed(() =>
+    this.orgEnvironments().map((env) => env.name),
+  );
 
   reload() {
     this.#environmentsResource.reload();

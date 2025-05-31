@@ -82,12 +82,7 @@ export class TransactionGroupsComponent implements OnInit, OnDestroy {
     other: "# Transactions",
   };
 
-  visibleEnvironmentsLoaded$ = toObservable(
-    this.#environmentsService.visibleEnvironmentsLoaded,
-  );
-  visibleEnvironments$ = toObservable(
-    this.#environmentsService.visibleEnvironments,
-  );
+  environmentNames = this.#environmentsService.orgEnvironmentNames;
   transactionGroupsDisplay$ = this.service.transactionGroupsDisplay$;
   errors$ = this.service.errors$;
   loading$ = this.service.loading$;
@@ -113,7 +108,7 @@ export class TransactionGroupsComponent implements OnInit, OnDestroy {
     toObservable(
       this.organizationDetailService.organizationEnvironmentsProcessed,
     ),
-    this.visibleEnvironments$,
+    toObservable(this.visibleEnvironments),
   ]).pipe(
     map(([appliedProjectCount, orgEnvironments, projectEnvironments]) =>
       appliedProjectCount !== 1 ? orgEnvironments : projectEnvironments,
@@ -195,7 +190,10 @@ export class TransactionGroupsComponent implements OnInit, OnDestroy {
       takeUntilDestroyed(),
     );
 
-    combineLatest([this.visibleEnvironmentsLoaded$, this.route.queryParams])
+    combineLatest([
+      toObservable(this.visibleEnvironments),
+      this.route.queryParams,
+    ])
       .pipe(
         takeUntilDestroyed(),
         tap(([projectEnvironments, queryParams]) => {
@@ -307,7 +305,6 @@ export class TransactionGroupsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.projectEnvironmentsService.clearState();
     this.service.clearState();
   }
 }
