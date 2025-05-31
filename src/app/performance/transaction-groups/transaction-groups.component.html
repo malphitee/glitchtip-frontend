@@ -21,17 +21,14 @@
               [attr.colspan]="displayedColumns.length"
               class="table-header"
             >
-              @if (
-                organizationEnvironments$ | async;
-                as organizationEnvironments
-              ) {
+              @if (environmentNames(); as environments) {
                 <gt-data-filter-bar
                   [dateForm]="dateForm"
                   [environmentForm]="environmentForm"
                   [sortForm]="sortForm"
                   [searchForm]="searchForm"
                   [sorts]="sorts"
-                  [organizationEnvironments]="organizationEnvironments"
+                  [organizationEnvironments]="environments"
                   (dateFormSubmission)="onDateFormSubmit($event)"
                   (dateFormReset)="dateFormReset()"
                   (filterByEnvironment)="filterByEnvironment($event)"

@@ -1,18 +1,18 @@
-import { Component, OnInit, OnDestroy, inject } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  inject,
+  effect,
+  input,
+} from "@angular/core";
+import { AsyncPipe, I18nPluralPipe } from "@angular/common";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { FormControl, FormGroup } from "@angular/forms";
 import { MatSelectChange } from "@angular/material/select";
 import { takeUntilDestroyed, toObservable } from "@angular/core/rxjs-interop";
 import { combineLatest, EMPTY } from "rxjs";
-import {
-  distinctUntilChanged,
-  filter,
-  map,
-  switchMap,
-  tap,
-} from "rxjs/operators";
-import { OrganizationDetailService } from "src/app/api/organizations/organization-detail.service";
+import { map, switchMap, tap } from "rxjs/operators";
 import { PerformanceService } from "../performance.service";
 import { normalizeProjectParams } from "src/app/shared/shared.utils";
 import { TransactionGroup } from "src/app/api/transactions/transactions.interfaces";
@@ -31,7 +31,8 @@ import { OrganizationEnvironmentsService } from "src/app/api/org-environments.se
   templateUrl: "./transaction-groups.component.html",
   styleUrls: ["./transaction-groups.component.scss"],
   imports: [
-    CommonModule,
+    AsyncPipe,
+    I18nPluralPipe,
     ListTitleComponent,
     ProjectFilterBarComponent,
     MatTableModule,
@@ -44,14 +45,14 @@ import { OrganizationEnvironmentsService } from "src/app/api/org-environments.se
 })
 export class TransactionGroupsComponent implements OnInit, OnDestroy {
   private organizationsService = inject(OrganizationsService);
-  private organizationDetailService = inject(OrganizationDetailService);
   protected service = inject(PerformanceService);
   #environmentsService = inject(OrganizationEnvironmentsService);
   protected router = inject(Router);
   protected route = inject(ActivatedRoute);
 
   paginator$ = this.service.paginator$;
-  orgSlug$ = this.route.paramMap.pipe(map((params) => params.get("org-slug")));
+  orgSlug = input.required<string>({ alias: "org-slug" });
+  orgSlug$ = toObservable(this.orgSlug);
   displayedColumns = ["name-and-project", "avgDuration"];
   sortForm = new FormGroup({
     sort: new FormControl({
@@ -103,17 +104,7 @@ export class TransactionGroupsComponent implements OnInit, OnDestroy {
     }),
   );
 
-  organizationEnvironments$ = combineLatest([
-    this.appliedProjectCount$,
-    toObservable(
-      this.organizationDetailService.organizationEnvironmentsProcessed,
-    ),
-    toObservable(this.visibleEnvironments),
-  ]).pipe(
-    map(([appliedProjectCount, orgEnvironments, projectEnvironments]) =>
-      appliedProjectCount !== 1 ? orgEnvironments : projectEnvironments,
-    ),
-  );
+  environments = this.#environmentsService.orgEnvironments;
 
   constructor() {
     combineLatest([this.orgSlug$, this.route.queryParamMap])
@@ -138,8 +129,8 @@ export class TransactionGroupsComponent implements OnInit, OnDestroy {
       )
       .subscribe();
 
-    this.organizationEnvironments$.subscribe((environments) =>
-      environments?.length === 0
+    effect(() =>
+      this.environments().length === 0
         ? this.environmentForm.controls.environment.disable()
         : this.environmentForm.controls.environment.enable(),
     );
@@ -152,48 +143,7 @@ export class TransactionGroupsComponent implements OnInit, OnDestroy {
           : this.sortForm.controls.sort.enable(),
       );
 
-    this.orgSlug$
-      .pipe(
-        switchMap((orgSlug) => {
-          if (orgSlug) {
-            return this.organizationDetailService.getOrganizationEnvironments(
-              orgSlug,
-            );
-          }
-          return EMPTY;
-        }),
-        takeUntilDestroyed(),
-      )
-      .subscribe();
-
-    combineLatest([
-      this.orgSlug$,
-      this.route.queryParamMap.pipe(
-        map((params) => params.getAll("project")[0]),
-        filter((project) => !!project),
-        distinctUntilChanged(),
-      ),
-      this.organizationsService.activeOrganizationProjects$,
-    ]).pipe(
-      switchMap(([orgSlug, projectId, orgProjects]) => {
-        const projectSlug = orgProjects?.find(
-          (orgProject) => orgProject.id.toString() === projectId,
-        )?.slug;
-        if (orgSlug && projectSlug) {
-          // return this.projectEnvironmentsService.retrieveEnvironmentsWithProperties(
-          //   orgSlug,
-          //   projectSlug,
-          // );
-        }
-        return EMPTY;
-      }),
-      takeUntilDestroyed(),
-    );
-
-    combineLatest([
-      toObservable(this.visibleEnvironments),
-      this.route.queryParams,
-    ])
+    combineLatest([toObservable(this.environments), this.route.queryParams])
       .pipe(
         takeUntilDestroyed(),
         tap(([projectEnvironments, queryParams]) => {
@@ -259,6 +209,7 @@ export class TransactionGroupsComponent implements OnInit, OnDestroy {
         query: query !== undefined ? query : "",
       });
     });
+    this.#environmentsService.reload();
   }
 
   onDateFormSubmit(queryParams: object) {
