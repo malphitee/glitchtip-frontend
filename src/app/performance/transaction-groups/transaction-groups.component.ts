@@ -24,7 +24,7 @@ import { MatTableModule } from "@angular/material/table";
 import { ProjectFilterBarComponent } from "../../list-elements/project-filter-bar/project-filter-bar.component";
 import { ListTitleComponent } from "../../list-elements/list-title/list-title.component";
 import { OrganizationsService } from "src/app/api/organizations.service";
-import { OrganizationEnvironmentsService } from "src/app/api/org-environments.service";
+import { EnvironmentsService } from "src/app/api/environments.service";
 
 @Component({
   selector: "gt-transaction-groups",
@@ -46,7 +46,7 @@ import { OrganizationEnvironmentsService } from "src/app/api/org-environments.se
 export class TransactionGroupsComponent implements OnInit, OnDestroy {
   private organizationsService = inject(OrganizationsService);
   protected service = inject(PerformanceService);
-  #environmentsService = inject(OrganizationEnvironmentsService);
+  #environmentsService = inject(EnvironmentsService);
   protected router = inject(Router);
   protected route = inject(ActivatedRoute);
 
@@ -83,7 +83,7 @@ export class TransactionGroupsComponent implements OnInit, OnDestroy {
     other: "# Transactions",
   };
 
-  environmentNames = this.#environmentsService.orgEnvironmentNames;
+  environmentNames = this.#environmentsService.environmentNames;
   transactionGroupsDisplay$ = this.service.transactionGroupsDisplay$;
   errors$ = this.service.errors$;
   loading$ = this.service.loading$;

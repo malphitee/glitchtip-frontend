@@ -1,11 +1,12 @@
 import {
   Component,
   ChangeDetectionStrategy,
-  OnDestroy,
   inject,
   input,
   effect,
   computed,
+  OnInit,
+  OnDestroy,
 } from "@angular/core";
 import { DatePipe, I18nPluralPipe } from "@angular/common";
 import { FormControl, FormGroup } from "@angular/forms";
@@ -16,10 +17,8 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatSelectChange } from "@angular/material/select";
 import { MatTableModule } from "@angular/material/table";
 import { Router, ActivatedRoute, RouterLink } from "@angular/router";
-import { lastValueFrom } from "rxjs";
 import { IssuesService } from "../issues.service";
 import { IssueStatus } from "../interfaces";
-import { ProjectEnvironmentsService } from "src/app/settings/projects/project-detail/project-environments/project-environments.service";
 import { DaysAgoPipe, DaysOldPipe } from "../../shared/days-ago.pipe";
 import { IssueZeroStatesComponent } from "../issue-zero-states/issue-zero-states.component";
 import { ListFooterComponent } from "../../list-elements/list-footer/list-footer.component";
@@ -33,8 +32,8 @@ import {
   stringArrAttribute,
   stringAttribute,
 } from "src/app/shared/shared.utils";
-import { OrganizationDetailService } from "src/app/api/organizations/organization-detail.service";
 import { ConfirmDialogComponent } from "src/app/shared/confirm-dialog/confirm-dialog.component";
+import { EnvironmentsService } from "src/app/api/environments.service";
 
 type Issue = components["schemas"]["IssueSchema"];
 
@@ -58,16 +57,15 @@ type Issue = components["schemas"]["IssueSchema"];
     DaysOldPipe,
     I18nPluralPipe,
   ],
-  providers: [IssuesService, ProjectEnvironmentsService],
+  providers: [IssuesService],
 })
-export class IssuesPageComponent implements OnDestroy {
+export class IssuesPageComponent implements OnInit, OnDestroy {
   dialog = inject(MatDialog);
   protected service = inject(IssuesService);
   protected router = inject(Router);
   protected route = inject(ActivatedRoute);
   private organizationsService = inject(OrganizationsService);
-  private organizationDetailService = inject(OrganizationDetailService);
-  private projectEnvironmentsService = inject(ProjectEnvironmentsService);
+  #environmentsService = inject(EnvironmentsService);
 
   orgSlug = input.required<string>({ alias: "org-slug" });
   cursor = input(undefined, { transform: stringAttribute });
@@ -145,10 +143,12 @@ export class IssuesPageComponent implements OnDestroy {
   });
 
   availableEnvironments = computed(() =>
-    this.appliedProjectCount() !== 1
-      ? this.organizationDetailService.organizationEnvironmentsProcessed()
-      : this.projectEnvironmentsService.visibleEnvironments(),
+    this.#environmentsService.environmentNames(),
   );
+  // this.appliedProjectCount() !== 1
+  //   ? this.organizationDetailService.organizationEnvironmentsProcessed()
+  //   : this.projectEnvironmentsService.visibleEnvironments(),
+  // );
 
   constructor() {
     effect(() => {
@@ -163,6 +163,21 @@ export class IssuesPageComponent implements OnDestroy {
         environment: this.environment(),
       });
     });
+    effect(() => {
+      const projects = this.projects();
+      if (projects.length == 1) {
+        const project = this.activeOrganizationProjects().find(
+          (proj) => proj.id === projects[0],
+        );
+        if (project?.slug) {
+          this.#environmentsService.projectSlug.set(project.slug);
+        } else {
+          this.#environmentsService.projectSlug.set(null);
+        }
+      } else {
+        this.#environmentsService.projectSlug.set(null);
+      }
+    });
     effect(() =>
       this.issues().length === 0
         ? this.sortForm.controls.sort.disable()
@@ -173,27 +188,18 @@ export class IssuesPageComponent implements OnDestroy {
         ? this.environmentForm.controls.environment.disable()
         : this.environmentForm.controls.environment.enable(),
     );
-    effect(() => {
-      const orgSlug = this.orgSlug();
-      if (orgSlug) {
-        lastValueFrom(
-          this.organizationDetailService.getOrganizationEnvironments(orgSlug),
-        );
-      }
-    });
     /**
      * When changing from one project to another, see if there is an environment
      * in the URL. If it doesn't match a project environment, reset the URL.
      */
     effect(() => {
-      const projectEnvironments =
-        this.projectEnvironmentsService.visibleEnvironmentsLoaded();
       const project = this.projects();
       const environment = this.environment();
+      const environments = this.availableEnvironments();
       if (
         project.length &&
         environment &&
-        !projectEnvironments!.includes(environment)
+        !environments.includes(environment)
       ) {
         this.environmentForm.setValue({ environment: null });
         this.router.navigate([], {
@@ -230,8 +236,12 @@ export class IssuesPageComponent implements OnDestroy {
     });
   }
 
-  ngOnDestroy() {
-    this.projectEnvironmentsService.clearState();
+  ngOnInit(): void {
+    this.#environmentsService.reload();
+  }
+
+  ngOnDestroy(): void {
+    this.#environmentsService.projectSlug.set(null);
   }
 
   trackIssues(index: number, issue: Issue): string {
