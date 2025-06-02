@@ -5,6 +5,7 @@ import {
   Validators,
   FormGroupDirective,
   ReactiveFormsModule,
+  AbstractControl,
 } from "@angular/forms";
 import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -59,24 +60,19 @@ export class ManageEmails {
    *
    * @param control The form control being validated
    */
-  // matchesExistingValidator = (control: AbstractControl) =>
-  //   this.emailAddresses$.pipe(
-  //     map((emails) => {
-  //       const matchedEmail = emails.find(
-  //         (email) => email.email === control.value,
-  //       );
-  //       return matchedEmail ? { matchesExistingValidator: true } : null;
-  //     }),
-  //     first(),
-  //   );
+  matchesExistingValidator = (control: AbstractControl) => {
+    const matchedEmail = this.emailAddresses().find(
+      (email) => email.email === control.value,
+    );
+    return matchedEmail ? { matchesExistingValidator: true } : null;
+  };
 
-  // tslint:disable:member-ordering
   form = new FormGroup({
-    email_address: new FormControl(
-      "",
-      [Validators.email, Validators.required],
-      // this.matchesExistingValidator,
-    ),
+    email_address: new FormControl("", [
+      Validators.email,
+      Validators.required,
+      this.matchesExistingValidator,
+    ]),
   });
 
   deleteEmail = (email: string) => this.#service.removeEmailAddress(email);

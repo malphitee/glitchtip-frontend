@@ -88,7 +88,23 @@ export class ManageEmailsState extends StatefulService<EmailState> {
     }
   }
 
-  removeEmailAddress(email: string) {}
+  async removeEmailAddress(email: string) {
+    this.setState({
+      loadingStates: { ...this.state().loadingStates, delete: email },
+    });
+    const { error } = await client.DELETE("/api/0/users/{user_id}/emails/", {
+      params: { path: { user_id: "me" } },
+      body: { email },
+    });
+    if (error) {
+      // this.resetLoadingDelete();
+      // this.setSnackbarMessage(`There was a problem. Try again later.`);
+    } else {
+      // this.setRemovedEmailAddress(email);
+      // this.resetLoadingDelete();
+      // this.#matSnackBar.open(`${email} has been removed from your account.`);
+    }
+  }
   makeEmailPrimary(email: string) {}
   resendConfirmation(email: string) {}
 }
