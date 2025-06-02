@@ -2,25 +2,38 @@ import {
   Component,
   OnInit,
   ChangeDetectionStrategy,
+  input,
   inject,
 } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
-import { map } from "rxjs/operators";
-import { ConfirmEmailService } from "../../api/confirm-email/confirm-email.service";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { Router } from "@angular/router";
+import { client } from "src/app/api/api";
 
 @Component({
-  selector: "gt-confirm-email",
-  template: ``,
+  template: `<div i18n>Confirming email…</div>`,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
 })
 export class ConfirmEmailComponent implements OnInit {
-  private activatedRoute = inject(ActivatedRoute);
-  private confirmEmailService = inject(ConfirmEmailService);
+  #router = inject(Router);
+  #snackBar = inject(MatSnackBar);
+  key = input.required<string>();
 
-  ngOnInit(): void {
-    this.activatedRoute.params
-      .pipe(map((params) => this.confirmEmailService.confirmEmail(params.key)))
-      .subscribe();
+  async ngOnInit() {
+    const { error } = await client.POST(
+      "/_allauth/browser/v1/auth/email/verify",
+      {
+        params: { path: { client: "browser" } },
+        body: { key: this.key() },
+      },
+    );
+    if (error) {
+      this.#snackBar.open($localize`
+          This e-mail confirmation link expired or is invalid. Please
+          issue a new e-mail confirmation request.
+      `);
+    } else {
+      this.#snackBar.open($localize`Your email address has been confirmed.`);
+    }
+    this.#router.navigate(["profile"]);
   }
 }
