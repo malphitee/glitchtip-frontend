@@ -46,12 +46,12 @@ export class EventDetailComponent implements OnInit {
   private issueService = inject(IssueDetailService);
   route = inject(ActivatedRoute);
 
-  event$ = this.issueService.event$;
-  initialLoadComplete$ = this.issueService.eventInitialLoadComplete$;
-  nextEvent$ = this.issueService.hasNextEvent$;
-  previousEvent$ = this.issueService.hasPreviousEvent$;
-  nextEventUrl$ = this.issueService.nextEventUrl$;
-  previousEventUrl$ = this.issueService.previousEventUrl$;
+  event = this.issueService.event;
+  initialLoadComplete = this.issueService.eventInitialLoadComplete;
+  nextEvent = this.issueService.hasNextEvent;
+  previousEvent = this.issueService.hasPreviousEvent;
+  nextEventUrl = this.issueService.nextEventUrl;
+  previousEventUrl = this.issueService.previousEventUrl;
   eventIDParam$ = this.route.paramMap.pipe(
     map((params) => params.get("event-id")),
   );

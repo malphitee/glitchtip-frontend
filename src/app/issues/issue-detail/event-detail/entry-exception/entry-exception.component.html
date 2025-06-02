@@ -8,10 +8,10 @@
             <div class="spacer">
               (<a mat-button (click)="getFlippedFrames()"
                 >most recent call
-                @if (isReversed$ | async) {
+                @if (isReversed()) {
                   <span>first</span>
                 }
-                @if ((isReversed$ | async) === false) {
+                @if (isReversed() === false) {
                   <span>last</span>
                 }</a
               >)

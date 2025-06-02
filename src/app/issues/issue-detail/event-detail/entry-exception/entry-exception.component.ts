@@ -37,7 +37,7 @@ export class EntryExceptionComponent {
   readonly eventTitle = input<string>();
   readonly eventPlatform = input<string>();
   eventEntryException$ = this.issueService.eventEntryException$;
-  isReversed$ = this.issueService.isReversed$;
+  isReversed = this.issueService.isReversed;
 
   checkStacktraceInterface = isStacktrace;
 

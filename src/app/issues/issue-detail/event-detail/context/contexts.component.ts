@@ -13,7 +13,7 @@ import { AsyncPipe } from "@angular/common";
   templateUrl: "./contexts.component.html",
   styleUrls: ["./contexts.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatIconModule, AsyncPipe],
+  imports: [AsyncPipe, MatIconModule],
 })
 export class ContextsComponent implements OnInit {
   private issueDetailService = inject(IssueDetailService);

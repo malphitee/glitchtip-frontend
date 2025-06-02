@@ -1,4 +1,4 @@
-@if ((initialLoadComplete$ | async) && (event$ | async) === null) {
+@if (initialLoadComplete() && event() === null) {
   <section class="mat-typography">
     <h2>Event not found</h2>
     <p class="mat-body-1">
@@ -8,7 +8,7 @@
   </section>
 }
 
-@if (event$ | async; as event) {
+@if (event(); as event) {
   <section class="mat-typography">
     <section class="header">
       <div>
@@ -38,15 +38,15 @@
       <nav class="navigation-buttons">
         <button
           mat-button
-          [routerLink]="(previousEventUrl$ | async) || ''"
-          [disabled]="(previousEvent$ | async) === false"
+          [routerLink]="previousEventUrl() || ''"
+          [disabled]="previousEvent() === false"
         >
           <mat-icon>keyboard_arrow_left</mat-icon> Older
         </button>
         <button
           mat-button
-          [routerLink]="(nextEventUrl$ | async) || ''"
-          [disabled]="(nextEvent$ | async) === false"
+          [routerLink]="nextEventUrl() || ''"
+          [disabled]="nextEvent() === false"
         >
           Newer <mat-icon iconPositionEnd>keyboard_arrow_right</mat-icon>
         </button>

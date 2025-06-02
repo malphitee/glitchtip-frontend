@@ -61,15 +61,10 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
   private router = inject(Router);
 
   readonly issue = computed(() => this.state().issue);
-  readonly issue$ = toObservable(this.issue);
   readonly issueInitialLoadComplete = computed(
     () => this.state().issueInitialLoadComplete,
   );
-  readonly issueInitialLoadComplete$ = toObservable(
-    this.issueInitialLoadComplete,
-  );
   readonly event = computed(() => this.state().event);
-  readonly event$ = toObservable(this.event);
   readonly tags = computed(() => {
     const state = this.state();
     return state.tags && this.tagsWithPercent(state.tags);
@@ -77,21 +72,14 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
   readonly eventInitialLoadComplete = computed(
     () => this.state().eventInitialLoadComplete,
   );
-  readonly eventInitialLoadComplete$ = toObservable(
-    this.eventInitialLoadComplete,
-  );
   readonly isReversed = computed(() => this.state().isReversed);
-  readonly isReversed$ = toObservable(this.isReversed);
   readonly showShowMore = computed(() => this.state().showShowMore);
-  readonly showShowMore$ = toObservable(this.showShowMore);
   readonly hasNextEvent = computed(
     () => this.event() && this.event()?.nextEventID !== null,
   );
-  readonly hasNextEvent$ = toObservable(this.hasNextEvent);
   readonly hasPreviousEvent = computed(
     () => this.event() && this.event()?.previousEventID !== null,
   );
-  readonly hasPreviousEvent$ = toObservable(this.hasPreviousEvent);
   readonly nextEventUrl = computed(() => {
     const orgSlug = this.organization.activeOrganizationSlug();
     const issue = this.issue();
@@ -102,7 +90,6 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
     }
     return null;
   });
-  readonly nextEventUrl$ = toObservable(this.nextEventUrl);
   readonly previousEventUrl = computed(() => {
     const orgSlug = this.organization.activeOrganizationSlug();
     const issue = this.issue();

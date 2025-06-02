@@ -1,7 +1,6 @@
 import {
   KeyValue,
   NgClass,
-  AsyncPipe,
   JsonPipe,
   DatePipe,
   KeyValuePipe,
@@ -30,7 +29,6 @@ import { MatDividerModule } from "@angular/material/divider";
     NgClass,
     MatButtonModule,
     MatIconModule,
-    AsyncPipe,
     JsonPipe,
     DatePipe,
     KeyValuePipe,
@@ -41,8 +39,8 @@ export class EntryBreadcrumbsComponent implements AfterViewInit {
 
   @ViewChild("breadBox") breadBox?: ElementRef;
 
-  breadcrumbs$ = this.issueDetailService.breadcrumbs$;
-  showShowMore$ = this.issueDetailService.showShowMore$;
+  breadcrumbs = this.issueDetailService.breadcrumbs;
+  showShowMore = this.issueDetailService.showShowMore;
 
   ngAfterViewInit() {
     if (this.breadBox?.nativeElement.offsetHeight >= 1250) {
