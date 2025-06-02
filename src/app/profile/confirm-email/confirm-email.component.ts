@@ -22,7 +22,6 @@ export class ConfirmEmailComponent implements OnInit {
     const { error } = await client.POST(
       "/_allauth/browser/v1/auth/email/verify",
       {
-        params: { path: { client: "browser" } },
         body: { key: this.key() },
       },
     );

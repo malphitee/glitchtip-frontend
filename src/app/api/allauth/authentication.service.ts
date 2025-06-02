@@ -31,20 +31,15 @@ function postForm(action: string, data: JsonObject) {
 })
 export class AuthenticationService {
   getAuthenticationStatus() {
-    return client.GET("/_allauth/browser/v1/auth/session", {
-      params: { path: { client: "browser" } },
-    });
+    return client.GET("/_allauth/browser/v1/auth/session");
   }
 
   logout() {
-    return client.DELETE("/_allauth/browser/v1/auth/session", {
-      params: { path: { client: "browser" } },
-    });
+    return client.DELETE("/_allauth/browser/v1/auth/session");
   }
 
   login(email: string, password: string) {
     return client.POST("/_allauth/browser/v1/auth/login", {
-      params: { path: { client: "browser" } },
       body: {
         email,
         password,
@@ -54,7 +49,6 @@ export class AuthenticationService {
 
   mfaAuthenticate(code: string) {
     return client.POST("/_allauth/browser/v1/auth/2fa/authenticate", {
-      params: { path: { client: "browser" } },
       body: {
         code,
       },
@@ -63,7 +57,6 @@ export class AuthenticationService {
 
   signup(email: string, password: string) {
     return client.POST("/_allauth/browser/v1/auth/signup", {
-      params: { path: { client: "browser" } },
       body: {
         email,
         password,
@@ -74,7 +67,6 @@ export class AuthenticationService {
   getEmailVerificationInformation(key: string) {
     return client.GET("/_allauth/browser/v1/auth/email/verify", {
       params: {
-        path: { client: "browser" },
         header: {
           "X-Email-Verification-Key": key,
         },
@@ -84,7 +76,6 @@ export class AuthenticationService {
 
   verifyEmail(key: string) {
     return client.POST("/_allauth/browser/v1/auth/email/verify", {
-      params: { path: { client: "browser" } },
       body: {
         key,
       },
@@ -93,7 +84,6 @@ export class AuthenticationService {
 
   reauthenticate(password: string) {
     return client.POST("/_allauth/browser/v1/auth/reauthenticate", {
-      params: { path: { client: "browser" } },
       body: {
         password,
       },
@@ -102,7 +92,6 @@ export class AuthenticationService {
 
   requestPassword(email: string) {
     return client.POST("/_allauth/browser/v1/auth/password/request", {
-      params: { path: { client: "browser" } },
       body: {
         email,
       },
@@ -111,7 +100,6 @@ export class AuthenticationService {
 
   resetPassword(key: string, password: string) {
     return client.POST("/_allauth/browser/v1/auth/password/reset", {
-      params: { path: { client: "browser" } },
       body: {
         key,
         password,
@@ -133,14 +121,11 @@ export class AuthenticationService {
   }
 
   getWebAuthnCredentialRequest() {
-    return client.GET("/_allauth/browser/v1/auth/webauthn/authenticate", {
-      params: { path: { client: "browser" } },
-    });
+    return client.GET("/_allauth/browser/v1/auth/webauthn/authenticate");
   }
 
   perform2FAWebAuthn(credential: AuthenticateWebAuthn) {
     return client.POST("/_allauth/browser/v1/auth/webauthn/authenticate", {
-      params: { path: { client: "browser" } },
       body: {
         credential,
       },

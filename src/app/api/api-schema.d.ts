@@ -2993,6 +2993,8 @@ export interface components {
             transaction: string;
             /** Tags */
             tags: Record<string, unknown>;
+            /** Hashes */
+            hashes: unknown[];
         };
         /** IssueDetailSchema */
         IssueDetailSchema: {
@@ -4266,10 +4268,10 @@ export interface components {
         };
         /** EmailAddressSchema */
         EmailAddressSchema: {
-            /** Primary */
-            primary: boolean;
-            /** Verified */
-            verified: boolean;
+            /** Isprimary */
+            isPrimary: boolean;
+            /** Isverified */
+            isVerified: boolean;
             /** Email Address */
             email: string;
         };
