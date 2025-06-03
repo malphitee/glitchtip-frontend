@@ -1,11 +1,11 @@
 import {
   Component,
-  OnInit,
   ChangeDetectionStrategy,
   inject,
+  input,
+  OnInit,
 } from "@angular/core";
 import { ActivatedRoute, RouterLink } from "@angular/router";
-import { map, exhaustMap } from "rxjs/operators";
 import { IssueDetailService } from "../issue-detail.service";
 import { EventTag } from "src/app/issues/interfaces";
 import { EntryDataComponent } from "../../../shared/entry-data/entry-data.component";
@@ -18,7 +18,7 @@ import { ContextsComponent } from "./context/contexts.component";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
-import { AsyncPipe, DatePipe, KeyValuePipe } from "@angular/common";
+import { DatePipe, KeyValuePipe } from "@angular/common";
 
 @Component({
   selector: "gt-event-detail",
@@ -37,13 +37,14 @@ import { AsyncPipe, DatePipe, KeyValuePipe } from "@angular/common";
     EntryBreadcrumbsComponent,
     EntryRequestComponent,
     EntryDataComponent,
-    AsyncPipe,
     DatePipe,
     KeyValuePipe,
   ],
 })
 export class EventDetailComponent implements OnInit {
   private issueService = inject(IssueDetailService);
+  orgSlug = input.required<string>({ alias: "org-slug" });
+  eventID = input<string | null>(null, { alias: "event-id" });
   route = inject(ActivatedRoute);
 
   event = this.issueService.event;
@@ -52,22 +53,14 @@ export class EventDetailComponent implements OnInit {
   previousEvent = this.issueService.hasPreviousEvent;
   nextEventUrl = this.issueService.nextEventUrl;
   previousEventUrl = this.issueService.previousEventUrl;
-  eventIDParam$ = this.route.paramMap.pipe(
-    map((params) => params.get("event-id")),
-  );
-  orgSlug$ = this.route.paramMap.pipe(map((params) => params.get("org-slug")));
 
   ngOnInit() {
-    this.eventIDParam$
-      .pipe(
-        exhaustMap((eventID) => {
-          if (eventID) {
-            return this.issueService.getEventByID(eventID);
-          }
-          return this.issueService.getLatestEvent();
-        }),
-      )
-      .subscribe();
+    const eventID = this.eventID();
+    if (eventID) {
+      this.issueService.getEventByID(eventID);
+    } else {
+      this.issueService.getLatestEvent();
+    }
   }
 
   getNewerEvent() {

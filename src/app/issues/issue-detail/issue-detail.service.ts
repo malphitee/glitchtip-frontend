@@ -26,6 +26,7 @@ import { Json } from "src/app/interface-primitives";
 import { OrganizationsService } from "src/app/api/organizations.service";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
 import { toObservable } from "@angular/core/rxjs-interop";
+import { client } from "src/app/api/api";
 
 interface IssueDetailState {
   issue: IssueDetail | null;
@@ -173,17 +174,15 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
   getLatestEvent() {
     const issue = this.state().issue;
     if (issue) {
-      return this.retrieveLatestEvent(issue.id);
+      this.retrieveLatestEvent(issue.id);
     }
-    return EMPTY;
   }
 
   getEventByID(eventID: string) {
     const issue = this.state().issue;
     if (issue) {
-      return this.retrieveEvent(issue.id, eventID);
+      this.retrieveEvent(issue.id, eventID);
     }
-    return EMPTY;
   }
 
   retrieveTags(id: number, query?: string) {
@@ -291,31 +290,34 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
     }
   }
 
-  private retrieveLatestEvent(issueId: number) {
+  private async retrieveLatestEvent(issueID: number) {
     this.setState({ eventLoading: true });
-    return this.issuesAPIService.retrieveLatestEvent(issueId).pipe(
-      tap((event) => this.setEvent(event)),
-      catchError((error) => {
-        if (error instanceof HttpErrorResponse && error.status === 404) {
-          this.clearEvent();
-        }
-        return EMPTY;
-      }),
+    const { data } = await client.GET(
+      "/api/0/issues/{issue_id}/events/latest/",
+      {
+        params: { path: { issue_id: issueID } },
+      },
     );
+    if (data) {
+      this.setEvent(data as any);
+    } else {
+      this.clearEvent();
+    }
   }
 
-  // private removed for testing
-  retrieveEvent(issueId: number, eventID: string) {
+  async retrieveEvent(issueID: number, eventID: string) {
     this.setState({ eventLoading: true });
-    return this.issuesAPIService.retrieveEvent(issueId, eventID).pipe(
-      tap((event) => this.setEvent(event)),
-      catchError((error) => {
-        if (error instanceof HttpErrorResponse && error.status === 404) {
-          this.clearEvent();
-        }
-        return EMPTY;
-      }),
+    const { data } = await client.GET(
+      "/api/0/issues/{issue_id}/events/{event_id}/",
+      {
+        params: { path: { issue_id: issueID, event_id: eventID } },
+      },
     );
+    if (data) {
+      this.setEvent(data as any);
+    } else {
+      this.clearEvent();
+    }
   }
 
   // private removed for testing

@@ -4,7 +4,6 @@ import { EMPTY, map } from "rxjs";
 import { baseUrl } from "../../constants";
 import { APIBaseService } from "../api-base.service";
 import {
-  EventDetail,
   IssueDetail,
   IssueStatus,
   IssueTags,
@@ -48,16 +47,6 @@ export class IssuesAPIService extends APIBaseService {
 
   destroy(id: string) {
     return this.http.delete(this.detailURL(id));
-  }
-
-  retrieveLatestEvent(issueId: number) {
-    const url = `${this.url}${issueId}/events/latest/`;
-    return this.http.get<EventDetail>(url);
-  }
-
-  retrieveEvent(issueId: number, eventID: string) {
-    const url = `${this.url}${issueId}/events/${eventID}/`;
-    return this.http.get<EventDetail>(url);
   }
 
   retrieveTags(issueId: string, query?: string) {
