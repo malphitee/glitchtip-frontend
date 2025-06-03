@@ -1,12 +1,7 @@
-import { computed, Injectable, resource } from "@angular/core";
-import { client } from "src/app/api/api";
+import { computed, inject, Injectable, resource } from "@angular/core";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { client, handleError } from "src/app/api/api";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
-
-// type LoadingStateNames =
-//   | "add"
-//   | "delete"
-//   | "makePrimary"
-//   | "resendConfirmation";
 
 interface LoadingStates {
   add: boolean;
@@ -40,6 +35,7 @@ const initialState: EmailState = {
 
 @Injectable()
 export class ManageEmailsState extends StatefulService<EmailState> {
+  #snackbar = inject(MatSnackBar);
   #emailAddressesResource = resource({
     loader: async ({ abortSignal }) => {
       const { data } = await client.GET("/api/0/users/{user_id}/emails/", {
@@ -67,7 +63,11 @@ export class ManageEmailsState extends StatefulService<EmailState> {
   }
 
   async addEmailAddress(email: string) {
-    const { data, error } = await client.POST(
+    this.setState({
+      addEmailError: "",
+      loadingStates: { ...this.state().loadingStates, add: true },
+    });
+    const { data, error, response } = await client.POST(
       "/api/0/users/{user_id}/emails/",
       {
         params: {
@@ -78,14 +78,20 @@ export class ManageEmailsState extends StatefulService<EmailState> {
         body: { email },
       },
     );
+    this.setState({
+      loadingStates: { ...this.state().loadingStates, add: false },
+    });
     if (data) {
       this.#emailAddressesResource.update((emails) =>
         emails ? emails.concat([data]) : [data],
       );
+      return true;
     }
-    if (error) {
-      console.log(error);
+    const errors = handleError(error, response);
+    if (errors.detail.length) {
+      this.setState({ addEmailError: errors.detail[0].msg });
     }
+    return false;
   }
 
   async removeEmailAddress(email: string) {
@@ -96,15 +102,76 @@ export class ManageEmailsState extends StatefulService<EmailState> {
       params: { path: { user_id: "me" } },
       body: { email },
     });
+    this.setState({
+      loadingStates: { ...this.state().loadingStates, delete: null },
+    });
     if (error) {
-      // this.resetLoadingDelete();
-      // this.setSnackbarMessage(`There was a problem. Try again later.`);
-    } else {
-      // this.setRemovedEmailAddress(email);
-      // this.resetLoadingDelete();
-      // this.#matSnackBar.open(`${email} has been removed from your account.`);
+      this.#snackbar.open($localize`There was a problem. Try again later.`);
+      return false;
     }
+    this.#emailAddressesResource.update((emails) =>
+      emails?.filter((em) => em.email !== email),
+    );
+    this.#snackbar.open(
+      $localize`${email} has been removed from your account.`,
+    );
+    return true;
   }
-  makeEmailPrimary(email: string) {}
-  resendConfirmation(email: string) {}
+
+  async makeEmailPrimary(email: string) {
+    this.setState({
+      loadingStates: { ...this.state().loadingStates, makePrimary: email },
+    });
+    const { data, error, response } = await client.PUT(
+      "/api/0/users/{user_id}/emails/",
+      {
+        params: { path: { user_id: "me" } },
+        body: { email },
+      },
+    );
+    if (data) {
+      this.setState({
+        loadingStates: { ...this.state().loadingStates, makePrimary: "" },
+      });
+      this.#emailAddressesResource.reload();
+      this.#snackbar.open(
+        $localize`${email} is now your primary email address.`,
+      );
+      return true;
+    }
+    const errors = handleError(error, response);
+    if (errors.detail.length) {
+      this.#snackbar.open(errors.detail[0].msg);
+    }
+    return false;
+  }
+
+  async resendConfirmation(email: string) {
+    this.setState({
+      loadingStates: {
+        ...this.state().loadingStates,
+        resendConfirmation: email,
+      },
+    });
+    const { data, error, response } = await client.POST(
+      "/api/0/users/{user_id}/emails/confirm/",
+      {
+        params: { path: { user_id: "me" } },
+        body: { email },
+      },
+    );
+    if (data) {
+      this.setState({
+        loadingStates: {
+          ...this.state().loadingStates,
+          resendConfirmation: "",
+        },
+      });
+    }
+    const errors = handleError(error, response);
+    if (errors.detail.length) {
+      this.#snackbar.open(errors.detail[0].msg);
+    }
+    return false;
+  }
 }

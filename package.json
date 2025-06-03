@@ -51,11 +51,11 @@
     "@egoistdeveloper/operating-system-logos": "~1.2.3",
     "@github/webauthn-json": "^2.1.1",
     "@micro-sentry/angular": "^7.1.1",
-    "@stripe/stripe-js": "^5.4.0",
+    "@stripe/stripe-js": "^7.3.1",
     "@swimlane/ngx-charts": "^22.0.0",
     "date-fns": "^4.1.0",
     "express": "^4.18.2",
-    "ngx-markdown": "^19.1.1",
+    "ngx-markdown": "^20.0.0",
     "openapi-fetch": "^0.14.0",
     "qrcode": "^1.5.4",
     "rxjs": "^7.8.1",
@@ -64,11 +64,11 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^20.0.0",
-    "@angular-eslint/builder": "~19.6.0",
-    "@angular-eslint/eslint-plugin": "~19.6.0",
-    "@angular-eslint/eslint-plugin-template": "~19.6.0",
-    "@angular-eslint/schematics": "~19.6.0",
-    "@angular-eslint/template-parser": "~19.6.0",
+    "@angular-eslint/builder": "~19.7.1",
+    "@angular-eslint/eslint-plugin": "~19.7.1",
+    "@angular-eslint/eslint-plugin-template": "~19.7.1",
+    "@angular-eslint/schematics": "~19.7.1",
+    "@angular-eslint/template-parser": "~19.7.1",
     "@angular/build": "^20.0.0",
     "@angular/cli": "~20.0.0",
     "@angular/compiler-cli": "~20.0.0",
@@ -103,7 +103,7 @@
     "karma-coverage-istanbul-reporter": "~3.0.3",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "^2.1.0",
-    "ng-extract-i18n-merge": "^2.15.0",
+    "ng-extract-i18n-merge": "^2.15.1",
     "openapi-typescript": "^7.8.0",
     "prettier": "3.5.3",
     "storybook": "9.0.1",
@@ -115,18 +115,6 @@
     "xliff": "^6.2.1"
   },
   "overrides": {
-    "ngx-markdown": {
-      "@angular/animations": "$@angular/animations",
-      "@angular/cdk": "$@angular/cdk",
-      "@angular/common": "$@angular/common",
-      "@angular/compiler": "$@angular/compiler",
-      "@angular/core": "$@angular/core",
-      "@angular/forms": "$@angular/forms",
-      "@angular/material": "$@angular/material",
-      "@angular/platform-browser": "$@angular/platform-browser",
-      "@angular/platform-browser-dynamic": "$@angular/platform-browser-dynamic",
-      "@angular/router": "$@angular/router"
-    },
     "@swimlane/ngx-charts": {
       "@angular/animations": "$@angular/animations",
       "@angular/cdk": "$@angular/cdk",
@@ -137,10 +125,6 @@
       "@angular/platform-browser": "$@angular/platform-browser",
       "@angular/platform-browser-dynamic": "$@angular/platform-browser-dynamic",
       "@angular/router": "$@angular/router"
-    },
-    "@storybook/angular": {
-      "@angular-devkit/build-angular": "$@angular-devkit/build-angular"
-    },
-    "storybook": "$storybook"
+    }
   }
 }

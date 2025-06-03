@@ -42,7 +42,6 @@ export class ManageEmails {
   emailAddresses = this.#service.emailAddressesSorted;
   loadingStates = this.#service.loadingStates;
   addEmailError = this.#service.addEmailError;
-  // resetFormSubject = this.#service.resetFormSubject;
 
   get email_address() {
     return this.form.get("email_address");
@@ -80,9 +79,15 @@ export class ManageEmails {
   resendConfirmation = (email: string) =>
     this.#service.resendConfirmation(email);
 
-  onSubmit() {
+  async onSubmit() {
     if (this.form.valid) {
-      this.#service.addEmailAddress(this.form.value.email_address!);
+      const success = await this.#service.addEmailAddress(
+        this.form.value.email_address!,
+      );
+      if (success) {
+        this.formDirective.resetForm();
+        this.form.reset();
+      }
     }
   }
 }

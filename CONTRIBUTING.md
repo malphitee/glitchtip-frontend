@@ -27,6 +27,7 @@ We use Angular CLI for rapid, performant development. Components should be lazy 
 - Use OnPush change detection
 - We don't have full test coverage. Complex functions should have unit tests. Trivial ones are acceptable without them as TypeScript checks them sufficiently. Integration tests that prove correctness of a collection of smaller functions is encouraged.
 - We use Angular Material for rapid development. A component that works today is better than a nicer custom component that might work some day. But don’t bend over backwards to use Material if it doesn’t fit the use case
+- Follow the [Angular style guide](https://angular.dev/style-guide)
 
 ## Contribution tutorial
 
@@ -36,10 +37,10 @@ Create a new component and service. The component is what the user is shown in a
 
 ```bash
 ng generate component foo
-ng generate service foo
+ng generate service foo/foo-state
 ```
 
-`src/app/foo/` now contains foo.component.html, foo.component.scss, foo.component.ts, and foo.service.ts. We're going to omit unit testing for now. But if you had a unit test, it might be named foo.service.spec.ts.
+`src/app/foo/` now contains foo.html, foo.scss, foo.ts, and foo-state.ts. We're going to omit unit testing for now. But if you had a unit test, it might be named foo.spec.ts.
 
 Next add the component to our router. We could lazy load a imported sub-route file with `loadChildren: () => import("./foo/routes")`. This is preferred when adding multiple nested pages. For this tutorial, we'll add just a single component. Edit `src/app/app.routes.ts`. To make the new page URL be `/<org-slug>/foo` we'll add a nested router under :org-slug
 
@@ -50,7 +51,7 @@ Next add the component to our router. We could lazy load a imported sub-route fi
   children: [
     {
       path: "foo",
-      loadComponent: () => import("./foo/foo.component").then(c => c.FooComponent),
+      loadComponent: () => import("./foo/foo").then(c => c.FooComponent),
       title: "Foo",
     },
   ]
@@ -61,7 +62,7 @@ Run GlitchTip `npm start`. In your browser, go to localhost:4200/<your-org>/foo 
 
 We'll assume you already added a foo API to glitchtip-backend. When the API changes, we need to update our openapi typescript spec with `npm run openapi-typescript`. To simplify the tutorial, we'll reuse the projects API and pretend it's returning our list of foos.
 
-Edit `src/app/foo/foo.service.ts`
+Edit `src/app/foo/foo-state.ts`
 
 ```TypeScript
 import { computed, Injectable, resource, signal } from "@angular/core";
@@ -110,7 +111,7 @@ export class FooService {
 }
 ```
 
-Next we'll provide the service to our FooComponent in `src/app/foo/foo.component.ts`
+Next we'll provide the service to our FooComponent in `src/app/foo/foo.ts`
 
 ```TypeScript
 import {
@@ -123,8 +124,8 @@ import {
 import { FooService } from "./foo.service";
 
 @Component({
-  templateUrl: "./foo.component.html",
-  styleUrl: "./foo.component.scss",
+  templateUrl: "./foo.html",
+  styleUrl: "./foo.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [FooService],  // Omit if providing globally (sharing state)
 })
@@ -145,7 +146,7 @@ export class FooComponent implements OnInit {
 }
 ```
 
-`src/app/foo/foo.component.html`
+`src/app/foo/foo.html`
 
 ```html
 <p>foo works!</p>
