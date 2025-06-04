@@ -37,6 +37,11 @@ export function handleError(
   response: Response,
 ): NinjaErrorResponse {
   switch (response.status) {
+    case 400:
+      if (error && typeof error === "object" && "detail" in error) {
+        return { detail: [{ msg: error.detail }] };
+      }
+      break;
     case 404:
       return { detail: [{ msg: response.statusText }] };
     case 422:
