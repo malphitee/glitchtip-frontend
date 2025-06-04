@@ -1,8 +1,6 @@
 import { Injectable, computed, inject, resource, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { EMPTY } from "rxjs";
-import { catchError, tap, withLatestFrom } from "rxjs/operators";
 import {
   IssueStatus,
   ExceptionValueData,
@@ -18,7 +16,6 @@ import {
   IssueTagsAdjusted,
 } from "../interfaces";
 import { generateIconPath } from "../../shared/shared.utils";
-import { IssuesAPIService } from "src/app/api/issues/issues-api.service";
 import { Json } from "src/app/interface-primitives";
 import { OrganizationsService } from "src/app/api/organizations.service";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
@@ -45,7 +42,6 @@ const initialState: IssueDetailState = {
 })
 export class IssueDetailService extends StatefulService<IssueDetailState> {
   private organization = inject(OrganizationsService);
-  private issuesAPIService = inject(IssuesAPIService);
   private snackBar = inject(MatSnackBar);
   private router = inject(Router);
 
@@ -173,12 +169,14 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
     this.#params.set({ issueID, eventID });
   }
 
-  retrieveTags(id: number, query?: string) {
-    return this.issuesAPIService.retrieveTags(id.toString(), query).pipe(
-      tap((resp) => {
-        this.setTags(resp);
-      }),
-    );
+  async retrieveTags(id: number, query?: string) {
+    const queryParams: any = query ? { query: query } : {};
+    const { data } = await client.GET("/api/0/issues/{issue_id}/tags/", {
+      params: { path: { issue_id: id }, query: queryParams },
+    });
+    if (data) {
+      this.setTags(data as any);
+    }
   }
 
   getReversedFrames() {
@@ -214,23 +212,21 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
     this.setUpdatedCommentCount(num);
   }
 
-  deleteIssue(id: string) {
-    this.issuesAPIService
-      .destroy(id)
-      .pipe(
-        withLatestFrom(this.organization.activeOrganizationSlug$),
-        tap(([_, activeOrgSlug]) => {
-          this.snackBar.open(`Issue ${id} has been deleted.`);
-          this.router.navigate([activeOrgSlug, "issues"]);
-        }),
-        catchError((_) => {
-          this.snackBar.open(
-            `There was an error deleting this issue. Please try again.`,
-          );
-          return EMPTY;
-        }),
-      )
-      .subscribe();
+  async deleteIssue(id: string) {
+    const { error } = await client.DELETE("/api/0/issues/{issue_id}/", {
+      params: { path: { issue_id: parseInt(id) } },
+    });
+    if (error) {
+      this.snackBar.open(
+        `There was an error deleting this issue. Please try again.`,
+      );
+    } else {
+      this.snackBar.open($localize`Issue ${id} has been deleted.`);
+      this.router.navigate([
+        this.organization.activeOrganizationSlug(),
+        "issues",
+      ]);
+    }
   }
 
   private tagsWithPercent(tags: IssueTags[]): IssueTagsAdjusted[] | undefined {

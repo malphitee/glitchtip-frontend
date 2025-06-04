@@ -1,13 +1,9 @@
 import { Injectable, inject } from "@angular/core";
-import { HttpClient, HttpParams } from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import { EMPTY } from "rxjs";
 import { baseUrl } from "../../constants";
 import { APIBaseService } from "../api-base.service";
-import {
-  IssueStatus,
-  IssueTags,
-  UpdateStatusResponse,
-} from "src/app/issues/interfaces";
+import { IssueStatus, UpdateStatusResponse } from "src/app/issues/interfaces";
 
 @Injectable({
   providedIn: "root",
@@ -39,16 +35,7 @@ export class IssuesAPIService extends APIBaseService {
   }
 
   destroy(id: string) {
-    return this.http.delete(this.detailURL(id));
-  }
-
-  retrieveTags(issueId: string, query?: string) {
-    const url = `${this.url}${issueId}/tags/`;
-    let params = new HttpParams();
-    if (query) {
-      params = params.append("query", query);
-    }
-    return this.http.get<IssueTags[]>(url, { params });
+    return EMPTY;
   }
 
   orgIssuesUrl(orgSlug: string, issueId?: number) {
