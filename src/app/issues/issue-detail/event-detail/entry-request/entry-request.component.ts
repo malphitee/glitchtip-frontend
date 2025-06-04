@@ -3,7 +3,7 @@ import { IssueDetailService } from "../../issue-detail.service";
 import { EntryDataComponent } from "../../../../shared/entry-data/entry-data.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatDividerModule } from "@angular/material/divider";
-import { AsyncPipe, KeyValuePipe } from "@angular/common";
+import { KeyValuePipe } from "@angular/common";
 
 @Component({
   selector: "gt-entry-request",
@@ -14,12 +14,11 @@ import { AsyncPipe, KeyValuePipe } from "@angular/common";
     MatDividerModule,
     MatTooltipModule,
     EntryDataComponent,
-    AsyncPipe,
     KeyValuePipe,
   ],
 })
 export class EntryRequestComponent {
   private issueService = inject(IssueDetailService);
 
-  eventEntryRequest$ = this.issueService.eventEntryRequest$;
+  eventEntryRequest = this.issueService.eventEntryRequest;
 }

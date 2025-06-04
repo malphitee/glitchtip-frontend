@@ -2754,15 +2754,15 @@ export interface components {
             /** Groupid */
             groupID: string;
             /**
-             * Timestamp
+             * Datecreated
              * Format: date-time
              */
-            timestamp: string;
+            dateCreated: string;
             /**
-             * Received
+             * Datereceived
              * Format: date-time
              */
-            received: string;
+            dateReceived: string;
             /** Dist */
             dist?: string | null;
             /** Transaction */
@@ -2788,16 +2788,20 @@ export interface components {
             }[];
             /** Entries */
             entries?: (components["schemas"]["BreadcrumbsEntry"] | components["schemas"]["CSPEntry"] | components["schemas"]["ExceptionEntry"] | components["schemas"]["MessageEntry"] | components["schemas"]["RequestEntry"])[];
-            /** Data.Contexts */
-            "data.contexts"?: {
+            /** Contexts */
+            contexts?: {
                 [key: string]: (components["schemas"]["DeviceContext"] | components["schemas"]["OSContext"] | components["schemas"]["RuntimeContext"] | components["schemas"]["AppContext"] | components["schemas"]["BrowserContext"] | components["schemas"]["GPUContext"] | components["schemas"]["StateContext"] | components["schemas"]["CultureContext"] | components["schemas"]["CloudResourceContext"] | components["schemas"]["TraceContext"] | components["schemas"]["ReplayContext"] | components["schemas"]["ResponseContext"]) | unknown;
             } | null;
-            /** Data.Extra */
-            "data.extra"?: {
+            /** Context */
+            context?: {
                 [key: string]: unknown;
             } | null;
-            /** Data.User */
-            "data.user"?: unknown | null;
+            /** User */
+            user?: unknown | null;
+            /** Sdk */
+            sdk?: {
+                [key: string]: unknown;
+            } | null;
             /** Title */
             title: string;
         };
@@ -2866,15 +2870,15 @@ export interface components {
             /** Groupid */
             groupID: string;
             /**
-             * Timestamp
+             * Datecreated
              * Format: date-time
              */
-            timestamp: string;
+            dateCreated: string;
             /**
-             * Received
+             * Datereceived
              * Format: date-time
              */
-            received: string;
+            dateReceived: string;
             /** Dist */
             dist?: string | null;
             /** Transaction */
@@ -2900,16 +2904,20 @@ export interface components {
             }[];
             /** Entries */
             entries?: (components["schemas"]["BreadcrumbsEntry"] | components["schemas"]["CSPEntry"] | components["schemas"]["ExceptionEntry"] | components["schemas"]["MessageEntry"] | components["schemas"]["RequestEntry"])[];
-            /** Data.Contexts */
-            "data.contexts"?: {
+            /** Contexts */
+            contexts?: {
                 [key: string]: (components["schemas"]["DeviceContext"] | components["schemas"]["OSContext"] | components["schemas"]["RuntimeContext"] | components["schemas"]["AppContext"] | components["schemas"]["BrowserContext"] | components["schemas"]["GPUContext"] | components["schemas"]["StateContext"] | components["schemas"]["CultureContext"] | components["schemas"]["CloudResourceContext"] | components["schemas"]["TraceContext"] | components["schemas"]["ReplayContext"] | components["schemas"]["ResponseContext"]) | unknown;
             } | null;
-            /** Data.Extra */
-            "data.extra"?: {
+            /** Context */
+            context?: {
                 [key: string]: unknown;
             } | null;
-            /** Data.User */
-            "data.user"?: unknown | null;
+            /** User */
+            user?: unknown | null;
+            /** Sdk */
+            sdk?: {
+                [key: string]: unknown;
+            } | null;
             /** Title */
             title: string;
             userReport: components["schemas"]["UserReportSchema"] | null;

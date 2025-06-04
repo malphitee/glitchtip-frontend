@@ -24,7 +24,6 @@ import { IssuesAPIService } from "src/app/api/issues/issues-api.service";
 import { Json } from "src/app/interface-primitives";
 import { OrganizationsService } from "src/app/api/organizations.service";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
-import { toObservable } from "@angular/core/rxjs-interop";
 import { client } from "src/app/api/api";
 import { components } from "src/app/api/api-schema";
 
@@ -97,44 +96,36 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
     }
     return null;
   });
-  readonly previousEventUrl$ = toObservable(this.previousEventUrl);
   readonly eventEntryException = computed(() => {
     const event = this.event();
     const isReversed = this.isReversed();
 
     return event ? this.reverseFrames(event, isReversed) : undefined;
   });
-  readonly eventEntryException$ = toObservable(this.eventEntryException);
-  readonly _rawStacktraceValues = computed(() => {
+  readonly rawStacktraceValues = computed(() => {
     const event = this.event();
-    return event ? this.rawStacktraceValues(event) : undefined;
+    return event ? this.getRawStacktraceValues(event) : undefined;
   });
-  readonly rawStacktraceValues$ = toObservable(this._rawStacktraceValues);
   readonly eventEntryRequest = computed(() => {
     const event = this.event();
-    return event ? this.entryRequestData(event) : undefined;
+    return event ? this.getEntryRequestData(event) : undefined;
   });
-  readonly eventEntryRequest$ = toObservable(this.eventEntryRequest);
-  readonly _eventEntryCSP = computed(() => {
+  readonly eventEntryCSP = computed(() => {
     const event = this.event();
-    return event ? this.eventEntryCSP(event) : undefined;
+    return event ? this.getEventEntryCSP(event) : undefined;
   });
-  readonly eventEntryCSP$ = toObservable(this._eventEntryCSP);
-  readonly _eventEntryMessage = computed(() => {
+  readonly eventEntryMessage = computed(() => {
     const event = this.event();
-    return event ? this.eventEntryMessage(event) : undefined;
+    return event ? this.getEventEntryMessage(event) : undefined;
   });
-  readonly eventEntryMessage$ = toObservable(this._eventEntryMessage);
-  readonly _specialContexts = computed(() => {
+  readonly specialContexts = computed(() => {
     const event = this.event();
-    return event ? this.specialContexts(event) : undefined;
+    return event ? this.getSpecialContexts(event) : undefined;
   });
-  readonly specialContexts$ = toObservable(this._specialContexts);
   readonly breadcrumbs = computed(() => {
     const event = this.event();
     return event ? this.eventEntryBreadcrumbs(event) : undefined;
   });
-  readonly breadcrumbs$ = toObservable(this.breadcrumbs);
 
   #params = signal<{ issueID: string; eventID: string | null }>({
     issueID: "",
@@ -333,7 +324,7 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
   }
 
   /* Return the message entry type for an event */
-  private eventEntryMessage(event: EventDetail): Message | undefined {
+  private getEventEntryMessage(event: EventDetail): Message | undefined {
     const eventMessage = this.getMessageEntryData(event);
 
     if (eventMessage) {
@@ -343,7 +334,7 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
   }
 
   /* Return the CSP entry type for an event */
-  private eventEntryCSP(event: EventDetail): CSP | undefined {
+  private getEventEntryCSP(event: EventDetail): CSP | undefined {
     const eventCSP = this.getCspEntryData(event);
 
     if (eventCSP) {
@@ -364,7 +355,9 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
   }
 
   /* Return the request entry type for an event with additional fields parsed from url */
-  private entryRequestData(event: EventDetail): AnnotatedRequest | undefined {
+  private getEntryRequestData(
+    event: EventDetail,
+  ): AnnotatedRequest | undefined {
     const eventRequest = this.getRequestEntryData(event);
     if (eventRequest) {
       let urlDomainName = "";
@@ -411,7 +404,7 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
     return;
   }
 
-  rawStacktraceValues(event: EventDetail): Values[] | undefined {
+  getRawStacktraceValues(event: EventDetail): Values[] | undefined {
     const platform = event.platform;
     const eventException = this.getExceptionEntryData(event);
 
@@ -455,14 +448,14 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
    * The order they are return in should always be user, browser, runtime
    * os, device, gpu
    */
-  specialContexts(event: EventDetail): AnnotatedContexts[] {
-    const user = (event as any).user;
-    const contexts = (event as any).contexts;
+  getSpecialContexts(event: EventDetail): AnnotatedContexts[] {
+    const user: any = event.user;
+    const contexts = event.contexts;
     const contextsArray: AnnotatedContexts[] = [];
 
     for (const key in contexts) {
       if (key) {
-        const contextsObject = contexts[key];
+        const contextsObject: any = contexts[key];
 
         if (key === "browser") {
           contextsArray.unshift({

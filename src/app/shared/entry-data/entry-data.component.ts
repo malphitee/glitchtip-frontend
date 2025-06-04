@@ -8,8 +8,8 @@ import { Component, ChangeDetectionStrategy, input } from "@angular/core";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EntryDataComponent {
-  readonly key = input<string>();
-  readonly value = input<unknown>();
+  readonly key = input<any>();
+  readonly value = input<any>();
 
   get displayValue() {
     const value = this.value();

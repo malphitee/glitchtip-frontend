@@ -4,10 +4,10 @@ import {
   inject,
   input,
   effect,
+  computed,
 } from "@angular/core";
-import { ActivatedRoute, RouterLink } from "@angular/router";
+import { RouterLink } from "@angular/router";
 import { IssueDetailService } from "../issue-detail.service";
-import { EventTag } from "src/app/issues/interfaces";
 import { EntryDataComponent } from "../../../shared/entry-data/entry-data.component";
 import { EntryRequestComponent } from "./entry-request/entry-request.component";
 import { EntryBreadcrumbsComponent } from "./entry-breadcrumbs/entry-breadcrumbs.component";
@@ -46,9 +46,10 @@ export class EventDetailComponent {
   orgSlug = input.required<string>({ alias: "org-slug" });
   issueID = input.required<string>({ alias: "issue-id" });
   eventID = input<string | null>(null, { alias: "event-id" });
-  route = inject(ActivatedRoute);
+  query = input<string | null>(null);
 
-  event = this.issueService.event as any;
+  event = this.issueService.event;
+  contexts = computed(() => this.event()?.contexts as { [key: string]: any });
   initialLoadComplete = this.issueService.eventInitialLoadComplete;
   nextEvent = this.issueService.hasNextEvent;
   previousEvent = this.issueService.hasPreviousEvent;
@@ -62,10 +63,9 @@ export class EventDetailComponent {
   }
 
   /** TODO fix these types */
-  generateQuery(tag: EventTag) {
+  generateQuery(tag: { [key: string]: string | null }) {
     // Assume unresolved if not present; tag overrides query otherwise
-    const query = this.route.snapshot.queryParams.query;
-    const unresolved = query === undefined ? "is:unresolved " : "";
+    const unresolved = this.query() === undefined ? "is:unresolved " : "";
 
     if (tag.key === "environment") {
       return { environment: tag.value };
