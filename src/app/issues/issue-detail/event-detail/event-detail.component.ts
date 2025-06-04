@@ -3,7 +3,6 @@ import {
   ChangeDetectionStrategy,
   inject,
   input,
-  effect,
   computed,
 } from "@angular/core";
 import { RouterLink } from "@angular/router";
@@ -55,12 +54,6 @@ export class EventDetailComponent {
   previousEvent = this.issueService.hasPreviousEvent;
   nextEventUrl = this.issueService.nextEventUrl;
   previousEventUrl = this.issueService.previousEventUrl;
-
-  constructor() {
-    effect(() => {
-      this.issueService.setParams(this.issueID(), this.eventID());
-    });
-  }
 
   /** TODO fix these types */
   generateQuery(tag: { [key: string]: string | null }) {

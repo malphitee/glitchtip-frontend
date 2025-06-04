@@ -3017,10 +3017,10 @@ export interface components {
             /** Status */
             status: string;
             project: components["schemas"]["ProjectReference"];
-            /** Short Id */
-            short_id: string;
-            /** Num Comments */
-            num_comments: number;
+            /** Shortid */
+            shortId: string;
+            /** Numcomments */
+            numComments: number;
             /**
              * Stats
              * @default {
@@ -3055,24 +3055,24 @@ export interface components {
             user_count: number | null;
             /** Matching Event Id */
             matching_event_id?: string | null;
+            /**
+             * Firstseen
+             * Format: date-time
+             */
+            firstSeen: string;
+            /**
+             * Lastseen
+             * Format: date-time
+             */
+            lastSeen: string;
             /** Title */
             title: string;
             /** Metadata */
             metadata: Record<string, unknown>;
             /** Culprit */
             culprit?: string | null;
-            /**
-             * First Seen
-             * Format: date-time
-             */
-            first_seen?: string;
-            /**
-             * Last Seen
-             * Format: date-time
-             */
-            last_seen?: string;
-            /** User Report Count */
-            user_report_count: number;
+            /** Userreportcount */
+            userReportCount: number;
         };
         /** ProjectReference */
         ProjectReference: {
@@ -3132,8 +3132,8 @@ export interface components {
             project: components["schemas"]["ProjectReference"];
             /** Short Id Display */
             short_id_display: string;
-            /** Numcomments */
-            numComments: number;
+            /** Num Comments */
+            num_comments: number;
             /**
              * Stats
              * @default {
@@ -3168,22 +3168,22 @@ export interface components {
             userCount: number | null;
             /** Matchingeventid */
             matchingEventId?: string | null;
+            /**
+             * First Seen
+             * Format: date-time
+             */
+            first_seen: string;
+            /**
+             * Last Seen
+             * Format: date-time
+             */
+            last_seen: string;
             /** Title */
             title: string;
             /** Metadata */
             metadata: Record<string, unknown>;
             /** Culprit */
             culprit?: string | null;
-            /**
-             * First Seen
-             * Format: date-time
-             */
-            firstSeen?: string;
-            /**
-             * Last Seen
-             * Format: date-time
-             */
-            lastSeen?: string;
         };
         /** IssueTagSchema */
         IssueTagSchema: {

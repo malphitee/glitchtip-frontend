@@ -15,7 +15,7 @@ export class SlugifyDirective {
     return true;
   }
 
-  @HostListener("paste", ["$event"]) blockPaste(event: KeyboardEvent) {
+  @HostListener("paste", ["$event"]) blockPaste(event: ClipboardEvent) {
     this.validateFields();
   }
 

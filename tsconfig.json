@@ -9,7 +9,7 @@
     "declaration": false,
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
-    "module": "ES2022",
+    "module": "preserve",
     "moduleResolution": "bundler",
     "noUnusedLocals": true,
     "noImplicitReturns": true,
@@ -25,8 +25,9 @@
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
-    "fullTemplateTypeCheck": true,
-    "strictTemplates": true,
-    "strictInjectionParameters": true
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "typeCheckHostBindings": true,
+    "strictTemplates": true
   }
 }

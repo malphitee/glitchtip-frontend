@@ -1,11 +1,9 @@
-import { HttpErrorResponse } from "@angular/common/http";
 import { Injectable, computed, inject, resource, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { EMPTY, lastValueFrom } from "rxjs";
-import { catchError, filter, take, tap, withLatestFrom } from "rxjs/operators";
+import { EMPTY } from "rxjs";
+import { catchError, tap, withLatestFrom } from "rxjs/operators";
 import {
-  IssueDetail,
   IssueStatus,
   ExceptionValueData,
   Request,
@@ -28,23 +26,18 @@ import { client } from "src/app/api/api";
 import { components } from "src/app/api/api-schema";
 
 type EventDetail = components["schemas"]["IssueEventDetailSchema"];
+type IssueDetail = components["schemas"]["IssueDetailSchema"];
 
 interface IssueDetailState {
-  issue: IssueDetail | null;
-  issueLoading: boolean;
-  issueInitialLoadComplete: boolean;
   tags: IssueTags[] | null;
   isReversed: boolean;
   showShowMore: boolean;
 }
 
 const initialState: IssueDetailState = {
-  issue: null,
   tags: null,
   isReversed: true,
   showShowMore: false,
-  issueLoading: false,
-  issueInitialLoadComplete: false,
 };
 
 @Injectable({
@@ -56,9 +49,9 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
   private snackBar = inject(MatSnackBar);
   private router = inject(Router);
 
-  readonly issue = computed(() => this.state().issue);
-  readonly issueInitialLoadComplete = computed(
-    () => this.state().issueInitialLoadComplete,
+  readonly issue = computed(() => this.#issueResource.value());
+  readonly issueInitialLoadComplete = computed(() =>
+    this.#issueResource.hasValue(),
   );
   readonly event = computed(() => this.#eventResource.value());
   readonly tags = computed(() => {
@@ -82,7 +75,7 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
     const event = this.event();
 
     if (event && event.nextEventID) {
-      return this.eventUrl(orgSlug, issue, event.nextEventID);
+      return this.eventUrl(orgSlug, issue!, event.nextEventID);
     }
     return null;
   });
@@ -92,7 +85,7 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
     const event = this.event();
 
     if (event && event.previousEventID) {
-      return this.eventUrl(orgSlug, issue, event.previousEventID);
+      return this.eventUrl(orgSlug, issue!, event.previousEventID);
     }
     return null;
   });
@@ -131,6 +124,18 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
     issueID: "",
     eventID: "",
   });
+  #issueResource = resource({
+    params: () => ({ issueID: this.#params().issueID }),
+    loader: async ({ params }) => {
+      if (!params.issueID) {
+        return;
+      }
+      const { data } = await client.GET("/api/0/issues/{issue_id}/", {
+        params: { path: { issue_id: parseInt(params.issueID) } },
+      });
+      return data;
+    },
+  });
   #eventResource = resource({
     params: () => ({ params: this.#params() }),
     loader: async ({ params }) => {
@@ -164,27 +169,6 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
     super(initialState);
   }
 
-  retrieveIssue(id: number) {
-    this.setState({ issueLoading: true });
-    return this.issuesAPIService.retrieve(id.toString()).pipe(
-      tap((issue) => this.setIssue(issue)),
-      catchError((error) => {
-        if (error instanceof HttpErrorResponse && error.status === 404) {
-          this.clearIssue();
-        }
-        return EMPTY;
-      }),
-    );
-  }
-
-  setIssue(issue: IssueDetail) {
-    this.setState({
-      issue,
-      issueLoading: false,
-      issueInitialLoadComplete: true,
-    });
-  }
-
   setParams(issueID: string, eventID: string | null) {
     this.#params.set({ issueID, eventID });
   }
@@ -205,24 +189,24 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
     this.setState({ showShowMore: value });
   }
 
-  setStatus(status: IssueStatus) {
-    const issue = this.state().issue;
+  async setStatus(status: IssueStatus) {
+    const issue = this.issue();
     if (issue) {
-      lastValueFrom(
-        this.organization.activeOrganizationSlug$.pipe(
-          filter((slug) => !!slug),
-          take(1),
-          tap((slug) => {
-            if (slug) {
-              lastValueFrom(
-                this.issuesAPIService
-                  .update(status, slug, issue.id)
-                  .pipe(tap((resp) => this.setIssueStatus(resp.status))),
-              );
-            }
-          }),
-        ),
+      const { data } = await client.PUT(
+        "/api/0/organizations/{organization_slug}/issues/{issue_id}/",
+        {
+          params: {
+            path: {
+              organization_slug: this.organization.activeOrganizationSlug(),
+              issue_id: parseInt(this.#params().issueID),
+            },
+          },
+          body: { status: status as any },
+        },
       );
+      if (data) {
+        this.setIssueStatus(data.status as IssueStatus);
+      }
     }
   }
 
@@ -287,31 +271,14 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
 
   /** Set local state issue state */
   private setIssueStatus(status: IssueStatus) {
-    const state = this.state();
-    if (state.issue) {
-      const issue = { ...state.issue, status };
-      this.setState({ issue });
-    }
-  }
-
-  private clearIssue() {
-    this.setState({
-      issue: null,
-      issueLoading: false,
-      issueInitialLoadComplete: true,
-    });
+    this.#issueResource.update((issue) => ({ ...issue!, status }));
   }
 
   private setUpdatedCommentCount(num: number) {
-    const state = this.state();
-    if (state.issue) {
-      this.setState({
-        issue: {
-          ...state.issue,
-          numComments: state.issue.numComments + num,
-        },
-      });
-    }
+    this.#issueResource.update((issue) => ({
+      ...issue!,
+      numComments: issue!.numComments + num,
+    }));
   }
 
   setTags(tags: IssueTags[]) {

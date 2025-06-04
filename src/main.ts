@@ -1,21 +1,14 @@
 import {
-  enableProdMode,
   ErrorHandler,
-  importProvidersFrom,
   inject,
   provideZonelessChangeDetection,
   Provider,
 } from "@angular/core";
 import { loadTranslations } from "@angular/localize";
 
-import { environment } from "./environments/environment";
 import { AppComponent } from "./app/app.component";
-import { MicroSentryModule } from "@micro-sentry/angular";
-import {
-  MAT_SNACK_BAR_DEFAULT_OPTIONS,
-  MatSnackBarModule,
-} from "@angular/material/snack-bar";
-import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
+import { provideMicroSentry } from "@micro-sentry/angular";
+import { MAT_SNACK_BAR_DEFAULT_OPTIONS } from "@angular/material/snack-bar";
 import { routes, TemplatePageTitleStrategy } from "./app/app.routes";
 import { bootstrapApplication } from "@angular/platform-browser";
 import { LessAnnoyingErrorStateMatcher } from "./app/shared/less-annoying-error-state-matcher";
@@ -49,10 +42,6 @@ if (window.Cypress) {
   snackBarDuration = 100;
 }
 const serverErrorsRegex = new RegExp(`403 Forbidden|404 OK`, "mi");
-
-if (environment.production) {
-  enableProdMode();
-}
 
 // First locale is default, add additional after it
 const availableLocales = ["en", "fr", "nb"];
@@ -108,10 +97,9 @@ const bootstrap = () =>
         }),
       ),
       provideMarkdown(),
-      importProvidersFrom(
-        MatSnackBarModule,
-        MicroSentryModule.forRoot({ ignoreErrors: [serverErrorsRegex] }),
-      ),
+      provideMicroSentry({
+        ignoreErrors: [serverErrorsRegex],
+      }),
       {
         provide: MAT_SNACK_BAR_DEFAULT_OPTIONS,
         useValue: { duration: snackBarDuration },
@@ -122,7 +110,6 @@ const bootstrap = () =>
         provide: ErrorStateMatcher,
         useClass: LessAnnoyingErrorStateMatcher,
       },
-      provideAnimationsAsync(),
       provideHttpClient(
         withFetch(),
         withXsrfConfiguration({

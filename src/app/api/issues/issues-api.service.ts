@@ -1,15 +1,13 @@
 import { Injectable, inject } from "@angular/core";
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { EMPTY, map } from "rxjs";
+import { EMPTY } from "rxjs";
 import { baseUrl } from "../../constants";
 import { APIBaseService } from "../api-base.service";
 import {
-  IssueDetail,
   IssueStatus,
   IssueTags,
   UpdateStatusResponse,
 } from "src/app/issues/interfaces";
-import { normalizeID } from "../shared-api.utils";
 
 @Injectable({
   providedIn: "root",
@@ -31,12 +29,7 @@ export class IssuesAPIService extends APIBaseService {
   }
 
   retrieve(id: string) {
-    return this.http.get<IssueDetail>(this.detailURL(id)).pipe(
-      map((issueDetail) => {
-        issueDetail.project.id = normalizeID(issueDetail.project.id);
-        return issueDetail;
-      }),
-    );
+    return EMPTY;
   }
 
   update(status: IssueStatus, orgSlug: string, id: number) {

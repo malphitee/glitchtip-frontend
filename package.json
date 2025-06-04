@@ -17,7 +17,7 @@
     "cy:openscreenshot": "cypress open --env screenshot=true",
     "cy:run": "cypress run",
     "e2e": "concurrently \"npm run start -- --no-hmr\" \"wait-on http-get://localhost:4200 && npm run cy:run\" --kill-others --success first",
-    "build-stats": "ng build --stats-json",
+    "build-stats": "ng build -c production --stats-json",
     "analyze": "webpack-bundle-analyzer dist/glitchtip-frontend/stats.json",
     "docs:json": "compodoc -p ./tsconfig.json -e json -d .",
     "extract-i18n": "ng extract-i18n",
@@ -111,7 +111,6 @@
     "ts-node": "~7.0.0",
     "typescript": "^5.8.2",
     "wait-on": "^5.3.0",
-    "webpack-bundle-analyzer": "^4.10.2",
     "xliff": "^6.2.1"
   },
   "overrides": {
