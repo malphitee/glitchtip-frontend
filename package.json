@@ -28,7 +28,6 @@
     "openapi-typescript-allauth": "openapi-typescript http://localhost:8000/_allauth/openapi.json -o src/app/api/allauth-schema.d.ts"
   },
   "dependencies": {
-    "@angular/animations": "~20.0.0",
     "@angular/cdk": "~20.0.1",
     "@angular/common": "~20.0.0",
     "@angular/compiler": "~20.0.0",
@@ -115,7 +114,7 @@
   },
   "overrides": {
     "@swimlane/ngx-charts": {
-      "@angular/animations": "$@angular/animations",
+      "@angular/animations": "^20.0.0",
       "@angular/cdk": "$@angular/cdk",
       "@angular/common": "$@angular/common",
       "@angular/compiler": "$@angular/compiler",
