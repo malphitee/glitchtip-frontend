@@ -1,12 +1,11 @@
 import { HttpErrorResponse } from "@angular/common/http";
-import { Injectable, computed, inject } from "@angular/core";
+import { Injectable, computed, inject, resource, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { EMPTY, lastValueFrom } from "rxjs";
 import { catchError, filter, take, tap, withLatestFrom } from "rxjs/operators";
 import {
   IssueDetail,
-  EventDetail,
   IssueStatus,
   ExceptionValueData,
   Request,
@@ -27,14 +26,14 @@ import { OrganizationsService } from "src/app/api/organizations.service";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
 import { toObservable } from "@angular/core/rxjs-interop";
 import { client } from "src/app/api/api";
+import { components } from "src/app/api/api-schema";
+
+type EventDetail = components["schemas"]["IssueEventDetailSchema"];
 
 interface IssueDetailState {
   issue: IssueDetail | null;
   issueLoading: boolean;
   issueInitialLoadComplete: boolean;
-  event: EventDetail | null;
-  eventLoading: boolean;
-  eventInitialLoadComplete: boolean;
   tags: IssueTags[] | null;
   isReversed: boolean;
   showShowMore: boolean;
@@ -42,14 +41,11 @@ interface IssueDetailState {
 
 const initialState: IssueDetailState = {
   issue: null,
-  event: null,
   tags: null,
   isReversed: true,
   showShowMore: false,
   issueLoading: false,
   issueInitialLoadComplete: false,
-  eventLoading: false,
-  eventInitialLoadComplete: false,
 };
 
 @Injectable({
@@ -65,13 +61,13 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
   readonly issueInitialLoadComplete = computed(
     () => this.state().issueInitialLoadComplete,
   );
-  readonly event = computed(() => this.state().event);
+  readonly event = computed(() => this.#eventResource.value());
   readonly tags = computed(() => {
     const state = this.state();
     return state.tags && this.tagsWithPercent(state.tags);
   });
-  readonly eventInitialLoadComplete = computed(
-    () => this.state().eventInitialLoadComplete,
+  readonly eventInitialLoadComplete = computed(() =>
+    this.#eventResource.hasValue(),
   );
   readonly isReversed = computed(() => this.state().isReversed);
   readonly showShowMore = computed(() => this.state().showShowMore);
@@ -140,6 +136,39 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
   });
   readonly breadcrumbs$ = toObservable(this.breadcrumbs);
 
+  #params = signal<{ issueID: string; eventID: string | null }>({
+    issueID: "",
+    eventID: "",
+  });
+  #eventResource = resource({
+    params: () => ({ params: this.#params() }),
+    loader: async ({ params }) => {
+      const issueID = parseInt(params.params.issueID);
+      const eventID = params.params.eventID;
+      if (!issueID) {
+        return undefined;
+      }
+      if (eventID) {
+        const { data } = await client.GET(
+          "/api/0/issues/{issue_id}/events/{event_id}/",
+          {
+            params: {
+              path: { issue_id: issueID, event_id: eventID },
+            },
+          },
+        );
+        return data;
+      }
+      const { data } = await client.GET(
+        "/api/0/issues/{issue_id}/events/latest/",
+        {
+          params: { path: { issue_id: issueID } },
+        },
+      );
+      return data;
+    },
+  });
+
   constructor() {
     super(initialState);
   }
@@ -157,32 +186,16 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
     );
   }
 
-  getPreviousEvent() {
-    const state = this.state();
-    if (state.issue && state.event && state.event.previousEventID) {
-      this.retrieveEvent(state.issue.id, state.event.previousEventID);
-    }
+  setIssue(issue: IssueDetail) {
+    this.setState({
+      issue,
+      issueLoading: false,
+      issueInitialLoadComplete: true,
+    });
   }
 
-  getNextEvent() {
-    const state = this.state();
-    if (state.issue && state.event && state.event.nextEventID) {
-      this.retrieveEvent(state.issue.id, state.event.nextEventID);
-    }
-  }
-
-  getLatestEvent() {
-    const issue = this.state().issue;
-    if (issue) {
-      this.retrieveLatestEvent(issue.id);
-    }
-  }
-
-  getEventByID(eventID: string) {
-    const issue = this.state().issue;
-    if (issue) {
-      this.retrieveEvent(issue.id, eventID);
-    }
+  setParams(issueID: string, eventID: string | null) {
+    this.#params.set({ issueID, eventID });
   }
 
   retrieveTags(id: number, query?: string) {
@@ -290,51 +303,11 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
     }
   }
 
-  private async retrieveLatestEvent(issueID: number) {
-    this.setState({ eventLoading: true });
-    const { data } = await client.GET(
-      "/api/0/issues/{issue_id}/events/latest/",
-      {
-        params: { path: { issue_id: issueID } },
-      },
-    );
-    if (data) {
-      this.setEvent(data as any);
-    } else {
-      this.clearEvent();
-    }
-  }
-
-  async retrieveEvent(issueID: number, eventID: string) {
-    this.setState({ eventLoading: true });
-    const { data } = await client.GET(
-      "/api/0/issues/{issue_id}/events/{event_id}/",
-      {
-        params: { path: { issue_id: issueID, event_id: eventID } },
-      },
-    );
-    if (data) {
-      this.setEvent(data as any);
-    } else {
-      this.clearEvent();
-    }
-  }
-
-  // private removed for testing
-  setIssue(issue: IssueDetail) {
-    this.setState({
-      issue,
-      issueLoading: false,
-      issueInitialLoadComplete: true,
-    });
-  }
-
   private clearIssue() {
     this.setState({
       issue: null,
       issueLoading: false,
       issueInitialLoadComplete: true,
-      event: null,
     });
   }
 
@@ -348,23 +321,6 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
         },
       });
     }
-  }
-
-  // private removed for testing
-  setEvent(event: EventDetail) {
-    this.setState({
-      event,
-      eventLoading: false,
-      eventInitialLoadComplete: true,
-    });
-  }
-
-  clearEvent() {
-    this.setState({
-      event: null,
-      eventLoading: false,
-      eventInitialLoadComplete: true,
-    });
   }
 
   setTags(tags: IssueTags[]) {
@@ -500,8 +456,8 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
    * os, device, gpu
    */
   specialContexts(event: EventDetail): AnnotatedContexts[] {
-    const user = event.user;
-    const contexts = event.contexts;
+    const user = (event as any).user;
+    const contexts = (event as any).contexts;
     const contextsArray: AnnotatedContexts[] = [];
 
     for (const key in contexts) {
@@ -660,7 +616,7 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
    * property or undefined
    */
   private getEntryData(event: EventDetail, entryType: EntryType) {
-    const entries = event.entries.find((entry) => entry.type === entryType);
+    const entries = event.entries!.find((entry) => entry.type === entryType);
     if (!entries) {
       return undefined;
     }

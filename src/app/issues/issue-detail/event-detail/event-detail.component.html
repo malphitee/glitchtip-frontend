@@ -85,7 +85,7 @@
     <gt-entry-csp></gt-entry-csp>
     <gt-entry-breadcrumbs></gt-entry-breadcrumbs>
     <gt-entry-request></gt-entry-request>
-    @for (context of event.contexts | keyvalue; track context) {
+    <!-- @for (context of event.contexts | keyvalue; track context) {
       <section>
         <mat-divider></mat-divider>
         <h3>
@@ -110,16 +110,16 @@
           }
         </dl>
       </section>
-    }
+    } -->
     @if (event.context) {
       <section>
         <mat-divider></mat-divider>
         <h3>Additional Data</h3>
         <dl>
-          @for (context of event.context | keyvalue; track context) {
+          <!-- @for (context of event.context | keyvalue; track context) {
             <gt-entry-data [key]="context.key" [value]="context.value">
             </gt-entry-data>
-          }
+          } -->
         </dl>
       </section>
     }

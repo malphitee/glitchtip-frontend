@@ -3,7 +3,7 @@ import {
   ChangeDetectionStrategy,
   inject,
   input,
-  OnInit,
+  effect,
 } from "@angular/core";
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { IssueDetailService } from "../issue-detail.service";
@@ -41,34 +41,24 @@ import { DatePipe, KeyValuePipe } from "@angular/common";
     KeyValuePipe,
   ],
 })
-export class EventDetailComponent implements OnInit {
+export class EventDetailComponent {
   private issueService = inject(IssueDetailService);
   orgSlug = input.required<string>({ alias: "org-slug" });
+  issueID = input.required<string>({ alias: "issue-id" });
   eventID = input<string | null>(null, { alias: "event-id" });
   route = inject(ActivatedRoute);
 
-  event = this.issueService.event;
+  event = this.issueService.event as any;
   initialLoadComplete = this.issueService.eventInitialLoadComplete;
   nextEvent = this.issueService.hasNextEvent;
   previousEvent = this.issueService.hasPreviousEvent;
   nextEventUrl = this.issueService.nextEventUrl;
   previousEventUrl = this.issueService.previousEventUrl;
 
-  ngOnInit() {
-    const eventID = this.eventID();
-    if (eventID) {
-      this.issueService.getEventByID(eventID);
-    } else {
-      this.issueService.getLatestEvent();
-    }
-  }
-
-  getNewerEvent() {
-    this.issueService.getNextEvent();
-  }
-
-  getOlderEvent() {
-    this.issueService.getPreviousEvent();
+  constructor() {
+    effect(() => {
+      this.issueService.setParams(this.issueID(), this.eventID());
+    });
   }
 
   /** TODO fix these types */
