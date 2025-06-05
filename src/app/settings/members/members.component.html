@@ -12,7 +12,7 @@
     <mat-divider></mat-divider>
     <mat-card-content>
       <div class="list">
-        @for (member of members$ | async; track member) {
+        @for (member of members(); track member) {
           <div class="list--item">
             <div class="email-and-badge">
               <a class="email" mat-line [routerLink]="[member.id]"

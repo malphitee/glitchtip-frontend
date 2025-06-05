@@ -5,7 +5,6 @@ import {
   Member,
   MemberDetail,
   OrgMemberUpdate,
-  OrgMemberIn,
 } from "./organizations.interface";
 
 @Injectable({
@@ -31,19 +30,11 @@ export class MembersAPIService {
     );
   }
 
-  destroy(orgSlug: string, memberId: number) {
-    return this.http.delete(this.detailURL(orgSlug, memberId));
-  }
-
   makeOrgOwner(orgSlug: string, memberId: number) {
     return this.http.post<Member>(
       this.detailURL(orgSlug, memberId) + "set_owner/",
       null,
     );
-  }
-
-  inviteUser(orgSlug: string, data: OrgMemberIn) {
-    return this.http.post<Member>(this.listURL(orgSlug), data);
   }
 
   private listURL(organizationSlug: string) {
