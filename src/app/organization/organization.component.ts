@@ -17,6 +17,8 @@ import {
 } from "@angular/router";
 import { filter, Subscription } from "rxjs";
 import { OrganizationsService } from "../api/organizations.service";
+import { SettingsService } from "../api/settings.service";
+import { SubscriptionService } from "../api/subscriptions/subscription.service";
 
 @Component({
   imports: [RouterOutlet],
@@ -26,6 +28,8 @@ import { OrganizationsService } from "../api/organizations.service";
 export class OrganizationFrameComponent implements OnDestroy, OnInit {
   route = inject(ActivatedRoute);
   router = inject(Router);
+  settings = inject(SettingsService);
+  subscription = inject(SubscriptionService);
   private firstChildRoute: string = "";
   private subscriptions: Subscription[] = [];
   private isNavigationFromBackButton = false;
@@ -64,6 +68,14 @@ export class OrganizationFrameComponent implements OnDestroy, OnInit {
         }
       } else {
         this.router.navigate(["/"]);
+      }
+    });
+
+    effect(() => {
+      const billingEnabled = this.settings.billingEnabled();
+      const activeOrgSlug = this.organizationService.activeOrganizationSlug();
+      if (billingEnabled && activeOrgSlug) {
+        this.subscription.checkIfUserHasSubscription(activeOrgSlug);
       }
     });
   }

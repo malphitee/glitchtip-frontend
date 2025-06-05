@@ -1,9 +1,7 @@
 import { Injectable, computed, inject } from "@angular/core";
-import { HttpErrorResponse } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { combineLatest, lastValueFrom, EMPTY } from "rxjs";
-import { filter, distinctUntilChanged, catchError, tap } from "rxjs/operators";
+import { tap } from "rxjs/operators";
 import {
   Environment,
   Organization,
@@ -11,15 +9,11 @@ import {
   OrganizationErrors,
   OrganizationLoading,
 } from "./organizations.interface";
-import { SettingsService } from "../settings.service";
-import { SubscriptionService } from "../subscriptions/subscription.service";
 import { TeamsService } from "../teams/teams.service";
 import { Team } from "../teams/teams.interfaces";
 import { EnvironmentsAPIService } from "../environments/environments-api.service";
-import { TeamsAPIService } from "../teams/teams-api.service";
 import { OrganizationsService } from "../organizations.service";
-import { toObservable } from "@angular/core/rxjs-interop";
-import { client } from "../api";
+import { client, handleError } from "../api";
 import { components } from "../api-schema";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
 
@@ -61,9 +55,6 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
   private organizationsService = inject(OrganizationsService);
   private environmentsAPIService = inject(EnvironmentsAPIService);
   private snackBar = inject(MatSnackBar);
-  private settingsService = inject(SettingsService);
-  private subscriptionService = inject(SubscriptionService);
-  private teamsAPIService = inject(TeamsAPIService);
   private teamsService = inject(TeamsService);
 
   readonly initialLoad = computed(() => this.state().initialLoad);
@@ -127,25 +118,6 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
 
   constructor() {
     super(initialState);
-
-    // When billing is enabled, check if active org has subscription
-    combineLatest([
-      toObservable(this.settingsService.billingEnabled),
-      this.organizationsService.activeOrganization$,
-    ])
-      .pipe(
-        filter(
-          ([billingEnabled, activeOrganization]) =>
-            !!billingEnabled && !!activeOrganization,
-        ),
-        distinctUntilChanged((a, b) => a[1]?.id === b[1]?.id),
-        tap(([_, activeOrganization]) => {
-          this.subscriptionService.checkIfUserHasSubscription(
-            activeOrganization!.slug,
-          );
-        }),
-      )
-      .subscribe();
   }
 
   async updateOrganization(orgName: string) {
@@ -246,14 +218,20 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
       });
   }
 
-  retrieveOrganizationTeams(orgSlug: string) {
-    lastValueFrom(
-      this.teamsAPIService.list(orgSlug).pipe(
-        tap((resp) => {
-          this.setOrganizationTeams(resp);
-        }),
-      ),
+  async retrieveOrganizationTeams(orgSlug: string) {
+    const { data } = await client.GET(
+      "/api/0/organizations/{organization_slug}/teams/",
+      {
+        params: {
+          path: {
+            organization_slug: orgSlug,
+          },
+        },
+      },
     );
+    if (data) {
+      this.setOrganizationTeams(data as any);
+    }
   }
 
   async createTeam(teamSlug: string, orgSlug: string) {
@@ -271,64 +249,98 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
     return result;
   }
 
-  addTeamMember(member: Member, orgSlug: string, teamSlug: string) {
-    return this.teamsAPIService.addTeamMember(member, orgSlug, teamSlug).pipe(
-      tap((team: Team) => {
-        lastValueFrom(
-          this.teamsService.retrieveTeamMembers(orgSlug, team.slug),
-        );
-        this.retrieveOrganizationMembers(orgSlug);
-      }),
+  async addTeamMember(member: Member, orgSlug: string, teamSlug: string) {
+    const { data } = await client.POST(
+      "/api/0/organizations/{organization_slug}/members/{member_id}/teams/{team_slug}/",
+      {
+        params: {
+          path: {
+            organization_slug: orgSlug,
+            member_id: parseInt(member.id),
+            team_slug: teamSlug,
+          },
+        },
+        body: member as any,
+      },
     );
+    if (data) {
+      this.teamsService.retrieveTeamMembers(orgSlug, data.slug).toPromise();
+      await this.retrieveOrganizationMembers(orgSlug);
+      return data;
+    }
+    return;
   }
 
-  removeTeamMember(memberId: number, teamSlug: string) {
+  async removeTeamMember(memberId: number, teamSlug: string) {
     const orgSlug = this.organizationsService.activeOrganizationSlug();
-    if (orgSlug) {
-      return this.teamsAPIService
-        .removeTeamMember(memberId, orgSlug, teamSlug)
-        .pipe(
-          tap(() => {
-            this.teamsService.removeMember(memberId);
-          }),
-        );
+    const { data } = await client.DELETE(
+      "/api/0/organizations/{organization_slug}/members/{member_id}/teams/{team_slug}/",
+      {
+        params: {
+          path: {
+            organization_slug: orgSlug,
+            member_id: memberId,
+            team_slug: teamSlug,
+          },
+        },
+      },
+    );
+    if (data) {
+      this.teamsService.removeMember(memberId);
+    }
+    return data;
+  }
+
+  async leaveTeam(teamSlug: string) {
+    const orgSlug = this.organizationsService.activeOrganizationSlug();
+    this.setLeaveTeamLoading(teamSlug);
+    const { data, error, response } = await client.DELETE(
+      "/api/0/organizations/{organization_slug}/members/{member_id}/teams/{team_slug}/",
+      {
+        params: {
+          path: {
+            organization_slug: orgSlug,
+            member_id: "me",
+            team_slug: teamSlug,
+          },
+        },
+      },
+    );
+    if (data) {
+      this.snackBar.open($localize`You have left ${data.slug}`);
+      this.setTeamsView(data.slug, data.isMember, data.memberCount);
     } else {
-      return EMPTY;
+      const errors = handleError(error, response);
+      if (errors.detail.length) {
+        this.setLeaveTeamError(errors.detail[0].msg);
+      }
     }
   }
 
-  leaveTeam(teamSlug: string) {
-    const orgSlug = this.organizationsService.activeOrganizationSlug();
-    this.setLeaveTeamLoading(teamSlug);
-    lastValueFrom(
-      this.teamsAPIService.leaveTeam(orgSlug!, teamSlug).pipe(
-        tap((resp) => {
-          this.snackBar.open(`You have left ${resp.slug}`);
-          this.setTeamsView(resp.slug, resp.isMember, resp.memberCount);
-        }),
-        catchError((error: HttpErrorResponse) => {
-          this.setLeaveTeamError(error);
-          return EMPTY;
-        }),
-      ),
-    );
-  }
-
-  joinTeam(teamSlug: string) {
+  async joinTeam(teamSlug: string) {
     const orgSlug = this.organizationsService.activeOrganizationSlug();
     this.setJoinTeamLoading(teamSlug);
-    lastValueFrom(
-      this.teamsAPIService.joinTeam(orgSlug!, teamSlug).pipe(
-        tap((resp) => {
-          this.snackBar.open(`You joined ${resp.slug}`);
-          this.setTeamsView(resp.slug, resp.isMember, resp.memberCount);
-        }),
-        catchError((error: HttpErrorResponse) => {
-          this.setJoinTeamError(error);
-          return EMPTY;
-        }),
-      ),
+    const { data, error, response } = await client.POST(
+      "/api/0/organizations/{organization_slug}/members/{member_id}/teams/{team_slug}/",
+      {
+        params: {
+          path: {
+            organization_slug: orgSlug,
+            member_id: "me",
+            team_slug: teamSlug,
+          },
+        },
+      },
     );
+    if (data) {
+      this.snackBar.open($localize`You joined ${data.slug}`);
+      this.setTeamsView(data.slug, data.isMember, data.memberCount);
+    } else {
+      const errors = handleError(error, response);
+      if (errors.detail.length) {
+        this.setJoinTeamError(errors.detail[0].msg);
+      }
+    }
   }
 
   deleteTeam(slug: string) {
@@ -405,12 +417,12 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
     });
   }
 
-  private setLeaveTeamError(error: HttpErrorResponse) {
+  private setLeaveTeamError(error: string) {
     const state = this.state();
     this.setState({
       errors: {
         ...state.errors,
-        removeTeamMember: `${error.statusText}: ${error.status}`,
+        removeTeamMember: error,
       },
       loading: {
         ...state.loading,
@@ -419,12 +431,12 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
     });
   }
 
-  private setJoinTeamError(error: HttpErrorResponse) {
+  private setJoinTeamError(error: string) {
     const state = this.state();
     this.setState({
       errors: {
         ...state.errors,
-        addTeamMember: `${error.statusText}: ${error.status}`,
+        addTeamMember: error,
       },
       loading: {
         ...state.loading,
