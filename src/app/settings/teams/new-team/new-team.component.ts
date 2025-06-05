@@ -57,7 +57,6 @@ export class NewTeamComponent {
       Validators.pattern(slugRegex),
     ]),
   });
-  orgSlug?: string;
 
   get slug() {
     return this.form.get("slug");
