@@ -33,6 +33,7 @@ type Member = components["schemas"]["OrganizationUserSchema"];
     LoadingButtonComponent,
     MatTooltipModule,
   ],
+  providers: [MembersService],
 })
 export class MembersComponent implements OnInit {
   private organizationsService = inject(OrganizationsService);

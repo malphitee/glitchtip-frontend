@@ -16,7 +16,6 @@ import { SubscriptionService } from "../subscriptions/subscription.service";
 import { TeamsService } from "../teams/teams.service";
 import { Team } from "../teams/teams.interfaces";
 import { EnvironmentsAPIService } from "../environments/environments-api.service";
-import { OrganizationAPIService } from "./organizations-api.service";
 import { TeamsAPIService } from "../teams/teams-api.service";
 import { OrganizationsService } from "../organizations.service";
 import { toObservable, toSignal } from "@angular/core/rxjs-interop";
@@ -61,7 +60,6 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
   private router = inject(Router);
   private organizationsService = inject(OrganizationsService);
   private environmentsAPIService = inject(EnvironmentsAPIService);
-  private organizationAPIService = inject(OrganizationAPIService);
   private snackBar = inject(MatSnackBar);
   private settingsService = inject(SettingsService);
   private subscriptionService = inject(SubscriptionService);
@@ -150,17 +148,20 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
       .subscribe();
   }
 
-  updateOrganization(orgName: string) {
-    const data = { name: orgName };
+  async updateOrganization(orgName: string) {
+    const body = { name: orgName };
     const orgSlug = this.organizationsService.activeOrganizationSlug();
-    if (orgSlug) {
-      return this.organizationAPIService.update(orgSlug, data).pipe(
-        tap((resp) => {
-          this.updateOrgName(resp);
-        }),
-      );
+    const { data } = await client.PUT(
+      "/api/0/organizations/{organization_slug}/",
+      {
+        params: { path: { organization_slug: orgSlug } },
+        body,
+      },
+    );
+    if (data) {
+      this.updateOrgName(data as any);
     }
-    return EMPTY;
+    return data;
   }
 
   /** Delete organization: route to home page */

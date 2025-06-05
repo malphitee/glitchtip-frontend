@@ -3,7 +3,6 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { tap, take } from "rxjs/operators";
 import { OrganizationDetailService } from "../../api/organizations/organization-detail.service";
-import { Organization } from "src/app/api/organizations/organizations.interface";
 import { LoadingButtonComponent } from "../../shared/loading-button/loading-button.component";
 import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -63,22 +62,17 @@ export class OrganizationComponent implements OnInit {
     return this.form.get("name");
   }
 
-  updateOrganization() {
+  async updateOrganization() {
     this.updateLoading = true;
-    this.organizationDetailService
-      .updateOrganization(this.form.value.name!)
-      .subscribe(
-        (org: Organization) => {
-          this.updateLoading = false;
-          this.snackBar.open(
-            `The name of your organization has been updated to ${org.name}`,
-          );
-        },
-        (err) => {
-          this.updateLoading = false;
-          this.updateError = `${err.statusText}: ${err.status}`;
-        },
+    const org = await this.organizationDetailService.updateOrganization(
+      this.form.value.name!,
+    );
+    this.updateLoading = false;
+    if (org) {
+      this.snackBar.open(
+        $localize`The name of your organization has been updated to ${org.name}`,
       );
+    }
   }
 
   removeOrganization(slug: string, name: string) {

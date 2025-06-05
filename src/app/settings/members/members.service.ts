@@ -20,7 +20,7 @@ const initialState: MembersState = {
   sentResendInvite: [],
 };
 
-@Injectable({ providedIn: "root" })
+@Injectable()
 export class MembersService extends StatefulService<MembersState> {
   router = inject(Router);
   private organizationsService = inject(OrganizationsService);
