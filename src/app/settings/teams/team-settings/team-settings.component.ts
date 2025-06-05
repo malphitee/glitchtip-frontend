@@ -19,7 +19,6 @@ import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatCardModule } from "@angular/material/card";
-import { AsyncPipe } from "@angular/common";
 
 @Component({
   selector: "gt-team-settings",
@@ -33,7 +32,6 @@ import { AsyncPipe } from "@angular/common";
     ReactiveFormsModule,
     MatInputModule,
     LoadingButtonComponent,
-    AsyncPipe,
   ],
 })
 export class TeamSettingsComponent implements OnInit {
@@ -41,9 +39,9 @@ export class TeamSettingsComponent implements OnInit {
   private organizationsService = inject(OrganizationDetailService);
   private route = inject(ActivatedRoute);
 
-  team$ = this.teamsService.team$;
-  loading$ = this.teamsService.loading$;
-  errors$ = this.teamsService.errors$;
+  team = this.teamsService.team;
+  loading = this.teamsService.loading;
+  errors = this.teamsService.errors;
   form = new FormGroup({
     slug: new FormControl("", [Validators.required]),
   });

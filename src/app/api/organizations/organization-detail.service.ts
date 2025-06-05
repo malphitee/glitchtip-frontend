@@ -18,7 +18,7 @@ import { Team } from "../teams/teams.interfaces";
 import { EnvironmentsAPIService } from "../environments/environments-api.service";
 import { TeamsAPIService } from "../teams/teams-api.service";
 import { OrganizationsService } from "../organizations.service";
-import { toObservable, toSignal } from "@angular/core/rxjs-interop";
+import { toObservable } from "@angular/core/rxjs-interop";
 import { client } from "../api";
 import { components } from "../api-schema";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
@@ -83,7 +83,7 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
     }
     return projects.length;
   });
-  teamMembers = toSignal(this.teamsService.teamMembers$);
+  teamMembers = this.teamsService.teamMembers;
 
   readonly filteredAddTeamMembers = computed(() => {
     const organizationMembers = this.organizationMembers();

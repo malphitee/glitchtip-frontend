@@ -25,7 +25,6 @@ import { MatInputModule } from "@angular/material/input";
 import { PlatformPickerComponent } from "../platform-picker/platform-picker.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatCardModule } from "@angular/material/card";
-import { toSignal } from "@angular/core/rxjs-interop";
 import { NewProjectService } from "./new-project.service";
 import { Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
@@ -59,7 +58,7 @@ export class NewProjectComponent implements OnInit {
   dialog = inject(MatDialog);
 
   orgSlug = input.required<string>({ alias: "org-slug" });
-  teams = toSignal(this.teamsService.teams$);
+  teams = this.teamsService.teams;
   error = this.service.error;
   loading = this.service.loading;
   form = new FormGroup({
@@ -88,7 +87,7 @@ export class NewProjectComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.teamsService.retrieveTeamsByOrg(this.orgSlug()).toPromise();
+    this.teamsService.retrieveTeamsByOrg(this.orgSlug());
   }
 
   openCreateTeamDialog() {
