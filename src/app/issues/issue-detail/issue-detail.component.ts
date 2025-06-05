@@ -100,7 +100,6 @@ export class IssueDetailComponent implements OnInit {
     assignee: new FormControl(""),
   });
   issueID = input.required<string>({ alias: "issue-id" });
-  eventID = input<string | null>(null, { alias: "event-id" });
   organization = this.organizationsService.activeOrganization;
   participantCountPluralMapping: { [k: string]: string } = {
     "=0": "No Participants",
@@ -110,7 +109,7 @@ export class IssueDetailComponent implements OnInit {
 
   constructor() {
     effect(() => {
-      this.issueService.setParams(this.issueID(), this.eventID());
+      this.issueService.issueID.set(this.issueID());
     });
   }
 

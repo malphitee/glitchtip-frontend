@@ -4,6 +4,7 @@ import {
   inject,
   input,
   computed,
+  effect,
 } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { IssueDetailService } from "../issue-detail.service";
@@ -54,6 +55,12 @@ export class EventDetailComponent {
   previousEvent = this.issueService.hasPreviousEvent;
   nextEventUrl = this.issueService.nextEventUrl;
   previousEventUrl = this.issueService.previousEventUrl;
+
+  constructor() {
+    effect(() => {
+      this.issueService.eventID.set(this.eventID());
+    });
+  }
 
   /** TODO fix these types */
   generateQuery(tag: { [key: string]: string | null }) {

@@ -116,12 +116,10 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
     return event ? this.eventEntryBreadcrumbs(event) : undefined;
   });
 
-  #params = signal<{ issueID: string; eventID: string | null }>({
-    issueID: "",
-    eventID: "",
-  });
+  issueID = signal("");
+  eventID = signal<string | null>(null);
   #issueResource = resource({
-    params: () => ({ issueID: this.#params().issueID }),
+    params: () => ({ issueID: this.issueID() }),
     loader: async ({ params }) => {
       if (!params.issueID) {
         return;
@@ -133,10 +131,10 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
     },
   });
   #eventResource = resource({
-    params: () => ({ params: this.#params() }),
+    params: () => ({ issueID: this.issueID(), eventID: this.eventID() }),
     loader: async ({ params }) => {
-      const issueID = parseInt(params.params.issueID);
-      const eventID = params.params.eventID;
+      const issueID = parseInt(params.issueID);
+      const eventID = params.eventID;
       if (!issueID) {
         return undefined;
       }
@@ -163,10 +161,6 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
 
   constructor() {
     super(initialState);
-  }
-
-  setParams(issueID: string, eventID: string | null) {
-    this.#params.set({ issueID, eventID });
   }
 
   async retrieveTags(id: number, query?: string) {
@@ -196,7 +190,7 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
           params: {
             path: {
               organization_slug: this.organization.activeOrganizationSlug(),
-              issue_id: parseInt(this.#params().issueID),
+              issue_id: parseInt(this.issueID()),
             },
           },
           body: { status: status as any },
