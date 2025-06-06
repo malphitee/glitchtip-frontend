@@ -20,9 +20,9 @@ We use Angular CLI for rapid, performant development. Components should be lazy 
 
 - Always use component encapsulated CSS (limit use of global)
 - Use Storybook for presentational components, especially new design system components
-- Follow use signal, resource, computed for state
-- Store state in a service, not the component. Use {providedIn: "root"} if service state must be shared. Otherwise provide it directly to the component.
-- Avoid RXJS unless it's truely needed
+- Use `signal`, `resource`, and `computed` for state
+- Store state in a service, not the component. Use `{providedIn: "root"}` if service state must be shared. Otherwise provide it directly to the component.
+- Avoid RXJS unless it's truly needed
 - Use openapi-fetch instead of HttpClient
 - Use OnPush change detection
 - We don't have full test coverage. Complex functions should have unit tests. Trivial ones are acceptable without them as TypeScript checks them sufficiently. Integration tests that prove correctness of a collection of smaller functions is encouraged.
@@ -33,7 +33,7 @@ We use Angular CLI for rapid, performant development. Components should be lazy 
 
 Let's add a new page to GlitchTip with a pretend foo API. We'll assume the foo page requires being logged in and is organization specific. We'll assume the reader already has GlitchTip running locally.
 
-Create a new component and service. The component is what the user is shown in a browser while the service contains logic including API interactions. You can learn more about Angular dev [here](https://angular.dev/tutorials) but if you already know similair systems - we'll aim to get you up to speed in this tutorial.
+Create a new component and service. The component is what the user is shown in a browser while the service contains logic including API interactions. You can learn more about Angular dev [here](https://angular.dev/tutorials) but if you already know similar systems we'll aim to get you up to speed in this tutorial.
 
 ```bash
 ng generate component foo
@@ -42,7 +42,7 @@ ng generate service foo/foo-state
 
 `src/app/foo/` now contains foo.html, foo.scss, foo.ts, and foo-state.ts. We're going to omit unit testing for now. But if you had a unit test, it might be named foo.spec.ts.
 
-Next add the component to our router. We could lazy load a imported sub-route file with `loadChildren: () => import("./foo/routes")`. This is preferred when adding multiple nested pages. For this tutorial, we'll add just a single component. Edit `src/app/app.routes.ts`. To make the new page URL be `/<org-slug>/foo` we'll add a nested router under :org-slug
+Next add the component to our router. We could lazy load an imported sub-route file with `loadChildren: () => import("./foo/routes")`. This is preferred when adding multiple nested pages. For this tutorial, we'll add just a single component. Edit `src/app/app.routes.ts`. To make the new page URL be `/<org-slug>/foo` we'll add a nested router under :org-slug
 
 ```typescript
 {
@@ -58,7 +58,7 @@ Next add the component to our router. We could lazy load a imported sub-route fi
 }
 ```
 
-Run GlitchTip `npm start`. In your browser, go to localhost:4200/<your-org>/foo and you should see "foo works!"
+Run GlitchTip `npm start`. In your browser, go to `localhost:4200/<your-org>/foo` and you should see "foo works!"
 
 We'll assume you already added a foo API to glitchtip-backend. When the API changes, we need to update our openapi typescript spec with `npm run openapi-typescript`. To simplify the tutorial, we'll reuse the projects API and pretend it's returning our list of foos.
 
@@ -72,7 +72,7 @@ import { client } from "../api/api";  # openapi-fetch client
 // To share service state globally, set @Injectable({providedIn: "root"})
 @Injectable()
 export class FooService {
-  // Signals and resource store state https://angular.dev/guide/signals
+  // Signals and resources store state https://angular.dev/guide/signals
   orgSlug = signal("");  // We'll get this from the component
   // https://angular.dev/guide/signals/resource
   // # means private, not accessible from outside of this class.
