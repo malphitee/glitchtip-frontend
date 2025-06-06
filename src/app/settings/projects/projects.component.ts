@@ -2,17 +2,15 @@ import {
   Component,
   ChangeDetectionStrategy,
   OnInit,
-  OnDestroy,
   inject,
+  input,
 } from "@angular/core";
-import { Subscription } from "rxjs";
-import { distinct, filter, tap } from "rxjs/operators";
-import { ProjectSettingsService } from "./project-settings.service";
 import { ProjectCardComponent } from "../../shared/project-card/project-card.component";
 import { EmptyProjectsComponent } from "../../shared/project-card/empty-projects/empty-projects.component";
 import { RouterLink } from "@angular/router";
 import { MatButtonModule } from "@angular/material/button";
-import { AsyncPipe, DatePipe } from "@angular/common";
+import { DatePipe } from "@angular/common";
+import { SettingsProjectsService } from "./projects.service";
 import { OrganizationsService } from "src/app/api/organizations.service";
 
 @Component({
@@ -23,29 +21,19 @@ import { OrganizationsService } from "src/app/api/organizations.service";
     RouterLink,
     EmptyProjectsComponent,
     ProjectCardComponent,
-    AsyncPipe,
     DatePipe,
   ],
+  providers: [SettingsProjectsService],
 })
-export class ProjectsComponent implements OnInit, OnDestroy {
+export class ProjectsComponent implements OnInit {
+  private service = inject(SettingsProjectsService);
   private organizationsService = inject(OrganizationsService);
-  private projectSettingsService = inject(ProjectSettingsService);
 
-  subscription?: Subscription;
+  orgSlug = input.required<string>({ alias: "org-slug" });
   activeOrganization = this.organizationsService.activeOrganization;
-  projectsForActiveOrg$ = this.projectSettingsService.projects$;
+  projects = this.service.projects;
 
   ngOnInit() {
-    this.subscription = this.organizationsService.activeOrganizationSlug$
-      .pipe(
-        distinct(),
-        filter((slug) => !!slug),
-        tap((slug) => this.projectSettingsService.retrieveProjects(slug!)),
-      )
-      .subscribe();
-  }
-
-  ngOnDestroy() {
-    this.subscription?.unsubscribe();
+    this.service.orgSlug.set(this.orgSlug());
   }
 }

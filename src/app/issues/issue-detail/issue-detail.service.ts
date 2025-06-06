@@ -1,12 +1,7 @@
-import { HttpErrorResponse } from "@angular/common/http";
-import { Injectable, computed, inject } from "@angular/core";
+import { Injectable, computed, inject, resource, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { EMPTY, lastValueFrom } from "rxjs";
-import { catchError, filter, take, tap, withLatestFrom } from "rxjs/operators";
 import {
-  IssueDetail,
-  EventDetail,
   IssueStatus,
   ExceptionValueData,
   Request,
@@ -21,34 +16,25 @@ import {
   IssueTagsAdjusted,
 } from "../interfaces";
 import { generateIconPath } from "../../shared/shared.utils";
-import { IssuesAPIService } from "src/app/api/issues/issues-api.service";
 import { Json } from "src/app/interface-primitives";
 import { OrganizationsService } from "src/app/api/organizations.service";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
-import { toObservable } from "@angular/core/rxjs-interop";
+import { client } from "src/app/api/api";
+import { components } from "src/app/api/api-schema";
+
+type EventDetail = components["schemas"]["IssueEventDetailSchema"];
+type IssueDetail = components["schemas"]["IssueDetailSchema"];
 
 interface IssueDetailState {
-  issue: IssueDetail | null;
-  issueLoading: boolean;
-  issueInitialLoadComplete: boolean;
-  event: EventDetail | null;
-  eventLoading: boolean;
-  eventInitialLoadComplete: boolean;
   tags: IssueTags[] | null;
   isReversed: boolean;
   showShowMore: boolean;
 }
 
 const initialState: IssueDetailState = {
-  issue: null,
-  event: null,
   tags: null,
   isReversed: true,
   showShowMore: false,
-  issueLoading: false,
-  issueInitialLoadComplete: false,
-  eventLoading: false,
-  eventInitialLoadComplete: false,
 };
 
 @Injectable({
@@ -56,155 +42,135 @@ const initialState: IssueDetailState = {
 })
 export class IssueDetailService extends StatefulService<IssueDetailState> {
   private organization = inject(OrganizationsService);
-  private issuesAPIService = inject(IssuesAPIService);
   private snackBar = inject(MatSnackBar);
   private router = inject(Router);
 
-  readonly issue = computed(() => this.state().issue);
-  readonly issue$ = toObservable(this.issue);
-  readonly issueInitialLoadComplete = computed(
-    () => this.state().issueInitialLoadComplete,
+  readonly issue = computed(() => this.#issueResource.value());
+  readonly issueInitialLoadComplete = computed(() =>
+    this.#issueResource.hasValue(),
   );
-  readonly issueInitialLoadComplete$ = toObservable(
-    this.issueInitialLoadComplete,
-  );
-  readonly event = computed(() => this.state().event);
-  readonly event$ = toObservable(this.event);
+  readonly event = computed(() => this.#eventResource.value());
   readonly tags = computed(() => {
     const state = this.state();
     return state.tags && this.tagsWithPercent(state.tags);
   });
-  readonly eventInitialLoadComplete = computed(
-    () => this.state().eventInitialLoadComplete,
-  );
-  readonly eventInitialLoadComplete$ = toObservable(
-    this.eventInitialLoadComplete,
+  readonly eventInitialLoadComplete = computed(() =>
+    this.#eventResource.hasValue(),
   );
   readonly isReversed = computed(() => this.state().isReversed);
-  readonly isReversed$ = toObservable(this.isReversed);
   readonly showShowMore = computed(() => this.state().showShowMore);
-  readonly showShowMore$ = toObservable(this.showShowMore);
   readonly hasNextEvent = computed(
     () => this.event() && this.event()?.nextEventID !== null,
   );
-  readonly hasNextEvent$ = toObservable(this.hasNextEvent);
   readonly hasPreviousEvent = computed(
     () => this.event() && this.event()?.previousEventID !== null,
   );
-  readonly hasPreviousEvent$ = toObservable(this.hasPreviousEvent);
   readonly nextEventUrl = computed(() => {
     const orgSlug = this.organization.activeOrganizationSlug();
     const issue = this.issue();
     const event = this.event();
 
     if (event && event.nextEventID) {
-      return this.eventUrl(orgSlug, issue, event.nextEventID);
+      return this.eventUrl(orgSlug, issue!, event.nextEventID);
     }
     return null;
   });
-  readonly nextEventUrl$ = toObservable(this.nextEventUrl);
   readonly previousEventUrl = computed(() => {
     const orgSlug = this.organization.activeOrganizationSlug();
     const issue = this.issue();
     const event = this.event();
 
     if (event && event.previousEventID) {
-      return this.eventUrl(orgSlug, issue, event.previousEventID);
+      return this.eventUrl(orgSlug, issue!, event.previousEventID);
     }
     return null;
   });
-  readonly previousEventUrl$ = toObservable(this.previousEventUrl);
   readonly eventEntryException = computed(() => {
     const event = this.event();
     const isReversed = this.isReversed();
 
     return event ? this.reverseFrames(event, isReversed) : undefined;
   });
-  readonly eventEntryException$ = toObservable(this.eventEntryException);
-  readonly _rawStacktraceValues = computed(() => {
+  readonly rawStacktraceValues = computed(() => {
     const event = this.event();
-    return event ? this.rawStacktraceValues(event) : undefined;
+    return event ? this.getRawStacktraceValues(event) : undefined;
   });
-  readonly rawStacktraceValues$ = toObservable(this._rawStacktraceValues);
   readonly eventEntryRequest = computed(() => {
     const event = this.event();
-    return event ? this.entryRequestData(event) : undefined;
+    return event ? this.getEntryRequestData(event) : undefined;
   });
-  readonly eventEntryRequest$ = toObservable(this.eventEntryRequest);
-  readonly _eventEntryCSP = computed(() => {
+  readonly eventEntryCSP = computed(() => {
     const event = this.event();
-    return event ? this.eventEntryCSP(event) : undefined;
+    return event ? this.getEventEntryCSP(event) : undefined;
   });
-  readonly eventEntryCSP$ = toObservable(this._eventEntryCSP);
-  readonly _eventEntryMessage = computed(() => {
+  readonly eventEntryMessage = computed(() => {
     const event = this.event();
-    return event ? this.eventEntryMessage(event) : undefined;
+    return event ? this.getEventEntryMessage(event) : undefined;
   });
-  readonly eventEntryMessage$ = toObservable(this._eventEntryMessage);
-  readonly _specialContexts = computed(() => {
+  readonly specialContexts = computed(() => {
     const event = this.event();
-    return event ? this.specialContexts(event) : undefined;
+    return event ? this.getSpecialContexts(event) : undefined;
   });
-  readonly specialContexts$ = toObservable(this._specialContexts);
   readonly breadcrumbs = computed(() => {
     const event = this.event();
     return event ? this.eventEntryBreadcrumbs(event) : undefined;
   });
-  readonly breadcrumbs$ = toObservable(this.breadcrumbs);
+
+  issueID = signal("");
+  eventID = signal<string | null>(null);
+  #issueResource = resource({
+    params: () => ({ issueID: this.issueID() }),
+    loader: async ({ params }) => {
+      if (!params.issueID) {
+        return;
+      }
+      const { data } = await client.GET("/api/0/issues/{issue_id}/", {
+        params: { path: { issue_id: parseInt(params.issueID) } },
+      });
+      return data;
+    },
+  });
+  #eventResource = resource({
+    params: () => ({ issueID: this.issueID(), eventID: this.eventID() }),
+    loader: async ({ params }) => {
+      const issueID = parseInt(params.issueID);
+      const eventID = params.eventID;
+      if (!issueID) {
+        return undefined;
+      }
+      if (eventID) {
+        const { data } = await client.GET(
+          "/api/0/issues/{issue_id}/events/{event_id}/",
+          {
+            params: {
+              path: { issue_id: issueID, event_id: eventID },
+            },
+          },
+        );
+        return data;
+      }
+      const { data } = await client.GET(
+        "/api/0/issues/{issue_id}/events/latest/",
+        {
+          params: { path: { issue_id: issueID } },
+        },
+      );
+      return data;
+    },
+  });
 
   constructor() {
     super(initialState);
   }
 
-  retrieveIssue(id: number) {
-    this.setState({ issueLoading: true });
-    return this.issuesAPIService.retrieve(id.toString()).pipe(
-      tap((issue) => this.setIssue(issue)),
-      catchError((error) => {
-        if (error instanceof HttpErrorResponse && error.status === 404) {
-          this.clearIssue();
-        }
-        return EMPTY;
-      }),
-    );
-  }
-
-  getPreviousEvent() {
-    const state = this.state();
-    if (state.issue && state.event && state.event.previousEventID) {
-      this.retrieveEvent(state.issue.id, state.event.previousEventID);
+  async retrieveTags(id: number, query?: string) {
+    const queryParams: any = query ? { query: query } : {};
+    const { data } = await client.GET("/api/0/issues/{issue_id}/tags/", {
+      params: { path: { issue_id: id }, query: queryParams },
+    });
+    if (data) {
+      this.setTags(data as any);
     }
-  }
-
-  getNextEvent() {
-    const state = this.state();
-    if (state.issue && state.event && state.event.nextEventID) {
-      this.retrieveEvent(state.issue.id, state.event.nextEventID);
-    }
-  }
-
-  getLatestEvent() {
-    const issue = this.state().issue;
-    if (issue) {
-      return this.retrieveLatestEvent(issue.id);
-    }
-    return EMPTY;
-  }
-
-  getEventByID(eventID: string) {
-    const issue = this.state().issue;
-    if (issue) {
-      return this.retrieveEvent(issue.id, eventID);
-    }
-    return EMPTY;
-  }
-
-  retrieveTags(id: number, query?: string) {
-    return this.issuesAPIService.retrieveTags(id.toString(), query).pipe(
-      tap((resp) => {
-        this.setTags(resp);
-      }),
-    );
   }
 
   getReversedFrames() {
@@ -215,24 +181,24 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
     this.setState({ showShowMore: value });
   }
 
-  setStatus(status: IssueStatus) {
-    const issue = this.state().issue;
+  async setStatus(status: IssueStatus) {
+    const issue = this.issue();
     if (issue) {
-      lastValueFrom(
-        this.organization.activeOrganizationSlug$.pipe(
-          filter((slug) => !!slug),
-          take(1),
-          tap((slug) => {
-            if (slug) {
-              lastValueFrom(
-                this.issuesAPIService
-                  .update(status, slug, issue.id)
-                  .pipe(tap((resp) => this.setIssueStatus(resp.status))),
-              );
-            }
-          }),
-        ),
+      const { data } = await client.PUT(
+        "/api/0/organizations/{organization_slug}/issues/{issue_id}/",
+        {
+          params: {
+            path: {
+              organization_slug: this.organization.activeOrganizationSlug(),
+              issue_id: parseInt(this.issueID()),
+            },
+          },
+          body: { status: status as any },
+        },
       );
+      if (data) {
+        this.setIssueStatus(data.status as IssueStatus);
+      }
     }
   }
 
@@ -240,23 +206,21 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
     this.setUpdatedCommentCount(num);
   }
 
-  deleteIssue(id: string) {
-    this.issuesAPIService
-      .destroy(id)
-      .pipe(
-        withLatestFrom(this.organization.activeOrganizationSlug$),
-        tap(([_, activeOrgSlug]) => {
-          this.snackBar.open(`Issue ${id} has been deleted.`);
-          this.router.navigate([activeOrgSlug, "issues"]);
-        }),
-        catchError((_) => {
-          this.snackBar.open(
-            `There was an error deleting this issue. Please try again.`,
-          );
-          return EMPTY;
-        }),
-      )
-      .subscribe();
+  async deleteIssue(id: string) {
+    const { error } = await client.DELETE("/api/0/issues/{issue_id}/", {
+      params: { path: { issue_id: parseInt(id) } },
+    });
+    if (error) {
+      this.snackBar.open(
+        `There was an error deleting this issue. Please try again.`,
+      );
+    } else {
+      this.snackBar.open($localize`Issue ${id} has been deleted.`);
+      this.router.navigate([
+        this.organization.activeOrganizationSlug(),
+        "issues",
+      ]);
+    }
   }
 
   private tagsWithPercent(tags: IssueTags[]): IssueTagsAdjusted[] | undefined {
@@ -297,85 +261,14 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
 
   /** Set local state issue state */
   private setIssueStatus(status: IssueStatus) {
-    const state = this.state();
-    if (state.issue) {
-      const issue = { ...state.issue, status };
-      this.setState({ issue });
-    }
-  }
-
-  private retrieveLatestEvent(issueId: number) {
-    this.setState({ eventLoading: true });
-    return this.issuesAPIService.retrieveLatestEvent(issueId).pipe(
-      tap((event) => this.setEvent(event)),
-      catchError((error) => {
-        if (error instanceof HttpErrorResponse && error.status === 404) {
-          this.clearEvent();
-        }
-        return EMPTY;
-      }),
-    );
-  }
-
-  // private removed for testing
-  retrieveEvent(issueId: number, eventID: string) {
-    this.setState({ eventLoading: true });
-    return this.issuesAPIService.retrieveEvent(issueId, eventID).pipe(
-      tap((event) => this.setEvent(event)),
-      catchError((error) => {
-        if (error instanceof HttpErrorResponse && error.status === 404) {
-          this.clearEvent();
-        }
-        return EMPTY;
-      }),
-    );
-  }
-
-  // private removed for testing
-  setIssue(issue: IssueDetail) {
-    this.setState({
-      issue,
-      issueLoading: false,
-      issueInitialLoadComplete: true,
-    });
-  }
-
-  private clearIssue() {
-    this.setState({
-      issue: null,
-      issueLoading: false,
-      issueInitialLoadComplete: true,
-      event: null,
-    });
+    this.#issueResource.update((issue) => ({ ...issue!, status }));
   }
 
   private setUpdatedCommentCount(num: number) {
-    const state = this.state();
-    if (state.issue) {
-      this.setState({
-        issue: {
-          ...state.issue,
-          numComments: state.issue.numComments + num,
-        },
-      });
-    }
-  }
-
-  // private removed for testing
-  setEvent(event: EventDetail) {
-    this.setState({
-      event,
-      eventLoading: false,
-      eventInitialLoadComplete: true,
-    });
-  }
-
-  clearEvent() {
-    this.setState({
-      event: null,
-      eventLoading: false,
-      eventInitialLoadComplete: true,
-    });
+    this.#issueResource.update((issue) => ({
+      ...issue!,
+      numComments: issue!.numComments + num,
+    }));
   }
 
   setTags(tags: IssueTags[]) {
@@ -388,7 +281,7 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
   }
 
   /* Return the message entry type for an event */
-  private eventEntryMessage(event: EventDetail): Message | undefined {
+  private getEventEntryMessage(event: EventDetail): Message | undefined {
     const eventMessage = this.getMessageEntryData(event);
 
     if (eventMessage) {
@@ -398,7 +291,7 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
   }
 
   /* Return the CSP entry type for an event */
-  private eventEntryCSP(event: EventDetail): CSP | undefined {
+  private getEventEntryCSP(event: EventDetail): CSP | undefined {
     const eventCSP = this.getCspEntryData(event);
 
     if (eventCSP) {
@@ -419,7 +312,9 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
   }
 
   /* Return the request entry type for an event with additional fields parsed from url */
-  private entryRequestData(event: EventDetail): AnnotatedRequest | undefined {
+  private getEntryRequestData(
+    event: EventDetail,
+  ): AnnotatedRequest | undefined {
     const eventRequest = this.getRequestEntryData(event);
     if (eventRequest) {
       let urlDomainName = "";
@@ -466,7 +361,7 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
     return;
   }
 
-  rawStacktraceValues(event: EventDetail): Values[] | undefined {
+  getRawStacktraceValues(event: EventDetail): Values[] | undefined {
     const platform = event.platform;
     const eventException = this.getExceptionEntryData(event);
 
@@ -510,14 +405,14 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
    * The order they are return in should always be user, browser, runtime
    * os, device, gpu
    */
-  specialContexts(event: EventDetail): AnnotatedContexts[] {
-    const user = event.user;
+  getSpecialContexts(event: EventDetail): AnnotatedContexts[] {
+    const user: any = event.user;
     const contexts = event.contexts;
     const contextsArray: AnnotatedContexts[] = [];
 
     for (const key in contexts) {
       if (key) {
-        const contextsObject = contexts[key];
+        const contextsObject: any = contexts[key];
 
         if (key === "browser") {
           contextsArray.unshift({
@@ -671,7 +566,7 @@ export class IssueDetailService extends StatefulService<IssueDetailState> {
    * property or undefined
    */
   private getEntryData(event: EventDetail, entryType: EntryType) {
-    const entries = event.entries.find((entry) => entry.type === entryType);
+    const entries = event.entries!.find((entry) => entry.type === entryType);
     if (!entries) {
       return undefined;
     }

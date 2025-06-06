@@ -5,6 +5,7 @@ import {
   inject,
   computed,
   input,
+  effect,
 } from "@angular/core";
 import { FormControl, FormGroup } from "@angular/forms";
 import { ActivatedRoute, RouterModule } from "@angular/router";
@@ -47,7 +48,7 @@ export class IssueDetailComponent implements OnInit {
   issue = this.issueService.issue;
   issueTitle = computed(() => {
     const issue = this.issue();
-    if (issue === null || issue.metadata === null) {
+    if (!issue || issue.metadata === null) {
       return ["", null] as [string, string | null];
     }
     const metadata = issue.metadata;
@@ -75,23 +76,23 @@ export class IssueDetailComponent implements OnInit {
         return [metadata.title!, null] as [string, string | null];
     }
   });
-  issueSubtitle = computed(() => {
+  issueSubtitle = computed<string>(() => {
     const issue = this.issue();
-    if (issue === null || issue.metadata === null) {
+    if (!issue || issue.metadata === null) {
       return "";
     }
     const metadata = issue.metadata;
     switch (issue.type) {
       case "error":
-        return metadata.value;
+        return metadata.value as string;
       case "csp":
-        return metadata.message;
+        return metadata.message as string;
       case "expectct":
       case "expectstaple":
       case "hpkp":
         return "";
       default:
-        return issue.culprit;
+        return issue.culprit as string;
     }
   });
   initialLoadComplete = this.issueService.issueInitialLoadComplete;
@@ -106,11 +107,14 @@ export class IssueDetailComponent implements OnInit {
     other: "# Participants",
   };
 
+  constructor() {
+    effect(() => {
+      this.issueService.issueID.set(this.issueID());
+    });
+  }
+
   ngOnInit() {
     this.issueService.clearState();
-    const issueID = this.issueID();
-    // Consider moving to effect once ported to resource
-    this.issueService.retrieveIssue(+issueID).toPromise();
   }
 
   markResolved() {
@@ -137,7 +141,7 @@ export class IssueDetailComponent implements OnInit {
     }
   }
 
-  generateBackLink(projectId: number) {
+  generateBackLink(projectId: string) {
     return {
       ...this.route.snapshot.queryParams,
       project: projectId,

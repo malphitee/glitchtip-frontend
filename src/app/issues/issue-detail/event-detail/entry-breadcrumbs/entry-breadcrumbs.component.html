@@ -1,14 +1,14 @@
-@if (breadcrumbs$ | async; as breadcrumbs) {
+@if (breadcrumbs(); as breadcrumbs) {
   <section class="mat-typography">
     <mat-divider></mat-divider>
     <h3>Breadcrumbs</h3>
     <div
       #breadBox
       class="wrapper"
-      [ngClass]="(showShowMore$ | async) ? 'bread-box' : 'bread-box--expanded'"
-      [class.bread-box--expanded]="(showShowMore$ | async) === false"
+      [ngClass]="showShowMore() ? 'bread-box' : 'bread-box--expanded'"
+      [class.bread-box--expanded]="showShowMore() === false"
     >
-      @if (showShowMore$ | async) {
+      @if (showShowMore()) {
         <button
           class="expand-button"
           mat-button

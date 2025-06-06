@@ -1,4 +1,4 @@
-@if ((initialLoadComplete$ | async) && (event$ | async) === null) {
+@if (initialLoadComplete() && event() === null) {
   <section class="mat-typography">
     <h2>Event not found</h2>
     <p class="mat-body-1">
@@ -8,7 +8,7 @@
   </section>
 }
 
-@if (event$ | async; as event) {
+@if (event(); as event) {
   <section class="mat-typography">
     <section class="header">
       <div>
@@ -24,7 +24,7 @@
             target="_blank"
             [href]="
               '/organizations/' +
-              (orgSlug$ | async) +
+              orgSlug() +
               '/issues/' +
               event.groupID +
               '/events/' +
@@ -38,15 +38,15 @@
       <nav class="navigation-buttons">
         <button
           mat-button
-          [routerLink]="(previousEventUrl$ | async) || ''"
-          [disabled]="(previousEvent$ | async) === false"
+          [routerLink]="previousEventUrl() || ''"
+          [disabled]="previousEvent() === false"
         >
           <mat-icon>keyboard_arrow_left</mat-icon> Older
         </button>
         <button
           mat-button
-          [routerLink]="(nextEventUrl$ | async) || ''"
-          [disabled]="(nextEvent$ | async) === false"
+          [routerLink]="nextEventUrl() || ''"
+          [disabled]="nextEvent() === false"
         >
           Newer <mat-icon iconPositionEnd>keyboard_arrow_right</mat-icon>
         </button>
@@ -64,8 +64,7 @@
           @for (tag of event.tags; track tag.key) {
             <li class="pseudo-chip">
               <a
-                [routerLink]="['..']"
-                [relativeTo]="route.parent"
+                [routerLink]="['/', orgSlug(), 'issues']"
                 [queryParams]="generateQuery(tag)"
                 queryParamsHandling="merge"
               >
@@ -80,17 +79,17 @@
     <gt-entry-message></gt-entry-message>
     <gt-entry-exception
       [eventTitle]="event?.title"
-      [eventPlatform]="event?.platform"
+      [eventPlatform]="event?.platform!"
     ></gt-entry-exception>
     <gt-entry-csp></gt-entry-csp>
     <gt-entry-breadcrumbs></gt-entry-breadcrumbs>
     <gt-entry-request></gt-entry-request>
-    @for (context of event.contexts | keyvalue; track context) {
+    @for (context of contexts() | keyvalue; track context) {
       <section>
         <mat-divider></mat-divider>
         <h3>
-          {{ context.value.type }}
-          @if (context.value.type) {
+          {{ context.value!.type! }}
+          @if (context.value!.type!) {
             ({{ context.key }})
           } @else {
             {{ context.key }}

@@ -21,14 +21,14 @@
     </mat-card-header>
     <mat-divider></mat-divider>
     <mat-card-content>
-      @if ((yourTeams$ | async)?.length) {
+      @if (yourTeams()?.length) {
         <ul>
           @if (errors(); as error) {
             <mat-error class="center-text">{{
               error.removeTeamMember
             }}</mat-error>
           }
-          @for (yourTeam of yourTeams$ | async; track yourTeam) {
+          @for (yourTeam of yourTeams(); track yourTeam) {
             <li class="team-list-item">
               <div class="team-list-item-text">
                 <a [routerLink]="[yourTeam.slug, 'members']">
@@ -51,7 +51,7 @@
           }
         </ul>
       } @else {
-        @if ((otherTeams$ | async)?.length) {
+        @if (otherTeams()?.length) {
           <p i18n
             >You aren't part of any teams. Join a team below or press the
             "Create Team" button in the upper right.</p
@@ -70,7 +70,7 @@
     </mat-card-content>
   </mat-card>
 
-  @if ((otherTeams$ | async)?.length) {
+  @if (otherTeams()?.length) {
     <mat-card>
       <mat-card-title i18n>Other Teams</mat-card-title>
       <mat-divider></mat-divider>
@@ -79,7 +79,7 @@
           @if (errors(); as error) {
             <mat-error class="center-text">{{ error.addTeamMember }}</mat-error>
           }
-          @for (otherTeam of otherTeams$ | async; track otherTeam) {
+          @for (otherTeam of otherTeams(); track otherTeam) {
             <li class="team-list-item">
               <div class="team-list-item-text">
                 <a [routerLink]="[otherTeam.slug, 'members']">

@@ -1,4 +1,4 @@
-@for (value of rawStacktraceValues$ | async; track value) {
+@for (value of rawStacktraceValues(); track value) {
   <div class="wrapper">
     <p>
       @if (eventPlatform() === "java") {

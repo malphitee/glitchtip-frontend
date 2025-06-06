@@ -92,14 +92,14 @@ export class NotificationsService {
           if (projects) {
             const projectsWithAlerts = projects.map((project) => {
               const matchingId = Object.keys(projectAlerts).find(
-                (element) => parseInt(element, 10) === project.id,
+                (element) => element === project.id,
               );
               return {
                 ...project,
                 alertStatus: matchingId ? projectAlerts[matchingId] : -1,
               };
             });
-            this.groupProjectsByOrg(projectsWithAlerts);
+            this.groupProjectsByOrg(projectsWithAlerts as any);
           }
         }),
       )

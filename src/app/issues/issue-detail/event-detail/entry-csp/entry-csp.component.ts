@@ -3,7 +3,7 @@ import { IssueDetailService } from "../../issue-detail.service";
 import { EntryDataComponent } from "../../../../shared/entry-data/entry-data.component";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { MatDividerModule } from "@angular/material/divider";
-import { AsyncPipe, JsonPipe, KeyValuePipe } from "@angular/common";
+import { JsonPipe, KeyValuePipe } from "@angular/common";
 
 @Component({
   selector: "gt-entry-csp",
@@ -14,7 +14,6 @@ import { AsyncPipe, JsonPipe, KeyValuePipe } from "@angular/common";
     MatDividerModule,
     MatButtonToggleModule,
     EntryDataComponent,
-    AsyncPipe,
     JsonPipe,
     KeyValuePipe,
   ],
@@ -22,5 +21,5 @@ import { AsyncPipe, JsonPipe, KeyValuePipe } from "@angular/common";
 export class EntryCSPComponent {
   private issueService = inject(IssueDetailService);
 
-  eventEntryCSP$ = this.issueService.eventEntryCSP$;
+  eventEntryCSP = this.issueService.eventEntryCSP;
 }

@@ -25,10 +25,7 @@ export interface paths {
             parameters: {
                 query?: never;
                 header?: never;
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody?: never;
@@ -62,10 +59,7 @@ export interface paths {
             parameters: {
                 query?: never;
                 header?: never;
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody: components["requestBodies"]["Login"];
@@ -129,10 +123,7 @@ export interface paths {
             parameters: {
                 query?: never;
                 header?: never;
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody: components["requestBodies"]["Signup"];
@@ -206,10 +197,7 @@ export interface paths {
                     /** @description The email verification key */
                     "X-Email-Verification-Key": components["parameters"]["EmailVerificationKey"];
                 };
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody?: never;
@@ -260,10 +248,7 @@ export interface paths {
                      *      */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody?: components["requestBodies"]["VerifyEmail"];
@@ -298,6 +283,54 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/_allauth/browser/v1/auth/email/verify/resend": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Resend email verification code
+         * @description Requests a new email verification code.
+         *     Requires `ACCOUNT_EMAIL_VERIFICATION_SUPPORTS_RESEND = True`.
+         *
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: {
+                    /** @description Session token. Only needed when `client` is equal to `app`.
+                     *      */
+                    "X-Session-Token"?: components["parameters"]["SessionToken"];
+                };
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                200: components["responses"]["StatusOK"];
+                /** @description Conflict. The email verification (by code) flow is not pending.
+                 *      */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ConflictResponse"];
+                    };
+                };
+                429: components["responses"]["TooManyRequests"];
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/_allauth/browser/v1/auth/phone/verify": {
         parameters: {
             query?: never;
@@ -322,10 +355,7 @@ export interface paths {
                      *      */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody?: components["requestBodies"]["VerifyPhone"];
@@ -352,6 +382,54 @@ export interface paths {
                         "application/json": components["schemas"]["ConflictResponse"];
                     };
                 };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/_allauth/browser/v1/auth/phone/verify/resend": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Resend phone number verification code
+         * @description Requests a new phone number verification code.
+         *     Requires `ACCOUNT_PHONE_VERIFICATION_SUPPORTS_RESEND = True`.
+         *
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: {
+                    /** @description Session token. Only needed when `client` is equal to `app`.
+                     *      */
+                    "X-Session-Token"?: components["parameters"]["SessionToken"];
+                };
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                200: components["responses"]["StatusOK"];
+                /** @description Conflict. The phone verification flow is not pending.
+                 *      */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ConflictResponse"];
+                    };
+                };
+                429: components["responses"]["TooManyRequests"];
             };
         };
         delete?: never;
@@ -387,10 +465,7 @@ export interface paths {
                      *      */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody: components["requestBodies"]["Reauthenticate"];
@@ -441,10 +516,7 @@ export interface paths {
             parameters: {
                 query?: never;
                 header?: never;
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody: components["requestBodies"]["RequestPassword"];
@@ -493,10 +565,7 @@ export interface paths {
                     /** @description The password reset key */
                     "X-Password-Reset-Key": components["parameters"]["PasswordResetKey"];
                 };
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody?: never;
@@ -539,10 +608,7 @@ export interface paths {
             parameters: {
                 query?: never;
                 header?: never;
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody?: components["requestBodies"]["ResetPassword"];
@@ -646,10 +712,7 @@ export interface paths {
                      *      */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody: components["requestBodies"]["ProviderToken"];
@@ -712,10 +775,7 @@ export interface paths {
             parameters: {
                 query?: never;
                 header?: never;
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody?: never;
@@ -746,10 +806,7 @@ export interface paths {
             parameters: {
                 query?: never;
                 header?: never;
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody: components["requestBodies"]["ProviderSignup"];
@@ -825,10 +882,7 @@ export interface paths {
                      *      */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody: components["requestBodies"]["MFAAuthenticate"];
@@ -880,10 +934,7 @@ export interface paths {
                      *      */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody?: never;
@@ -927,10 +978,7 @@ export interface paths {
                      *      */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody?: never;
@@ -952,10 +1000,7 @@ export interface paths {
                      *      */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody: components["requestBodies"]["AuthenticateWebAuthn"];
@@ -999,10 +1044,7 @@ export interface paths {
                      *      */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody?: never;
@@ -1024,10 +1066,7 @@ export interface paths {
                      *      */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody: components["requestBodies"]["ReauthenticateWebAuthn"];
@@ -1071,10 +1110,7 @@ export interface paths {
                      *      */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody?: never;
@@ -1099,10 +1135,7 @@ export interface paths {
                      *      */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody: components["requestBodies"]["LoginWebAuthn"];
@@ -1153,10 +1186,7 @@ export interface paths {
             parameters: {
                 query?: never;
                 header?: never;
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody: components["requestBodies"]["ConfirmLoginCode"];
@@ -1215,10 +1245,7 @@ export interface paths {
                      *      */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody?: never;
@@ -1245,10 +1272,7 @@ export interface paths {
                      *      */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody?: components["requestBodies"]["ProviderAccount"];
@@ -1290,10 +1314,7 @@ export interface paths {
                      *      */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody?: never;
@@ -1317,10 +1338,7 @@ export interface paths {
                      *      */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody?: components["requestBodies"]["Email"];
@@ -1348,10 +1366,15 @@ export interface paths {
             };
         };
         /**
-         * Add an email addresses
+         * Add/Change email address
          *
-         * @description Add a new email address to the account. The email address will be marked as unverified, and
-         *     an email verification mail will be sent.
+         * @description The following functionality is available:
+         *
+         *       - Adding a new email address for an already signed in user (`ACCOUNT_CHANGE_EMAIL = False`).
+         *       - Change to a new email address for an already signed in user   (`ACCOUNT_CHANGE_EMAIL = True`).
+         *       - Change to a new email address during the email verification process at signup (`ACCOUNT_EMAIL_VERIFICATION_SUPPORTS_CHANGE = True`).
+         *
+         *     In all cases, an email verification mail will be sent containing a link or code that needs to be verified.
          *
          */
         post: {
@@ -1362,10 +1385,7 @@ export interface paths {
                      *      */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody?: components["requestBodies"]["Email"];
@@ -1381,6 +1401,16 @@ export interface paths {
                     };
                 };
                 401: components["responses"]["AuthenticationOrReauthentication"];
+                /** @description Conflict. For example, when no user is authenticated and no email verification flow is pending.
+                 *      */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ConflictResponse"];
+                    };
+                };
             };
         };
         /**
@@ -1396,10 +1426,7 @@ export interface paths {
                      *      */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody?: components["requestBodies"]["Email"];
@@ -1432,10 +1459,7 @@ export interface paths {
                      *      */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody?: components["requestBodies"]["MarkPrimaryEmail"];
@@ -1475,10 +1499,7 @@ export interface paths {
                      *      */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody?: never;
@@ -1491,9 +1512,16 @@ export interface paths {
         /**
          * Change the phone number
          *
-         * @description Initiate the phone number change process. After posting a new phone
-         *     number, proceed with the phone verification endpoint to confirm the
-         *     change of the phone number by posting the verification code.
+         * @description The following functionality is available:
+         *
+         *     - Initiate the phone number change process for signed in users.
+         *     - Change to a new phone number during the phone number verification
+         *       process at signup for unauthenticated users. Note that this requires:
+         *       `ACCOUNT_PHONE_VERIFICATION_SUPPORTS_CHANGE = True`.
+         *
+         *     In both cases, after posting a new phone number, proceed with the phone
+         *     verification endpoint to confirm the change of the phone number by
+         *     posting the verification code.
          *
          */
         post: {
@@ -1504,10 +1532,7 @@ export interface paths {
                      *      */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody?: components["requestBodies"]["Phone"];
@@ -1531,6 +1556,16 @@ export interface paths {
                     };
                 };
                 401: components["responses"]["AuthenticationOrReauthentication"];
+                /** @description Conflict. For example, when no user is authenticated and no phone verification flow is pending.
+                 *      */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ConflictResponse"];
+                    };
+                };
             };
         };
         delete?: never;
@@ -1555,10 +1590,7 @@ export interface paths {
                      *      */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody?: never;
@@ -1596,10 +1628,7 @@ export interface paths {
                      *      */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody?: never;
@@ -1625,10 +1654,7 @@ export interface paths {
                      *      */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody?: components["requestBodies"]["SetupTOTP"];
@@ -1660,10 +1686,7 @@ export interface paths {
                      *      */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody?: never;
@@ -1697,10 +1720,7 @@ export interface paths {
                      *      */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody?: never;
@@ -1720,10 +1740,7 @@ export interface paths {
                      *      */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody?: never;
@@ -1768,10 +1785,7 @@ export interface paths {
                      *      */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody?: never;
@@ -1797,10 +1811,7 @@ export interface paths {
                      *      */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody?: components["requestBodies"]["UpdateWebAuthn"];
@@ -1819,10 +1830,7 @@ export interface paths {
                      *      */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody?: components["requestBodies"]["AddWebAuthnAuthenticator"];
@@ -1842,10 +1850,7 @@ export interface paths {
                      *      */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody?: components["requestBodies"]["DeleteWebAuthn"];
@@ -1881,10 +1886,7 @@ export interface paths {
                      *      */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody?: never;
@@ -1909,10 +1911,7 @@ export interface paths {
                      *      */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody?: never;
@@ -1950,10 +1949,7 @@ export interface paths {
                      *      */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
-                path: {
-                    /** @description The type of client accessing the API. */
-                    client: components["parameters"]["Client"];
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody?: components["requestBodies"]["ChangePassword"];
@@ -2160,6 +2156,33 @@ export interface components {
             /**
              * @description The URL to return to after the redirect flow is complete.
              *
+             *     Note that this is not to be mistaken with the callback URL that you
+             *     configure over at the OAuth provider during the OAuth app/client
+             *     setup. The flow is as follows:
+             *
+             *       1. Your frontend redirects to the headless provider redirect
+             *          endpoint in a synchronous (non-XHR) manner, informing allauth
+             *          (by means of `callback_url`) where to redirect to after the
+             *          provider handshake is completed.
+             *
+             *       2. Headless will redirect to the (OAuth) identity provider to
+             *          initiate the handshake, passing along a different callback URL
+             *          to the provider: one that points to an allauth backend URL.
+             *          This is the URL that you need to have setup at your OAuth
+             *          app/client configuration. Note that this must be a backend URL
+             *          as providers can use POST requests to perform their callbacks,
+             *          which is something a frontend would not be able to handle.
+             *
+             *       3. After the authorization at the provider is completed, the
+             *          provider redirects to the *backend* allauth callback URL, which
+             *          will then redirect back to the *frontend* callback URL.
+             *
+             *       4. Your frontend is now expected to fetch the current session to
+             *          determine what the next course of action is. The user could be
+             *          authenticated at this point, or another flow is pending
+             *          (e.g. email verification, or, provider signup). In case of
+             *          errors a `?error=` is passed to the frontend callback URL.
+             *
              * @example https://app.project.org/account/provider/callback
              */
             callback_url: string;
@@ -2204,13 +2227,13 @@ export interface components {
         Phone: string;
         Login: {
             password: components["schemas"]["Password"];
-        } | {
+        } & ({
             username: components["schemas"]["Username"];
         } | {
             email: components["schemas"]["Email"];
         } | {
             phone: components["schemas"]["Phone"];
-        };
+        });
         /** @enum {integer} */
         StatusOK: 200;
         /** @enum {integer} */
@@ -2357,7 +2380,7 @@ export interface components {
                  *
                  * @example Enter a valid email address.
                  */
-                message: number;
+                message: string;
             }[];
         };
         /**
@@ -2802,6 +2825,19 @@ export interface components {
                 };
             };
         };
+        /** @description Too many requests.
+         *      */
+        TooManyRequests: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/json": {
+                    /** @enum {integer} */
+                    status: 429;
+                };
+            };
+        };
         /** @description Information on the TOTP authenticator.
          *      */
         TOTPAuthenticator: {
@@ -2916,8 +2952,6 @@ export interface components {
         };
     };
     parameters: {
-        /** @description The type of client accessing the API. */
-        Client: "app" | "browser";
         /** @description The email verification key */
         EmailVerificationKey: string;
         /** @description The password reset key */

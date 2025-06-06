@@ -1,14 +1,12 @@
-import { Component, OnInit, ViewChild, inject } from "@angular/core";
+import { Component, ViewChild, inject } from "@angular/core";
 import {
   FormGroup,
   FormControl,
   Validators,
   FormGroupDirective,
-  AbstractControl,
   ReactiveFormsModule,
+  AbstractControl,
 } from "@angular/forms";
-import { EmailService } from "../../api/emails/email.service";
-import { map, first } from "rxjs/operators";
 import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatIconModule } from "@angular/material/icon";
@@ -16,14 +14,14 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { LoadingButtonComponent } from "../../shared/loading-button/loading-button.component";
 import { MatChipsModule } from "@angular/material/chips";
-import { AsyncPipe } from "@angular/common";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatCardModule } from "@angular/material/card";
+import { ManageEmailsState } from "./manage-emails-state";
 
 @Component({
   selector: "gt-manage-emails",
-  templateUrl: "./manage-emails.component.html",
-  styleUrls: ["./manage-emails.component.scss"],
+  templateUrl: "./manage-emails.html",
+  styleUrls: ["./manage-emails.scss"],
   imports: [
     MatCardModule,
     MatDividerModule,
@@ -35,16 +33,15 @@ import { MatCardModule } from "@angular/material/card";
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
-    AsyncPipe,
   ],
+  providers: [ManageEmailsState],
 })
-export class ManageEmailsComponent implements OnInit {
-  private emailService = inject(EmailService);
+export class ManageEmails {
+  #service = inject(ManageEmailsState);
 
-  emailAddresses$ = this.emailService.emailAddressesSorted$;
-  loadingStates$ = this.emailService.loadingStates$;
-  addEmailError$ = this.emailService.addEmailError$;
-  resetFormSubject = this.emailService.resetFormSubject;
+  emailAddresses = this.#service.emailAddressesSorted;
+  loadingStates = this.#service.loadingStates;
+  addEmailError = this.#service.addEmailError;
 
   get email_address() {
     return this.form.get("email_address");
@@ -62,39 +59,35 @@ export class ManageEmailsComponent implements OnInit {
    *
    * @param control The form control being validated
    */
-  matchesExistingValidator = (control: AbstractControl) =>
-    this.emailAddresses$.pipe(
-      map((emails) => {
-        const matchedEmail = emails.find(
-          (email) => email.email === control.value,
-        );
-        return matchedEmail ? { matchesExistingValidator: true } : null;
-      }),
-      first(),
+  matchesExistingValidator = (control: AbstractControl) => {
+    const matchedEmail = this.emailAddresses().find(
+      (email) => email.email === control.value,
     );
+    return matchedEmail ? { matchesExistingValidator: true } : null;
+  };
 
-  // tslint:disable:member-ordering
   form = new FormGroup({
-    email_address: new FormControl(
-      "",
-      [Validators.email, Validators.required],
+    email_address: new FormControl("", [
+      Validators.email,
+      Validators.required,
       this.matchesExistingValidator,
-    ),
+    ]),
   });
 
-  ngOnInit(): void {
-    this.emailService.retrieveEmailAddresses();
-    this.resetFormSubject.subscribe((_) => this.formDirective.resetForm());
-  }
-
-  deleteEmail = (email: string) => this.emailService.removeEmailAddress(email);
-  makePrimary = (email: string) => this.emailService.makeEmailPrimary(email);
+  deleteEmail = (email: string) => this.#service.removeEmailAddress(email);
+  makePrimary = (email: string) => this.#service.makeEmailPrimary(email);
   resendConfirmation = (email: string) =>
-    this.emailService.resendConfirmation(email);
+    this.#service.resendConfirmation(email);
 
-  onSubmit() {
+  async onSubmit() {
     if (this.form.valid) {
-      this.emailService.addEmailAddress(this.form.value.email_address!);
+      const success = await this.#service.addEmailAddress(
+        this.form.value.email_address!,
+      );
+      if (success) {
+        this.formDirective.resetForm();
+        this.form.reset();
+      }
     }
   }
 }

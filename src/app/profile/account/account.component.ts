@@ -4,7 +4,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatCardModule } from "@angular/material/card";
 import { LoadingButtonComponent } from "../../shared/loading-button/loading-button.component";
-import { ManageEmailsComponent } from "../manage-emails/manage-emails.component";
+import { ManageEmails } from "../manage-emails/manage-emails";
 import { SocialAuthComponent } from "../social-auth/social-auth.component";
 import { ChangePasswordComponent } from "../change-password/change-password.component";
 import { PreferencesComponent } from "../preferences/preferences.component";
@@ -18,7 +18,7 @@ import { AuthService } from "src/app/auth.service";
     PreferencesComponent,
     ChangePasswordComponent,
     SocialAuthComponent,
-    ManageEmailsComponent,
+    ManageEmails,
     MatCardModule,
     MatDividerModule,
     MatFormFieldModule,

@@ -1,11 +1,4 @@
-import {
-  computed,
-  inject,
-  Injectable,
-  resource,
-  ResourceStatus,
-  signal,
-} from "@angular/core";
+import { computed, inject, Injectable, resource, signal } from "@angular/core";
 import { client } from "./api";
 import { toObservable } from "@angular/core/rxjs-interop";
 import { interval, takeUntil, takeWhile } from "rxjs";
@@ -28,13 +21,18 @@ export class OrganizationsService {
       this.#activeOrganizationSlug() ?? this.organizations()?.[0]?.slug ?? null,
   );
   organizationsResource = resource({
-    request: () => ({ isAuthenticated: this.authService.isAuthenticated() }),
-    loader: async ({ request, abortSignal }) => {
-      if (!request.isAuthenticated) {
+    params: () => ({ isAuthenticated: this.authService.isAuthenticated() }),
+    loader: async ({ params, abortSignal }) => {
+      if (!params.isAuthenticated) {
         return undefined;
       }
       let { data, response } = await client.GET("/api/0/organizations/", {
         signal: abortSignal,
+        params: {
+          query: {
+            limit: 100,
+          },
+        },
       });
       let cursor = getCursor(response);
       if (!cursor || !data || abortSignal.aborted) {
@@ -61,6 +59,7 @@ export class OrganizationsService {
           params: {
             query: {
               cursor,
+              limit: 100,
             },
           },
         }));
@@ -85,16 +84,16 @@ export class OrganizationsService {
     },
   });
   activeOrganizationResource = resource({
-    request: () => ({ organization_slug: this.activeOrganizationSlug() }),
-    loader: async ({ request, abortSignal }) => {
-      if (!request.organization_slug) {
+    params: () => ({ organization_slug: this.activeOrganizationSlug() }),
+    loader: async ({ params, abortSignal }) => {
+      if (!params.organization_slug) {
         return undefined;
       }
       const { data, error } = await client.GET(
         "/api/0/organizations/{organization_slug}/",
         {
           params: {
-            path: { organization_slug: request.organization_slug },
+            path: { organization_slug: params.organization_slug },
           },
           signal: abortSignal,
         },
@@ -109,7 +108,7 @@ export class OrganizationsService {
   organizationsCount = computed(() => this.organizations.length);
   activeOrganization = computed(() => this.activeOrganizationResource.value());
   activeOrganizationLoaded = computed(
-    () => this.activeOrganizationResource.status() >= ResourceStatus.Resolved,
+    () => !this.activeOrganizationResource.isLoading(),
   );
   activeOrganizationProjects = computed(
     () => this.activeOrganization()?.projects || [],
@@ -117,8 +116,8 @@ export class OrganizationsService {
   projectsCount = computed(() => this.activeOrganizationProjects().length);
   initialLoad = computed(
     () =>
-      this.organizationsResource.status() > ResourceStatus.Loading &&
-      this.activeOrganizationResource.status() > ResourceStatus.Loading,
+      !this.organizationsResource.isLoading() &&
+      !this.activeOrganizationResource.isLoading(),
   );
 
   // For compatibility, remove when possible

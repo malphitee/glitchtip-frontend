@@ -3,15 +3,14 @@ import {
   OnInit,
   ChangeDetectionStrategy,
   inject,
+  input,
 } from "@angular/core";
-import { ActivatedRoute, RouterLink } from "@angular/router";
-import { map, filter } from "rxjs/operators";
+import { RouterLink } from "@angular/router";
 import { OrganizationDetailService } from "src/app/api/organizations/organization-detail.service";
-import { MembersService } from "src/app/api/organizations/members.service";
+import { MembersService } from "src/app/settings/members/members.service";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { LoadingButtonComponent } from "../../shared/loading-button/loading-button.component";
 import { MatChipsModule } from "@angular/material/chips";
-import { AsyncPipe } from "@angular/common";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatCardModule } from "@angular/material/card";
 import { MatButtonModule } from "@angular/material/button";
@@ -33,27 +32,20 @@ type Member = components["schemas"]["OrganizationUserSchema"];
     MatChipsModule,
     LoadingButtonComponent,
     MatTooltipModule,
-    AsyncPipe,
   ],
+  providers: [MembersService],
 })
 export class MembersComponent implements OnInit {
   private organizationsService = inject(OrganizationsService);
   private organizationDetailService = inject(OrganizationDetailService);
   private membersService = inject(MembersService);
-  private route = inject(ActivatedRoute);
 
+  orgSlug = input.required<string>({ alias: "org-slug" });
   activeOrganizationDetail = this.organizationsService.activeOrganization;
-  members$ = this.membersService.members$;
+  members = this.membersService.members;
 
   ngOnInit(): void {
-    this.route.params
-      .pipe(
-        map((params) => params["org-slug"] as string),
-        filter((slug) => !!slug),
-      )
-      .subscribe((slug) => {
-        this.organizationDetailService.retrieveOrganizationMembers(slug);
-      });
+    this.organizationDetailService.retrieveOrganizationMembers(this.orgSlug());
   }
 
   resendInvite(member: Member) {

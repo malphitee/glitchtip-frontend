@@ -47,7 +47,7 @@ export class AuthTokensService extends StatefulService<AuthTokensState> {
         errorFields[key] = [value];
       }
     });
-    return errorFields
+    return errorFields;
   });
   readonly createErrorForm = computed(() => this.state().createErrorForm);
   readonly createLoading = computed(() => this.state().createLoading);

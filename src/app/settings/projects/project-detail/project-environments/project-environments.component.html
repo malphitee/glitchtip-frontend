@@ -5,10 +5,10 @@
     </mat-card-header>
     <mat-divider></mat-divider>
     <mat-card-content>
-      @if ((initialLoad$ | async) === false) {
+      @if (initialLoad() === false) {
         <div class="loading"></div>
       } @else {
-        @if (sortedEnvironments$ | async; as sortedEnvironments) {
+        @if (sortedEnvironments(); as sortedEnvironments) {
           @for (
             sortedEnvironment of sortedEnvironments;
             track sortedEnvironment
@@ -26,9 +26,7 @@
                     </span>
                     <gt-loading-button
                       (buttonClick)="toggleHidden(environment)"
-                      [loading]="
-                        environment.id === (toggleHiddenloading$ | async)
-                      "
+                      [loading]="environment.id === toggleHiddenloading()"
                       [buttonText]="environment.isHidden ? 'Show' : 'Hide'"
                       buttonStyle="stroked"
                     ></gt-loading-button>

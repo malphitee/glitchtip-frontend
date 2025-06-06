@@ -1,13 +1,13 @@
 import {
   Component,
-  OnInit,
   ChangeDetectionStrategy,
   inject,
+  input,
+  computed,
+  effect,
 } from "@angular/core";
-import { ActivatedRoute, RouterLink } from "@angular/router";
-import { map, exhaustMap } from "rxjs/operators";
+import { RouterLink } from "@angular/router";
 import { IssueDetailService } from "../issue-detail.service";
-import { EventTag } from "src/app/issues/interfaces";
 import { EntryDataComponent } from "../../../shared/entry-data/entry-data.component";
 import { EntryRequestComponent } from "./entry-request/entry-request.component";
 import { EntryBreadcrumbsComponent } from "./entry-breadcrumbs/entry-breadcrumbs.component";
@@ -18,7 +18,7 @@ import { ContextsComponent } from "./context/contexts.component";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
-import { AsyncPipe, DatePipe, KeyValuePipe } from "@angular/common";
+import { DatePipe, KeyValuePipe } from "@angular/common";
 
 @Component({
   selector: "gt-event-detail",
@@ -37,52 +37,35 @@ import { AsyncPipe, DatePipe, KeyValuePipe } from "@angular/common";
     EntryBreadcrumbsComponent,
     EntryRequestComponent,
     EntryDataComponent,
-    AsyncPipe,
     DatePipe,
     KeyValuePipe,
   ],
 })
-export class EventDetailComponent implements OnInit {
+export class EventDetailComponent {
   private issueService = inject(IssueDetailService);
-  route = inject(ActivatedRoute);
+  orgSlug = input.required<string>({ alias: "org-slug" });
+  issueID = input.required<string>({ alias: "issue-id" });
+  eventID = input<string | null>(null, { alias: "event-id" });
+  query = input<string | null>(null);
 
-  event$ = this.issueService.event$;
-  initialLoadComplete$ = this.issueService.eventInitialLoadComplete$;
-  nextEvent$ = this.issueService.hasNextEvent$;
-  previousEvent$ = this.issueService.hasPreviousEvent$;
-  nextEventUrl$ = this.issueService.nextEventUrl$;
-  previousEventUrl$ = this.issueService.previousEventUrl$;
-  eventIDParam$ = this.route.paramMap.pipe(
-    map((params) => params.get("event-id")),
-  );
-  orgSlug$ = this.route.paramMap.pipe(map((params) => params.get("org-slug")));
+  event = this.issueService.event;
+  contexts = computed(() => this.event()?.contexts as { [key: string]: any });
+  initialLoadComplete = this.issueService.eventInitialLoadComplete;
+  nextEvent = this.issueService.hasNextEvent;
+  previousEvent = this.issueService.hasPreviousEvent;
+  nextEventUrl = this.issueService.nextEventUrl;
+  previousEventUrl = this.issueService.previousEventUrl;
 
-  ngOnInit() {
-    this.eventIDParam$
-      .pipe(
-        exhaustMap((eventID) => {
-          if (eventID) {
-            return this.issueService.getEventByID(eventID);
-          }
-          return this.issueService.getLatestEvent();
-        }),
-      )
-      .subscribe();
-  }
-
-  getNewerEvent() {
-    this.issueService.getNextEvent();
-  }
-
-  getOlderEvent() {
-    this.issueService.getPreviousEvent();
+  constructor() {
+    effect(() => {
+      this.issueService.eventID.set(this.eventID());
+    });
   }
 
   /** TODO fix these types */
-  generateQuery(tag: EventTag) {
+  generateQuery(tag: { [key: string]: string | null }) {
     // Assume unresolved if not present; tag overrides query otherwise
-    const query = this.route.snapshot.queryParams.query;
-    const unresolved = query === undefined ? "is:unresolved " : "";
+    const unresolved = this.query() === undefined ? "is:unresolved " : "";
 
     if (tag.key === "environment") {
       return { environment: tag.value };

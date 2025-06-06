@@ -1,4 +1,4 @@
-@if (activeProject$ | async; as project) {
+@if (activeProject(); as project) {
   <section class="l-body">
     <gt-detail-header
       [title]="'Settings for ' + project.name"
@@ -23,8 +23,8 @@
       </mat-card-header>
       <mat-divider></mat-divider>
       <mat-card-content>
-        @if (updateNameError) {
-          <mat-error class="server-error">{{ updateNameError }}</mat-error>
+        @if (updateNameError()) {
+          <mat-error class="server-error">{{ updateNameError() }}</mat-error>
         }
         <form
           [formGroup]="nameForm"
@@ -54,9 +54,9 @@
           >
           </gt-loading-button>
         </form>
-        @if (updatePlatformError) {
+        @if (updatePlatformError()) {
           <mat-error class="server-error">
-            {{ updatePlatformError }}
+            {{ updatePlatformError() }}
           </mat-error>
         }
         <form
@@ -87,7 +87,7 @@
         </form>
       </mat-card-content>
     </mat-card>
-    @for (projectKey of (projectKeys$ | async) || []; track projectKey) {
+    @for (projectKey of projectKeys() || []; track projectKey) {
       <mat-card>
         <mat-card-header class="vertical-card-header">
           <mat-card-title i18n>Client Keys (DSN)</mat-card-title>
@@ -110,8 +110,14 @@
         </mat-card-content>
       </mat-card>
     }
-    <gt-project-environments></gt-project-environments>
-    <gt-project-alerts></gt-project-alerts>
+    <gt-project-environments
+      [orgSlug]="orgSlug()"
+      [projectSlug]="projectSlug()"
+    ></gt-project-environments>
+    <gt-project-alerts
+      [orgSlug]="orgSlug()"
+      [projectSlug]="projectSlug()"
+    ></gt-project-alerts>
     <mat-card>
       <mat-card-header>
         <mat-card-title i18n>Personal Project Notifications</mat-card-title>
@@ -146,13 +152,13 @@
             >By deleting your project, you will lose all associated data. This
             cannot be undone.</p
           >
-          @if (deleteError) {
-            <mat-error>{{ deleteError }}</mat-error>
+          @if (deleteError()) {
+            <mat-error>{{ deleteError() }}</mat-error>
           }
         </div>
         <gt-loading-button
           buttonText="Delete Project"
-          [loading]="deleteLoading"
+          [loading]="deleteLoading()"
           (buttonClick)="deleteProject()"
           id="delete-project"
         >

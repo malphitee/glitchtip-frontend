@@ -1,8 +1,5 @@
 <section class="grid-wrapper">
-  @for (
-    contexts of specialContexts$ | async;
-    track contexts.title + contexts.type
-  ) {
+  @for (contexts of specialContexts(); track contexts.title + contexts.type) {
     <div class="wrapper">
       @if (contexts.icon || contexts.matIcon) {
         @if (contexts.icon) {

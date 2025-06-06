@@ -1,25 +1,23 @@
-@if (orgSlug$ | async; as orgSlug) {
+@if (orgSlug(); as orgSlug) {
   <mat-card>
     <mat-card-header class="card-header">
       <mat-card-title i18n>Projects</mat-card-title>
-      @if ((errors$ | async)?.addProjectToTeam) {
-        <mat-error>{{ (errors$ | async)?.addProjectToTeam }}</mat-error>
+      @if (errors().addProjectToTeam) {
+        <mat-error>{{ errors().addProjectToTeam }}</mat-error>
       }
       <div>
-        @if ((userTeamRole$ | async) !== "member") {
+        @if (userTeamRole() !== "member") {
           <mat-form-field appearance="outline">
             <mat-label i18n>Add Project</mat-label>
             <mat-select
               (selectionChange)="addProject()"
               [formControl]="project"
             >
-              @if ((projectsNotOnTeam$ | async)?.length) {
-                @for (project of projectsNotOnTeam$ | async; track project) {
-                  <mat-option [value]="project.slug">
-                    {{ project.name }}
-                  </mat-option>
-                }
-              } @else {
+              @for (project of projectsNotOnTeam(); track project) {
+                <mat-option [value]="project.slug">
+                  {{ project.name }}
+                </mat-option>
+              } @empty {
                 <mat-option disabled i18n>No projects</mat-option>
               }
             </mat-select>
@@ -29,16 +27,14 @@
     </mat-card-header>
     <mat-divider></mat-divider>
     <mat-card-content>
-      @if ((projectsOnTeam$ | async)?.length === 0) {
+      @if (projectsOnTeam().length === 0) {
         <p class="center-text" i18n>This team doesn't have any projects</p>
       } @else {
         <ul>
-          @if ((errors$ | async)?.removeProjectFromTeam) {
-            <mat-error class="center-text">{{
-              (errors$ | async)?.removeProjectFromTeam
-            }}</mat-error>
+          @if (errors().removeProjectFromTeam) {
+            <mat-error class="center-text">{{ errors().removeProjectFromTeam }}</mat-error>
           }
-          @for (project of projectsOnTeam$ | async; track project) {
+          @for (project of projectsOnTeam(); track project) {
             <li class="team-project-list-item">
               <a
                 class="team-name"
@@ -49,10 +45,8 @@
               <gt-loading-button
                 buttonText="Remove"
                 buttonStyle="stroked"
-                [loading]="
-                  project.slug === (loading$ | async)?.removeProjectFromTeam
-                "
-                (buttonClick)="removeProject(project.slug)"
+                [loading]="project.slug === loading().removeProjectFromTeam"
+                (buttonClick)="removeProject(project.slug!)"
                 id="remove-team-member"
               ></gt-loading-button>
             </li>

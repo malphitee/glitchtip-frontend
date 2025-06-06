@@ -31,12 +31,12 @@ export class IssueZeroStatesComponent implements OnInit {
   private projectsService = inject(ProjectsService);
 
   projectKeyResource = resource({
-    request: () => ({
+    params: () => ({
       organizationSlug: this.activeOrganizationSlug(),
       projectSlug: this.activeProjectSlug(),
     }),
-    loader: async ({ request }) => {
-      if (!request.organizationSlug || !request.projectSlug) {
+    loader: async ({ params }) => {
+      if (!params.organizationSlug || !params.projectSlug) {
         return undefined;
       }
       const { data } = await client.GET(
@@ -44,8 +44,8 @@ export class IssueZeroStatesComponent implements OnInit {
         {
           params: {
             path: {
-              organization_slug: request.organizationSlug,
-              project_slug: request.projectSlug,
+              organization_slug: params.organizationSlug,
+              project_slug: params.projectSlug,
             },
           },
         },

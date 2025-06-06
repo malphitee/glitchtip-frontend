@@ -12,7 +12,6 @@ import { MatDividerModule } from "@angular/material/divider";
 import { MatOptionModule } from "@angular/material/core";
 import { MatSelectModule } from "@angular/material/select";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { AsyncPipe } from "@angular/common";
 import { MatCardModule } from "@angular/material/card";
 
 @Component({
@@ -28,7 +27,6 @@ import { MatCardModule } from "@angular/material/card";
     MatDividerModule,
     RouterLink,
     LoadingButtonComponent,
-    AsyncPipe,
   ],
 })
 export class TeamMembersComponent implements OnInit {
@@ -38,9 +36,9 @@ export class TeamMembersComponent implements OnInit {
   private snackBar = inject(MatSnackBar);
   private userService = inject(UserService);
 
-  teamMembers$ = this.teamsService.teamMembers$;
+  teamMembers = this.teamsService.teamMembers;
   filteredAddTeamMembers = this.organizationsService.filteredAddTeamMembers;
-  userTeamRole$ = this.teamsService.userTeamRole$;
+  userTeamRole = this.teamsService.userTeamRole;
 
   member = new FormControl();
   orgSlug = "";
@@ -70,39 +68,33 @@ export class TeamMembersComponent implements OnInit {
     this.userService.getUserDetails();
   }
 
-  addTeamMember() {
+  async addTeamMember() {
     this.loading = true;
-    this.organizationsService
-      .addTeamMember(this.member.value, this.orgSlug, this.teamSlug)
-      .subscribe(
-        (team) => {
-          /** Had some issues with FormControl's value being typed as `any` */
-          const member: Member = this.member.value;
-          this.loading = false;
-          this.snackBar.open(`${member.email} has been added to #${team.slug}`);
-        },
-        (err) => {
-          this.loading = false;
-          this.addMemberError = `${err.statusText}: ${err.status}`;
-        },
+    const team = await this.organizationsService.addTeamMember(
+      this.member.value,
+      this.orgSlug,
+      this.teamSlug,
+    );
+    this.loading = false;
+    if (team) {
+      const member: Member = this.member.value;
+      this.snackBar.open(
+        $localize`${member.email} has been added to #${team.slug}`,
       );
+    }
   }
 
-  removeTeamMember(memberId: number, memberEmail: string) {
+  async removeTeamMember(memberId: number, memberEmail: string) {
     this.selectedTeamMember = memberId;
-    this.organizationsService
-      .removeTeamMember(memberId, this.teamSlug)
-      .subscribe(
-        (resp) => {
-          this.selectedTeamMember = null;
-          this.snackBar.open(
-            `${memberEmail} has been removed from #${resp.slug}`,
-          );
-        },
-        (err) => {
-          this.selectedTeamMember = null;
-          this.removeMemberError = `${err.statusText}: ${err.status}`;
-        },
+    const team = await this.organizationsService.removeTeamMember(
+      memberId,
+      this.teamSlug,
+    );
+    this.selectedTeamMember = null;
+    if (team) {
+      this.snackBar.open(
+        $localize`${memberEmail} has been removed from #${team.slug}`,
       );
+    }
   }
 }

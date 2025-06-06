@@ -43,12 +43,12 @@ export class MonitorService extends StatefulService<MonitorState> {
 
   monitorId = signal<number | null>(null);
   monitorResource = resource({
-    request: () => ({
+    params: () => ({
       organizationSlug: this.activeOrganizationSlug(),
       monitorId: this.monitorId(),
     }),
-    loader: async ({ request }) => {
-      if (!request.organizationSlug || !request.monitorId) {
+    loader: async ({ params }) => {
+      if (!params.organizationSlug || !params.monitorId) {
         return undefined;
       }
       const { data } = await client.GET(
@@ -56,8 +56,8 @@ export class MonitorService extends StatefulService<MonitorState> {
         {
           params: {
             path: {
-              organization_slug: request.organizationSlug,
-              monitor_id: request.monitorId,
+              organization_slug: params.organizationSlug,
+              monitor_id: params.monitorId,
             },
           },
         },
@@ -66,12 +66,12 @@ export class MonitorService extends StatefulService<MonitorState> {
     },
   });
   monitorUptimeAlertsResource = resource({
-    request: () => ({
+    params: () => ({
       organizationSlug: this.activeOrganizationSlug(),
       projectSlug: this.associatedProjectSlug(),
     }),
-    loader: async ({ request }) => {
-      if (!request.organizationSlug || !request.projectSlug) {
+    loader: async ({ params }) => {
+      if (!params.organizationSlug || !params.projectSlug) {
         return undefined;
       }
       const { data } = await client.GET(
@@ -79,8 +79,8 @@ export class MonitorService extends StatefulService<MonitorState> {
         {
           params: {
             path: {
-              organization_slug: request.organizationSlug,
-              project_slug: request.projectSlug,
+              organization_slug: params.organizationSlug,
+              project_slug: params.projectSlug,
             },
           },
         },

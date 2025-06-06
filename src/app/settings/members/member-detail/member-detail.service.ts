@@ -1,17 +1,16 @@
 import { Injectable, computed, inject } from "@angular/core";
-import { HttpErrorResponse } from "@angular/common/http";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { EMPTY, lastValueFrom } from "rxjs";
-import { tap, catchError } from "rxjs/operators";
 import {
-  Member,
-  MemberDetail,
   MemberRole,
   MemberRoleDetail,
 } from "../../../api/organizations/organizations.interface";
-import { MembersAPIService } from "../../../api/organizations/members-api.service";
 import { OrganizationsService } from "../../../api/organizations.service";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
+import { client, handleError } from "src/app/api/api";
+import { components } from "src/app/api/api-schema";
+
+type Member = components["schemas"]["OrganizationUserSchema"];
+type MemberDetail = components["schemas"]["OrganizationUserDetailSchema"];
 
 interface MemberDetailState {
   member: Member | null;
@@ -35,7 +34,6 @@ const initialState: MemberDetailState = {
 
 @Injectable({ providedIn: "root" })
 export class MemberDetailService extends StatefulService<MemberDetailState> {
-  private membersAPIService = inject(MembersAPIService);
   private organizationsService = inject(OrganizationsService);
   private snackBar = inject(MatSnackBar);
 
@@ -59,82 +57,88 @@ export class MemberDetailService extends StatefulService<MemberDetailState> {
     super(initialState);
   }
 
-  updateMemberRole(updatedRole: MemberRole) {
+  async updateMemberRole(updatedRole: MemberRole) {
     this.setUpdateMemberRoleLoadingStart();
 
     const orgSlug = this.organizationsService.activeOrganizationSlug();
     const memberDetail = this.member();
 
     if (orgSlug && memberDetail) {
-      const data = {
+      const body = {
         orgRole: updatedRole,
         teamRoles: [],
       };
 
-      return this.membersAPIService
-        .update(orgSlug, memberDetail.id, data)
-        .pipe(
-          tap((resp) => {
-            this.setUpdateMemberRole(resp);
-            this.snackBar.open(
-              `Successfully updated ${resp.email}'s role to ${resp.roleName}`,
-            );
-          }),
-          catchError((error: HttpErrorResponse) => {
-            this.setUpdateMemberRoleError(
-              `${error.statusText}: ${error.status}`,
-            );
-            return EMPTY;
-          }),
-        )
-        .toPromise();
-    } else {
-      return Promise.resolve(null);
+      const { data, error, response } = await client.PUT(
+        "/api/0/organizations/{organization_slug}/members/{member_id}/",
+        {
+          params: {
+            path: {
+              organization_slug: orgSlug,
+              member_id: parseInt(memberDetail.id),
+            },
+          },
+          body,
+        },
+      );
+      if (data) {
+        this.setUpdateMemberRole(data);
+        this.snackBar.open(
+          $localize`Successfully updated ${data.email}'s role to ${data.roleName}`,
+        );
+      } else {
+        const errors = handleError(error, response);
+        if (errors.detail.length) {
+          this.setUpdateMemberRoleError(errors.detail[0].msg);
+        }
+      }
     }
   }
 
-  transferOrgOwnership() {
+  async transferOrgOwnership() {
     this.setTransferOrgOwnershipLoadingStart();
 
     const orgSlug = this.organizationsService.activeOrganizationSlug();
     const member = this.member();
 
     if (orgSlug && member) {
-      return this.membersAPIService
-        .makeOrgOwner(orgSlug, member.id)
-        .pipe(
-          tap((resp) => {
-            this.snackBar.open(
-              `Successfully transferred organization account ownership to ${resp.email}.`,
-            );
-            this.setTransferOrgOwnership(resp);
-          }),
-          catchError((err: HttpErrorResponse) => {
-            if (err.status === 403 && err.error?.detail) {
-              this.setTransferOrgOwnershipError(err.error?.detail);
-            } else if (err.status === 400 && err.error?.message) {
-              this.setTransferOrgOwnershipError(err.error?.message);
-            } else {
-              this.setTransferOrgOwnershipError(
-                "Unable to transfer account ownership.",
-              );
-            }
-            return EMPTY;
-          }),
-        )
-        .toPromise();
-    } else {
-      // Handle the case where orgSlug or member is null
-      return Promise.resolve(null);
+      const { data, error, response } = await client.POST(
+        "/api/0/organizations/{organization_slug}/members/{member_id}/set_owner/",
+        {
+          params: {
+            path: {
+              organization_slug: orgSlug,
+              member_id: parseInt(member.id),
+            },
+          },
+        },
+      );
+      if (data) {
+        this.snackBar.open(
+          $localize`Successfully transferred organization account ownership to ${data.email}.`,
+        );
+        this.setTransferOrgOwnership(data);
+      } else {
+        const errors = handleError(error, response);
+        if (errors.detail.length) {
+          this.setTransferOrgOwnershipError(errors.detail[0].msg);
+        }
+      }
     }
   }
 
-  retrieveMemberDetail(orgSlug: string, memberId: number) {
-    return lastValueFrom(
-      this.membersAPIService
-        .retrieve(orgSlug, memberId)
-        .pipe(tap((memberDetail) => this.setMemberDetails(memberDetail))),
+  async retrieveMemberDetail(orgSlug: string, memberId: number) {
+    const { data } = await client.GET(
+      "/api/0/organizations/{organization_slug}/members/{member_id}/",
+      {
+        params: {
+          path: { organization_slug: orgSlug, member_id: memberId },
+        },
+      },
     );
+    if (data) {
+      this.setMemberDetails(data);
+    }
   }
 
   private setUpdateMemberRoleError(updateMemberRoleError: string) {
@@ -171,7 +175,7 @@ export class MemberDetailService extends StatefulService<MemberDetailState> {
     this.setState({
       member,
       memberTeams: member.teams,
-      availableRoles: member.roles,
+      availableRoles: (member as any).roles,
     });
   }
 }

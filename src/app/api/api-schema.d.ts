@@ -2532,8 +2532,8 @@ export interface components {
         };
         /** ProjectAlertSchema */
         ProjectAlertSchema: {
-            /** Alertrecipient Set */
-            alertrecipient_set: components["schemas"]["AlertRecipientSchema"][];
+            /** Alertrecipients */
+            alertRecipients: components["schemas"]["AlertRecipientSchema"][];
             /** ID */
             id?: number | null;
             /** Name */
@@ -2564,11 +2564,8 @@ export interface components {
         };
         /** ProjectAlertIn */
         ProjectAlertIn: {
-            /**
-             * Name
-             * @default
-             */
-            name: string;
+            /** Name */
+            name?: string | null;
             /** Alertrecipients */
             alertRecipients?: (components["schemas"]["EmailAlertRecipientIn"] | components["schemas"]["WebhookAlertRecipientIn"])[] | null;
             /** Timespan Minutes */
@@ -2617,8 +2614,8 @@ export interface components {
         };
         /** EnvironmentProjectSchema */
         EnvironmentProjectSchema: {
-            /** Environment.Name */
-            "environment.name": string;
+            /** Name */
+            name: string;
             /** ID */
             id?: number | null;
             /**
@@ -2757,15 +2754,15 @@ export interface components {
             /** Groupid */
             groupID: string;
             /**
-             * Timestamp
+             * Datecreated
              * Format: date-time
              */
-            timestamp: string;
+            dateCreated: string;
             /**
-             * Received
+             * Datereceived
              * Format: date-time
              */
-            received: string;
+            dateReceived: string;
             /** Dist */
             dist?: string | null;
             /** Transaction */
@@ -2791,16 +2788,20 @@ export interface components {
             }[];
             /** Entries */
             entries?: (components["schemas"]["BreadcrumbsEntry"] | components["schemas"]["CSPEntry"] | components["schemas"]["ExceptionEntry"] | components["schemas"]["MessageEntry"] | components["schemas"]["RequestEntry"])[];
-            /** Data.Contexts */
-            "data.contexts"?: {
+            /** Contexts */
+            contexts?: {
                 [key: string]: (components["schemas"]["DeviceContext"] | components["schemas"]["OSContext"] | components["schemas"]["RuntimeContext"] | components["schemas"]["AppContext"] | components["schemas"]["BrowserContext"] | components["schemas"]["GPUContext"] | components["schemas"]["StateContext"] | components["schemas"]["CultureContext"] | components["schemas"]["CloudResourceContext"] | components["schemas"]["TraceContext"] | components["schemas"]["ReplayContext"] | components["schemas"]["ResponseContext"]) | unknown;
             } | null;
-            /** Data.Extra */
-            "data.extra"?: {
+            /** Context */
+            context?: {
                 [key: string]: unknown;
             } | null;
-            /** Data.User */
-            "data.user"?: unknown | null;
+            /** User */
+            user?: unknown | null;
+            /** Sdk */
+            sdk?: {
+                [key: string]: unknown;
+            } | null;
             /** Title */
             title: string;
         };
@@ -2869,15 +2870,15 @@ export interface components {
             /** Groupid */
             groupID: string;
             /**
-             * Timestamp
+             * Datecreated
              * Format: date-time
              */
-            timestamp: string;
+            dateCreated: string;
             /**
-             * Received
+             * Datereceived
              * Format: date-time
              */
-            received: string;
+            dateReceived: string;
             /** Dist */
             dist?: string | null;
             /** Transaction */
@@ -2903,16 +2904,20 @@ export interface components {
             }[];
             /** Entries */
             entries?: (components["schemas"]["BreadcrumbsEntry"] | components["schemas"]["CSPEntry"] | components["schemas"]["ExceptionEntry"] | components["schemas"]["MessageEntry"] | components["schemas"]["RequestEntry"])[];
-            /** Data.Contexts */
-            "data.contexts"?: {
+            /** Contexts */
+            contexts?: {
                 [key: string]: (components["schemas"]["DeviceContext"] | components["schemas"]["OSContext"] | components["schemas"]["RuntimeContext"] | components["schemas"]["AppContext"] | components["schemas"]["BrowserContext"] | components["schemas"]["GPUContext"] | components["schemas"]["StateContext"] | components["schemas"]["CultureContext"] | components["schemas"]["CloudResourceContext"] | components["schemas"]["TraceContext"] | components["schemas"]["ReplayContext"] | components["schemas"]["ResponseContext"]) | unknown;
             } | null;
-            /** Data.Extra */
-            "data.extra"?: {
+            /** Context */
+            context?: {
                 [key: string]: unknown;
             } | null;
-            /** Data.User */
-            "data.user"?: unknown | null;
+            /** User */
+            user?: unknown | null;
+            /** Sdk */
+            sdk?: {
+                [key: string]: unknown;
+            } | null;
             /** Title */
             title: string;
             userReport: components["schemas"]["UserReportSchema"] | null;
@@ -2996,6 +3001,8 @@ export interface components {
             transaction: string;
             /** Tags */
             tags: Record<string, unknown>;
+            /** Hashes */
+            hashes: unknown[];
         };
         /** IssueDetailSchema */
         IssueDetailSchema: {
@@ -3010,10 +3017,10 @@ export interface components {
             /** Status */
             status: string;
             project: components["schemas"]["ProjectReference"];
-            /** Short Id */
-            short_id: string;
-            /** Num Comments */
-            num_comments: number;
+            /** Shortid */
+            shortId: string;
+            /** Numcomments */
+            numComments: number;
             /**
              * Stats
              * @default {
@@ -3048,24 +3055,24 @@ export interface components {
             user_count: number | null;
             /** Matching Event Id */
             matching_event_id?: string | null;
+            /**
+             * Firstseen
+             * Format: date-time
+             */
+            firstSeen: string;
+            /**
+             * Lastseen
+             * Format: date-time
+             */
+            lastSeen: string;
             /** Title */
             title: string;
             /** Metadata */
             metadata: Record<string, unknown>;
             /** Culprit */
             culprit?: string | null;
-            /**
-             * First Seen
-             * Format: date-time
-             */
-            first_seen?: string;
-            /**
-             * Last Seen
-             * Format: date-time
-             */
-            last_seen?: string;
-            /** User Report Count */
-            user_report_count: number;
+            /** Userreportcount */
+            userReportCount: number;
         };
         /** ProjectReference */
         ProjectReference: {
@@ -3125,8 +3132,8 @@ export interface components {
             project: components["schemas"]["ProjectReference"];
             /** Short Id Display */
             short_id_display: string;
-            /** Numcomments */
-            numComments: number;
+            /** Num Comments */
+            num_comments: number;
             /**
              * Stats
              * @default {
@@ -3161,22 +3168,22 @@ export interface components {
             userCount: number | null;
             /** Matchingeventid */
             matchingEventId?: string | null;
+            /**
+             * First Seen
+             * Format: date-time
+             */
+            first_seen: string;
+            /**
+             * Last Seen
+             * Format: date-time
+             */
+            last_seen: string;
             /** Title */
             title: string;
             /** Metadata */
             metadata: Record<string, unknown>;
             /** Culprit */
             culprit?: string | null;
-            /**
-             * First Seen
-             * Format: date-time
-             */
-            firstSeen?: string;
-            /**
-             * Last Seen
-             * Format: date-time
-             */
-            lastSeen?: string;
         };
         /** IssueTagSchema */
         IssueTagSchema: {
@@ -3403,10 +3410,10 @@ export interface components {
             /** Scrubipaddresses */
             scrubIpAddresses: boolean;
             /**
-             * Created
+             * Datecreated
              * Format: date-time
              */
-            created: string;
+            dateCreated: string;
             /** Platform */
             platform?: string | null;
             /** First Event */
@@ -3694,10 +3701,10 @@ export interface components {
             /** Scrubipaddresses */
             scrubIpAddresses: boolean;
             /**
-             * Created
+             * Datecreated
              * Format: date-time
              */
-            created: string;
+            dateCreated: string;
             /** Platform */
             platform?: string | null;
             /** First Event */
@@ -3718,11 +3725,8 @@ export interface components {
             slug?: string | null;
             /** Platform */
             platform?: string | null;
-            /**
-             * Eventthrottlerate
-             * @default 0
-             */
-            eventThrottleRate: number;
+            /** Eventthrottlerate */
+            eventThrottleRate?: number | null;
         };
         /**
          * ProjectSchema
@@ -3782,10 +3786,10 @@ export interface components {
             /** Scrubipaddresses */
             scrubIpAddresses: boolean;
             /**
-             * Created
+             * Datecreated
              * Format: date-time
              */
-            created: string;
+            dateCreated: string;
             /** Platform */
             platform?: string | null;
             /** First Event */
@@ -4272,10 +4276,10 @@ export interface components {
         };
         /** EmailAddressSchema */
         EmailAddressSchema: {
-            /** Primary */
-            primary: boolean;
-            /** Verified */
-            verified: boolean;
+            /** Isprimary */
+            isPrimary: boolean;
+            /** Isverified */
+            isVerified: boolean;
             /** Email Address */
             email: string;
         };

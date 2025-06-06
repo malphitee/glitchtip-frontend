@@ -9,9 +9,9 @@ export class MergedService {
   selectedHashes = signal<string[]>([]);
   private snackbar = inject(MatSnackBar);
   private hashesResource = resource({
-    request: () => ({ issueID: this.issueID(), orgSlug: this.orgSlug() }),
-    loader: async ({ request }) => {
-      if (!request.issueID || !request.orgSlug) {
+    params: () => ({ issueID: this.issueID(), orgSlug: this.orgSlug() }),
+    loader: async ({ params }) => {
+      if (!params.issueID || !params.orgSlug) {
         return undefined;
       }
       const { data, error } = await client.GET(
@@ -19,8 +19,8 @@ export class MergedService {
         {
           params: {
             path: {
-              issue_id: request.issueID,
-              organization_slug: request.orgSlug,
+              issue_id: params.issueID,
+              organization_slug: params.orgSlug,
             },
           },
         },

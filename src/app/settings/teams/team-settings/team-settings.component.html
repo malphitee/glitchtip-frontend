@@ -1,13 +1,13 @@
-@if (team$ | async; as team) {
+@if (team(); as team) {
   <mat-card>
     <mat-card-header>
       <mat-card-title i18n>Settings</mat-card-title>
     </mat-card-header>
     <mat-divider></mat-divider>
     <mat-card-content>
-      @if ((errors$ | async)?.updateName) {
+      @if (errors()?.updateName) {
         <mat-error class="server-error center-text">{{
-          (errors$ | async)?.updateName
+          errors()?.updateName
         }}</mat-error>
       }
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
@@ -22,7 +22,7 @@
         </mat-form-field>
         <gt-loading-button
           [disabled]="this.form.get('slug')?.value === team.slug"
-          [loading]="(loading$ | async)?.updateName"
+          [loading]="loading()?.updateName"
           buttonText="Update Name"
           id="update-project-name"
         >
@@ -46,7 +46,7 @@
     </div>
     <gt-loading-button
       buttonText="Delete Team"
-      [loading]="(loading$ | async)?.deleteTeam"
+      [loading]="loading()?.deleteTeam"
       (buttonClick)="deleteTeam()"
     >
     </gt-loading-button>
