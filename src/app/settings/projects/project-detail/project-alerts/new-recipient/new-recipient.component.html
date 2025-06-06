@@ -23,13 +23,14 @@
           }
         </mat-select>
       </mat-form-field>
-
-      @switch (recipientType.value) {
-        @case ("discord") {
+      <div class="recipientDetails">
+        @if (
+          ["discord", "googlechat", "webhook"].includes(recipientType.value)
+        ) {
           <mat-form-field class="webhook" appearance="outline">
             <mat-label>Webhook URL</mat-label>
             <svg matPrefix class="slack">
-              <use xlink:href="#discord"></use>
+              <use [attr.xlink:href]="'#' + recipientType.value"></use>
             </svg>
             <input
               matInput
@@ -37,6 +38,12 @@
               formControlName="url"
               placeholder="URL"
             />
+            @if (recipientType.value === "webhook") {
+              <mat-hint i18n
+                >Supports Slack, Microsoft Teams, Rocket.Chat, and
+                more</mat-hint
+              >
+            }
             @if (url.errors) {
               <mat-error>
                 @if (url.errors.required || url.errors.pattern) {
@@ -48,74 +55,15 @@
               </mat-error>
             }
           </mat-form-field>
-        }
-        @case ("googlechat") {
-          <mat-form-field class="webhook" appearance="outline">
-            <mat-label>Webhook URL</mat-label>
-            <svg matPrefix class="slack">
-              <use xlink:href="#googlechat"></use>
-            </svg>
-            <input
-              matInput
-              type="url"
-              formControlName="url"
-              placeholder="URL"
-            />
-            @if (url.errors) {
-              <mat-error>
-                @if (url.errors.required || url.errors.pattern) {
-                  <span
-                    >Enter a valid URL with protocol (ex.
-                    https://example.com)</span
-                  >
-                }
-              </mat-error>
-            }
-          </mat-form-field>
-        }
-        @case ("webhook") {
-          <mat-form-field class="webhook" appearance="outline">
-            <mat-label>Webhook URL</mat-label>
-            <svg matPrefix class="slack">
-              <use xlink:href="#webhook"></use>
-            </svg>
-            <input
-              matInput
-              type="url"
-              formControlName="url"
-              placeholder="URL"
-            />
-            <mat-hint i18n
-              >Supports Slack, Microsoft Teams, Rocket.Chat, and more</mat-hint
-            >
-            @if (url.errors) {
-              <mat-error>
-                @if (url.errors.required || url.errors.pattern) {
-                  <span
-                    >Enter a valid URL with protocol (ex.
-                    https://example.com)</span
-                  >
-                }
-              </mat-error>
-            }
-          </mat-form-field>
-        }
-        @case ("email") {
+        } @else if (recipientType.value === "email") {
           <p class="email">
             An email will be sent to the members of this project.<br />
             Select "Add Recipient" to continue.
           </p>
-        }
-        @default {
+        } @else {
           <p class="default">Select an alert type to get started.</p>
         }
-      }
-
-      <!-- @if (recipientError(); as error) {
-        <p class="error recipients-error">
-          {{ error }}
-        </p>
-      } -->
+      </div>
     </mat-dialog-content>
     <mat-dialog-actions>
       <gt-loading-button type="submit" buttonText="Add Recipient">
