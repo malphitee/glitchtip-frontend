@@ -1,17 +1,13 @@
 import { Injectable, computed, inject } from "@angular/core";
 import { Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { tap } from "rxjs/operators";
 import {
-  Environment,
-  Organization,
   MemberRole,
   OrganizationErrors,
   OrganizationLoading,
 } from "./organizations.interface";
 import { TeamsService } from "../teams/teams.service";
 import { Team } from "../teams/teams.interfaces";
-import { EnvironmentsAPIService } from "../environments/environments-api.service";
 import { OrganizationsService } from "../organizations.service";
 import { client, handleError } from "../api";
 import { components } from "../api-schema";
@@ -22,7 +18,6 @@ type Member = components["schemas"]["OrganizationUserSchema"];
 interface OrganizationsState {
   organizationMembers: Member[];
   organizationTeams: Team[];
-  organizationEnvironments: Environment[];
   errors: OrganizationErrors;
   loading: OrganizationLoading;
   /** Has organizations loaded the first time? */
@@ -32,7 +27,6 @@ interface OrganizationsState {
 const initialState: OrganizationsState = {
   organizationMembers: [],
   organizationTeams: [],
-  organizationEnvironments: [],
   errors: {
     createOrganization: "",
     addTeamMember: "",
@@ -53,7 +47,6 @@ const initialState: OrganizationsState = {
 export class OrganizationDetailService extends StatefulService<OrganizationsState> {
   private router = inject(Router);
   private organizationsService = inject(OrganizationsService);
-  private environmentsAPIService = inject(EnvironmentsAPIService);
   private snackBar = inject(MatSnackBar);
   private teamsService = inject(TeamsService);
 
@@ -98,21 +91,6 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
     return orgTeams === selectedOrgTeams;
   });
 
-  readonly organizationEnvironments = computed(
-    () => this.state().organizationEnvironments,
-  );
-
-  readonly organizationEnvironmentsProcessed = computed(() => {
-    const environments = this.organizationEnvironments();
-    return environments.reduce(
-      (accumulator, environment) => [
-        ...accumulator,
-        ...(!accumulator.includes(environment.name) ? [environment.name] : []),
-      ],
-      [] as string[],
-    );
-  });
-
   readonly errors = computed(() => this.state().errors);
   readonly loading = computed(() => this.state().loading);
 
@@ -130,9 +108,6 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
         body,
       },
     );
-    if (data) {
-      this.updateOrgName(data as any);
-    }
     return data;
   }
 
@@ -308,7 +283,6 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
     );
     if (data) {
       this.snackBar.open($localize`You have left ${data.slug}`);
-      this.setTeamsView(data.slug, data.isMember, data.memberCount);
     } else {
       const errors = handleError(error, response);
       if (errors.detail.length) {
@@ -334,33 +308,12 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
     );
     if (data) {
       this.snackBar.open($localize`You joined ${data.slug}`);
-      this.setTeamsView(data.slug, data.isMember, data.memberCount);
     } else {
       const errors = handleError(error, response);
       if (errors.detail.length) {
         this.setJoinTeamError(errors.detail[0].msg);
       }
     }
-  }
-
-  deleteTeam(slug: string) {
-    this.updateTeamsView(slug);
-  }
-
-  updateTeam(id: number, newSlug: string) {
-    this.updateTeamSlug(id, newSlug);
-  }
-
-  getOrganizationEnvironments(orgSlug: string) {
-    return this.retrieveOrganizationEnvironments(orgSlug);
-  }
-
-  private retrieveOrganizationEnvironments(orgSlug: string) {
-    return this.environmentsAPIService.list(orgSlug).pipe(
-      tap((environments) => {
-        this.setOrganizationEnvironments(environments);
-      }),
-    );
   }
 
   clearErrorState() {
@@ -392,16 +345,6 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
       },
     });
   }
-
-  // private setAddMemberLoading(loading: boolean) {
-  //   const state = this.state.getValue();
-  //   this.setState({
-  //     loading: {
-  //       ...state.loading,
-  //       addOrganizationMember: loading,
-  //     },
-  //   });
-  // }
 
   private setAddMemberError(error: string) {
     const state = this.state();
@@ -445,19 +388,6 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
     });
   }
 
-  private updateOrgName(orgName: Organization) {
-    // const state = this.state.getValue();
-    // if (state.organizations) {
-    //   this.setState({
-    //     organizations: state.organizations.map((organization) =>
-    //       orgName.id === organization.id
-    //         ? { ...organization, name: orgName.name }
-    //         : organization
-    //     ),
-    //   });
-    // }
-  }
-
   private setActiveOrganizationMembers(members: Member[]) {
     this.setState({
       organizationMembers: members,
@@ -467,61 +397,6 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
   private setOrganizationTeams(teams: Team[]) {
     this.setState({
       organizationTeams: teams,
-    });
-  }
-
-  private setTeamsView(teamSlug: string, member: boolean, members: number) {
-    // const state = this.state.getValue();
-    // if (state.activeOrganization?.teams) {
-    //   this.setState({
-    //     activeOrganization: {
-    //       ...state.activeOrganization,
-    //       teams: state.activeOrganization?.teams.map((team) =>
-    //         team.slug === teamSlug
-    //           ? { ...team, isMember: member, memberCount: members }
-    //           : team
-    //       ),
-    //     },
-    //     loading: {
-    //       ...state.loading,
-    //       addTeamMember: "",
-    //       removeTeamMember: "",
-    //     },
-    //   });
-    // }
-  }
-
-  private updateTeamsView(slug: string) {
-    // const state = this.state.getValue();
-    // if (state.activeOrganization?.teams) {
-    //   this.setState({
-    //     activeOrganization: {
-    //       ...state.activeOrganization,
-    //       teams: state.activeOrganization?.teams.filter(
-    //         (team) => team.slug !== slug
-    //       ),
-    //     },
-    //   });
-    // }
-  }
-
-  private updateTeamSlug(id: number, newSlug: string) {
-    // const state = this.state.getValue();
-    // if (state.activeOrganization?.teams) {
-    //   this.setState({
-    //     activeOrganization: {
-    //       ...state.activeOrganization,
-    //       teams: state.activeOrganization?.teams.map((team) =>
-    //         team.id === id ? { ...team, slug: newSlug } : team
-    //       ),
-    //     },
-    //   });
-    // }
-  }
-
-  private setOrganizationEnvironments(environments: Environment[]) {
-    this.setState({
-      organizationEnvironments: environments,
     });
   }
 }

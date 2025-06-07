@@ -13,7 +13,6 @@ import {
 import { TeamsService } from "src/app/api/teams/teams.service";
 import { ActivatedRoute } from "@angular/router";
 import { map, take } from "rxjs/operators";
-import { OrganizationDetailService } from "src/app/api/organizations/organization-detail.service";
 import { LoadingButtonComponent } from "../../../shared/loading-button/loading-button.component";
 import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -36,7 +35,6 @@ import { MatCardModule } from "@angular/material/card";
 })
 export class TeamSettingsComponent implements OnInit {
   private teamsService = inject(TeamsService);
-  private organizationsService = inject(OrganizationDetailService);
   private route = inject(ActivatedRoute);
 
   team = this.teamsService.team;
@@ -72,7 +70,7 @@ export class TeamSettingsComponent implements OnInit {
             this.teamsService
               .updateTeamSlug(orgSlug, teamSlug, newSlug!)
               .subscribe((resp) => {
-                this.organizationsService.updateTeam(resp.id, resp.slug);
+                // this.organizationsService.updateTeam(resp.id, resp.slug);
               });
           }
         }),
@@ -86,9 +84,8 @@ export class TeamSettingsComponent implements OnInit {
         .pipe(
           map(([orgSlug, teamSlug]) => {
             if (orgSlug && teamSlug) {
-              this.teamsService
-                .deleteTeam(orgSlug, teamSlug)
-                .then(() => this.organizationsService.deleteTeam(teamSlug));
+              this.teamsService.deleteTeam(orgSlug, teamSlug);
+              // .then(() => this.organizationsService.deleteTeam(teamSlug));
             }
           }),
         )

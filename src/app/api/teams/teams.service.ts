@@ -129,21 +129,6 @@ export class TeamsService extends StatefulService<TeamsState> {
     });
   }
 
-  // private setDeleteTeamError(error: HttpErrorResponse) {
-  //   const state = this.state.getValue();
-  //   this.state.next({
-  //     ...state,
-  //     errors: {
-  //       ...state.errors,
-  //       deleteTeam: `${error.statusText}: ${error.status}`,
-  //     },
-  //     loading: {
-  //       ...state.loading,
-  //       deleteTeam: false,
-  //     },
-  //   });
-  // }
-
   addTeam(team: Team) {
     this.addOneTeam(team);
   }
