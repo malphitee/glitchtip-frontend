@@ -1,9 +1,7 @@
 import { computed, inject, Injectable, resource, signal } from "@angular/core";
 import { client } from "./api";
 import { toObservable } from "@angular/core/rxjs-interop";
-import { interval, takeUntil, takeWhile } from "rxjs";
 import { AuthService } from "../auth.service";
-import { refreshInterval } from "../shared/shared.utils";
 import { getCursor, updateArrayById } from "../shared/pagination.utils";
 import { components } from "./api-schema";
 
@@ -107,8 +105,8 @@ export class OrganizationsService {
   organizations = computed(() => this.organizationsResource.value() || []);
   organizationsCount = computed(() => this.organizations.length);
   activeOrganization = computed(() => this.activeOrganizationResource.value());
-  activeOrganizationLoaded = computed(
-    () => !this.activeOrganizationResource.isLoading(),
+  activeOrganizationLoaded = computed(() =>
+    this.activeOrganizationResource.hasValue(),
   );
   activeOrganizationProjects = computed(
     () => this.activeOrganization()?.projects || [],
@@ -116,8 +114,8 @@ export class OrganizationsService {
   projectsCount = computed(() => this.activeOrganizationProjects().length);
   initialLoad = computed(
     () =>
-      !this.organizationsResource.isLoading() &&
-      !this.activeOrganizationResource.isLoading(),
+      this.organizationsResource.hasValue() &&
+      this.activeOrganizationResource.hasValue(),
   );
 
   // For compatibility, remove when possible
@@ -126,7 +124,7 @@ export class OrganizationsService {
   activeOrganizationProjects$ = toObservable(this.activeOrganizationProjects);
 
   constructor() {
-    this.refresh();
+    setTimeout(() => this.refresh(), 30000);
   }
 
   setActiveOrganizationSlug(slug: string | null) {
@@ -158,21 +156,20 @@ export class OrganizationsService {
    * Silently attempt to refresh active org details every 2 seconds
    * until event rate throttle is 0 or 12 seconds passes.
    */
-  repeatRefreshOrgDetail() {
+  repeatRefreshOrgDetail(i = 0) {
     this.activeOrganizationResource.reload();
-    this.activeOrganization$
-      .pipe(
-        takeUntil(interval(2000).pipe(takeUntil(interval(12000)))),
-        takeWhile(
-          (org) =>
-            org?.eventThrottleRate === undefined || org.eventThrottleRate > 0,
-        ),
-      )
-      .subscribe(() => this.activeOrganizationResource.reload());
+    const org = this.activeOrganization();
+    if (
+      i < 10 &&
+      (org?.eventThrottleRate === undefined || org.eventThrottleRate > 0)
+    ) {
+      setTimeout(() => this.repeatRefreshOrgDetail(i + 1), 2000);
+    }
   }
 
   private refresh() {
-    // Refresh 30s, 10m, 30m...
-    refreshInterval([30, 60 * 10], 60 * 30).subscribe(() => this.reload());
+    this.activeOrganizationResource.reload();
+    this.organizationsResource.reload();
+    setTimeout(() => this.refresh(), 10 * 60 * 1000); // 10 min
   }
 }
