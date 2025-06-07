@@ -3,7 +3,6 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { client } from "../api";
 import { components } from "../api-schema";
 import { AuthService } from "src/app/auth.service";
-import { refreshInterval } from "src/app/shared/shared.utils";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
 
 type UserOptions = components["schemas"]["UserOptions"];
@@ -50,7 +49,7 @@ export class UserService extends StatefulService<UserState> {
 
   constructor() {
     super(initialState);
-    this.refresh();
+    setTimeout(() => this.refresh(), 10000);
     effect(() => {
       const user = this.user();
       if (user?.chatwootIdentifierHash) {
@@ -133,7 +132,7 @@ export class UserService extends StatefulService<UserState> {
   }
 
   private refresh() {
-    // Refresh 10s, 3m, 15m...
-    refreshInterval([10, 60 * 3], 60 * 15).subscribe(() => this.reload());
+    this.reload();
+    setTimeout(() => this.refresh(), 20 * 60 * 1000); // 20 min
   }
 }
