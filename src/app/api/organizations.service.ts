@@ -105,17 +105,22 @@ export class OrganizationsService {
   organizations = computed(() => this.organizationsResource.value() || []);
   organizationsCount = computed(() => this.organizations.length);
   activeOrganization = computed(() => this.activeOrganizationResource.value());
-  activeOrganizationLoaded = computed(() =>
-    this.activeOrganizationResource.hasValue(),
+  organizationsLoaded = computed(
+    () =>
+      this.organizationsResource.hasValue() ||
+      !this.organizationsResource.isLoading(),
+  );
+  activeOrganizationLoaded = computed(
+    () =>
+      this.activeOrganizationResource.hasValue() ||
+      !this.activeOrganizationResource.isLoading(),
   );
   activeOrganizationProjects = computed(
     () => this.activeOrganization()?.projects || [],
   );
   projectsCount = computed(() => this.activeOrganizationProjects().length);
   initialLoad = computed(
-    () =>
-      this.organizationsResource.hasValue() &&
-      this.activeOrganizationResource.hasValue(),
+    () => this.organizationsLoaded() && this.activeOrganizationLoaded(),
   );
 
   // For compatibility, remove when possible
