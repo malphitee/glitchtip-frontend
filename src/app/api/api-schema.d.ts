@@ -2935,10 +2935,10 @@ export interface components {
                 [key: string]: string;
             };
             /**
-             * Created
+             * Datecreated
              * Format: date-time
              */
-            created: string;
+            dateCreated: string;
             /** User */
             user?: string | null;
             /** ID */
