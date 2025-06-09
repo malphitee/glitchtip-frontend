@@ -3,6 +3,7 @@ import {
   OnInit,
   ChangeDetectionStrategy,
   inject,
+  input,
 } from "@angular/core";
 import {
   FormControl,
@@ -11,8 +12,6 @@ import {
   ReactiveFormsModule,
 } from "@angular/forms";
 import { TeamsService } from "src/app/api/teams/teams.service";
-import { ActivatedRoute } from "@angular/router";
-import { map, take } from "rxjs/operators";
 import { LoadingButtonComponent } from "../../../shared/loading-button/loading-button.component";
 import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -35,7 +34,6 @@ import { MatCardModule } from "@angular/material/card";
 })
 export class TeamSettingsComponent implements OnInit {
   private teamsService = inject(TeamsService);
-  private route = inject(ActivatedRoute);
 
   team = this.teamsService.team;
   loading = this.teamsService.loading;
@@ -43,53 +41,22 @@ export class TeamSettingsComponent implements OnInit {
   form = new FormGroup({
     slug: new FormControl("", [Validators.required]),
   });
-  routeSlugs$ = this.route.paramMap.pipe(
-    map((params) => [params.get("org-slug"), params.get("team-slug")]),
-  );
+  orgSlug = input.required<string>({ alias: "org-slug" });
+  teamSlug = input.required<string>({ alias: "team-slug" });
 
   ngOnInit(): void {
-    this.routeSlugs$
-      .pipe(
-        map(([orgSlug, teamSlug]) => {
-          if (orgSlug && teamSlug) {
-            this.teamsService.retrieveSingleTeam(orgSlug, teamSlug);
-            this.form.patchValue({ slug: teamSlug });
-          }
-        }),
-      )
-      .subscribe();
+    this.teamsService.retrieveSingleTeam(this.orgSlug(), this.teamSlug());
+    this.form.patchValue({ slug: this.teamSlug() });
   }
 
   onSubmit() {
     const newSlug = this.form.value.slug;
-    this.routeSlugs$
-      .pipe(
-        take(1),
-        map(([orgSlug, teamSlug]) => {
-          if (orgSlug && teamSlug) {
-            this.teamsService
-              .updateTeamSlug(orgSlug, teamSlug, newSlug!)
-              .subscribe((resp) => {
-                // this.organizationsService.updateTeam(resp.id, resp.slug);
-              });
-          }
-        }),
-      )
-      .toPromise();
+    this.teamsService.updateTeamSlug(this.orgSlug(), this.teamSlug(), newSlug!);
   }
 
   deleteTeam() {
     if (window.confirm("Are you sure you want to delete this team?")) {
-      this.routeSlugs$
-        .pipe(
-          map(([orgSlug, teamSlug]) => {
-            if (orgSlug && teamSlug) {
-              this.teamsService.deleteTeam(orgSlug, teamSlug);
-              // .then(() => this.organizationsService.deleteTeam(teamSlug));
-            }
-          }),
-        )
-        .toPromise();
+      this.teamsService.deleteTeam(this.orgSlug(), this.teamSlug());
     }
   }
 }

@@ -239,7 +239,7 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
       },
     );
     if (data) {
-      this.teamsService.retrieveTeamMembers(orgSlug, data.slug).toPromise();
+      this.teamsService.retrieveTeamMembers(orgSlug, data.slug);
       await this.retrieveOrganizationMembers(orgSlug);
       return data;
     }

@@ -61,7 +61,7 @@ export class TeamMembersComponent implements OnInit {
       )
       .subscribe(({ orgSlug, teamSlug }) => {
         if (orgSlug && teamSlug) {
-          this.teamsService.retrieveTeamMembers(orgSlug, teamSlug).toPromise();
+          this.teamsService.retrieveTeamMembers(orgSlug, teamSlug);
           this.organizationsService.retrieveOrganizationMembers(orgSlug);
         }
       });
@@ -84,10 +84,10 @@ export class TeamMembersComponent implements OnInit {
     }
   }
 
-  async removeTeamMember(memberId: number, memberEmail: string) {
-    this.selectedTeamMember = memberId;
+  async removeTeamMember(memberId: string, memberEmail: string) {
+    this.selectedTeamMember = parseInt(memberId);
     const team = await this.organizationsService.removeTeamMember(
-      memberId,
+      parseInt(memberId),
       this.teamSlug,
     );
     this.selectedTeamMember = null;
