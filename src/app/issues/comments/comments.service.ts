@@ -21,9 +21,7 @@ const initialState: CommentsState = {
   commentDeleteLoading: [],
 };
 
-@Injectable({
-  providedIn: "root",
-})
+@Injectable()
 export class CommentsService extends StatefulService<CommentsState> {
   private issueDetailService = inject(IssueDetailService);
   private snackbar = inject(MatSnackBar);

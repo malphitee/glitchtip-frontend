@@ -1,5 +1,4 @@
-import { of } from "rxjs";
-
+import { signal } from "@angular/core";
 import { ContextsComponent } from "./contexts.component";
 import { generateIconPath, iconDictionary } from "src/app/shared/shared.utils";
 
@@ -62,7 +61,7 @@ export const Contexts = () => {
 
   return {
     props: {
-      specialContexts$: of(fullContext),
+      specialContexts: signal(fullContext),
     },
   };
 };
@@ -116,7 +115,7 @@ export const UnknownContexts = () => {
   ];
   return {
     props: {
-      specialContexts$: of(transformedContexts),
+      specialContexts: signal(transformedContexts),
     },
   };
 };

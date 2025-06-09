@@ -9,6 +9,7 @@ import { DetailHeaderComponent } from "src/app/shared/detail/header/header.compo
 import { TransactionGroupDetailService } from "./transaction-group-detail.service";
 import { HumanizeDurationPipe } from "../../shared/seconds-or-ms.pipe";
 import { OrganizationsService } from "src/app/api/organizations.service";
+import { toObservable } from "@angular/core/rxjs-interop";
 
 @Component({
   selector: "gt-transaction-group-detail",
@@ -28,7 +29,8 @@ export class TransactionGroupDetailComponent implements OnInit, OnDestroy {
   private organizationsService = inject(OrganizationsService);
   private transactionGroupDetailService = inject(TransactionGroupDetailService);
 
-  activeOrganizationSlug$ = this.organizationsService.activeOrganizationSlug$;
+  activeOrganizationSlug = this.organizationsService.activeOrganizationSlug;
+  activeOrganizationSlug$ = toObservable(this.activeOrganizationSlug);
   organization$ = this.organizationsService.activeOrganization$;
   initialLoadComplete$ =
     this.transactionGroupDetailService.transactionGroupInitialLoadComplete$;

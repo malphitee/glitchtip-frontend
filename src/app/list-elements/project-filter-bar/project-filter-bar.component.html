@@ -69,7 +69,7 @@
         }
       </mat-accordion>
     </div>
-    @if (orgSlug$ | async; as orgSlug) {
+    @if (orgSlug(); as orgSlug) {
       <div class="nav-action-group">
         <a
           mat-stroked-button

@@ -1,10 +1,10 @@
-import { of } from "rxjs";
 import type { Meta, StoryObj } from "@storybook/angular";
 
 import { EntryBreadcrumbsComponent } from "../entry-breadcrumbs/entry-breadcrumbs.component";
 
 import { databaseStackError } from "../test-data/database-stack-error";
 import { breadcrumbError } from "../test-data/breadcrumb-error";
+import { signal } from "@angular/core";
 
 const meta: Meta<EntryBreadcrumbsComponent> = {
   title: "Events/Event Detail/Entry Breadcrumbs",
@@ -18,7 +18,7 @@ export const BreadcrumbsShort: Story = {
   name: "Short",
   render: () => ({
     props: {
-      breadcrumbs$: of(databaseStackError.entries[1].data),
+      breadcrumbs: signal(databaseStackError.entries[1].data),
     },
   }),
 };
@@ -145,7 +145,7 @@ export const BreadcrumbsMedium: Story = {
   name: "Medium",
   render: () => ({
     props: {
-      breadcrumbs$: of(mediumLength),
+      breadcrumbs: signal(mediumLength),
     },
   }),
 };
@@ -154,7 +154,7 @@ export const BreadcrumbsLong: Story = {
   name: "Long",
   render: () => ({
     props: {
-      breadcrumbs$: of(breadcrumbError.entries[1].data),
+      breadcrumbs: signal(breadcrumbError.entries[1].data),
     },
   }),
 };

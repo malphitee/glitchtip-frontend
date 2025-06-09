@@ -1,7 +1,5 @@
 import { Component, OnInit, computed, inject, input } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { lastValueFrom } from "rxjs";
-import { tap } from "rxjs/operators";
 import { CommentsService } from "./comments.service";
 import { UserService } from "src/app/api/user/user.service";
 import { MarkdownModule } from "ngx-markdown";
@@ -25,6 +23,7 @@ import { DatePipe } from "@angular/common";
     MarkdownModule,
     DatePipe,
   ],
+  providers: [CommentsService],
 })
 export class CommentsComponent implements OnInit {
   private userService = inject(UserService);
@@ -64,13 +63,8 @@ export class CommentsComponent implements OnInit {
   }
 
   deleteComment(commentId: number) {
-    if (window.confirm("Are you sure you want to delete this comment?"))
-      lastValueFrom(
-        this.route.params.pipe(
-          tap((params) => {
-            this.commentsService.deleteComment(+params["issue-id"], commentId);
-          }),
-        ),
-      );
+    if (window.confirm("Are you sure you want to delete this comment?")) {
+      this.commentsService.deleteComment(+this.issueID(), commentId);
+    }
   }
 }

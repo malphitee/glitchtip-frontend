@@ -125,7 +125,7 @@ export class OrganizationsService {
 
   // For compatibility, remove when possible
   activeOrganization$ = toObservable(this.activeOrganization);
-  activeOrganizationSlug$ = toObservable(this.activeOrganizationSlug);
+  // activeOrganizationSlug$ = toObservable(this.activeOrganizationSlug);
   activeOrganizationProjects$ = toObservable(this.activeOrganizationProjects);
 
   constructor() {

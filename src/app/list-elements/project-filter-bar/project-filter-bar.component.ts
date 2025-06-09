@@ -49,7 +49,7 @@ export class ProjectFilterBarComponent implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
-  orgSlug$ = this.organizationsService.activeOrganizationSlug$;
+  orgSlug = this.organizationsService.activeOrganizationSlug;
   /** All projects available */
   projects$ = this.organizationsService.activeOrganizationProjects$;
 

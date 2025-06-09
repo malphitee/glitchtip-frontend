@@ -10,7 +10,6 @@ export class CustomMicroSentryErrorHandler implements ErrorHandler {
     const errorBus = this.errorBus;
     const microSentry = inject(MicroSentryService);
 
-    // tslint:disable-next-line:rxjs-prefer-angular-takeuntil
     errorBus.errors$.subscribe((error) => {
       microSentry.report(error as Error);
     });
