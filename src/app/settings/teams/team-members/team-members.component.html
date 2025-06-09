@@ -23,7 +23,7 @@
   </mat-card-header>
   <mat-divider></mat-divider>
   <mat-card-content>
-    @if (teamMembers()?.length === 0) {
+    @if (teamMembers().length === 0) {
       <p class="center-text" i18n>This team doesn't have any members</p>
     } @else {
       <ul data-test-list class="member-list">

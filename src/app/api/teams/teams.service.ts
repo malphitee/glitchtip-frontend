@@ -81,7 +81,7 @@ export class TeamsService extends StatefulService<TeamsState> {
 
   async retrieveTeamMembers(orgSlug: string, teamSlug: string) {
     const { data } = await client.GET(
-      "/api/0/organizations/{organization_slug}/members/",
+      "/api/0/teams/{organization_slug}/{team_slug}/members/",
       {
         params: {
           path: {
