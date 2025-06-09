@@ -34,7 +34,7 @@ export class UserReportsIssueComponent {
   #service = inject(UserReportsService);
   protected route = inject(ActivatedRoute);
 
-  issueID = input<string>("", { alias: "issue-id" });
+  issueID = input.required<string>({ alias: "issue-id" });
   cursor = input("");
   paginator = this.#service.paginator;
   reports = this.#service.reports;
