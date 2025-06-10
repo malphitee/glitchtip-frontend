@@ -128,7 +128,13 @@
         }
       </mat-card-content>
     </mat-card>
-    <gt-monitor-checks [monitor]="monitor"></gt-monitor-checks>
+    <gt-monitor-checks
+      [monitor]="monitor"
+      [orgSlug]="orgSlug()"
+      [monitorID]="monitorID()"
+      [isChange]="isChange()"
+      [cursor]="cursor()"
+    ></gt-monitor-checks>
     @if (monitor.monitorType === "Heartbeat" && monitor.heartbeatEndpoint) {
       <mat-card id="heartbeat-endpoint" class="heartbeat-card">
         <mat-card-header>
