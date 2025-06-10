@@ -1,128 +1,87 @@
-import { HttpErrorResponse } from "@angular/common/http";
-import { Injectable, inject } from "@angular/core";
-import { combineLatest, EMPTY } from "rxjs";
-import { catchError, filter, map, tap } from "rxjs/operators";
-import { TransactionGroupsAPIService } from "../../api/transactions/transaction-groups-api.service";
-import { TransactionGroup } from "../../api/transactions/transactions.interfaces";
-import {
-  initialPaginationState,
-  PaginationStatefulService,
-  PaginationStatefulServiceState,
-} from "../../shared/stateful-service/pagination-stateful-service";
-import { parseErrorMessage } from "../../shared/shared.utils";
+import { Injectable, computed, inject, resource, signal } from "@angular/core";
 import { OrganizationsService } from "../../api/organizations.service";
+import { client, handleError, NinjaErrorResponse } from "src/app/api/api";
+import {
+  getPaginationHeaders,
+  getPaginator,
+} from "src/app/shared/pagination.utils";
 
-export interface PerformanceState extends PaginationStatefulServiceState {
-  transactionGroups: TransactionGroup[];
-  errors: string[];
+interface DataParams {
+  orgSlug: string;
+  cursor?: string;
+  query?: string;
+  start?: string;
+  end?: string;
+  sort?: string;
+  project?: string[];
+  environment?: string;
 }
 
-const initialState: PerformanceState = {
-  transactionGroups: [],
-  errors: [],
-  pagination: initialPaginationState,
-};
-
 @Injectable()
-export class PerformanceService extends PaginationStatefulService<PerformanceState> {
-  private transactionGroupsAPIService = inject(TransactionGroupsAPIService);
+export class PerformanceService {
   private organizationsService = inject(OrganizationsService);
 
-  transactionGroups$ = this.getState$.pipe(
-    map((state) => state.transactionGroups),
-  );
+  params = signal<DataParams | undefined>(undefined);
+  #transactionGroupsResource = resource({
+    params: () => ({ params: this.params() }),
+    loader: async ({ params }) => {
+      if (!params.params) {
+        return undefined;
+      }
 
-  transactionGroupsDisplay$ = combineLatest([
-    this.organizationsService.activeOrganizationProjects$,
-    this.transactionGroups$,
-  ]).pipe(
-    filter(([projects, groups]) => !!projects && !!groups),
-    map(([projects, groups]) => {
-      return groups.map((group) => {
-        const projectSlug = projects?.find(
-          (project) => +project.id === group.project,
-        )?.name;
-        return {
-          ...group,
-          projectSlug,
-        };
-      });
-    }),
-  );
-
-  errors$ = this.getState$.pipe(map((state) => state.errors));
-
-  constructor() {
-    super(initialState);
-  }
-
-  getTransactionGroups(
-    orgSlug: string,
-    cursor: string | undefined | null,
-    project: number[] | null,
-    start: string | undefined | null,
-    end: string | undefined | null,
-    sort: string | undefined | null,
-    environment: string | undefined | null,
-    query: string | undefined | null,
-  ) {
-    return this.retrieveTransactionGroups(
-      orgSlug,
-      cursor,
-      project,
-      start,
-      end,
-      sort,
-      environment,
-      query,
-    );
-  }
-
-  private retrieveTransactionGroups(
-    orgSlug: string,
-    cursor?: string | null,
-    project?: number[] | null,
-    start?: string | null,
-    end?: string | null,
-    sort?: string | null,
-    environment?: string | null,
-    query?: string | null,
-  ) {
-    this.setLoadingStart();
-    return this.transactionGroupsAPIService
-      .list(orgSlug, cursor, project, start, end, sort, environment, query)
-      .pipe(
-        tap((res) => {
-          this.setStateAndPagination({ transactionGroups: res.body! }, res);
-        }),
-        catchError((err: HttpErrorResponse) => {
-          this.setTransactionGroupsError(err);
-          return EMPTY;
-        }),
+      const { error, data, response } = await client.GET(
+        "/api/0/organizations/{organization_slug}/transaction-groups/",
+        {
+          params: {
+            path: { organization_slug: params.params.orgSlug },
+            query: {
+              cursor: params.params.cursor,
+              query: params.params.query,
+              start: params.params.start,
+              end: params.params.end,
+              sort: params.params.sort as any,
+              project: params.params.project,
+              environment: params.params.environment
+                ? [params.params.environment]
+                : undefined,
+            },
+          },
+        },
       );
-  }
+      const pagination = getPaginationHeaders(response);
+      let errors: NinjaErrorResponse | undefined;
+      if (error) {
+        errors = handleError(error, response);
+      }
+      return { data, errors, pagination };
+    },
+  });
 
-  private setTransactionGroupsError(errors: HttpErrorResponse) {
-    const state = this.state.getValue();
-    this.setState({
-      errors: parseErrorMessage(errors),
-      pagination: {
-        ...state.pagination,
-        loading: false,
-        initialLoadComplete: true,
-      },
+  transactionGroups = computed(
+    () => this.#transactionGroupsResource.value()?.data || [],
+  );
+  transactionGroupsDisplay = computed(() => {
+    const projects = this.organizationsService.activeOrganizationProjects();
+    const groups = this.transactionGroups();
+    return groups.map((group) => {
+      const projectSlug = projects?.find(
+        (project) => +project.id === (group as any).project,
+      )?.name;
+      return {
+        ...group,
+        projectSlug,
+      };
     });
-  }
-
-  private setLoadingStart() {
-    const state = this.state.getValue();
-    this.setState({
-      errors: [],
-      pagination: {
-        ...state.pagination,
-        loading: true,
-        initialLoadComplete: false,
-      },
-    });
-  }
+  });
+  loading = computed(() => this.#transactionGroupsResource.isLoading());
+  initialLoadComplete = computed(
+    () => this.#transactionGroupsResource.hasValue() || !this.loading(),
+  );
+  errors = computed(
+    () => this.#transactionGroupsResource.value()?.errors?.detail,
+  );
+  pagination = computed(
+    () => this.#transactionGroupsResource.value()?.pagination,
+  );
+  paginator = computed(() => getPaginator(this.pagination()));
 }

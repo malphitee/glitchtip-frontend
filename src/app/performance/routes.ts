@@ -1,6 +1,6 @@
 import { Route } from "@angular/router";
 import { TransactionGroupDetailComponent } from "./transaction-group-detail/transaction-group-detail.component";
-import { TransactionGroupsComponent } from "./transaction-groups/transaction-groups.component";
+import { TransactionGroupsComponent } from "./transaction-groups/transaction-groups";
 
 export default [
   {

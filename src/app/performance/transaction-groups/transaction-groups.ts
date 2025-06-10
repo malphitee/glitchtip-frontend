@@ -1,26 +1,26 @@
 import {
   Component,
   OnInit,
-  OnDestroy,
   inject,
   effect,
   input,
+  computed,
 } from "@angular/core";
-import { AsyncPipe, I18nPluralPipe } from "@angular/common";
+import { I18nPluralPipe } from "@angular/common";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { FormControl, FormGroup } from "@angular/forms";
 import { MatSelectChange } from "@angular/material/select";
-import { takeUntilDestroyed, toObservable } from "@angular/core/rxjs-interop";
-import { combineLatest, EMPTY } from "rxjs";
-import { map, switchMap, tap } from "rxjs/operators";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatTableModule } from "@angular/material/table";
 import { PerformanceService } from "./transaction-groups-state";
-import { normalizeProjectParams } from "src/app/shared/shared.utils";
+import {
+  stringArrAttribute,
+  stringAttribute,
+} from "src/app/shared/shared.utils";
 import { TransactionGroup } from "src/app/api/transactions/transactions.interfaces";
 import { HumanizeDurationPipe } from "../../shared/seconds-or-ms.pipe";
 import { ListFooterComponent } from "../../list-elements/list-footer/list-footer.component";
-import { MatTooltipModule } from "@angular/material/tooltip";
 import { DataFilterBarComponent } from "../../list-elements/data-filter-bar/data-filter-bar.component";
-import { MatTableModule } from "@angular/material/table";
 import { ProjectFilterBarComponent } from "../../list-elements/project-filter-bar/project-filter-bar.component";
 import { ListTitleComponent } from "../../list-elements/list-title/list-title.component";
 import { OrganizationsService } from "src/app/api/organizations.service";
@@ -28,10 +28,9 @@ import { EnvironmentsService } from "src/app/api/environments.service";
 
 @Component({
   selector: "gt-transaction-groups",
-  templateUrl: "./transaction-groups.component.html",
-  styleUrls: ["./transaction-groups.component.scss"],
+  templateUrl: "./transaction-groups.html",
+  styleUrls: ["./transaction-groups.scss"],
   imports: [
-    AsyncPipe,
     I18nPluralPipe,
     ListTitleComponent,
     ProjectFilterBarComponent,
@@ -44,16 +43,23 @@ import { EnvironmentsService } from "src/app/api/environments.service";
   ],
   providers: [PerformanceService],
 })
-export class TransactionGroupsComponent implements OnInit, OnDestroy {
+export class TransactionGroupsComponent implements OnInit {
   private organizationsService = inject(OrganizationsService);
   protected service = inject(PerformanceService);
   #environmentsService = inject(EnvironmentsService);
   protected router = inject(Router);
   protected route = inject(ActivatedRoute);
 
-  paginator$ = this.service.paginator$;
   orgSlug = input.required<string>({ alias: "org-slug" });
-  orgSlug$ = toObservable(this.orgSlug);
+  cursor = input(undefined, { transform: stringAttribute });
+  query = input(undefined, { transform: stringAttribute });
+  start = input(undefined, { transform: stringAttribute });
+  end = input(undefined, { transform: stringAttribute });
+  sort = input(undefined, { transform: stringAttribute });
+  projects = input([], { alias: "project", transform: stringArrAttribute });
+  environment = input(undefined, { transform: stringAttribute });
+
+  paginator = this.service.paginator;
   displayedColumns = ["name-and-project", "avgDuration"];
   sortForm = new FormGroup({
     sort: new FormControl({
@@ -85,50 +91,28 @@ export class TransactionGroupsComponent implements OnInit, OnDestroy {
   };
 
   environmentNames = this.#environmentsService.environmentNames;
-  transactionGroupsDisplay$ = this.service.transactionGroupsDisplay$;
-  errors$ = this.service.errors$;
-  loading$ = this.service.loading$;
-  initialLoadComplete$ = this.service.initialLoadComplete$;
-  activeOrganizationProjects$ =
-    this.organizationsService.activeOrganizationProjects$;
-
-  projectsFromParams$ = this.route.queryParams.pipe(
-    map((params) => normalizeProjectParams(params.project)),
-  );
-
-  appliedProjectCount$ = this.projectsFromParams$.pipe(
-    map((projects) => {
-      if (Array.isArray(projects)) {
-        return projects.length;
-      }
-      return 0;
-    }),
-  );
-
+  transactionGroupsDisplay = this.service.transactionGroupsDisplay;
+  errors = this.service.errors;
+  loading = this.service.loading;
+  initialLoadComplete = this.service.initialLoadComplete;
+  activeOrganizationProjects =
+    this.organizationsService.activeOrganizationProjects;
   environments = this.#environmentsService.orgEnvironments;
+  appliedProjectCount = computed(() => this.projects().length);
 
   constructor() {
-    combineLatest([this.orgSlug$, this.route.queryParamMap])
-      .pipe(
-        switchMap(([orgSlug, params]) => {
-          if (orgSlug) {
-            const project = normalizeProjectParams(params.getAll("project"));
-            return this.service.getTransactionGroups(
-              orgSlug,
-              params.get("cursor"),
-              project,
-              params.get("start"),
-              params.get("end"),
-              params.get("sort"),
-              params.get("environment"),
-              params.get("query"),
-            );
-          }
-          return EMPTY;
-        }),
-        takeUntilDestroyed(),
-      )
-      .subscribe();
+    effect(() => {
+      this.service.params.set({
+        orgSlug: this.orgSlug(),
+        cursor: this.cursor(),
+        query: this.query() ?? "is:unresolved",
+        start: this.start(),
+        end: this.end(),
+        sort: this.sort(),
+        project: this.projects(),
+        environment: this.environment(),
+      });
+    });
 
     effect(() =>
       this.environments().length === 0
@@ -136,32 +120,11 @@ export class TransactionGroupsComponent implements OnInit, OnDestroy {
         : this.environmentForm.controls.environment.enable(),
     );
 
-    this.transactionGroupsDisplay$
-      .pipe(takeUntilDestroyed())
-      .subscribe((groups) =>
-        groups.length === 0
-          ? this.sortForm.controls.sort.disable()
-          : this.sortForm.controls.sort.enable(),
-      );
-
-    combineLatest([toObservable(this.environments), this.route.queryParams])
-      .pipe(
-        takeUntilDestroyed(),
-        tap(([projectEnvironments, queryParams]) => {
-          if (
-            queryParams.project &&
-            queryParams.environment &&
-            !projectEnvironments!.includes(queryParams.environment)
-          ) {
-            this.environmentForm.setValue({ environment: null });
-            this.router.navigate([], {
-              queryParams: { environment: null },
-              queryParamsHandling: "merge",
-            });
-          }
-        }),
-      )
-      .subscribe();
+    effect(() =>
+      this.transactionGroupsDisplay().length === 0
+        ? this.sortForm.controls.sort.disable()
+        : this.sortForm.controls.sort.enable(),
+    );
   }
 
   checkForOverflow($event: Event) {
@@ -254,9 +217,5 @@ export class TransactionGroupsComponent implements OnInit, OnDestroy {
       },
       queryParamsHandling: "merge",
     });
-  }
-
-  ngOnDestroy() {
-    this.service.clearState();
   }
 }

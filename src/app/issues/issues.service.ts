@@ -56,9 +56,7 @@ export class IssuesService extends StatefulService<IssuesState> {
   private params = signal<DataParams | undefined>(undefined);
 
   private issuesResource = resource({
-    params: () => ({
-      params: this.params(),
-    }),
+    params: () => ({ params: this.params() }),
     loader: async ({ params }) => {
       if (!params.params) {
         return undefined;
