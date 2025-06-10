@@ -2,15 +2,15 @@ import { HttpErrorResponse } from "@angular/common/http";
 import { Injectable, inject } from "@angular/core";
 import { combineLatest, EMPTY } from "rxjs";
 import { catchError, filter, map, tap } from "rxjs/operators";
-import { TransactionGroupsAPIService } from "../api/transactions/transaction-groups-api.service";
-import { TransactionGroup } from "../api/transactions/transactions.interfaces";
+import { TransactionGroupsAPIService } from "../../api/transactions/transaction-groups-api.service";
+import { TransactionGroup } from "../../api/transactions/transactions.interfaces";
 import {
   initialPaginationState,
   PaginationStatefulService,
   PaginationStatefulServiceState,
-} from "../shared/stateful-service/pagination-stateful-service";
-import { parseErrorMessage } from "../shared/shared.utils";
-import { OrganizationsService } from "../api/organizations.service";
+} from "../../shared/stateful-service/pagination-stateful-service";
+import { parseErrorMessage } from "../../shared/shared.utils";
+import { OrganizationsService } from "../../api/organizations.service";
 
 export interface PerformanceState extends PaginationStatefulServiceState {
   transactionGroups: TransactionGroup[];
@@ -23,9 +23,7 @@ const initialState: PerformanceState = {
   pagination: initialPaginationState,
 };
 
-@Injectable({
-  providedIn: "root",
-})
+@Injectable()
 export class PerformanceService extends PaginationStatefulService<PerformanceState> {
   private transactionGroupsAPIService = inject(TransactionGroupsAPIService);
   private organizationsService = inject(OrganizationsService);

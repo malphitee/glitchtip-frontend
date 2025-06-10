@@ -13,7 +13,7 @@ import { MatSelectChange } from "@angular/material/select";
 import { takeUntilDestroyed, toObservable } from "@angular/core/rxjs-interop";
 import { combineLatest, EMPTY } from "rxjs";
 import { map, switchMap, tap } from "rxjs/operators";
-import { PerformanceService } from "../performance.service";
+import { PerformanceService } from "./transaction-groups-state";
 import { normalizeProjectParams } from "src/app/shared/shared.utils";
 import { TransactionGroup } from "src/app/api/transactions/transactions.interfaces";
 import { HumanizeDurationPipe } from "../../shared/seconds-or-ms.pipe";
@@ -42,6 +42,7 @@ import { EnvironmentsService } from "src/app/api/environments.service";
     ListFooterComponent,
     HumanizeDurationPipe,
   ],
+  providers: [PerformanceService],
 })
 export class TransactionGroupsComponent implements OnInit, OnDestroy {
   private organizationsService = inject(OrganizationsService);

@@ -1,6 +1,6 @@
 @if ((initialLoadComplete$ | async) && (transactionGroup$ | async) === null) {
   <section class="l-body l-body--full-width">
-    @if (organization$ | async; as organization) {
+    @if (organization(); as organization) {
       <mat-card class="auth-form transaction-group-404">
         <mat-card-content>
           <h1 class="mat-headline-4">Transaction group not found</h1>

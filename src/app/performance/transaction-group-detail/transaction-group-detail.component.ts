@@ -31,7 +31,7 @@ export class TransactionGroupDetailComponent implements OnInit, OnDestroy {
 
   activeOrganizationSlug = this.organizationsService.activeOrganizationSlug;
   activeOrganizationSlug$ = toObservable(this.activeOrganizationSlug);
-  organization$ = this.organizationsService.activeOrganization$;
+  organization = this.organizationsService.activeOrganization;
   initialLoadComplete$ =
     this.transactionGroupDetailService.transactionGroupInitialLoadComplete$;
   transactionGroup$ = this.transactionGroupDetailService.transactionGroup$;
