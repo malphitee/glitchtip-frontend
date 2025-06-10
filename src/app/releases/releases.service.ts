@@ -21,9 +21,7 @@ const initialState: ReleasesState = {
   errors: [],
 };
 
-@Injectable({
-  providedIn: "root",
-})
+@Injectable()
 export class ReleasesService extends PaginationStatefulService<ReleasesState> {
   private releasesAPIService = inject(ReleasesAPIService);
 

@@ -1,11 +1,11 @@
 import { Route } from "@angular/router";
 import { ReleaseDetailComponent } from "./release-detail/release-detail.component";
-import { ReleasesComponent } from "./releases.component";
+import { Releases } from "./releases";
 
 export default [
   {
     path: "",
-    component: ReleasesComponent,
+    component: Releases,
   },
   {
     path: ":version",

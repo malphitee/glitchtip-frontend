@@ -1,30 +1,39 @@
-import { Component, OnDestroy, inject } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  input,
+} from "@angular/core";
 import { ActivatedRoute, RouterLink } from "@angular/router";
-import { CommonModule } from "@angular/common";
+import { AsyncPipe, DatePipe } from "@angular/common";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatTableModule } from "@angular/material/table";
 import { checkForOverflow } from "src/app/shared/shared.utils";
 import { ListTitleComponent } from "../list-elements/list-title/list-title.component";
 import { ListFooterComponent } from "../list-elements/list-footer/list-footer.component";
 import { ReleasesService } from "./releases.service";
-import { combineLatest, map } from "rxjs";
 
 @Component({
-  templateUrl: "./releases.component.html",
-  styleUrls: ["./releases.component.scss"],
+  templateUrl: "./releases.html",
+  styleUrls: ["./releases.scss"],
   imports: [
-    CommonModule,
+    AsyncPipe,
+    DatePipe,
     ListTitleComponent,
     MatTableModule,
     RouterLink,
     MatTooltipModule,
     ListFooterComponent,
   ],
+  providers: [ReleasesService],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ReleasesComponent implements OnDestroy {
+export class Releases {
   protected service = inject(ReleasesService);
   protected route = inject(ActivatedRoute);
 
+  orgSlug = input.required<string>({ alias: "org-slug" });
+  cursor = input<string | undefined>();
   paginator$ = this.service.paginator$;
   tooltipDisabled = false;
   displayedColumns = ["version", "created"];
@@ -33,22 +42,13 @@ export class ReleasesComponent implements OnDestroy {
   loading$ = this.service.loading$;
   initialLoadComplete$ = this.service.initialLoadComplete$;
 
-  constructor() {
-    combineLatest([
-      this.route.paramMap.pipe(map((params) => params.get("org-slug"))),
-      this.route.queryParamMap,
-    ]).subscribe(([orgSlug, params]) => {
-      if (orgSlug) {
-        this.service.getReleases(orgSlug, params.get("cursor"));
-      }
-    });
+  constructor() {}
+
+  ngOnInit() {
+    this.service.getReleases(this.orgSlug(), this.cursor());
   }
 
   checkIfTooltipIsNecessary($event: Event) {
     this.tooltipDisabled = checkForOverflow($event);
-  }
-
-  ngOnDestroy(): void {
-    this.service.clearState();
   }
 }
