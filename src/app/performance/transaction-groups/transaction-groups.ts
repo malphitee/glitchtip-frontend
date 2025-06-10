@@ -17,7 +17,6 @@ import {
   stringArrAttribute,
   stringAttribute,
 } from "src/app/shared/shared.utils";
-import { TransactionGroup } from "src/app/api/transactions/transactions.interfaces";
 import { HumanizeDurationPipe } from "../../shared/seconds-or-ms.pipe";
 import { ListFooterComponent } from "../../list-elements/list-footer/list-footer.component";
 import { DataFilterBarComponent } from "../../list-elements/data-filter-bar/data-filter-bar.component";
@@ -148,7 +147,7 @@ export class TransactionGroups implements OnInit {
     this.tooltipDisabled = this.checkForOverflow($event);
   }
 
-  setTitleTooltip(group: TransactionGroup) {
+  setTitleTooltip(group: { method: string; transaction: string; op: string }) {
     if (group.method) {
       return `${group.method} ${group.transaction}`;
     } else {

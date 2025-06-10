@@ -1,5 +1,4 @@
 import { Component, OnInit, input, output, inject } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { LoadingButtonComponent } from "src/app/shared/loading-button/loading-button.component";
 import {
   FormGroup,
@@ -9,6 +8,7 @@ import {
   AbstractControl,
   ValidationErrors,
 } from "@angular/forms";
+import { AsyncPipe, DecimalPipe } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { MatCardModule } from "@angular/material/card";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
@@ -60,7 +60,8 @@ const portUrlValidators = [
   templateUrl: "./monitor-form.component.html",
   styleUrls: ["./monitor-form.component.scss"],
   imports: [
-    CommonModule,
+    AsyncPipe,
+    DecimalPipe,
     ReactiveFormsModule,
     RouterModule,
     LoadingButtonComponent,
