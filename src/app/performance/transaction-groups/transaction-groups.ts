@@ -43,7 +43,7 @@ import { EnvironmentsService } from "src/app/api/environments.service";
   ],
   providers: [PerformanceService],
 })
-export class TransactionGroupsComponent implements OnInit {
+export class TransactionGroups implements OnInit {
   private organizationsService = inject(OrganizationsService);
   protected service = inject(PerformanceService);
   #environmentsService = inject(EnvironmentsService);
