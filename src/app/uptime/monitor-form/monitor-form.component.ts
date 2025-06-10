@@ -8,7 +8,7 @@ import {
   AbstractControl,
   ValidationErrors,
 } from "@angular/forms";
-import { AsyncPipe, DecimalPipe } from "@angular/common";
+import { AsyncPipe, DecimalPipe, NgTemplateOutlet } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { MatCardModule } from "@angular/material/card";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
@@ -62,6 +62,7 @@ const portUrlValidators = [
   imports: [
     AsyncPipe,
     DecimalPipe,
+    NgTemplateOutlet,
     ReactiveFormsModule,
     RouterModule,
     LoadingButtonComponent,
