@@ -22,7 +22,9 @@ export interface NinjaErrorResponse {
   detail: UnprocessableEntityDetail[] | GenericErrorDetailItem[];
 }
 
-function isNinjaErrorResponse(payload: any): payload is NinjaErrorResponse {
+export function isNinjaErrorResponse(
+  payload: any,
+): payload is NinjaErrorResponse {
   if (typeof payload !== "object" || payload === null || !payload.detail) {
     return false;
   }
@@ -72,5 +74,6 @@ if (baseElement) {
     options["baseUrl"] = baseHref;
   }
 }
-export const client = createClient<paths & allauthPaths>(options);
+export type apiPaths = paths & allauthPaths;
+export const client = createClient<apiPaths>(options);
 client.use(csrfMiddleware);
