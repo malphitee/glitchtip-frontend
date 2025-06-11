@@ -1,7 +1,7 @@
 import { Injectable, computed, inject, resource, signal } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
-import { client } from "src/app/api/api";
+import { client } from "src/app/shared/api/api";
 import { OrganizationsService } from "src/app/api/organizations.service";
 
 @Injectable({ providedIn: "root" })

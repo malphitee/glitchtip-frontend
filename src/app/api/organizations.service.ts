@@ -1,5 +1,5 @@
 import { computed, inject, Injectable, resource, signal } from "@angular/core";
-import { client } from "./api";
+import { client } from "../shared/api/api";
 import { toObservable } from "@angular/core/rxjs-interop";
 import { AuthService } from "../auth.service";
 import { getCursor, updateArrayById } from "../shared/pagination.utils";
@@ -28,7 +28,7 @@ export class OrganizationsService {
         signal: abortSignal,
         params: {
           query: {
-            limit: 100,
+            limit: 200,
           },
         },
       });
@@ -51,13 +51,13 @@ export class OrganizationsService {
       // Set causes abortSignal.aborted to be true, don't rely on it going forward
       this.organizationsResource.set(allAccumulatedOrgs);
       let i = 0;
-      while (cursor && i < 10) {
+      while (cursor && i < 5) {
         i++;
         ({ data, response } = await client.GET("/api/0/organizations/", {
           params: {
             query: {
               cursor,
-              limit: 100,
+              limit: 200,
             },
           },
         }));

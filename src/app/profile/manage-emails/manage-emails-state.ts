@@ -1,6 +1,6 @@
 import { computed, inject, Injectable, resource } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { client, handleError } from "src/app/api/api";
+import { client, handleError } from "src/app/shared/api/api";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
 
 interface LoadingStates {

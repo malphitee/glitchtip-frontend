@@ -1,7 +1,7 @@
 import { Injectable, computed, resource, signal } from "@angular/core";
 import { ProjectEnvironment } from "src/app/api/organizations/organizations.interface";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
-import { client } from "src/app/api/api";
+import { client } from "src/app/shared/api/api";
 
 interface ProjectsState {
   toggleHiddenLoading: number | null;

@@ -15,7 +15,7 @@ import { IssuesService } from "../issues.service";
 import { ProjectsService } from "src/app/projects/projects.service";
 import { CopyInputComponent } from "../../shared/copy-input/copy-input.component";
 import { OrganizationsService } from "src/app/api/organizations.service";
-import { client } from "src/app/api/api";
+import { client } from "src/app/shared/api/api";
 
 @Component({
   selector: "gt-issue-zero-states",

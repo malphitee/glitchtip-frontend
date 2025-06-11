@@ -1,6 +1,5 @@
 import { Injectable, computed, signal } from "@angular/core";
 import { apiResource } from "src/app/shared/api/api-resource-factory";
-import { getPaginator } from "src/app/shared/pagination.utils";
 
 @Injectable()
 export class ReleaseDetailService {
@@ -32,8 +31,7 @@ export class ReleaseDetailService {
   releaseFileErrors = computed(
     () => this.#releaseFilesResource.serverError()?.detail,
   );
-  pagination = computed(() => this.#releaseFilesResource.value()?.pagination);
-  paginator = computed(() => getPaginator(this.pagination()));
+  paginator = computed(() => this.#releaseFilesResource.paginator());
   loading = computed(
     () =>
       this.#releaseFilesResource.isLoading() ||

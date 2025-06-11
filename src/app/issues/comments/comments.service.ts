@@ -2,7 +2,7 @@ import { Injectable, computed, inject, resource, signal } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { IssueDetailService } from "../issue-detail/issue-detail.service";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
-import { client } from "src/app/api/api";
+import { client } from "src/app/shared/api/api";
 import { components } from "src/app/api/api-schema";
 
 type Comment = components["schemas"]["CommentSchema"];

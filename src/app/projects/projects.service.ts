@@ -1,7 +1,7 @@
 import { Injectable, computed } from "@angular/core";
 import { toObservable } from "@angular/core/rxjs-interop";
 import { StatefulService } from "../shared/stateful-service/signal-state.service";
-import { client } from "../api/api";
+import { client } from "../shared/api/api";
 import { components } from "../api/api-schema";
 
 type ProjectOrgaizationSchema =

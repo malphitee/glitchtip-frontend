@@ -1,6 +1,6 @@
-import { computed, effect, Injectable, resource, inject } from "@angular/core";
+import { computed, effect, Injectable, inject } from "@angular/core";
 import { MicroSentryService } from "@micro-sentry/angular";
-import { client } from "./api";
+import { apiResource } from "../shared/api/api-resource-factory";
 
 export const DSN_REGEXP =
   /^(?:(\w+):)\/\/(?:(\w+)(?::(\w+))?@)([\w.-]+)(?::(\d+))?\/(.+)/;
@@ -11,13 +11,7 @@ export const DSN_REGEXP =
 export class SettingsService {
   private microSentry = inject(MicroSentryService);
 
-  settingsResource = resource({
-    loader: async () => {
-      const { data } = await client.GET("/api/settings/");
-      return data;
-    },
-  });
-
+  settingsResource = apiResource(() => ({ url: "/api/settings/" }));
   settings = computed(() => this.settingsResource.value());
   socialApps = computed(() => this.settings()?.socialApps || []);
   billingEnabled = computed(() => this.settings()?.billingEnabled);

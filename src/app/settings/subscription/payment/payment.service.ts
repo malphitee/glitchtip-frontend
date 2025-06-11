@@ -1,12 +1,13 @@
-import { computed, Injectable, inject, resource } from "@angular/core";
+import { computed, Injectable, inject } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
 import { SettingsService } from "src/app/api/settings.service";
-import { client } from "src/app/api/api";
+import { client } from "src/app/shared/api/api";
 
 import { components } from "src/app/api/api-schema";
 import { loadStripe } from "@stripe/stripe-js";
+import { apiResource } from "src/app/shared/api/api-resource-factory";
 
 type Organization = components["schemas"]["OrganizationDetailSchema"];
 export interface Price
@@ -35,12 +36,7 @@ export class PaymentService extends StatefulService<PaymentState> {
     () => this.state().subscriptionCreationLoadingId,
   );
 
-  productsResource = resource({
-    loader: async () => {
-      const { data } = await client.GET("/api/0/stripe/products/");
-      return data;
-    },
-  });
+  productsResource = apiResource(() => ({ url: "/api/0/stripe/products/" }));
   products = computed(
     () =>
       this.productsResource

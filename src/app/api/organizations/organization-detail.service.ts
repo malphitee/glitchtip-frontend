@@ -9,7 +9,7 @@ import {
 import { TeamsService } from "../teams/teams.service";
 import { Team } from "../teams/teams.interfaces";
 import { OrganizationsService } from "../organizations.service";
-import { client, handleError } from "../api";
+import { client, handleError } from "../../shared/api/api";
 import { components } from "../api-schema";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
 

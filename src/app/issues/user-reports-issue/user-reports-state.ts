@@ -1,5 +1,9 @@
 import { computed, Injectable, resource, signal } from "@angular/core";
-import { client, handleError, NinjaErrorResponse } from "src/app/api/api";
+import {
+  client,
+  handleError,
+  NinjaErrorResponse,
+} from "src/app/shared/api/api";
 import {
   getPaginationHeaders,
   getPaginator,

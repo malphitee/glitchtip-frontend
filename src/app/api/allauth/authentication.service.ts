@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { allauthBase } from "src/app/constants";
 import { JsonObject } from "src/app/interface-primitives";
 import { getCSRFToken } from "src/app/shared/shared.utils";
-import { client } from "../api";
+import { client } from "../../shared/api/api";
 
 import { components } from "../allauth-schema";
 

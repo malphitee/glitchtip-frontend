@@ -1,6 +1,6 @@
 import { computed, effect, inject, Injectable, resource } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { client } from "../api";
+import { client } from "../../shared/api/api";
 import { components } from "../api-schema";
 import { AuthService } from "src/app/auth.service";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";

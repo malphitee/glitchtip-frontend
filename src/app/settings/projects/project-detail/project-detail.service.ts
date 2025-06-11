@@ -1,5 +1,6 @@
-import { computed, Injectable, resource, signal } from "@angular/core";
-import { client, handleError } from "src/app/api/api";
+import { computed, Injectable, signal } from "@angular/core";
+import { client, handleError } from "src/app/shared/api/api";
+import { apiResource } from "src/app/shared/api/api-resource-factory";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
 
 interface State {
@@ -23,50 +24,31 @@ const initialState: State = {
 @Injectable()
 export class ProjectDetailService extends StatefulService<State> {
   #params = signal({ orgSlug: "", projectSlug: "" });
-  #projectKeysResource = resource({
-    params: () => ({
-      params: this.#params(),
-    }),
-    loader: async ({ params }) => {
-      if (params.params.orgSlug) {
-        const { data } = await client.GET(
-          "/api/0/projects/{organization_slug}/{project_slug}/keys/",
-          {
-            params: {
-              path: {
-                organization_slug: params.params.orgSlug,
-                project_slug: params.params.projectSlug,
-              },
-            },
-          },
-        );
-        return data;
-      }
-      return undefined;
-    },
-  });
-  #projectResource = resource({
-    params: () => ({
-      params: this.#params(),
-    }),
-    loader: async ({ params }) => {
-      if (!params.params.orgSlug) {
-        return undefined;
-      }
-      const { data } = await client.GET(
-        "/api/0/projects/{organization_slug}/{project_slug}/",
-        {
-          params: {
-            path: {
-              organization_slug: params.params.orgSlug,
-              project_slug: params.params.projectSlug,
-            },
-          },
+  #projectKeysResource = apiResource(this.#params, (params) => ({
+    url: "/api/0/projects/{organization_slug}/{project_slug}/keys/",
+    options: {
+      params: {
+        path: {
+          organization_slug: params.orgSlug,
+          project_slug: params.projectSlug,
         },
-      );
-      return data;
+        query: {
+          limit: 200,
+        },
+      },
     },
-  });
+  }));
+  #projectResource = apiResource(this.#params, (params) => ({
+    url: "/api/0/projects/{organization_slug}/{project_slug}/",
+    options: {
+      params: {
+        path: {
+          organization_slug: params.orgSlug,
+          project_slug: params.projectSlug,
+        },
+      },
+    },
+  }));
   readonly projectKeys = computed(() => this.#projectKeysResource.value());
   readonly project = computed(() => this.#projectResource.value());
   readonly deleteLoading = computed(() => this.state().deleteLoading);

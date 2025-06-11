@@ -1,7 +1,7 @@
 import { Injectable, computed, inject, resource } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
-import { client } from "src/app/api/api";
+import { client } from "src/app/shared/api/api";
 import { UNHANDLED_ERROR } from "src/app/constants";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
 

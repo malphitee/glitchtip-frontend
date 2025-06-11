@@ -3,7 +3,7 @@ import { TeamErrors, TeamLoading } from "./teams.interfaces";
 import { UserService } from "../user/user.service";
 import { Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { client, handleError } from "../api";
+import { client, handleError } from "../../shared/api/api";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
 import { components } from "../api-schema";
 type Team = components["schemas"]["TeamProjectSchema"];

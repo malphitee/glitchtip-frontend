@@ -19,7 +19,7 @@ import { generateIconPath } from "../../shared/shared.utils";
 import { Json } from "src/app/interface-primitives";
 import { OrganizationsService } from "src/app/api/organizations.service";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
-import { client } from "src/app/api/api";
+import { client } from "src/app/shared/api/api";
 import { components } from "src/app/api/api-schema";
 
 type EventDetail = components["schemas"]["IssueEventDetailSchema"];

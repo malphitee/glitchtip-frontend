@@ -1,7 +1,7 @@
 import { computed, Injectable, inject, resource, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
-import { client } from "../api";
+import { client } from "../../shared/api/api";
 import { SettingsService } from "../settings.service";
 
 export interface SubscriptionState {

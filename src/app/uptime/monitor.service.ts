@@ -9,7 +9,7 @@ import { SubscriptionService } from "../api/subscriptions/subscription.service";
 import { ServerError } from "../shared/django.interfaces";
 import { OrganizationsService } from "../api/organizations.service";
 import { StatefulService } from "../shared/stateful-service/signal-state.service";
-import { client } from "../api/api";
+import { client } from "../shared/api/api";
 import { components } from "../api/api-schema";
 
 type MonitorCheckSchema = components["schemas"]["MonitorCheckSchema"];

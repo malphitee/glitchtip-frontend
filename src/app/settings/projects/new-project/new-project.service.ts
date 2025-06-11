@@ -1,5 +1,5 @@
 import { computed, inject, Injectable } from "@angular/core";
-import { client } from "src/app/api/api";
+import { client } from "src/app/shared/api/api";
 import { components } from "src/app/api/api-schema";
 import { OrganizationsService } from "src/app/api/organizations.service";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";

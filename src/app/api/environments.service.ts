@@ -1,6 +1,6 @@
 import { computed, inject, Injectable, resource, signal } from "@angular/core";
 import { OrganizationsService } from "./organizations.service";
-import { client } from "./api";
+import { client } from "../shared/api/api";
 import { getCursor } from "../shared/pagination.utils";
 
 @Injectable({

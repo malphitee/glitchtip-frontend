@@ -1,5 +1,5 @@
 import { computed, Injectable, resource, signal } from "@angular/core";
-import { client } from "src/app/api/api";
+import { client } from "src/app/shared/api/api";
 import { getPaginationHeaders } from "src/app/shared/pagination.utils";
 
 @Injectable()

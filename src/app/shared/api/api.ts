@@ -2,10 +2,10 @@ import createClient, {
   type ClientOptions,
   type Middleware,
 } from "openapi-fetch";
-import type { paths } from "./api-schema";
-import type { paths as allauthPaths } from "./allauth-schema";
-import { getCSRFToken } from "../shared/shared.utils";
-import { SERVER_ERROR, UNHANDLED_ERROR } from "../constants";
+import type { paths } from "../../api/api-schema";
+import type { paths as allauthPaths } from "../../api/allauth-schema";
+import { getCSRFToken } from "../shared.utils";
+import { SERVER_ERROR, UNHANDLED_ERROR } from "../../constants";
 
 /** Represents structured django-ninja error raised from Pydantic validation */
 interface UnprocessableEntityDetail {

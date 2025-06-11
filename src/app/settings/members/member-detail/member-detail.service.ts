@@ -6,7 +6,7 @@ import {
 } from "../../../api/organizations/organizations.interface";
 import { OrganizationsService } from "../../../api/organizations.service";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
-import { client, handleError } from "src/app/api/api";
+import { client, handleError } from "src/app/shared/api/api";
 import { components } from "src/app/api/api-schema";
 
 type Member = components["schemas"]["OrganizationUserSchema"];

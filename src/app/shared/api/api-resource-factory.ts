@@ -6,12 +6,7 @@ import {
   getPaginator,
   PaginationState,
 } from "../pagination.utils";
-import {
-  apiPaths,
-  client,
-  handleError,
-  isNinjaErrorResponse,
-} from "../../api/api";
+import { apiPaths, client, handleError, isNinjaErrorResponse } from "./api";
 
 // #region --- Helper Types and Interfaces ---
 
@@ -41,7 +36,8 @@ type SuccessData<TGetOperation> = TGetOperation extends {
 function createObjectResource<TUrl extends PathsWithMethod<apiPaths, "get">>(
   getRequestOptions: () => {
     url: TUrl;
-    options: FetchOptions<FilterKeys<apiPaths[TUrl], "get">>;
+    // THE CHANGE: `options` is now optional.
+    options?: FetchOptions<FilterKeys<apiPaths[TUrl], "get">>;
   },
 ): ReturnType<
   typeof resource<
@@ -58,7 +54,8 @@ function createObjectResource<
   paramsSignal: Signal<TParams | undefined | null>,
   getRequestOptions: (params: TParams) => {
     url: TUrl;
-    options: FetchOptions<FilterKeys<apiPaths[TUrl], "get">>;
+    // THE CHANGE: `options` is now optional.
+    options?: FetchOptions<FilterKeys<apiPaths[TUrl], "get">>;
   },
 ): ReturnType<
   typeof resource<
@@ -194,7 +191,8 @@ interface ApiResourceFn extends ApiObjectResourceFn {
  * `resource` primitive.
  *
  * @example
- * // Static fetch for a single object.
+ * // Static fetch for a single object, with and without options.
+ * products = apiResource(() => ({ url: '/api/0/stripe/products/' }));
  * config = apiResource(() => ({ url: '/api/config/', options: {} }));
  *
  * // Reactive fetch for a single object, tied to a signal.

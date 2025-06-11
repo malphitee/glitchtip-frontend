@@ -2,7 +2,7 @@ import { Injectable, computed, inject, signal } from "@angular/core";
 import { HttpErrorResponse } from "@angular/common/http";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
-import { client } from "src/app/api/api";
+import { client } from "src/app/shared/api/api";
 import { components } from "src/app/api/api-schema";
 
 type ProjectKey = components["schemas"]["ProjectKeySchema"];
