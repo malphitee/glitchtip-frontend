@@ -1,7 +1,7 @@
-@if (paginator$ | async; as paginator) {
+@if (paginator(); as paginator) {
   <section class="l-body l-body--full-width mat-elevation-z0">
-    @if (release$ | async; as release) {
-      @if (releaseFiles$ | async; as files) {
+    @if (release(); as release) {
+      @if (releaseFiles(); as files) {
         <gt-detail-header
           [title]="
             'Release files for ' +
@@ -16,7 +16,7 @@
           <table
             mat-table
             class="mat-elevation-z2"
-            [dataSource]="releaseFiles$"
+            [dataSource]="releaseFiles()"
           >
             <ng-container matColumnDef="name">
               <th mat-header-cell *matHeaderCellDef>Filename</th>
@@ -56,11 +56,11 @@
               <td class="mat-cell" [attr.colspan]="displayedColumns.length">
                 <div class="empty-states">
                   @if (
-                    (initialLoadComplete$ | async) === true &&
-                    (loading$ | async) === false
+                    (initialLoadComplete()) === true &&
+                    (loading()) === false
                   ) {
-                    @if ((fileListErrors$ | async)?.length) {
-                      @if ((fileListErrors$ | async)?.length === 1) {
+                    @if ((fileListErrors())?.length) {
+                      @if ((fileListErrors())?.length === 1) {
                         <h3 class="mat-headline-4">
                           There was an error processing your request
                         </h3>
@@ -70,7 +70,7 @@
                         </h3>
                       }
                       <ul>
-                        @for (error of fileListErrors$ | async; track error) {
+                        @for (error of fileListErrors(); track error) {
                           <li>
                             {{ error }}
                           </li>

@@ -1,5 +1,5 @@
 import { Route } from "@angular/router";
-import { ReleaseDetailComponent } from "./release-detail/release-detail.component";
+import { ReleaseDetail } from "./release-detail/release-detail";
 import { Releases } from "./releases";
 
 export default [
@@ -9,6 +9,6 @@ export default [
   },
   {
     path: ":version",
-    component: ReleaseDetailComponent,
+    component: ReleaseDetail,
   },
 ] as Route[];
