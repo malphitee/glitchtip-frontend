@@ -2,6 +2,7 @@ import { computed, inject, Injectable, resource, signal } from "@angular/core";
 import { OrganizationsService } from "./organizations.service";
 import { client } from "../shared/api/api";
 import { getCursor } from "../shared/pagination.utils";
+import { apiResource } from "../shared/api/api-resource-factory";
 
 @Injectable({
   providedIn: "root",
@@ -10,45 +11,17 @@ export class EnvironmentsService {
   #orgService = inject(OrganizationsService);
 
   projectSlug = signal<string | null>(null);
-  #orgEnvironmentsResource = resource({
-    params: () => ({
-      orgSlug: this.#orgService.activeOrganizationSlug(),
-    }),
-    loader: async ({ params, abortSignal }) => {
-      if (!params.orgSlug) {
-        return undefined;
-      }
-      let { data, response } = await client.GET(
-        "/api/0/organizations/{organization_slug}/environments/",
-        {
-          signal: abortSignal,
-          params: {
-            path: { organization_slug: params.orgSlug },
-            query: { limit: 200 },
-          },
+  #orgEnvironmentsResource = apiResource.fetchAll(
+    this.#orgService.activeOrganizationSlug,
+    (slug) => ({
+      url: "/api/0/organizations/{organization_slug}/environments/",
+      options: {
+        params: {
+          path: { organization_slug: slug },
         },
-      );
-      let cursor = getCursor(response);
-      const page1 = data;
-      if (cursor && page1 && !abortSignal.aborted) {
-        // Support up to 400 environments
-        ({ data, response } = await client.GET(
-          "/api/0/organizations/{organization_slug}/environments/",
-          {
-            signal: abortSignal,
-            params: {
-              path: { organization_slug: params.orgSlug },
-              query: { limit: 200, cursor },
-            },
-          },
-        ));
-        if (data) {
-          return page1.concat(data);
-        }
-      }
-      return page1;
-    },
-  });
+      },
+    }),
+  );
   #projectEnvironmentsResource = resource({
     params: () => ({
       orgSlug: this.#orgService.activeOrganizationSlug(),

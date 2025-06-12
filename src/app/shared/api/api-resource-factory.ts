@@ -112,7 +112,6 @@ function createObjectResource<
   return Object.assign(res, { serverError });
 }
 
-// THE FIX: Add explicit overloads to `createFetchAllResource`
 // Overload for static requests (no params).
 function createFetchAllResource<TUrl extends PathsWithMethod<apiPaths, "get">>(
   getRequestOptions: () => {
