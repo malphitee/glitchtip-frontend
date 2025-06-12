@@ -1,4 +1,11 @@
-import { resource, isSignal, Signal, computed, signal } from "@angular/core";
+import {
+  resource,
+  isSignal,
+  Signal,
+  computed,
+  signal,
+  ResourceRef,
+} from "@angular/core";
 import type { FetchOptions } from "openapi-fetch";
 import type { PathsWithMethod, FilterKeys } from "openapi-typescript-helpers";
 import {
@@ -7,7 +14,13 @@ import {
   getPaginator,
   PaginationState,
 } from "../pagination.utils";
-import { apiPaths, client, handleError, isNinjaErrorResponse } from "./api";
+import {
+  apiPaths,
+  client,
+  handleError,
+  isNinjaErrorResponse,
+  NinjaErrorResponse,
+} from "./api";
 
 // #region --- Helper Types and Interfaces ---
 
@@ -29,6 +42,9 @@ type SuccessData<TGetOperation> = TGetOperation extends {
   ? D
   : unknown;
 
+type ObjectResource<T> = ResourceRef<T> & {
+  serverError: Signal<NinjaErrorResponse | undefined>;
+};
 // #endregion
 
 // #region --- Core Factory Implementations ---
@@ -39,12 +55,7 @@ function createObjectResource<TUrl extends PathsWithMethod<apiPaths, "get">>(
     url: TUrl;
     options?: FetchOptions<FilterKeys<apiPaths[TUrl], "get">>;
   },
-): ReturnType<
-  typeof resource<
-    SuccessData<FilterKeys<apiPaths[TUrl], "get">> | undefined,
-    boolean | undefined
-  >
->;
+): ObjectResource<SuccessData<FilterKeys<apiPaths[TUrl], "get">> | undefined>;
 
 // Overload for reactive requests (with params).
 function createObjectResource<
@@ -56,12 +67,7 @@ function createObjectResource<
     url: TUrl;
     options?: FetchOptions<FilterKeys<apiPaths[TUrl], "get">>;
   },
-): ReturnType<
-  typeof resource<
-    SuccessData<FilterKeys<apiPaths[TUrl], "get">> | undefined,
-    TParams | undefined
-  >
->;
+): ObjectResource<SuccessData<FilterKeys<apiPaths[TUrl], "get">> | undefined>;
 
 /**
  * The internal implementation for creating a resource for a single API object.

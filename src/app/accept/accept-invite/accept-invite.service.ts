@@ -1,8 +1,9 @@
-import { Injectable, computed, inject, resource, signal } from "@angular/core";
+import { Injectable, computed, effect, inject, signal } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
 import { client } from "src/app/shared/api/api";
 import { OrganizationsService } from "src/app/api/organizations.service";
+import { apiResource } from "src/app/shared/api/api-resource-factory";
 
 @Injectable({ providedIn: "root" })
 export class AcceptInviteService {
@@ -10,41 +11,18 @@ export class AcceptInviteService {
   #organizationsService = inject(OrganizationsService);
   #router = inject(Router);
 
-  #memberId = signal<number | undefined>(undefined);
-  #token = signal<string | undefined>(undefined);
-
-  inviteAcceptDetail = resource({
-    params: () => ({ memberId: this.#memberId(), token: this.#token() }),
-    loader: async ({ params }) => {
-      if (!params.memberId || !params.token) {
-        return undefined;
-      }
-      const { data, error } = await client.GET(
-        "/api/0/accept/{org_user_id}/{token}/",
-        {
-          params: {
-            path: {
-              org_user_id: params.memberId,
-              token: params.token,
-            },
-          },
+  #params = signal<{ memberID: number; token: string } | undefined>(undefined);
+  inviteAcceptDetail = apiResource(this.#params, (params) => ({
+    url: "/api/0/accept/{org_user_id}/{token}/",
+    options: {
+      params: {
+        path: {
+          org_user_id: params.memberID,
+          token: params.token,
         },
-      );
-      if (error) {
-        const detail = (error as any).detail;
-        if (detail === "Not found.") {
-          this.#snackBar.open($localize`
-            This invitation link expired or is invalid. Please
-            issue a new invitation request.
-          `);
-        } else {
-          this.#snackBar.open(detail);
-        }
-        this.#router.navigate(["/"]);
-      }
-      return data;
+      },
     },
-  });
+  }));
   acceptInfo = computed(() => this.inviteAcceptDetail.value());
   orgSlug = computed(() => this.acceptInfo()?.orgUser.organization.slug);
   alreadyInOrg = computed(() => {
@@ -63,9 +41,19 @@ export class AcceptInviteService {
     return false;
   });
 
-  setParams(memberId: number, token: string) {
-    this.#memberId.set(memberId);
-    this.#token.set(token);
+  constructor() {
+    effect(() => {
+      // On error, show message and navigate to /
+      const errors = this.inviteAcceptDetail.serverError();
+      if (errors?.detail.length) {
+        this.#snackBar.open(errors?.detail[0].msg);
+        this.#router.navigate(["/"]);
+      }
+    });
+  }
+
+  setParams(memberID: number, token: string) {
+    this.#params.set({ memberID, token });
   }
 
   async acceptInvite(memberId: number, token: string) {

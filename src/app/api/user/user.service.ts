@@ -1,9 +1,10 @@
-import { computed, effect, inject, Injectable, resource } from "@angular/core";
+import { computed, effect, inject, Injectable } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { client } from "../../shared/api/api";
 import { components } from "../api-schema";
 import { AuthService } from "src/app/auth.service";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
+import { apiResource } from "src/app/shared/api/api-resource-factory";
 
 type UserOptions = components["schemas"]["UserOptions"];
 
@@ -29,18 +30,12 @@ export class UserService extends StatefulService<UserState> {
 
   authService = inject(AuthService);
 
-  userResource = resource({
-    params: () => ({ isAuthenticated: this.authService.isAuthenticated() }),
-    loader: async ({ params }) => {
-      if (!params.isAuthenticated) {
-        return undefined;
-      }
-      const { data } = await client.GET("/api/0/users/{user_id}/", {
-        params: { path: mePath },
-      });
-      return data;
+  userResource = apiResource(this.authService.isAuthenticated, () => ({
+    url: "/api/0/users/{user_id}/",
+    options: {
+      params: { path: mePath },
     },
-  });
+  }));
   user = computed(() => this.userResource.value());
   activeUserEmail = computed(() => this.user()?.email);
   readonly userDeleteError = computed(() => this.state().userDeleteError);
