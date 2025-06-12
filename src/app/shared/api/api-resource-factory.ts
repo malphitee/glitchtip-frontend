@@ -2,6 +2,7 @@ import { resource, isSignal, Signal, computed, signal } from "@angular/core";
 import type { FetchOptions } from "openapi-fetch";
 import type { PathsWithMethod, FilterKeys } from "openapi-typescript-helpers";
 import {
+  getCursor,
   getPaginationHeaders,
   getPaginator,
   PaginationState,
@@ -36,7 +37,6 @@ type SuccessData<TGetOperation> = TGetOperation extends {
 function createObjectResource<TUrl extends PathsWithMethod<apiPaths, "get">>(
   getRequestOptions: () => {
     url: TUrl;
-    // THE CHANGE: `options` is now optional.
     options?: FetchOptions<FilterKeys<apiPaths[TUrl], "get">>;
   },
 ): ReturnType<
@@ -54,7 +54,6 @@ function createObjectResource<
   paramsSignal: Signal<TParams | undefined | null>,
   getRequestOptions: (params: TParams) => {
     url: TUrl;
-    // THE CHANGE: `options` is now optional.
     options?: FetchOptions<FilterKeys<apiPaths[TUrl], "get">>;
   },
 ): ReturnType<
@@ -113,8 +112,116 @@ function createObjectResource<
   return Object.assign(res, { serverError });
 }
 
+// THE FIX: Add explicit overloads to `createFetchAllResource`
+// Overload for static requests (no params).
+function createFetchAllResource<TUrl extends PathsWithMethod<apiPaths, "get">>(
+  getRequestOptions: () => {
+    url: TUrl;
+    options?: FetchOptions<FilterKeys<apiPaths[TUrl], "get">>;
+  },
+): ReturnType<
+  typeof resource<
+    SuccessData<FilterKeys<apiPaths[TUrl], "get">> | undefined,
+    boolean | undefined
+  >
+>;
+
+// Overload for reactive requests (with params).
+function createFetchAllResource<
+  TParams,
+  TUrl extends PathsWithMethod<apiPaths, "get">,
+>(
+  paramsSignal: Signal<TParams | undefined | null>,
+  getRequestOptions: (params: TParams) => {
+    url: TUrl;
+    options?: FetchOptions<FilterKeys<apiPaths[TUrl], "get">>;
+  },
+): ReturnType<
+  typeof resource<
+    SuccessData<FilterKeys<apiPaths[TUrl], "get">> | undefined,
+    TParams | undefined
+  >
+>;
+
 /**
- * The internal implementation for creating a resource for a paginated list.
+ * The internal implementation for creating a resource that fetches all pages of a
+ * paginated endpoint up to a hardcoded limit.
+ * @private Not exported directly. Consumed by the public `apiResource` constant.
+ */
+function createFetchAllResource<
+  TParams,
+  TUrl extends PathsWithMethod<apiPaths, "get">,
+>(...args: any[]) {
+  const isReactive = isSignal(args[0]);
+  const paramsSignal = isReactive ? args[0] : signal(true);
+  const getRequestOptions = isReactive ? args[1] : args[0];
+
+  type TGetOperation = FilterKeys<apiPaths[TUrl], "get">;
+  type TData = SuccessData<TGetOperation>;
+  type TResourceParams = TParams | undefined;
+
+  const res = resource<TData | undefined, TResourceParams>({
+    params: () => {
+      const p = paramsSignal();
+      return p === null ? undefined : p;
+    },
+    loader: async ({ params, abortSignal }) => {
+      if (!params) return undefined;
+
+      const { url, options } = isReactive
+        ? getRequestOptions(params)
+        : getRequestOptions();
+
+      const allData: any[] = [];
+      let pageCount = 0;
+      const MAX_PAGES = 5;
+      const PAGE_LIMIT = 200;
+      let cursor: string | null = null;
+
+      do {
+        // Construct query parameters for the current page
+        const queryParams = {
+          ...(options?.params?.query as object),
+          limit: PAGE_LIMIT,
+          cursor: cursor,
+        };
+
+        const { data, error, response } = await client.GET(url, {
+          ...options,
+          params: {
+            ...options?.params,
+            query: queryParams,
+          },
+          signal: abortSignal,
+        });
+
+        if (error) {
+          if (abortSignal.aborted) return undefined;
+          throw handleError(error, response);
+        }
+
+        if (data && Array.isArray(data)) {
+          allData.push(...data);
+        }
+
+        pageCount++;
+        cursor = getCursor(response);
+      } while (cursor && pageCount < MAX_PAGES && !abortSignal.aborted);
+
+      return allData as TData;
+    },
+  });
+
+  const serverError = computed(() => {
+    const err = res.error();
+    return isNinjaErrorResponse(err) ? err : undefined;
+  });
+
+  return Object.assign(res, { serverError });
+}
+
+/**
+ * The internal implementation for creating a resource for a single paginated list.
  * @private Not exported directly. Consumed by the public `apiResource` constant.
  */
 function createPaginatedResource<
@@ -180,9 +287,11 @@ function createPaginatedResource<
 // #region --- Public API Export ---
 
 type ApiObjectResourceFn = typeof createObjectResource;
+type ApiFetchAllResourceFn = typeof createFetchAllResource;
 
 interface ApiResourceFn extends ApiObjectResourceFn {
   paginated: typeof createPaginatedResource;
+  fetchAll: ApiFetchAllResourceFn;
 }
 
 /**
@@ -191,20 +300,21 @@ interface ApiResourceFn extends ApiObjectResourceFn {
  * `resource` primitive.
  *
  * @example
- * // Static fetch for a single object, with and without options.
- * products = apiResource(() => ({ url: '/api/0/stripe/products/' }));
- * config = apiResource(() => ({ url: '/api/config/', options: {} }));
+ * // Static fetch for a single object.
+ * config = apiResource(() => ({ url: '/api/config/' }));
  *
- * // Reactive fetch for a single object, tied to a signal.
+ * // Reactive fetch for a single object.
  * user = apiResource(this.userId, id => ({ url: '/users/{id}', options: { params: { path: { id } } } }));
- * // Access typed error: user.serverError()?.detail
  *
- * // Reactive fetch for a paginated list.
+ * // Fetch all pages of a paginated endpoint.
+ * orgs = apiResource.fetchAll(() => ({ url: '/organizations/' }));
+ *
+ * // Fetch a single page from a paginated list.
  * posts = apiResource.paginated(this.params, params => ({ url: '/posts', options: { params: { query: params } } }));
- * // Access helpers: posts.paginator() and posts.serverError()
  */
 export const apiResource: ApiResourceFn = Object.assign(createObjectResource, {
   paginated: createPaginatedResource,
+  fetchAll: createFetchAllResource,
 });
 
 // #endregion

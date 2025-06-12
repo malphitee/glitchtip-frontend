@@ -1,11 +1,8 @@
-import { computed, inject, Injectable, resource, signal } from "@angular/core";
+import { computed, inject, Injectable, signal } from "@angular/core";
 import { client } from "../shared/api/api";
 import { toObservable } from "@angular/core/rxjs-interop";
 import { AuthService } from "../auth.service";
-import { getCursor, updateArrayById } from "../shared/pagination.utils";
-import { components } from "./api-schema";
-
-type Organization = components["schemas"]["OrganizationSchema"];
+import { apiResource } from "../shared/api/api-resource-factory";
 
 @Injectable({
   providedIn: "root",
@@ -18,90 +15,24 @@ export class OrganizationsService {
     () =>
       this.#activeOrganizationSlug() ?? this.organizations()?.[0]?.slug ?? null,
   );
-  organizationsResource = resource({
-    params: () => ({ isAuthenticated: this.authService.isAuthenticated() }),
-    loader: async ({ params, abortSignal }) => {
-      if (!params.isAuthenticated) {
-        return undefined;
-      }
-      let { data, response } = await client.GET("/api/0/organizations/", {
-        signal: abortSignal,
+  organizationsResource = apiResource.fetchAll(
+    this.authService.isAuthenticated,
+    () => ({
+      url: "/api/0/organizations/",
+    }),
+  );
+
+  activeOrganizationResource = apiResource(
+    this.activeOrganizationSlug,
+    (slug) => ({
+      url: "/api/0/organizations/{organization_slug}/",
+      options: {
         params: {
-          query: {
-            limit: 200,
-          },
+          path: { organization_slug: slug },
         },
-      });
-      let cursor = getCursor(response);
-      if (!cursor || !data || abortSignal.aborted) {
-        return data; // If one page, return early
-      }
-
-      // Get existing organizations to persist during reload
-      let allAccumulatedOrgs: Organization[] = [
-        ...(this.organizationsResource.value() || []),
-      ];
-      // Update existing organizations and add new ones
-      updateArrayById(allAccumulatedOrgs, data);
-      // Track all organization IDs from API to identify removed orgs later
-      const loadedOrgIds = new Set<string>();
-      // Add first page organization IDs
-      data?.forEach((org) => loadedOrgIds.add(org.id));
-
-      // Set causes abortSignal.aborted to be true, don't rely on it going forward
-      this.organizationsResource.set(allAccumulatedOrgs);
-      let i = 0;
-      while (cursor && i < 5) {
-        i++;
-        ({ data, response } = await client.GET("/api/0/organizations/", {
-          params: {
-            query: {
-              cursor,
-              limit: 200,
-            },
-          },
-        }));
-        cursor = getCursor(response);
-        if (data) {
-          // Track organization IDs and update orgs from this page
-          data.forEach((org) => loadedOrgIds.add(org.id));
-          updateArrayById(allAccumulatedOrgs, data);
-          if (cursor) {
-            this.organizationsResource.set(allAccumulatedOrgs);
-          }
-        }
-      }
-
-      // Remove organizations that weren't found in any of the API responses
-      allAccumulatedOrgs = allAccumulatedOrgs.filter((org) =>
-        loadedOrgIds.has(org.id),
-      );
-      // Final update with removing orgs no longer present
-      this.organizationsResource.set(allAccumulatedOrgs);
-      return allAccumulatedOrgs;
-    },
-  });
-  activeOrganizationResource = resource({
-    params: () => ({ organization_slug: this.activeOrganizationSlug() }),
-    loader: async ({ params, abortSignal }) => {
-      if (!params.organization_slug) {
-        return undefined;
-      }
-      const { data, error } = await client.GET(
-        "/api/0/organizations/{organization_slug}/",
-        {
-          params: {
-            path: { organization_slug: params.organization_slug },
-          },
-          signal: abortSignal,
-        },
-      );
-      if (error) {
-        throw error;
-      }
-      return data;
-    },
-  });
+      },
+    }),
+  );
   organizations = computed(() => this.organizationsResource.value() || []);
   organizationsCount = computed(() => this.organizations.length);
   activeOrganization = computed(() => this.activeOrganizationResource.value());
