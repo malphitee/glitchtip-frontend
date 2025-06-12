@@ -4,7 +4,6 @@ import { allauthBase } from "src/app/constants";
 import {
   AllAuthProvidersResponse,
   AllAuthResponse,
-  AllAuthSessionResponse,
   AuthenticatorTOTPStatusResponse,
   AuthenticatorsResponse,
   GetWebauthnResponse,
@@ -23,20 +22,6 @@ interface RecoveryCodes {
 })
 export class AccountService {
   private http = inject(HttpClient);
-
-  changePassword(current_password: string, new_password: string) {
-    return this.http.post<AllAuthSessionResponse>(
-      baseUrl + "/password/change",
-      {
-        current_password,
-        new_password,
-      },
-    );
-  }
-
-  getProviders() {
-    return this.http.get<AllAuthProvidersResponse>(baseUrl + "/providers");
-  }
 
   disconnectProvider(provider: string, account: string) {
     return this.http.delete<AllAuthProvidersResponse>(baseUrl + "/providers", {
