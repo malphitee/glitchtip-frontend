@@ -14,13 +14,13 @@ import { MatIconModule } from "@angular/material/icon";
 import { RouterModule } from "@angular/router";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatButtonModule } from "@angular/material/button";
-import { CommonModule } from "@angular/common";
 import { MatDividerModule } from "@angular/material/divider";
+import { UpperCasePipe } from "@angular/common";
 
 @Component({
   selector: "gt-project-card",
   imports: [
-    CommonModule,
+    UpperCasePipe,
     MatCardModule,
     MatIconModule,
     RouterModule,

@@ -1,23 +1,14 @@
-import { Component, inject } from "@angular/core";
-import {
-  ActivatedRoute,
-  RouterLink,
-  RouterLinkActive,
-  RouterOutlet,
-} from "@angular/router";
-import { map } from "rxjs/operators";
-import { CommonModule } from "@angular/common";
+import { Component, input } from "@angular/core";
+import { RouterLink, RouterLinkActive, RouterOutlet } from "@angular/router";
 import { MatTabsModule } from "@angular/material/tabs";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { DetailHeaderComponent } from "src/app/shared/detail/header/header.component";
 
 @Component({
-  selector: "gt-team-details",
   templateUrl: "./team-details.component.html",
   styleUrls: ["./team-details.component.scss"],
   imports: [
-    CommonModule,
     MatButtonModule,
     RouterLink,
     MatIconModule,
@@ -28,12 +19,8 @@ import { DetailHeaderComponent } from "src/app/shared/detail/header/header.compo
   ],
 })
 export class TeamDetailsComponent {
-  private route = inject(ActivatedRoute);
-
-  teamSlug$ = this.route.paramMap.pipe(
-    map((params) => params.get("team-slug")),
-  );
-  orgSlug$ = this.route.paramMap.pipe(map((params) => params.get("org-slug")));
+  orgSlug = input.required<string>({ alias: "org-slug" });
+  teamSlug = input.required<string>({ alias: "team-slug" });
   navLinks = [
     {
       path: "members",

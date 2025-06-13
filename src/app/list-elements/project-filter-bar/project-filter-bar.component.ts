@@ -7,7 +7,7 @@ import {
   ElementRef,
   inject,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import { AsyncPipe } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatExpansionModule } from "@angular/material/expansion";
@@ -29,7 +29,7 @@ import { OrganizationsService } from "src/app/api/organizations.service";
 @Component({
   selector: "gt-project-filter-bar",
   imports: [
-    CommonModule,
+    AsyncPipe,
     MatButtonModule,
     MatDatepickerModule,
     MatExpansionModule,
