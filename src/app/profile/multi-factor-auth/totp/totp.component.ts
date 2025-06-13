@@ -26,7 +26,6 @@ import { FormErrorComponent } from "../../../shared/forms/form-error/form-error.
 import { ToDoItemComponent } from "../../../shared/to-do-item/to-do-item.component";
 import { BackupCodesComponent } from "./backup-codes/backup-codes.component";
 import { mapFormErrors } from "src/app/shared/forms/form.utils";
-import { lastValueFrom } from "rxjs";
 
 @Component({
   selector: "gt-totp",
@@ -98,13 +97,13 @@ export class TOTPComponent implements OnInit, OnDestroy {
     if (this.codeForm.valid) {
       const code = this.code;
       if (code?.value) {
-        lastValueFrom(this.service.activateTOTP(code.value));
+        this.service.activateTOTP(code.value);
       }
     }
   }
 
   deactivateTOTP() {
-    lastValueFrom(this.service.deactivateTOTP());
+    this.service.deactivateTOTP();
   }
 
   getStepIsDone(step: number) {

@@ -1,18 +1,14 @@
 import { Injectable, computed, inject } from "@angular/core";
-import { baseUrl } from "src/app/constants";
-import { HttpClient } from "@angular/common/http";
 import { ProjectsService } from "src/app/projects/projects.service";
-import { HttpErrorResponse } from "@angular/common/http";
 import {
   ProjectError,
   ProjectAlerts,
   NotificationStatus,
-  SubscribeByDefault,
   GroupedProjects,
 } from "./notifications.interface";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
 import { apiResource } from "src/app/shared/api/api-resource-factory";
-import { catchError, EMPTY, tap } from "rxjs";
+import { client, handleError } from "src/app/shared/api/api";
 
 interface NotificationsState {
   projectViewExpanded: boolean;
@@ -35,7 +31,6 @@ const initialState: NotificationsState = {
 @Injectable()
 export class NotificationsService extends StatefulService<NotificationsState> {
   private projectsService = inject(ProjectsService);
-  private http = inject(HttpClient);
 
   #notificationsResource = apiResource(() => ({
     url: "/api/0/users/{user_id}/notifications/",
@@ -45,7 +40,6 @@ export class NotificationsService extends StatefulService<NotificationsState> {
     url: "/api/0/users/{user_id}/notifications/alerts/",
     options: { params: { path: { user_id: "me" } } },
   }));
-  private readonly url = `${baseUrl}/users/me/notifications/`;
   readonly subscribeByDefault = computed(
     () => this.#notificationsResource.value()?.subscribeByDefault || false,
   );
@@ -76,7 +70,6 @@ export class NotificationsService extends StatefulService<NotificationsState> {
         };
       });
       return projectsWithAlerts;
-      // this.groupProjectsByOrg(projectsWithAlerts as any);
     }
     return;
   });
@@ -99,52 +92,55 @@ export class NotificationsService extends StatefulService<NotificationsState> {
     this.projectsService.retrieveProjects();
   }
 
-  alertsUpdate(projectId: number, status: NotificationStatus) {
-    const data: ProjectAlerts = {
+  async alertsUpdate(projectId: number, status: NotificationStatus) {
+    const body: ProjectAlerts = {
       [projectId]: status,
     };
     this.setProjectAlertLoading(projectId);
-    return this.http
-      .put<ProjectAlerts>(`${this.url}alerts/`, data)
-      .pipe(
-        tap((_) => {
-          this.#alertsList.reload();
-          this.setProjectAlertLoading(null);
-        }),
-        catchError((error) => {
-          if (error) {
-            this.setProjectAlertLoading(null);
-            this.setProjectAlertError(this.error(error), projectId);
-          }
-          return EMPTY;
-        }),
-      )
-      .toPromise();
+    const { error, response } = await client.PUT(
+      "/api/0/users/{user_id}/notifications/alerts/",
+      {
+        params: {
+          path: {
+            user_id: "me",
+          },
+        },
+        body,
+      },
+    );
+    this.#alertsList.reload();
+    this.setProjectAlertLoading(null);
+    if (response.status !== 204) {
+      const errors = handleError(error, response);
+      if (errors.detail.length) {
+        this.setProjectAlertError(errors.detail[0].msg, projectId);
+      }
+    }
   }
 
-  notificationsUpdate(subscribe: boolean) {
-    const data = { subscribeByDefault: subscribe };
+  async notificationsUpdate(subscribe: boolean) {
+    const body = { subscribeByDefault: subscribe };
     this.setSubscribeByDefaultLoading(true);
-    return this.http
-      .put<SubscribeByDefault>(this.url, data)
-      .pipe(
-        tap((resp) => {
-          this.setSubscribeByDefaultLoading(false);
-          this.setSubscribeByDefault(resp.subscribeByDefault);
-        }),
-        catchError((error) => {
-          if (error) {
-            this.setSubscribeByDefaultLoading(false);
-            this.setSubscribeByDefaultError(this.error(error));
-          }
-          return EMPTY;
-        }),
-      )
-      .subscribe();
-  }
-
-  error(error: HttpErrorResponse): string {
-    return `${error.name}: ${error.statusText}`;
+    const { data, error, response } = await client.PUT(
+      "/api/0/users/{user_id}/notifications/",
+      {
+        params: {
+          path: {
+            user_id: "me",
+          },
+        },
+        body,
+      },
+    );
+    this.setSubscribeByDefaultLoading(false);
+    if (data) {
+      this.setSubscribeByDefault(data.subscribeByDefault);
+    } else {
+      const errors = handleError(error, response);
+      if (errors.detail.length) {
+        this.setSubscribeByDefaultError(errors.detail[0].msg);
+      }
+    }
   }
 
   toggleProjectView() {

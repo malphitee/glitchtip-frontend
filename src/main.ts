@@ -1,6 +1,5 @@
 import {
   ErrorHandler,
-  inject,
   provideZonelessChangeDetection,
   Provider,
 } from "@angular/core";
@@ -14,16 +13,6 @@ import { bootstrapApplication } from "@angular/platform-browser";
 import { LessAnnoyingErrorStateMatcher } from "./app/shared/less-annoying-error-state-matcher";
 import { ErrorStateMatcher } from "@angular/material/core";
 import { CustomMicroSentryErrorHandler } from "./app/custom-microsentry-error-handler";
-import { tokenInterceptor } from "./app/api/auth/token.interceptor";
-import {
-  HttpHandlerFn,
-  HttpInterceptorFn,
-  HttpRequest,
-  provideHttpClient,
-  withFetch,
-  withInterceptors,
-  withXsrfConfiguration,
-} from "@angular/common/http";
 import {
   provideRouter,
   TitleStrategy,
@@ -58,16 +47,6 @@ if (locale in localeMappings) {
   locale = localeMappings[locale];
 }
 
-export function baseHrefInterceptor(
-  req: HttpRequest<unknown>,
-  next: HttpHandlerFn,
-) {
-  const baseHref = inject(APP_BASE_HREF);
-  const apiReq = req.clone({ url: `${baseHref.replace(/\/$/, "")}${req.url}` });
-  return next(apiReq);
-}
-
-const extraInterceptors: HttpInterceptorFn[] = [];
 const extraProviders: Provider[] = [];
 
 const baseElement = document.querySelector("base");
@@ -76,7 +55,6 @@ if (baseElement) {
   // Only add base href support when it's not "/"
   if (baseHref !== "/") {
     extraProviders.push({ provide: APP_BASE_HREF, useValue: baseHref });
-    extraInterceptors.push(baseHrefInterceptor);
   }
 }
 
@@ -112,14 +90,6 @@ const bootstrap = () =>
         provide: ErrorStateMatcher,
         useClass: LessAnnoyingErrorStateMatcher,
       },
-      provideHttpClient(
-        withFetch(),
-        withXsrfConfiguration({
-          cookieName: "csrftoken",
-          headerName: "X-CSRFTOKEN",
-        }),
-        withInterceptors([...extraInterceptors, tokenInterceptor]),
-      ),
     ],
   }).catch((err) => console.error(err));
 

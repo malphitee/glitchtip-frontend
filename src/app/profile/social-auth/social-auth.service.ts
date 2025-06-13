@@ -1,10 +1,9 @@
 import { Injectable, computed, inject } from "@angular/core";
 import { toObservable } from "@angular/core/rxjs-interop";
-import { catchError, combineLatest, map, tap, throwError } from "rxjs";
-import { AccountService } from "src/app/api/allauth/account.service";
-import { AllAuthHttpErrorResponse } from "src/app/api/allauth/allauth.interfaces";
+import { combineLatest, map } from "rxjs";
 import { SettingsService } from "src/app/api/settings.service";
 import { UserService } from "src/app/api/user/user.service";
+import { client } from "src/app/shared/api/api";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
 
 export interface SocialAuthState {
@@ -19,7 +18,6 @@ const initialState: SocialAuthState = {
   providedIn: "root",
 })
 export class SocialAuthService extends StatefulService<SocialAuthState> {
-  private accountService = inject(AccountService);
   private settingsService = inject(SettingsService);
   private userService = inject(UserService);
 
@@ -48,17 +46,15 @@ export class SocialAuthService extends StatefulService<SocialAuthState> {
     super(initialState);
   }
 
-  disconnect(id: number, provider: string, account: string) {
+  async disconnect(id: number, provider: string, account: string) {
     this.setState({ loadingId: id });
-    return this.accountService.disconnectProvider(provider, account).pipe(
-      tap(() => {
-        this.setState({ loadingId: null });
-        this.userService.getUserDetails();
-      }),
-      catchError((err: AllAuthHttpErrorResponse) => {
-        this.setState({ loadingId: null });
-        return throwError(() => err);
-      }),
-    );
+    await client.DELETE("/_allauth/browser/v1/account/providers", {
+      body: {
+        provider,
+        account,
+      },
+    });
+    this.setState({ loadingId: null });
+    this.userService.getUserDetails();
   }
 }

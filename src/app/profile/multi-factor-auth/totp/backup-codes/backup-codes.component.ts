@@ -12,7 +12,6 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 
 import { MultiFactorAuthService } from "../../multi-factor-auth.service";
 import { FormErrorComponent } from "../../../../shared/forms/form-error/form-error.component";
-import { lastValueFrom } from "rxjs";
 import { toObservable } from "@angular/core/rxjs-interop";
 
 @Component({
@@ -55,7 +54,7 @@ export class BackupCodesComponent {
   }
 
   startRegenCodes() {
-    lastValueFrom(this.service.regenerateRecoveryCodes());
+    this.service.regenerateRecoveryCodes();
   }
 
   copyCodes() {
@@ -75,7 +74,7 @@ export class BackupCodesComponent {
   verifyBackupCode() {
     const code = this.backupCodeForm.get("backupCode")?.value;
     if (this.backupCodeForm.valid && code) {
-      lastValueFrom(this.service.setRecoveryCodes(code));
+      this.service.setRecoveryCodes(code);
     }
   }
 
