@@ -15,7 +15,7 @@
         </div>
         <div class="button-group">
           <div class="button-and-loading">
-            @if ((subscribeByDefaultLoading$ | async) === true) {
+            @if ((subscribeByDefaultLoading()) === true) {
               <mat-spinner diameter="24"></mat-spinner>
             }
             <mat-button-toggle-group
@@ -25,25 +25,25 @@
               <mat-button-toggle
                 value="onDefault"
                 (change)="toggleDefaultNotifications(true)"
-                [class.underline]="(subscribeByDefault$ | async) === true"
-                [checked]="(subscribeByDefault$ | async) === true"
+                [class.underline]="(subscribeByDefault()) === true"
+                [checked]="(subscribeByDefault()) === true"
                 >On</mat-button-toggle
               >
               <mat-button-toggle
                 value="offDefault"
                 (change)="toggleDefaultNotifications(false)"
-                [class.underline]="(subscribeByDefault$ | async) === false"
-                [checked]="(subscribeByDefault$ | async) === false"
+                [class.underline]="(subscribeByDefault()) === false"
+                [checked]="(subscribeByDefault()) === false"
                 >Off</mat-button-toggle
               >
             </mat-button-toggle-group>
           </div>
-          @if (subscribeByDefaultError$ | async; as error) {
+          @if (subscribeByDefaultError(); as error) {
             <mat-error class="mat-small">{{ error }}</mat-error>
           }
         </div>
       </div>
-      @if ((projectViewExpanded$ | async) === false) {
+      @if ((projectViewExpanded()) === false) {
         <button
           mat-flat-button
           color="primary"
@@ -54,8 +54,8 @@
         </button>
       }
 
-      @if (projectViewExpanded$ | async) {
-        @for (projects of groupedProjects$ | async | keyvalue; track projects) {
+      @if (projectViewExpanded()) {
+        @for (projects of groupedProjects() | keyvalue; track projects) {
           <div>
             <div class="org-name mat-h3 mat-body-strong">
               {{ projects.value[0].organization.name }}
@@ -77,7 +77,7 @@
                   </div>
                   <div class="button-group">
                     <div class="button-and-loading">
-                      @if ((projectAlertLoading$ | async) === project.id) {
+                      @if ((projectAlertLoading()) === project.id) {
                         <mat-spinner diameter="24"></mat-spinner>
                       }
                       <mat-button-toggle-group
@@ -102,7 +102,7 @@
                           >Default
                           <span
                             >({{
-                              (subscribeByDefault$ | async) === true
+                              (subscribeByDefault()) === true
                                 ? "On"
                                 : "Off"
                             }})</span
@@ -110,9 +110,9 @@
                         >
                       </mat-button-toggle-group>
                     </div>
-                    @if ((projectAlertsError$ | async)?.id === project.id) {
+                    @if ((projectAlertsError())?.id === project.id) {
                       <mat-error class="mat-small">{{
-                        (projectAlertsError$ | async)?.error
+                        (projectAlertsError())?.error
                       }}</mat-error>
                     }
                   </div>
@@ -123,7 +123,7 @@
         }
       }
 
-      @if ((projectViewExpanded$ | async) === true) {
+      @if ((projectViewExpanded()) === true) {
         <button
           mat-flat-button
           color="primary"

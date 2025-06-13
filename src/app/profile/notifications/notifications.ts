@@ -4,7 +4,7 @@ import {
   ChangeDetectionStrategy,
   inject,
 } from "@angular/core";
-import { NotificationsService } from "./notifications.service";
+import { NotificationsService } from "./notifications-state";
 import { NotificationStatus } from "./notifications.interface";
 import { RouterLink } from "@angular/router";
 import { MatIconModule } from "@angular/material/icon";
@@ -12,14 +12,13 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
-import { AsyncPipe, KeyValuePipe } from "@angular/common";
+import { KeyValuePipe } from "@angular/common";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatCardModule } from "@angular/material/card";
 
 @Component({
-  selector: "gt-notifications",
-  templateUrl: "./notifications.component.html",
-  styleUrls: ["./notifications.component.scss"],
+  templateUrl: "./notifications.html",
+  styleUrls: ["./notifications.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatCardModule,
@@ -30,21 +29,21 @@ import { MatCardModule } from "@angular/material/card";
     MatButtonModule,
     MatIconModule,
     RouterLink,
-    AsyncPipe,
     KeyValuePipe,
   ],
+  providers: [NotificationsService],
 })
-export class NotificationsComponent implements OnInit {
+export class Notifications implements OnInit {
   private notificationsService = inject(NotificationsService);
 
-  subscribeByDefault$ = this.notificationsService.subscribeByDefault$;
-  projectViewExpanded$ = this.notificationsService.projectViewExpanded$;
-  subscribeByDefaultLoading$ =
-    this.notificationsService.subscribeByDefaultLoading$;
-  subscribeByDefaultError$ = this.notificationsService.subscribeByDefaultError$;
-  projectAlertLoading$ = this.notificationsService.projectAlertLoading$;
-  groupedProjects$ = this.notificationsService.groupedProjects$;
-  projectAlertsError$ = this.notificationsService.projectAlertsError$;
+  subscribeByDefault = this.notificationsService.subscribeByDefault;
+  projectViewExpanded = this.notificationsService.projectViewExpanded;
+  subscribeByDefaultLoading =
+    this.notificationsService.subscribeByDefaultLoading;
+  subscribeByDefaultError = this.notificationsService.subscribeByDefaultError;
+  projectAlertLoading = this.notificationsService.projectAlertLoading;
+  groupedProjects = this.notificationsService.groupedProjects;
+  projectAlertsError = this.notificationsService.projectAlertsError;
 
   ngOnInit(): void {
     this.notificationsService.subscribeToEndpoints();
