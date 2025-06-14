@@ -1,6 +1,5 @@
 import { computed, inject, Injectable, signal } from "@angular/core";
 import { client } from "../shared/api/api";
-import { toObservable } from "@angular/core/rxjs-interop";
 import { AuthService } from "../auth.service";
 import { apiResource } from "../shared/api/api-resource-factory";
 
@@ -53,9 +52,6 @@ export class OrganizationsService {
   initialLoad = computed(
     () => this.organizationsLoaded() && this.activeOrganizationLoaded(),
   );
-
-  // For compatibility, remove when possible
-  activeOrganizationProjects$ = toObservable(this.activeOrganizationProjects);
 
   constructor() {
     setTimeout(() => this.refresh(), 30000);

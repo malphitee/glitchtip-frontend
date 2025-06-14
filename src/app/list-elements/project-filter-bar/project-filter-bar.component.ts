@@ -25,6 +25,7 @@ import { Router, ActivatedRoute } from "@angular/router";
 import { MatExpansionPanel } from "@angular/material/expansion";
 import { normalizeProjectParams } from "src/app/shared/shared.utils";
 import { OrganizationsService } from "src/app/api/organizations.service";
+import { toObservable } from "@angular/core/rxjs-interop";
 
 @Component({
   selector: "gt-project-filter-bar",
@@ -51,7 +52,9 @@ export class ProjectFilterBarComponent implements OnInit {
 
   orgSlug = this.organizationsService.activeOrganizationSlug;
   /** All projects available */
-  projects$ = this.organizationsService.activeOrganizationProjects$;
+  projects$ = toObservable(
+    this.organizationsService.activeOrganizationProjects,
+  );
 
   /** Projects that are selected in this component but not yet applied */
   selectedProjectIds = new BehaviorSubject<number[]>([]);

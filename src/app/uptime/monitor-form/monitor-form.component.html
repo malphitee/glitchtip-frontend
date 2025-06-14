@@ -136,7 +136,7 @@
         <mat-form-field appearance="outline" data-cy="associated-project">
           <mat-label i18n>Associated Project</mat-label>
           <mat-select formControlName="project">
-            @if (orgProjects$ | async; as orgProjects) {
+            @if (orgProjects(); as orgProjects) {
               <mat-option value="">None</mat-option>
               @for (orgProject of orgProjects; track orgProject) {
                 <mat-option [value]="orgProject.id">
@@ -228,7 +228,7 @@
           }
         </mat-form-field>
         @if (totalEventsAllowed(); as totalEventsAllowed) {
-          @if (intervalPerMonth$ | async; as intervalPerMonth) {
+          @if (intervalPerMonth(); as intervalPerMonth) {
             <div class="help-text mat-caption">
               @if (intervalPerMonth <= totalEventsAllowed) {
                 This will use approximately
