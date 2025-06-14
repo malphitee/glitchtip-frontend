@@ -11,14 +11,12 @@ import { MatOptionModule } from "@angular/material/core";
 import { MatSelectModule } from "@angular/material/select";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatCardModule } from "@angular/material/card";
-import { AsyncPipe } from "@angular/common";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { UserService } from "src/app/api/user/user.service";
 import { AuthenticationService } from "src/app/api/allauth/authentication.service";
 import { AuthSvgComponent } from "../../shared/auth-svg/auth-svg.component";
 import { StatefulComponent } from "src/app/shared/stateful-service/signal-state.component";
 import { SocialAuthService, SocialAuthState } from "./social-auth.service";
-import { User } from "src/app/api/user/user.interfaces";
 
 @Component({
   selector: "gt-social-auth",
@@ -34,7 +32,6 @@ import { User } from "src/app/api/user/user.interfaces";
     AuthSvgComponent,
     MatDividerModule,
     MatButtonModule,
-    AsyncPipe,
   ],
 })
 export class SocialAuthComponent
@@ -47,8 +44,7 @@ export class SocialAuthComponent
   private snackBar = inject(MatSnackBar);
 
   socialApps = this.service.socialApps;
-  user$ = this.service.user$;
-  user?: User | any;
+  user = this.service.user;
   disconnectLoadingId = this.service.loadingId;
   account = new FormControl();
 
@@ -62,9 +58,6 @@ export class SocialAuthComponent
 
   ngOnInit() {
     this.userService.getUserDetails();
-    this.user$.subscribe((user) => {
-      this.user = user;
-    });
   }
 
   addAccount() {
@@ -76,18 +69,21 @@ export class SocialAuthComponent
   }
 
   async disconnect(id: number, provider: string, account: string) {
-    if (this.user?.hasPasswordAuth || this.user!.identities.length > 1) {
-      await this.service.disconnect(id, provider, account);
-      this.snackBar.open(
-        $localize`You have successfully disconnected your social auth account`,
-      );
-      // if (err.status === 400 && err.error.errors?.length) {
-      //   this.snackBar.open(err.error.errors[0].message);
-      //   return of(undefined);
-      // }
-      // this.snackBar.open(UNHANDLED_ERROR);
-    } else {
-      this.snackBar.open($localize`Your account has no password set up.`);
+    const user = this.user();
+    if (user) {
+      if (user.hasPasswordAuth || user.identities!.length > 1) {
+        await this.service.disconnect(id, provider, account);
+        this.snackBar.open(
+          $localize`You have successfully disconnected your social auth account`,
+        );
+        // if (err.status === 400 && err.error.errors?.length) {
+        //   this.snackBar.open(err.error.errors[0].message);
+        //   return of(undefined);
+        // }
+        // this.snackBar.open(UNHANDLED_ERROR);
+      } else {
+        this.snackBar.open($localize`Your account has no password set up.`);
+      }
     }
   }
 }

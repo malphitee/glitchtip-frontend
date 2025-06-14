@@ -46,7 +46,7 @@
     }
     <mat-tab label="All">
       <ul>
-        @if ((filteredPlatforms$ | async)?.length === 0) {
+        @if (filteredPlatforms()?.length === 0) {
           <li>
             <button
               mat-stroked-button
@@ -58,7 +58,7 @@
             </button>
           </li>
         }
-        @for (platform of filteredPlatforms$ | async; track platform) {
+        @for (platform of filteredPlatforms(); track platform) {
           <li>
             <button
               mat-stroked-button
@@ -99,7 +99,7 @@
         />
       </mat-form-field>
       <mat-list>
-        @if ((filteredPlatforms$ | async)?.length === 0) {
+        @if (filteredPlatforms()?.length === 0) {
           <mat-list-item class="list-item">
             <button
               id="picker-button-other"
@@ -112,7 +112,7 @@
             </button>
           </mat-list-item>
         }
-        @for (platform of filteredPlatforms$ | async; track platform) {
+        @for (platform of filteredPlatforms(); track platform) {
           <mat-list-item class="list-item">
             <button
               data-test

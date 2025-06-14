@@ -1,5 +1,5 @@
-@if (socialApps().length || (user$ | async)?.identities?.length) {
-  @if (user$ | async; as user) {
+@if (socialApps().length || user()?.identities?.length) {
+  @if (user(); as user) {
     <mat-card>
       <mat-card-header>
         <mat-card-title>Social Auth Accounts</mat-card-title>
@@ -27,14 +27,14 @@
       </mat-card-header>
       <mat-divider></mat-divider>
       <mat-card-content>
-        @if ((user$ | async)?.identities?.length === 0) {
+        @if (user.identities!.length === 0) {
           <p class="empty-auth">
             You haven't connected any social auth accounts.
           </p>
         } @else {
           <div class="socialaccount-list-wrapper">
             @for (
-              socialAccount of (user$ | async)?.identities;
+              socialAccount of user.identities;
               track socialAccount;
               let lastItem = $last
             ) {

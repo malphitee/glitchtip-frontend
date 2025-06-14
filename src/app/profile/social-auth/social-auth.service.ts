@@ -1,6 +1,4 @@
 import { Injectable, computed, inject } from "@angular/core";
-import { toObservable } from "@angular/core/rxjs-interop";
-import { combineLatest, map } from "rxjs";
 import { SettingsService } from "src/app/api/settings.service";
 import { UserService } from "src/app/api/user/user.service";
 import { client } from "src/app/shared/api/api";
@@ -23,25 +21,24 @@ export class SocialAuthService extends StatefulService<SocialAuthState> {
 
   loadingId = computed(() => this.state().loadingId);
   socialApps = this.settingsService.socialApps;
-  user$ = combineLatest([toObservable(this.userService.user)]).pipe(
-    map(([userDetails]) => {
-      const socialApps = this.socialApps();
-      let socialAccountsWithNames = userDetails?.identities.map(
-        (socialAccount) => {
-          return {
-            ...socialAccount,
-            name: socialApps.find(
-              (socialApp) => socialApp.provider === socialAccount.provider,
-            )?.name,
-          };
-        },
-      );
-      return {
-        ...userDetails,
-        identities: socialAccountsWithNames,
-      };
-    }),
-  );
+  user = computed(() => {
+    const userDetails = this.userService.user();
+    const socialApps = this.socialApps();
+    let socialAccountsWithNames = userDetails?.identities.map(
+      (socialAccount) => {
+        return {
+          ...socialAccount,
+          name: socialApps.find(
+            (socialApp) => socialApp.provider === socialAccount.provider,
+          )?.name,
+        };
+      },
+    );
+    return {
+      ...userDetails,
+      identities: socialAccountsWithNames,
+    };
+  });
   constructor() {
     super(initialState);
   }
