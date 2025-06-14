@@ -1,5 +1,5 @@
-@if (projects$ | async; as projects) {
-  <section [class.no-projects]="(projects$ | async)?.length === 0">
+@if (projects(); as projects) {
+  <section [class.no-projects]="projects?.length === 0">
     <div [class.no-projects__picker]="!projects.length" id="project-picker">
       <mat-accordion displayMode="flat" [hideToggle]="projects.length < 2">
         <mat-expansion-panel
@@ -12,7 +12,7 @@
             [class.disabled-looking]="projects.length === 0"
           >
             <mat-panel-title class="mat-body-1">
-              {{ selectedProjectsString$ | async }}
+              {{ selectedProjectsString() }}
             </mat-panel-title>
           </mat-expansion-panel-header>
           <mat-form-field appearance="outline">
@@ -26,7 +26,7 @@
             />
           </mat-form-field>
           <ul>
-            @for (project of filteredProjects$ | async; track project) {
+            @for (project of filteredProjects(); track project) {
               <li class="list-item">
                 <button
                   id="picker-button-{{ project.id }}"
@@ -46,7 +46,7 @@
             }
           </ul>
           <div class="button-group">
-            @if (someProjectsAreSelected$ | async) {
+            @if (someProjectsAreSelected()) {
               <button
                 mat-stroked-button
                 (click)="navigate(null); expansionPanel.close()"
@@ -55,14 +55,14 @@
               </button>
             }
             <button mat-flat-button (click)="closePanel()" color="primary">
-              @if ((selectedAndAppliedIdsAreEqual$ | async) === false) {
+              @if (selectedAndAppliedIdsAreEqual() === false) {
                 Apply &
               }
               Close
             </button>
           </div>
         </mat-expansion-panel>
-        @if ((appliedProjectIds$ | async)?.length) {
+        @if (appliedProjectIds()?.length) {
           <button mat-button class="reset-button" (click)="resetProjects()">
             <mat-icon>close</mat-icon>
           </button>
@@ -86,14 +86,8 @@
             color="primary"
             class="nav-action"
             [routerLink]="
-              (singleProjectSlug$ | async)
-                ? [
-                    '/',
-                    orgSlug,
-                    'settings',
-                    'projects',
-                    singleProjectSlug$ | async,
-                  ]
+              singleProjectSlug()
+                ? ['/', orgSlug, 'settings', 'projects', singleProjectSlug()]
                 : ['/', orgSlug, 'settings', 'projects']
             "
           >
