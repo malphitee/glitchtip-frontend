@@ -4,7 +4,7 @@
   </mat-card-header>
   <mat-divider></mat-divider>
   <mat-card-content>
-    @if (userDetails$ | async) {
+    @if (userDetails()) {
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <mat-form-field class="full-width first-field" appearance="outline">
           <mat-label>Name</mat-label>
@@ -29,7 +29,7 @@
             <mat-icon>close</mat-icon>
           </button>
           <mat-autocomplete #auto="matAutocomplete">
-            @for (timeZone of filteredOptions | async; track timeZone) {
+            @for (timeZone of filteredOptions(); track timeZone) {
               <mat-option [value]="timeZone">
                 {{ timeZone }}
               </mat-option>

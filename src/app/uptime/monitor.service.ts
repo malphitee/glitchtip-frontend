@@ -1,5 +1,4 @@
 import { Injectable, computed, inject, resource, signal } from "@angular/core";
-import { EMPTY } from "rxjs";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
 import { MonitorInput, ResponseTimeSeries } from "./uptime.interfaces";
@@ -166,7 +165,6 @@ export class MonitorService extends StatefulService<MonitorState> {
         non_field_errors: [`There was an error saving your monitor details.`],
       });
     }
-    return EMPTY;
   }
 
   editMonitor(data: MonitorInput) {

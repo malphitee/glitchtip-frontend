@@ -7,8 +7,8 @@ import {
   AfterViewInit,
   inject,
   Signal,
+  effect,
 } from "@angular/core";
-import { toObservable } from "@angular/core/rxjs-interop";
 import {
   FormControl,
   FormGroup,
@@ -60,9 +60,7 @@ export class LoginTotpComponent
   constructor() {
     const loginService = inject(LoginService);
 
-    toObservable(loginService.fieldErrors).subscribe((fieldErrors) =>
-      mapFormErrors(fieldErrors, this.form),
-    );
+    effect(() => mapFormErrors(loginService.fieldErrors(), this.form));
     super(loginService);
     this.hasWebAuthn = loginService.hasWebAuthn;
     this.loginService = loginService;

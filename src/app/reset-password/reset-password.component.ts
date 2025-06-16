@@ -1,4 +1,9 @@
-import { Component, ChangeDetectionStrategy, inject } from "@angular/core";
+import {
+  Component,
+  ChangeDetectionStrategy,
+  inject,
+  effect,
+} from "@angular/core";
 import {
   Validators,
   FormGroup,
@@ -10,7 +15,6 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatCardModule } from "@angular/material/card";
-import { toObservable } from "@angular/core/rxjs-interop";
 import { SettingsService } from "../api/settings.service";
 import { LoadingButtonComponent } from "../shared/loading-button/loading-button.component";
 import {
@@ -55,9 +59,7 @@ export class ResetPasswordComponent extends StatefulComponent<
   constructor() {
     const service = inject(ResetPasswordService);
 
-    toObservable(service.fieldErrors).subscribe((fieldErrors) =>
-      mapFormErrors(fieldErrors, this.form),
-    );
+    effect(() => mapFormErrors(service.fieldErrors(), this.form));
     super(service);
 
     this.service = service;

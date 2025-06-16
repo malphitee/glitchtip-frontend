@@ -1,4 +1,9 @@
-import { Component, ChangeDetectionStrategy, inject } from "@angular/core";
+import {
+  Component,
+  ChangeDetectionStrategy,
+  inject,
+  effect,
+} from "@angular/core";
 import {
   FormControl,
   FormGroup,
@@ -12,7 +17,6 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 
 import { MultiFactorAuthService } from "../../multi-factor-auth.service";
 import { FormErrorComponent } from "../../../../shared/forms/form-error/form-error.component";
-import { toObservable } from "@angular/core/rxjs-interop";
 
 @Component({
   selector: "gt-backup-codes",
@@ -44,9 +48,7 @@ export class BackupCodesComponent {
   });
 
   constructor() {
-    toObservable(this.error).subscribe((error) =>
-      this.backupCode?.setErrors({ serverError: [error] }),
-    );
+    effect(() => this.backupCode?.setErrors({ serverError: [this.error()] }));
   }
 
   get backupCode() {
