@@ -92,7 +92,7 @@ export class PlatformPickerComponent implements ControlValueAccessor {
   selected = 0;
   lastSelected = 0;
   allTabIndex = this.categoryList.length;
-  setSelected = (index: number) => {
+  setSelected(index: number) {
     if (this.selected !== this.allTabIndex) {
       this.lastSelected = this.selected;
     }
