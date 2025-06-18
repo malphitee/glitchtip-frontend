@@ -2,7 +2,7 @@ import { Component, OnInit, computed, inject, input } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { CommentsService } from "./comments.service";
 import { UserService } from "src/app/api/user/user.service";
-import { MarkdownModule } from "ngx-markdown";
+import { MarkdownComponent, provideMarkdown } from "ngx-markdown";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { MatDividerModule } from "@angular/material/divider";
@@ -20,10 +20,10 @@ import { DatePipe } from "@angular/common";
     MatDividerModule,
     MatButtonModule,
     MatIconModule,
-    MarkdownModule,
+    MarkdownComponent,
     DatePipe,
   ],
-  providers: [CommentsService],
+  providers: [CommentsService, provideMarkdown()],
 })
 export class CommentsComponent implements OnInit {
   private userService = inject(UserService);

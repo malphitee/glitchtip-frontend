@@ -8,7 +8,7 @@ import {
 import { SettingsService } from "../api/settings.service";
 import { MatDivider } from "@angular/material/divider";
 import { MatHint } from "@angular/material/form-field";
-import { MarkdownComponent } from "ngx-markdown";
+import { MarkdownComponent, provideMarkdown } from "ngx-markdown";
 
 @Component({
   selector: "gt-system-info",
@@ -21,6 +21,7 @@ import { MarkdownComponent } from "ngx-markdown";
     MatHint,
     MarkdownComponent,
   ],
+  providers: [provideMarkdown()],
   templateUrl: "./system-info.component.html",
   styleUrls: ["./system-info.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,

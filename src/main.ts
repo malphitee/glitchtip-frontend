@@ -1,5 +1,6 @@
 import {
   ErrorHandler,
+  inject,
   provideZonelessChangeDetection,
   Provider,
 } from "@angular/core";
@@ -14,6 +15,13 @@ import { LessAnnoyingErrorStateMatcher } from "./app/shared/less-annoying-error-
 import { ErrorStateMatcher } from "@angular/material/core";
 import { CustomMicroSentryErrorHandler } from "./app/custom-microsentry-error-handler";
 import {
+  HttpHandlerFn,
+  HttpInterceptorFn,
+  HttpRequest,
+  provideHttpClient,
+  withInterceptors,
+} from "@angular/common/http";
+import {
   provideRouter,
   TitleStrategy,
   withComponentInputBinding,
@@ -23,7 +31,6 @@ import {
 } from "@angular/router";
 import { CustomPreloadingStrategy } from "./app/preloadingStrategy";
 import { APP_BASE_HREF } from "@angular/common";
-import { provideMarkdown } from "ngx-markdown";
 import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
 
 let snackBarDuration = 4000;
@@ -47,6 +54,16 @@ if (locale in localeMappings) {
   locale = localeMappings[locale];
 }
 
+export function baseHrefInterceptor(
+  req: HttpRequest<unknown>,
+  next: HttpHandlerFn,
+) {
+  const baseHref = inject(APP_BASE_HREF);
+  const apiReq = req.clone({ url: `${baseHref.replace(/\/$/, "")}${req.url}` });
+  return next(apiReq);
+}
+
+const extraInterceptors: HttpInterceptorFn[] = [];
 const extraProviders: Provider[] = [];
 
 const baseElement = document.querySelector("base");
@@ -55,6 +72,7 @@ if (baseElement) {
   // Only add base href support when it's not "/"
   if (baseHref !== "/") {
     extraProviders.push({ provide: APP_BASE_HREF, useValue: baseHref });
+    extraInterceptors.push(baseHrefInterceptor);
   }
 }
 
@@ -76,7 +94,7 @@ const bootstrap = () =>
           paramsInheritanceStrategy: "always",
         }),
       ),
-      provideMarkdown(),
+      provideHttpClient(withInterceptors([...extraInterceptors])),
       provideMicroSentry({
         ignoreErrors: [serverErrorsRegex],
       }),

@@ -11,7 +11,7 @@ import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatCardModule } from "@angular/material/card";
 import { toObservable } from "@angular/core/rxjs-interop";
-import { MarkdownComponent } from "ngx-markdown";
+import { MarkdownComponent, provideMarkdown } from "ngx-markdown";
 import { FormErrorComponent } from "../shared/forms/form-error/form-error.component";
 import { LoginWebAuthnComponent } from "./login-webauthn/login-webauthn.component";
 import { LoginTotpComponent } from "./login-totp/login-totp.component";
@@ -44,6 +44,7 @@ type SocialApp = components["schemas"]["SocialAppSchema"];
     AuthSvgComponent,
     RouterLink,
   ],
+  providers: [provideMarkdown()]
 })
 export class LoginComponent
   extends StatefulComponent<LoginState, LoginService>

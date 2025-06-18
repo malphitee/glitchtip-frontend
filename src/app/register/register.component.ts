@@ -10,7 +10,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatCardModule } from "@angular/material/card";
-import { MarkdownComponent } from "ngx-markdown";
+import { MarkdownComponent, provideMarkdown } from "ngx-markdown";
 import { AuthSvgComponent } from "../shared/auth-svg/auth-svg.component";
 import { InputMatcherDirective } from "../shared/input-matcher.directive";
 import { RegisterService, RegisterState } from "./register.service";
@@ -40,6 +40,7 @@ type SocialApp = components["schemas"]["SocialAppSchema"];
     AuthSvgComponent,
     RouterLink,
   ],
+  providers: [provideMarkdown()],
 })
 export class RegisterComponent
   extends StatefulComponent<RegisterState, RegisterService>
