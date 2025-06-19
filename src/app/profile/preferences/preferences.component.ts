@@ -100,6 +100,7 @@ export class PreferencesComponent implements OnInit {
         } else {
           this.form.controls.theme.setValue("light");
         }
+        // Ensure effect only runs once after user details are loaded
         userDetailsInit.destroy()
       }
     });
