@@ -1,15 +1,13 @@
 import { Injectable, computed, inject } from "@angular/core";
-import { HttpErrorResponse } from "@angular/common/http";
-import { Team, TeamErrors, TeamLoading } from "./teams.interfaces";
-import { lastValueFrom, EMPTY } from "rxjs";
-import { tap, catchError } from "rxjs/operators";
-import { Member } from "../organizations/organizations.interface";
+import { TeamErrors, TeamLoading } from "./teams.interfaces";
 import { UserService } from "../user/user.service";
 import { Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { TeamsAPIService } from "./teams-api.service";
-import { client } from "../api";
+import { client, handleError } from "../../shared/api/api";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
+import { components } from "../api-schema";
+type Team = components["schemas"]["TeamProjectSchema"];
+type Member = components["schemas"]["OrganizationUserSchema"];
 
 interface TeamsState {
   teams: Team[] | null;
@@ -34,7 +32,6 @@ export class TeamsService extends StatefulService<TeamsState> {
   private userService = inject(UserService);
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
-  private teamsAPIService = inject(TeamsAPIService);
 
   readonly teams = computed(() => this.state().teams);
   readonly team = computed(() => this.state().team);
@@ -65,40 +62,75 @@ export class TeamsService extends StatefulService<TeamsState> {
     }
   }
 
-  retrieveSingleTeam(orgSlug: string, teamSlug: string) {
-    lastValueFrom(
-      this.teamsAPIService
-        .retrieve(orgSlug, teamSlug)
-        .pipe(tap((resp) => this.setSingleTeam(resp))),
+  async retrieveSingleTeam(orgSlug: string, teamSlug: string) {
+    const { data } = await client.GET(
+      "/api/0/teams/{organization_slug}/{team_slug}/",
+      {
+        params: {
+          path: {
+            organization_slug: orgSlug,
+            team_slug: teamSlug,
+          },
+        },
+      },
     );
+    if (data) {
+      this.setSingleTeam(data);
+    }
   }
 
-  retrieveTeamMembers(orgSlug: string, teamSlug: string) {
-    return this.teamsAPIService
-      .retrieveTeamMembers(orgSlug, teamSlug)
-      .pipe(tap((teamMembers) => this.setTeamMembers(teamMembers)));
+  async retrieveTeamMembers(orgSlug: string, teamSlug: string) {
+    const { data } = await client.GET(
+      "/api/0/teams/{organization_slug}/{team_slug}/members/",
+      {
+        params: {
+          path: {
+            organization_slug: orgSlug,
+            team_slug: teamSlug,
+          },
+        },
+      },
+    );
+    if (data) {
+      this.setTeamMembers(data);
+    }
   }
 
-  updateTeamSlug(orgSlug: string, teamSlug: string, newTeamSlug: string) {
+  async updateTeamSlug(orgSlug: string, teamSlug: string, newTeamSlug: string) {
     this.setUpdateTeamSlugLoading(true);
-    return this.teamsAPIService.update(orgSlug, teamSlug, newTeamSlug).pipe(
-      tap((resp) => {
-        this.router.navigate([
-          orgSlug,
-          "settings",
-          "teams",
-          resp.slug,
-          "settings",
-        ]);
-        this.setUpdateTeamSlugLoading(false);
-        this.snackBar.open(`Your team slug has been changed to #${resp.slug}`);
-        this.setSingleTeam(resp);
-      }),
-      catchError((error: HttpErrorResponse) => {
-        this.setUpdateTeamSlugError(error);
-        return EMPTY;
-      }),
+    const { data, error, response } = await client.PUT(
+      "/api/0/teams/{organization_slug}/{team_slug}/",
+      {
+        params: {
+          path: {
+            organization_slug: orgSlug,
+            team_slug: teamSlug,
+          },
+        },
+        body: {
+          slug: newTeamSlug,
+        },
+      },
     );
+    if (data) {
+      this.router.navigate([
+        orgSlug,
+        "settings",
+        "teams",
+        data.slug,
+        "settings",
+      ]);
+      this.setUpdateTeamSlugLoading(false);
+      this.snackBar.open(
+        $localize`Your team slug has been changed to #${data.slug}`,
+      );
+      this.setSingleTeam(data);
+    } else {
+      const errors = handleError(error, response);
+      if (errors.detail.length) {
+        this.setUpdateTeamSlugError(errors.detail[0].msg);
+      }
+    }
   }
 
   async deleteTeam(orgSlug: string, teamSlug: string) {
@@ -129,21 +161,6 @@ export class TeamsService extends StatefulService<TeamsState> {
     });
   }
 
-  // private setDeleteTeamError(error: HttpErrorResponse) {
-  //   const state = this.state.getValue();
-  //   this.state.next({
-  //     ...state,
-  //     errors: {
-  //       ...state.errors,
-  //       deleteTeam: `${error.statusText}: ${error.status}`,
-  //     },
-  //     loading: {
-  //       ...state.loading,
-  //       deleteTeam: false,
-  //     },
-  //   });
-  // }
-
   addTeam(team: Team) {
     this.addOneTeam(team);
   }
@@ -166,7 +183,7 @@ export class TeamsService extends StatefulService<TeamsState> {
 
   private removeTeamMember(memberId: number) {
     const filteredMembers = this.state().teamMembers.filter(
-      (teamMember) => teamMember.id !== memberId,
+      (teamMember) => teamMember.id !== memberId.toString(),
     );
     if (filteredMembers) {
       this.setState({ teamMembers: filteredMembers });
@@ -178,12 +195,12 @@ export class TeamsService extends StatefulService<TeamsState> {
     this.setState({ loading: { ...state.loading, updateName: loading } });
   }
 
-  private setUpdateTeamSlugError(error: HttpErrorResponse) {
+  private setUpdateTeamSlugError(error: string) {
     const state = this.state();
     this.setState({
       errors: {
         ...state.errors,
-        updateName: `${error.statusText}: ${error.status}`,
+        updateName: error,
       },
       loading: {
         ...state.loading,

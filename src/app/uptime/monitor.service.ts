@@ -1,5 +1,4 @@
 import { Injectable, computed, inject, resource, signal } from "@angular/core";
-import { EMPTY } from "rxjs";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
 import { MonitorInput, ResponseTimeSeries } from "./uptime.interfaces";
@@ -9,7 +8,7 @@ import { SubscriptionService } from "../api/subscriptions/subscription.service";
 import { ServerError } from "../shared/django.interfaces";
 import { OrganizationsService } from "../api/organizations.service";
 import { StatefulService } from "../shared/stateful-service/signal-state.service";
-import { client } from "../api/api";
+import { client } from "../shared/api/api";
 import { components } from "../api/api-schema";
 
 type MonitorCheckSchema = components["schemas"]["MonitorCheckSchema"];
@@ -166,7 +165,6 @@ export class MonitorService extends StatefulService<MonitorState> {
         non_field_errors: [`There was an error saving your monitor details.`],
       });
     }
-    return EMPTY;
   }
 
   editMonitor(data: MonitorInput) {

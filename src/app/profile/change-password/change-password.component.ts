@@ -18,7 +18,6 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatCardModule } from "@angular/material/card";
 import { toObservable } from "@angular/core/rxjs-interop";
-import { lastValueFrom, tap } from "rxjs";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { PasswordService, PasswordState } from "./password.service";
 import { UserService } from "src/app/api/user/user.service";
@@ -99,24 +98,19 @@ export class ChangePasswordComponent
     this.userService.getUserDetails();
   }
 
-  onSubmit() {
+  async onSubmit() {
     if (this.form.valid) {
-      lastValueFrom(
-        this.service
-          .changePassword(
-            this.form.value.current_password!,
-            this.form.value.new_password!,
-          )
-          .pipe(
-            tap(() => {
-              this.snackBar.open($localize`Your new password has been saved.`);
-              this.form.reset();
-              Object.keys(this.form.controls).forEach((key) => {
-                this.form.get(key)!.setErrors(null);
-              });
-            }),
-          ),
+      const result = await this.service.changePassword(
+        this.form.value.current_password!,
+        this.form.value.new_password!,
       );
+      if (result) {
+        this.snackBar.open($localize`Your new password has been saved.`);
+        this.form.reset();
+        Object.keys(this.form.controls).forEach((key) => {
+          this.form.get(key)!.setErrors(null);
+        });
+      }
     }
   }
 }

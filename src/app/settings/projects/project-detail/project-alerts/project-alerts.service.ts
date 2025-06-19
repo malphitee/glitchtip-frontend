@@ -1,8 +1,13 @@
-import { Injectable, computed, inject, resource, signal } from "@angular/core";
+import { Injectable, computed, effect, inject, signal } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
 import { components } from "src/app/api/api-schema";
-import { client, handleError, NinjaErrorResponse } from "src/app/api/api";
+import {
+  client,
+  handleError,
+  NinjaErrorResponse,
+} from "src/app/shared/api/api";
+import { apiResource } from "src/app/shared/api/api-resource-factory";
 
 type ProjectAlert = components["schemas"]["ProjectAlertSchema"];
 type AlertRecipient = components["schemas"]["AlertRecipientSchema"];
@@ -65,29 +70,20 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
   private snackBar = inject(MatSnackBar);
 
   #params = signal({ orgSlug: "", projectSlug: "" });
-  #projectAlertsResource = resource({
-    params: () => ({ params: this.#params() }),
-    loader: async ({ params }) => {
-      if (!params.params.orgSlug) {
-        return undefined;
-      }
-      const { data, error } = await client.GET(
-        "/api/0/projects/{organization_slug}/{project_slug}/alerts/",
-        {
-          params: {
-            path: {
-              organization_slug: params.params.orgSlug,
-              project_slug: params.params.projectSlug,
-            },
-          },
+  #projectAlertsResource = apiResource(this.#params, (params) => ({
+    url: "/api/0/projects/{organization_slug}/{project_slug}/alerts/",
+    options: {
+      params: {
+        path: {
+          organization_slug: params.orgSlug,
+          project_slug: params.projectSlug,
         },
-      );
-      if (error) {
-        throw $localize`There was an error loading your alerts. Try refreshing the page.`;
-      }
-      return data;
+        query: {
+          limit: 200,
+        },
+      },
     },
-  });
+  }));
   readonly initialLoad = computed(
     () =>
       this.#projectAlertsResource.status() !== "loading" ||
@@ -161,6 +157,11 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
 
   constructor() {
     super(initialState);
+    effect(() => {
+      if (this.#projectAlertsResource.error()) {
+        throw $localize`There was an error loading your alerts. Try refreshing the page.`;
+      }
+    });
   }
 
   setParams(orgSlug: string, projectSlug: string) {

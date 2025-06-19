@@ -1,8 +1,9 @@
-import { computed, Injectable, inject, resource, signal } from "@angular/core";
+import { computed, Injectable, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
-import { client } from "../api";
+import { client } from "../../shared/api/api";
 import { SettingsService } from "../settings.service";
+import { apiResource } from "src/app/shared/api/api-resource-factory";
 
 export interface SubscriptionState {
   billingPortalLoading: boolean;
@@ -30,17 +31,14 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
   stripePublicKey = this.settingsService.stripePublicKey;
 
   organizationSlug = signal<string>("");
-  subscriptionResource = resource({
-    params: () => ({
-      orgSlug: this.organizationSlug(),
-    }),
-    loader: async ({ params }) => {
-      if (!params.orgSlug) {
-        return undefined;
-      }
-      return await this.getSubscriptionData(params.orgSlug);
+  subscriptionResource = apiResource(this.organizationSlug, (orgSlug) => ({
+    url: "/api/0/stripe/subscriptions/{organization_slug}/",
+    options: {
+      params: {
+        path: { organization_slug: orgSlug },
+      },
     },
-  });
+  }));
   subscription = computed(() => {
     const subscriptionResponse = this.subscriptionResource.value();
     if (!subscriptionResponse) {
@@ -61,29 +59,14 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
     () => this.state().subscriptionRefreshTimeout,
   );
 
-  eventCountResource = resource({
-    params: () => ({
-      orgSlug: this.organizationSlug(),
-    }),
-    loader: async ({ params }) => {
-      if (!params.orgSlug) {
-        return undefined;
-      }
-
-      const { data, error } = await client.GET(
-        "/api/0/stripe/subscriptions/{organization_slug}/events_count/",
-        {
-          params: {
-            path: { organization_slug: params.orgSlug },
-          },
-        },
-      );
-      if (error) {
-        throw error;
-      }
-      return data;
+  eventCountResource = apiResource(this.organizationSlug, (orgSlug) => ({
+    url: "/api/0/stripe/subscriptions/{organization_slug}/events_count/",
+    options: {
+      params: {
+        path: { organization_slug: orgSlug },
+      },
     },
-  });
+  }));
   eventsCountWithTotal = computed(() => {
     const eventsCount = this.eventCountResource.value();
     if (!eventsCount) return eventsCount;

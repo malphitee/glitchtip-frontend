@@ -5,13 +5,14 @@ import {
   inject,
   computed,
   input,
+  booleanAttribute,
 } from "@angular/core";
 import { MonitorState, MonitorService } from "../monitor.service";
 import { RouterModule } from "@angular/router";
 import { CopyInputComponent } from "src/app/shared/copy-input/copy-input.component";
 import { MatCardModule } from "@angular/material/card";
 import { MatDividerModule } from "@angular/material/divider";
-import { MonitorChecksComponent } from "../monitor-checks/monitor-checks.component";
+import { MonitorChecks } from "../monitor-checks/monitor-checks";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MonitorResponseChartComponent } from "../monitor-response-chart/monitor-response-chart.component";
 import { MonitorChartComponent } from "../monitor-chart/monitor-chart.component";
@@ -22,6 +23,10 @@ import { DetailHeaderComponent } from "src/app/shared/detail/header/header.compo
 import { StatefulComponent } from "src/app/shared/stateful-service/signal-state.component";
 import { DecimalPipe, I18nPluralPipe } from "@angular/common";
 
+function booleanDefaultTrueAttribute(value: unknown): boolean {
+  return value === undefined ? true : booleanAttribute(value);
+}
+
 @Component({
   selector: "gt-monitor-detail",
   templateUrl: "./monitor-detail.component.html",
@@ -29,7 +34,7 @@ import { DecimalPipe, I18nPluralPipe } from "@angular/common";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterModule,
-    MonitorChecksComponent,
+    MonitorChecks,
     CopyInputComponent,
     MonitorResponseChartComponent,
     I18nPluralPipe,
@@ -50,7 +55,10 @@ export class MonitorDetailComponent
 {
   protected service: MonitorService;
 
+  orgSlug = input.required<string>({ alias: "org-slug" });
   monitorID = input.required<number>({ alias: "monitor-id" });
+  isChange = input.required({ transform: booleanDefaultTrueAttribute });
+  cursor = input<string | undefined>();
 
   monitor = this.service.activeMonitor;
   uptimeAlertCount = this.service.uptimeAlertCount;

@@ -9,20 +9,21 @@ import {
   effect,
 } from "@angular/core";
 import { RouterLink } from "@angular/router";
-import { MarkdownModule } from "ngx-markdown";
+import { MarkdownComponent, provideMarkdown } from "ngx-markdown";
 
 import { IssuesService } from "../issues.service";
 import { ProjectsService } from "src/app/projects/projects.service";
 import { CopyInputComponent } from "../../shared/copy-input/copy-input.component";
 import { OrganizationsService } from "src/app/api/organizations.service";
-import { client } from "src/app/api/api";
+import { client } from "src/app/shared/api/api";
 
 @Component({
   selector: "gt-issue-zero-states",
   templateUrl: "./issue-zero-states.component.html",
   styleUrls: ["./issue-zero-states.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, CopyInputComponent, MarkdownModule],
+  imports: [RouterLink, CopyInputComponent, MarkdownComponent],
+  providers: [provideMarkdown()]
 })
 export class IssueZeroStatesComponent implements OnInit {
   projects = input<string[]>();

@@ -1,24 +1,11 @@
-import { HttpErrorResponse } from "@angular/common/http";
-import { Injectable, computed, inject } from "@angular/core";
+import { Injectable, computed } from "@angular/core";
 import {
   RegistrationPublicKeyCredential,
   create,
   parseCreationOptionsFromJSON,
 } from "@github/webauthn-json/browser-ponyfill";
 import {
-  EMPTY,
-  catchError,
-  exhaustMap,
-  lastValueFrom,
-  of,
-  tap,
-  throwError,
-} from "rxjs";
-import { AccountService } from "src/app/api/allauth/account.service";
-import {
   AllAuthError,
-  AllAuthHttpErrorResponse,
-  Authenticator,
   AuthenticatorTOTPStatusNotFound,
   TOTPAuthenticator,
   WebAuthnAuthenticator,
@@ -28,13 +15,12 @@ import {
   messagesLookup,
   reduceParamErrors,
 } from "src/app/api/allauth/errorMessages";
-import { SERVER_ERROR } from "src/app/constants";
+import { client } from "src/app/shared/api/api";
+import { apiResource } from "src/app/shared/api/api-resource-factory";
 import { APIState } from "src/app/shared/shared.interfaces";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
 
 export interface MFAState extends APIState {
-  initialLoadComplete: boolean;
-  authenticators: Authenticator[];
   setupTOTPStage: number;
   recoveryCodes: string[];
   regenCodes: boolean;
@@ -50,9 +36,7 @@ export interface MFAState extends APIState {
 }
 
 const initialState: MFAState = {
-  initialLoadComplete: false,
   loading: false,
-  authenticators: [],
   setupTOTPStage: 1,
   recoveryCodes: [],
   regenCodes: false,
@@ -68,9 +52,17 @@ const initialState: MFAState = {
   providedIn: "root",
 })
 export class MultiFactorAuthService extends StatefulService<MFAState> {
-  private accountService = inject(AccountService);
-
-  initialLoadComplete = computed(() => this.state().initialLoadComplete);
+  #authenticatorsResource = apiResource(() => ({
+    url: "/_allauth/browser/v1/account/authenticators",
+  }));
+  authenticators = computed(
+    () => this.#authenticatorsResource.value()?.data || [],
+  );
+  initialLoadComplete = computed(
+    () =>
+      this.#authenticatorsResource.hasValue() ||
+      !this.#authenticatorsResource.isLoading(),
+  );
   loading = computed(() => this.state().loading);
   setupTOTPStage = computed(() => this.state().setupTOTPStage);
   error = computed(() => this.state().error);
@@ -84,13 +76,13 @@ export class MultiFactorAuthService extends StatefulService<MFAState> {
   totp = computed(() => this.state().totp);
   TOTPAuthenticator = computed(
     () =>
-      this.state().authenticators.filter((auth) => auth.type === "totp")[0] as
+      this.authenticators().filter((auth) => auth.type === "totp")[0] as
         | TOTPAuthenticator
         | undefined,
   );
   webAuthnAuthenticators = computed(
     () =>
-      this.state().authenticators.filter(
+      this.authenticators().filter(
         (auth) => auth.type === "webauthn",
       ) as WebAuthnAuthenticator[],
   );
@@ -103,44 +95,37 @@ export class MultiFactorAuthService extends StatefulService<MFAState> {
   }
 
   getAuthenticators() {
-    this.setState({ loading: true });
-    return this.accountService.listAuthenticators().pipe(
-      tap((resp) => {
-        this.setState({
-          ...initialState,
-          initialLoadComplete: true,
-          authenticators: resp.data,
-        });
-      }),
-    );
+    this.#authenticatorsResource.reload();
   }
 
   incrementTOTPStage() {
     const setupTOTPStage = this.setupTOTPStage();
     if (setupTOTPStage === 1) {
-      lastValueFrom(this.generateRecoveryCodes());
+      this.generateRecoveryCodes();
     } else if (setupTOTPStage === 3) {
     }
     this.setState({ setupTOTPStage: setupTOTPStage + 1 });
   }
 
-  generateRecoveryCodes() {
-    return this.accountService
-      .generateRecoveryCodes()
-      .pipe(tap((resp) => this.setState({ recoveryCodes: resp.codes })));
+  async generateRecoveryCodes() {
+    const { data } = await client.GET("/api/0/generate-recovery-codes/");
+    if (data) {
+      this.setState({ recoveryCodes: data.codes });
+    }
   }
 
-  regenerateRecoveryCodes() {
+  async regenerateRecoveryCodes() {
     this.setState({ loading: true, regenCodes: false });
-    return this.accountService.regenerateRecoveryCodes().pipe(
-      tap((resp) =>
-        this.setState({
-          loading: false,
-          regenCodes: true,
-          recoveryCodes: resp.data.unused_codes,
-        }),
-      ),
+    const { data } = await client.POST(
+      "/_allauth/browser/v1/account/authenticators/recovery-codes",
     );
+    if (data) {
+      this.setState({
+        loading: false,
+        regenCodes: true,
+        recoveryCodes: (data as any).data.unused_codes,
+      });
+    }
   }
 
   decrementTOTPStage() {
@@ -154,117 +139,114 @@ export class MultiFactorAuthService extends StatefulService<MFAState> {
     this.setState({ copiedCodes: true });
   }
 
-  getTOTPStatus() {
-    return this.accountService.totpAuthenticatorStatus().pipe(
-      catchError((err: HttpErrorResponse) => {
-        if (err.status === 404) {
-          const resp = err.error as AuthenticatorTOTPStatusNotFound;
-          this.setState({
-            totp: { secret: resp.meta.secret, totpUrl: resp.meta.totp_url },
-          });
-        }
-        return of(undefined);
-      }),
+  async getTOTPStatus() {
+    const { error, response } = await client.GET(
+      "/_allauth/browser/v1/account/authenticators/totp",
     );
-  }
-
-  activateTOTP(code: string) {
-    this.setState({ loading: true });
-    return this.accountService.activateTOTP(code).pipe(
-      tap(() =>
-        this.state.update((state) => ({
-          ...state,
-          loading: false,
-          setupTOTPStage: state.setupTOTPStage + 1,
-        })),
-      ),
-      exhaustMap(() => this.getAuthenticators()),
-      catchError((response: AllAuthHttpErrorResponse) => {
+    if (error) {
+      if (response.status === 404) {
+        const resp = error as AuthenticatorTOTPStatusNotFound;
         this.setState({
-          loading: false,
-          errors: handleAllAuthErrorResponse(response.error, response),
+          totp: { secret: resp.meta.secret, totpUrl: resp.meta.totp_url },
         });
-        if ([400, 500].includes(response.status)) {
-          return of(undefined);
-        }
-        return throwError(() => response);
-      }),
-    );
+      }
+    }
   }
 
-  deactivateTOTP() {
+  async activateTOTP(code: string) {
     this.setState({ loading: true });
-    return this.accountService
-      .deactivateTOTP()
-      .pipe(exhaustMap(() => this.getAuthenticators()));
-  }
-
-  setRecoveryCodes(code: string) {
-    this.setState({ loading: true });
-    return this.accountService.setRecoveryCodes(code).pipe(
-      tap(() =>
-        this.state.update((state) => ({
-          ...state,
-          loading: false,
-          setupTOTPStage: state.setupTOTPStage + 1,
-        })),
-      ),
-      exhaustMap(() => this.getTOTPStatus()),
-      catchError((err: HttpErrorResponse) => {
-        if (err.status === 400) {
-          this.setState({ error: err.error.detail });
-          return of(undefined);
-        } else if (err.status === 500) {
-          this.setState({ error: SERVER_ERROR });
-          return of(undefined);
-        }
-        return throwError(() => err);
-      }),
+    const { data, error, response } = await client.POST(
+      "/_allauth/browser/v1/account/authenticators/totp",
+      {
+        body: { code },
+      },
     );
+    if (data) {
+      this.state.update((state) => ({
+        ...state,
+        loading: false,
+        setupTOTPStage: state.setupTOTPStage + 1,
+      }));
+      this.#authenticatorsResource.reload();
+    } else {
+      this.setState({
+        loading: false,
+        errors: handleAllAuthErrorResponse(error, response),
+      });
+    }
   }
 
-  getWebauthn() {
+  async deactivateTOTP() {
+    this.setState({ loading: true });
+    await client.DELETE("/_allauth/browser/v1/account/authenticators/totp");
+    this.setState({ loading: false });
+    this.#authenticatorsResource.reload();
+  }
+
+  async setRecoveryCodes(code: string) {
+    this.setState({ loading: true });
+    const { error, response } = await client.POST(
+      "/api/0/generate-recovery-codes/",
+      { body: { code } },
+    );
+    if (response.status !== 200) {
+      this.state.update((state) => ({
+        ...state,
+        loading: false,
+        setupTOTPStage: state.setupTOTPStage + 1,
+      }));
+      this.getTOTPStatus();
+    } else {
+      const errors = handleAllAuthErrorResponse(error, response);
+      if (errors.length) {
+        this.setState({ error: errors[0].message });
+      }
+    }
+  }
+
+  async getWebauthn() {
     this.setState({ loading: true, errors: [] });
-    return this.accountService.getWebAuthn().pipe(
-      exhaustMap(async (resp) => {
-        return await create(
-          parseCreationOptionsFromJSON(resp.data.creation_options),
-        );
-      }),
-      tap((credential) => {
-        this.setState({ webAuthnStage: 2, loading: false, credential });
-      }),
-      catchError((err: HttpErrorResponse) => {
-        console.warn(err);
-        this.setState({
-          error: $localize`Device activation was unsuccessful.`,
-          webAuthnStage: 1,
-        });
-        return EMPTY;
-      }),
+    const { data, error } = await client.GET(
+      "/_allauth/browser/v1/account/authenticators/webauthn",
     );
+    if (data) {
+      const credential = await create(
+        parseCreationOptionsFromJSON(data.data.creation_options as any),
+      );
+      this.setState({ webAuthnStage: 2, loading: false, credential });
+    } else {
+      console.warn(error);
+      this.setState({
+        error: $localize`Device activation was unsuccessful.`,
+        webAuthnStage: 1,
+      });
+    }
   }
 
-  addWebAuthn(name: string) {
-    const credential = this.state().credential;
+  async addWebAuthn(name: string) {
+    const credential: any = this.state().credential;
     if (credential) {
       this.setState({ loading: true, errors: [] });
-      return this.accountService
-        .addWebAuthn(name, this.state().credential)
-        .pipe(
-          tap(() => {
-            this.clearState();
-          }),
-          exhaustMap(() => this.getAuthenticators()),
-        );
+      await client.POST(
+        "/_allauth/browser/v1/account/authenticators/webauthn",
+        {
+          body: {
+            name,
+            credential,
+          },
+        },
+      );
+      this.clearState();
+      this.#authenticatorsResource.reload();
     }
-    return EMPTY;
   }
 
-  deleteWebAuthn(id: number) {
+  async deleteWebAuthn(id: number) {
     this.setState({ loading: true, errors: [] });
-    return this.accountService
-      .deleteWebAuthn([id])
-      .pipe(exhaustMap(() => this.getAuthenticators()));
+    await client.DELETE(
+      "/_allauth/browser/v1/account/authenticators/webauthn",
+      { body: { authenticators: [id] } },
+    );
+    this.#authenticatorsResource.reload();
   }
 }

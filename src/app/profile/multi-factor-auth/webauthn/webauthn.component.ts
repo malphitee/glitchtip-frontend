@@ -12,7 +12,6 @@ import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatCardModule } from "@angular/material/card";
-import { lastValueFrom, tap } from "rxjs";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { LoadingButtonComponent } from "../../../shared/loading-button/loading-button.component";
 import { FormErrorComponent } from "../../../shared/forms/form-error/form-error.component";
@@ -57,26 +56,17 @@ export class WebAuthnComponent {
     return this.form.get("name");
   }
   activateWebAuthn() {
-    lastValueFrom(this.service.getWebauthn());
+    this.service.getWebauthn();
   }
-  registerWebAuthn() {
+  async registerWebAuthn() {
     const name = this.name?.value;
     if (this.form.valid && name) {
-      lastValueFrom(
-        this.service
-          .addWebAuthn(name)
-          .pipe(
-            tap(() =>
-              this.snackBar.open(
-                $localize`Your security key has been registered.`,
-              ),
-            ),
-          ),
-      );
+      await this.service.addWebAuthn(name);
+      this.snackBar.open($localize`Your security key has been registered.`);
     }
   }
   deleteWebAuthn(id: number) {
-    lastValueFrom(this.service.deleteWebAuthn(id));
+    this.service.deleteWebAuthn(id);
   }
   formatDate(lastUsed?: number) {
     if (lastUsed) {

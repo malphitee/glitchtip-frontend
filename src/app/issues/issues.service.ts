@@ -1,7 +1,7 @@
 import { Injectable, computed, inject, resource, signal } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { ActivatedRoute, Router } from "@angular/router";
-import { client } from "../api/api";
+import { client } from "../shared/api/api";
 import { StatefulService } from "../shared/stateful-service/signal-state.service";
 import { getPaginationHeaders, getPaginator } from "../shared/pagination.utils";
 import { IssueStatus } from "./interfaces";
@@ -56,9 +56,7 @@ export class IssuesService extends StatefulService<IssuesState> {
   private params = signal<DataParams | undefined>(undefined);
 
   private issuesResource = resource({
-    params: () => ({
-      params: this.params(),
-    }),
+    params: () => ({ params: this.params() }),
     loader: async ({ params }) => {
       if (!params.params) {
         return undefined;

@@ -1,4 +1,4 @@
-import { of } from "rxjs";
+import { signal } from "@angular/core";
 import { IssuesPageComponent } from "./issues-page.component";
 import { issueList } from "./issues-test-data";
 
@@ -148,12 +148,12 @@ function selectProps(stateSelection: string) {
   const state = pageStateConfig[stateSelection];
   return {
     props: {
-      loading$: of(state.loading),
-      appliedProjectCount$: of(state.appliedProjectCount),
-      areAllSelected$: of(state.areAllSelected),
-      thereAreSelectedIssues$: of(state.thereAreSelectedIssues),
-      projectsFromParams$: of([2, 3, 4]),
-      issues$: of(issueList.slice(0, state.issueLength)),
+      loading: signal(state.loading),
+      appliedProjectCount: signal(state.appliedProjectCount),
+      areAllSelected: signal(state.areAllSelected),
+      thereAreSelectedIssues: signal(state.thereAreSelectedIssues),
+      projectsFromParams: signal([2, 3, 4]),
+      issues: signal(issueList.slice(0, state.issueLength)),
     },
   };
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, inject } from "@angular/core";
+import { Component, OnInit, ViewChild, effect, inject } from "@angular/core";
 import {
   FormGroup,
   FormControl,
@@ -7,7 +7,6 @@ import {
   FormArray,
   FormBuilder,
 } from "@angular/forms";
-import { toObservable } from "@angular/core/rxjs-interop";
 import { MatCheckbox, MatCheckboxModule } from "@angular/material/checkbox";
 import { AuthTokensService, AuthTokensState } from "../auth-tokens.service";
 import { LoadingButtonComponent } from "../../../shared/loading-button/loading-button.component";
@@ -95,9 +94,7 @@ export class NewTokenComponent
     /* Set scopeOptions to scopes FormArray **/
     this.scopeOptions.forEach(() => this.scopes.push(new FormControl(false)));
 
-    toObservable(service.createErrorFields).subscribe((fieldErrors) =>
-      mapFormErrors(fieldErrors, this.form),
-    );
+    effect(() => mapFormErrors(service.createErrorFields(), this.form));
   }
 
   ngOnInit(): void {

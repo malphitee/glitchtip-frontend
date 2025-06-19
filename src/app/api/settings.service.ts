@@ -1,7 +1,6 @@
-import { computed, effect, Injectable, resource, inject } from "@angular/core";
+import { computed, effect, Injectable, inject } from "@angular/core";
 import { MicroSentryService } from "@micro-sentry/angular";
-import { client } from "./api";
-import { refreshInterval } from "../shared/shared.utils";
+import { apiResource } from "../shared/api/api-resource-factory";
 
 export const DSN_REGEXP =
   /^(?:(\w+):)\/\/(?:(\w+)(?::(\w+))?@)([\w.-]+)(?::(\d+))?\/(.+)/;
@@ -12,13 +11,7 @@ export const DSN_REGEXP =
 export class SettingsService {
   private microSentry = inject(MicroSentryService);
 
-  settingsResource = resource({
-    loader: async () => {
-      const { data } = await client.GET("/api/settings/");
-      return data;
-    },
-  });
-
+  settingsResource = apiResource(() => ({ url: "/api/settings/" }));
   settings = computed(() => this.settingsResource.value());
   socialApps = computed(() => this.settings()?.socialApps || []);
   billingEnabled = computed(() => this.settings()?.billingEnabled);
@@ -39,7 +32,7 @@ export class SettingsService {
   instanceName = computed(() => this.settings()?.glitchtipInstanceName);
 
   constructor() {
-    this.refreshSettings();
+    setTimeout(() => this.refreshSettings(), 5000);
     effect(() => {
       // Configure microsentry and chatwoot. Use computed functions to avoid
       // running when unnecessary
@@ -113,7 +106,7 @@ export class SettingsService {
   }
 
   private refreshSettings() {
-    // Refresh 30s, 5m, 30m...
-    refreshInterval([30, 60 * 5], 60 * 30).subscribe(() => this.reload());
+    this.reload();
+    setTimeout(() => this.refreshSettings(), 30 * 60 * 1000); // 30 min
   }
 }

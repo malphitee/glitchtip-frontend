@@ -26,7 +26,6 @@ import { LoadingButtonComponent } from "../../../shared/loading-button/loading-b
 import { DetailHeaderComponent } from "src/app/shared/detail/header/header.component";
 
 @Component({
-  selector: "gt-member-detail",
   templateUrl: "./member-detail.component.html",
   styleUrls: ["./member-detail.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,

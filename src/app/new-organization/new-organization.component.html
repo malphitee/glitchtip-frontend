@@ -1,9 +1,9 @@
 <div class="l-body">
-  @if (contextLoaded$ | async) {
+  @if (contextLoaded()) {
     <mat-card>
       <mat-card-content>
         <ng-container>
-          @if (canCreateOrg$ | async) {
+          @if (canCreateOrg()) {
             <mat-card-title i18n>Create a New Organization</mat-card-title>
             @if (organizationCount() === 0) {
               <p i18n>This is the first step to get started with GlitchTip.</p>

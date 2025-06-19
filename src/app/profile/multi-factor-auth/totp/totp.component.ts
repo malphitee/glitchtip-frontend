@@ -3,9 +3,9 @@ import {
   ChangeDetectionStrategy,
   ElementRef,
   ViewChild,
-  OnInit,
   OnDestroy,
   inject,
+  effect,
 } from "@angular/core";
 import {
   FormControl,
@@ -20,13 +20,11 @@ import { MatButtonModule } from "@angular/material/button";
 
 import { MatDividerModule } from "@angular/material/divider";
 import { MatCardModule } from "@angular/material/card";
-import { toObservable } from "@angular/core/rxjs-interop";
 import { MultiFactorAuthService } from "../multi-factor-auth.service";
 import { FormErrorComponent } from "../../../shared/forms/form-error/form-error.component";
 import { ToDoItemComponent } from "../../../shared/to-do-item/to-do-item.component";
 import { BackupCodesComponent } from "./backup-codes/backup-codes.component";
 import { mapFormErrors } from "src/app/shared/forms/form.utils";
-import { lastValueFrom } from "rxjs";
 
 @Component({
   selector: "gt-totp",
@@ -45,13 +43,12 @@ import { lastValueFrom } from "rxjs";
     MatInputModule,
   ],
 })
-export class TOTPComponent implements OnInit, OnDestroy {
+export class TOTPComponent implements OnDestroy {
   private service = inject(MultiFactorAuthService);
 
   @ViewChild("canvas", { static: false }) canvas: ElementRef | undefined;
   TOTPAuthenticator = this.service.TOTPAuthenticator;
   totp = this.service.totp;
-  totp$ = toObservable(this.totp);
   step = this.service.setupTOTPStage;
   formErrors = this.service.formErrors;
   codeForm = new FormGroup({
@@ -65,21 +62,17 @@ export class TOTPComponent implements OnInit, OnDestroy {
   constructor() {
     const service = this.service;
 
-    toObservable(service.fieldErrors).subscribe((fieldErrors) =>
-      mapFormErrors(fieldErrors, this.codeForm),
-    );
-  }
-
-  get code() {
-    return this.codeForm.get("code");
-  }
-
-  ngOnInit() {
-    this.totp$.subscribe((totp) => {
+    effect(() => mapFormErrors(service.fieldErrors(), this.codeForm));
+    effect(() => {
+      const totp = this.totp();
       if (totp) {
         this.generateQRCode(totp.totpUrl);
       }
     });
+  }
+
+  get code() {
+    return this.codeForm.get("code");
   }
 
   ngOnDestroy() {
@@ -98,13 +91,13 @@ export class TOTPComponent implements OnInit, OnDestroy {
     if (this.codeForm.valid) {
       const code = this.code;
       if (code?.value) {
-        lastValueFrom(this.service.activateTOTP(code.value));
+        this.service.activateTOTP(code.value);
       }
     }
   }
 
   deactivateTOTP() {
-    lastValueFrom(this.service.deactivateTOTP());
+    this.service.deactivateTOTP();
   }
 
   getStepIsDone(step: number) {

@@ -14,15 +14,12 @@ import { bootstrapApplication } from "@angular/platform-browser";
 import { LessAnnoyingErrorStateMatcher } from "./app/shared/less-annoying-error-state-matcher";
 import { ErrorStateMatcher } from "@angular/material/core";
 import { CustomMicroSentryErrorHandler } from "./app/custom-microsentry-error-handler";
-import { tokenInterceptor } from "./app/api/auth/token.interceptor";
 import {
   HttpHandlerFn,
   HttpInterceptorFn,
   HttpRequest,
   provideHttpClient,
-  withFetch,
   withInterceptors,
-  withXsrfConfiguration,
 } from "@angular/common/http";
 import {
   provideRouter,
@@ -34,7 +31,6 @@ import {
 } from "@angular/router";
 import { CustomPreloadingStrategy } from "./app/preloadingStrategy";
 import { APP_BASE_HREF } from "@angular/common";
-import { provideMarkdown } from "ngx-markdown";
 import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
 
 let snackBarDuration = 4000;
@@ -98,7 +94,7 @@ const bootstrap = () =>
           paramsInheritanceStrategy: "always",
         }),
       ),
-      provideMarkdown(),
+      provideHttpClient(withInterceptors([...extraInterceptors])),
       provideMicroSentry({
         ignoreErrors: [serverErrorsRegex],
       }),
@@ -112,14 +108,6 @@ const bootstrap = () =>
         provide: ErrorStateMatcher,
         useClass: LessAnnoyingErrorStateMatcher,
       },
-      provideHttpClient(
-        withFetch(),
-        withXsrfConfiguration({
-          cookieName: "csrftoken",
-          headerName: "X-CSRFTOKEN",
-        }),
-        withInterceptors([...extraInterceptors, tokenInterceptor]),
-      ),
     ],
   }).catch((err) => console.error(err));
 

@@ -1,6 +1,6 @@
 import { computed, inject, Injectable, resource } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { client, handleError } from "src/app/api/api";
+import { client, handleError } from "src/app/shared/api/api";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
 
 interface LoadingStates {
@@ -153,24 +153,34 @@ export class ManageEmailsState extends StatefulService<EmailState> {
         resendConfirmation: email,
       },
     });
-    const { data, error, response } = await client.POST(
+    const { error, response } = await client.POST(
       "/api/0/users/{user_id}/emails/confirm/",
       {
         params: { path: { user_id: "me" } },
         body: { email },
       },
     );
-    if (data) {
+    if (response.ok) {
       this.setState({
         loadingStates: {
           ...this.state().loadingStates,
           resendConfirmation: "",
         },
       });
+      this.#snackbar.open(`A confirmation email has been sent to ${email}.`);
+      return true;
     }
-    const errors = handleError(error, response);
-    if (errors.detail.length) {
-      this.#snackbar.open(errors.detail[0].msg);
+    if (error) {
+      const errors = handleError(error, response);
+      if (errors.detail.length) {
+        this.setState({
+          loadingStates: {
+            ...this.state().loadingStates,
+            resendConfirmation: "",
+          },
+        });
+        this.#snackbar.open(errors.detail[0].msg);
+      }
     }
     return false;
   }

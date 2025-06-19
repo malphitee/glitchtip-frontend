@@ -1,15 +1,15 @@
 import { Route } from "@angular/router";
-import { TransactionGroupDetailComponent } from "./transaction-group-detail/transaction-group-detail.component";
-import { TransactionGroupsComponent } from "./transaction-groups/transaction-groups.component";
+import { TransactionGroupDetail } from "./transaction-group-detail/transaction-group-detail";
+import { TransactionGroups } from "./transaction-groups/transaction-groups";
 
 export default [
   {
     path: "transaction-groups",
-    component: TransactionGroupsComponent,
+    component: TransactionGroups,
   },
   {
     path: "transaction-groups/:transaction-group-id",
-    component: TransactionGroupDetailComponent,
+    component: TransactionGroupDetail,
   },
   {
     path: "",

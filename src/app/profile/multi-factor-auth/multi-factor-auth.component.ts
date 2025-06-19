@@ -5,7 +5,6 @@ import {
   inject,
 } from "@angular/core";
 
-import { lastValueFrom } from "rxjs";
 import { MultiFactorAuthService } from "./multi-factor-auth.service";
 import { TOTPComponent } from "./totp/totp.component";
 import { WebAuthnComponent } from "./webauthn/webauthn.component";
@@ -23,6 +22,6 @@ export class MultiFactorAuthComponent implements OnInit {
   initialLoadComplete = this.service.initialLoadComplete;
 
   ngOnInit() {
-    lastValueFrom(this.service.getAuthenticators());
+    this.service.getAuthenticators();
   }
 }

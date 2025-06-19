@@ -4,7 +4,6 @@ import {
   effect,
   inject,
   input,
-  InputSignal,
   OnDestroy,
   OnInit,
 } from "@angular/core";
@@ -34,7 +33,7 @@ export class OrganizationFrameComponent implements OnDestroy, OnInit {
   private subscriptions: Subscription[] = [];
   private isNavigationFromBackButton = false;
   organizationService = inject(OrganizationsService);
-  orgSlug: InputSignal<string> = input.required<string>({ alias: "org-slug" });
+  orgSlug = input.required<string>({ alias: "org-slug" });
 
   constructor() {
     effect(() => {

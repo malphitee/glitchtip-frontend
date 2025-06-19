@@ -3,10 +3,10 @@ import { ProfileComponent } from "./profile.component";
 import { ConfirmEmailComponent } from "./confirm-email/confirm-email.component";
 import { AuthTokensComponent } from "./auth-tokens/auth-tokens.component";
 import { NewTokenComponent } from "./auth-tokens/new-token/new-token.component";
-import { NotificationsComponent } from "./notifications/notifications.component";
+import { Notifications } from "./notifications/notifications";
 import { AccountComponent } from "./account/account.component";
 import { MultiFactorAuthComponent } from "./multi-factor-auth/multi-factor-auth.component";
-import { WizardComponent } from "./wizard/wizard.component";
+import { Wizard } from "./wizard/wizard";
 
 export default [
   {
@@ -17,9 +17,9 @@ export default [
       { path: "auth-tokens/new", component: NewTokenComponent },
 
       { path: "", component: AccountComponent },
-      { path: "notifications", component: NotificationsComponent },
+      { path: "notifications", component: Notifications },
       { path: "multi-factor-auth", component: MultiFactorAuthComponent },
-      { path: "wizard/:hash", component: WizardComponent },
+      { path: "wizard/:hash", component: Wizard },
     ],
   },
   {

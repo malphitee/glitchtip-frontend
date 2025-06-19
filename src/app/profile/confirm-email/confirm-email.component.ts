@@ -7,7 +7,7 @@ import {
 } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
-import { client } from "src/app/api/api";
+import { client } from "src/app/shared/api/api";
 
 @Component({
   template: `<div i18n>Confirming email…</div>`,

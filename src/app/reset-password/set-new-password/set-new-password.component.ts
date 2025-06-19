@@ -3,9 +3,9 @@ import {
   ChangeDetectionStrategy,
   inject,
   input,
+  effect,
 } from "@angular/core";
-import { toObservable } from "@angular/core/rxjs-interop";
-import { ActivatedRoute, Router, RouterLink } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 import {
   Validators,
   ReactiveFormsModule,
@@ -16,7 +16,6 @@ import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
 
 import { MatCardModule } from "@angular/material/card";
-import { map } from "rxjs/operators";
 import { LoadingButtonComponent } from "../../shared/loading-button/loading-button.component";
 import { InputMatcherDirective } from "../../shared/input-matcher.directive";
 import {
@@ -29,7 +28,6 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { StatefulComponent } from "src/app/shared/stateful-service/signal-state.component";
 
 @Component({
-  selector: "gt-set-new-password",
   templateUrl: "./set-new-password.component.html",
   styleUrls: ["./set-new-password.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -49,14 +47,10 @@ export class SetNewPasswordComponent extends StatefulComponent<
   ResetPasswordService
 > {
   private router = inject(Router);
-  private activatedRoute = inject(ActivatedRoute);
   protected service: ResetPasswordService;
   private snackBar = inject(MatSnackBar);
   readonly key = input.required<string>();
 
-  params$ = this.activatedRoute.params.pipe(
-    map((params) => ({ key: params.key })),
-  );
   formErrors = this.service.formErrors;
   success = this.service.success;
   loading = this.service.loading;
@@ -82,9 +76,7 @@ export class SetNewPasswordComponent extends StatefulComponent<
   constructor() {
     const service = inject(ResetPasswordService);
 
-    toObservable(service.fieldErrors).subscribe((fieldErrors) =>
-      mapFormErrors(fieldErrors, this.form),
-    );
+    effect(() => mapFormErrors(service.fieldErrors(), this.form));
     super(service);
 
     this.service = service;

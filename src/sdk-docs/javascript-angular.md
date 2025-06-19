@@ -1,4 +1,4 @@
-GlitchTip recommends using [@micro-sentry/angular](https://github.com/taiga-family/micro-sentry). Alternatively, users who need performance data need to use `@sentry/angular-ivy`.
+GlitchTip recommends using [@micro-sentry/angular](https://github.com/taiga-family/micro-sentry). Alternatively, users who want performance data need to use `@sentry/angular`.
 
 # @micro-sentry
 
@@ -40,20 +40,20 @@ import { MicroSentryModule } from '@micro-sentry/angular';
     }),
 ```
 
-# @sentry/angular-ivy
+# @sentry/angular
 
-@sentry/angular-ivy has more features including performance tracking. The package adds up to [277 KB](https://bundlephobia.com/result?p=@sentry/angular-ivy) to your JS bundle size.
+@sentry/angular has more features including performance tracking. The package adds up to [578 KB](https://bundlephobia.com/result?p=@sentry/angular) to your JS bundle size.
 
-Install `@sentry/angular-ivy`:
+Install `@sentry/angular`:
 
 ```bash
-$ npm install --save @sentry/angular-ivy
+$ npm install --save @sentry/angular
 ```
 
 For best results, add this snippet to your main.ts. If you need to set the DSN dynamically, you may set this elsewhere as well.
 
 ```javascript
-import { init } from "@sentry/angular-ivy";
+import { init } from "@sentry/angular";
 
 init({
   dsn: "YOUR-GLITCHTIP-DSN-HERE",
@@ -66,7 +66,7 @@ init({
 A more robust configuration example:
 
 ```javascript
-import { init } from '@sentry/angular-ivy';
+import { init } from '@sentry/angular';
 
 .init({
   dsn: "YOUR-GLITCHTIP-DSN-HERE",
@@ -107,7 +107,7 @@ Sentry.init({
 
 ### Show user feedback dialog
 
-Provide a custom Angular ErrorHandler. In your root modules file, adjust providers:
+Provide a custom Angular ErrorHandler. Adjust your providers:
 
 ```javascript
 providers: [

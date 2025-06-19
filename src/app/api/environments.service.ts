@@ -1,7 +1,6 @@
-import { computed, inject, Injectable, resource, signal } from "@angular/core";
+import { computed, inject, Injectable, signal } from "@angular/core";
 import { OrganizationsService } from "./organizations.service";
-import { client } from "./api";
-import { getCursor } from "../shared/pagination.utils";
+import { apiResource } from "../shared/api/api-resource-factory";
 
 @Injectable({
   providedIn: "root",
@@ -10,94 +9,39 @@ export class EnvironmentsService {
   #orgService = inject(OrganizationsService);
 
   projectSlug = signal<string | null>(null);
-  #orgEnvironmentsResource = resource({
-    params: () => ({
-      orgSlug: this.#orgService.activeOrganizationSlug(),
+  #orgEnvironmentsResource = apiResource.fetchAll(
+    this.#orgService.activeOrganizationSlug,
+    (slug) => ({
+      url: "/api/0/organizations/{organization_slug}/environments/",
+      options: {
+        params: {
+          path: { organization_slug: slug },
+        },
+      },
     }),
-    loader: async ({ params, abortSignal }) => {
-      if (!params.orgSlug) {
-        return undefined;
-      }
-      let { data, response } = await client.GET(
-        "/api/0/organizations/{organization_slug}/environments/",
-        {
-          signal: abortSignal,
-          params: {
-            path: { organization_slug: params.orgSlug },
-            query: { limit: 200 },
+  );
+  #projectEnvironmentsParams = computed(() => {
+    const orgSlug = this.#orgService.activeOrganizationSlug();
+    const projectSlug = this.projectSlug();
+    if (projectSlug) {
+      return { orgSlug, projectSlug };
+    }
+    return;
+  });
+  #projectEnvironmentsResource = apiResource.fetchAll(
+    this.#projectEnvironmentsParams,
+    (params) => ({
+      url: `/api/0/projects/{organization_slug}/{project_slug}/environments/`,
+      options: {
+        params: {
+          path: {
+            organization_slug: params.orgSlug,
+            project_slug: params.projectSlug,
           },
         },
-      );
-      let cursor = getCursor(response);
-      const page1 = data;
-      if (cursor && page1 && !abortSignal.aborted) {
-        // Support up to 400 environments
-        ({ data, response } = await client.GET(
-          "/api/0/organizations/{organization_slug}/environments/",
-          {
-            signal: abortSignal,
-            params: {
-              path: { organization_slug: params.orgSlug },
-              query: { limit: 200, cursor },
-            },
-          },
-        ));
-        if (data) {
-          return page1.concat(data);
-        }
-      }
-      return page1;
-    },
-  });
-  #projectEnvironmentsResource = resource({
-    params: () => ({
-      orgSlug: this.#orgService.activeOrganizationSlug(),
-      projectSlug: this.projectSlug(),
+      },
     }),
-    loader: async ({ params, abortSignal }) => {
-      if (!params.orgSlug || !params.projectSlug) {
-        return undefined;
-      }
-      let { data, response } = await client.GET(
-        "/api/0/projects/{organization_slug}/{project_slug}/environments/",
-        {
-          signal: abortSignal,
-          params: {
-            path: {
-              organization_slug: params.orgSlug,
-              project_slug: params.projectSlug,
-            },
-            query: {
-              limit: 200,
-            },
-          },
-        },
-      );
-      let cursor = getCursor(response);
-      const page1 = data;
-      if (cursor && page1 && !abortSignal.aborted) {
-        // Support up to 400 environments
-        ({ data, response } = await client.GET(
-          "/api/0/projects/{organization_slug}/{project_slug}/environments/",
-          {
-            signal: abortSignal,
-            params: {
-              path: {
-                organization_slug: params.orgSlug,
-                project_slug: params.projectSlug,
-              },
-              query: { limit: 200, cursor },
-            },
-          },
-        ));
-        if (data) {
-          return page1.concat(data);
-        }
-      }
-      return page1;
-    },
-  });
-  // loading = computed(() => this.#orgEnvironmentsResource.isLoading());
+  );
   orgEnvironments = computed(() => this.#orgEnvironmentsResource.value() || []);
   projectEnvironments = computed(
     () => this.#projectEnvironmentsResource.value() || [],

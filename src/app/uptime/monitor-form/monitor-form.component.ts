@@ -1,5 +1,11 @@
-import { Component, OnInit, input, output, inject } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import {
+  Component,
+  OnInit,
+  input,
+  output,
+  inject,
+  signal,
+} from "@angular/core";
 import { LoadingButtonComponent } from "src/app/shared/loading-button/loading-button.component";
 import {
   FormGroup,
@@ -9,6 +15,7 @@ import {
   AbstractControl,
   ValidationErrors,
 } from "@angular/forms";
+import { DecimalPipe, NgTemplateOutlet } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { MatCardModule } from "@angular/material/card";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
@@ -18,7 +25,6 @@ import { MatOptionModule } from "@angular/material/core";
 import { MatSelectModule } from "@angular/material/select";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
-import { map, Observable, of, startWith } from "rxjs";
 import { MonitorInput, MonitorType } from "../uptime.interfaces";
 import { intRegex, urlRegex } from "src/app/shared/validators";
 import { SubscriptionService } from "src/app/api/subscriptions/subscription.service";
@@ -60,7 +66,8 @@ const portUrlValidators = [
   templateUrl: "./monitor-form.component.html",
   styleUrls: ["./monitor-form.component.scss"],
   imports: [
-    CommonModule,
+    DecimalPipe,
+    NgTemplateOutlet,
     ReactiveFormsModule,
     RouterModule,
     LoadingButtonComponent,
@@ -86,10 +93,10 @@ export class MonitorFormComponent implements OnInit {
 
   readonly formSubmitted = output<MonitorInput>();
 
-  orgProjects$ = this.organizationsService.activeOrganizationProjects$;
+  orgProjects = this.organizationsService.activeOrganizationProjects;
   totalEventsAllowed = this.subscriptionService.totalEventsAllowed;
 
-  intervalPerMonth$: Observable<number | null> = of(null);
+  intervalPerMonth = signal<number | null>(null);
 
   typeChoices: MonitorType[] = ["Ping", "GET", "POST", "Heartbeat", "TCP Port"];
 
@@ -142,11 +149,12 @@ export class MonitorFormComponent implements OnInit {
 
   ngOnInit() {
     this.monitorService.callSubscriptionDetails();
-    this.intervalPerMonth$ =
-      this.monitorForm.controls.interval.valueChanges.pipe(
-        startWith(this.monitorSettings()?.interval ?? defaultInterval),
-        map((interval) => Math.floor(2592000 / interval)),
-      );
+    const initialInterval = this.monitorSettings()?.interval ?? defaultInterval;
+    this.intervalPerMonth.set(Math.floor(2592000 / initialInterval));
+
+    this.formInterval.valueChanges.subscribe((interval) => {
+      this.intervalPerMonth.set(Math.floor(2592000 / interval));
+    });
 
     const monitorSettings = this.monitorSettings();
     if (monitorSettings) {

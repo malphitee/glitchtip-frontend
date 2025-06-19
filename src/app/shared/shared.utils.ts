@@ -1,6 +1,5 @@
 // tslint:disable:max-line-length
 import { HttpErrorResponse } from "@angular/common/http";
-import { concat, delayWhen, interval, of, repeat } from "rxjs";
 
 /**
  * generateClassName comes from
@@ -252,20 +251,4 @@ function getCookie(name: string) {
 }
 export function getCSRFToken() {
   return getCookie("csrftoken");
-}
-
-export function refreshInterval(
-  initialDelaysInSeconds: number[],
-  repeatIntervalInSeconds: number,
-) {
-  const toMilliseconds = (seconds: number) => seconds * 1000;
-  const initialDelays = initialDelaysInSeconds.map(toMilliseconds);
-  const repeatInterval = toMilliseconds(repeatIntervalInSeconds);
-
-  return concat(
-    ...initialDelays.map((delay) =>
-      of(null).pipe(delayWhen(() => interval(delay))),
-    ),
-    interval(repeatInterval),
-  ).pipe(repeat());
 }

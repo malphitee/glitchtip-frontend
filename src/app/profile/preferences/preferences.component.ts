@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from "@angular/core";
+import { Component, OnInit, effect, inject, signal } from "@angular/core";
 import {
   AbstractControl,
   FormControl,
@@ -7,7 +7,6 @@ import {
   Validators,
   ReactiveFormsModule,
 } from "@angular/forms";
-import { filter, map, Observable, startWith, take } from "rxjs";
 import { SettingsService } from "src/app/api/settings.service";
 import { UserService } from "src/app/api/user/user.service";
 import { LoadingButtonComponent } from "../../shared/loading-button/loading-button.component";
@@ -17,11 +16,9 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { AsyncPipe } from "@angular/common";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatCardModule } from "@angular/material/card";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
-import { toObservable } from "@angular/core/rxjs-interop";
 
 function autocompleteStringValidator(validOptions: Array<string>): ValidatorFn {
   return (control: AbstractControl): { [key: string]: any } | null => {
@@ -48,7 +45,6 @@ function autocompleteStringValidator(validOptions: Array<string>): ValidatorFn {
     MatIconModule,
     MatOptionModule,
     LoadingButtonComponent,
-    AsyncPipe,
   ],
 })
 export class PreferencesComponent implements OnInit {
@@ -68,46 +64,54 @@ export class PreferencesComponent implements OnInit {
       autocompleteStringValidator(["system", "light", "dark"]),
     ),
   });
-  filteredOptions?: Observable<string[]>;
-  userDetails$ = toObservable(this.service.user);
-  serverTimeZone$ = toObservable(this.settings.serverTimeZone);
+  filteredOptions = signal<string[]>([]);
+  userDetails = this.service.user;
+  serverTimeZone = this.settings.serverTimeZone;
 
   formName = this.form.get("name") as FormControl;
   formTimeZone = this.form.get("timeZone") as FormControl;
 
-  ngOnInit() {
-    this.serverTimeZone$
-      .pipe(
-        filter((serverTimeZone) => !!serverTimeZone),
-        take(1),
-      )
-      .subscribe((serverTimeZone) => {
-        this.defaultTimeZone = this.defaultTimeZone + ` \(${serverTimeZone}\)`;
-        this.timeZones.unshift(this.defaultTimeZone);
+  constructor() {
+    effect(() => {
+      const serverTimeZone = this.serverTimeZone();
+      if (serverTimeZone) {
+        this.defaultTimeZone = "Default" + ` \(${serverTimeZone}\)`;
+        if (!this.timeZones.includes(this.defaultTimeZone)) {
+          this.timeZones.unshift(this.defaultTimeZone);
+        }
         if (this.form.controls.timeZone.value === "") {
           this.form.controls.timeZone.setValue(this.defaultTimeZone);
         }
-      });
-    this.userDetails$.subscribe((user) => {
-      if (user) {
-        this.form.controls.name.setValue(user.name!);
-      }
-      if (user?.options!.timezone) {
-        if (!this.timeZones.includes(user.options.timezone)) {
-          this.timeZones.unshift(user.options.timezone); // Existing TZ always valid
-        }
-        this.form.controls.timeZone.setValue(user.options.timezone);
-      }
-      if (user?.options!.preferredTheme) {
-        this.form.controls.theme.setValue(user.options.preferredTheme);
-      } else {
-        this.form.controls.theme.setValue("light");
       }
     });
-    this.filteredOptions = this.form.controls["timeZone"].valueChanges.pipe(
-      startWith(""),
-      map((value) => this._filter(value || "")),
-    );
+
+    const userDetailsInit = effect(() => {
+      const user = this.userDetails();
+      if (user) {
+        this.form.controls.name.setValue(user.name!);
+        if (user.options!.timezone) {
+          if (!this.timeZones.includes(user.options.timezone)) {
+            this.timeZones.unshift(user.options.timezone); // Existing TZ always valid
+          }
+          this.form.controls.timeZone.setValue(user.options.timezone);
+        }
+        if (user.options!.preferredTheme) {
+          this.form.controls.theme.setValue(user.options.preferredTheme);
+        } else {
+          this.form.controls.theme.setValue("light");
+        }
+        // Ensure effect only runs once after user details are loaded
+        userDetailsInit.destroy()
+      }
+    });
+  }
+
+  ngOnInit() {
+    this.filteredOptions.set(this._filter(""));
+
+    this.form.controls["timeZone"].valueChanges.subscribe((value) => {
+      this.filteredOptions.set(this._filter(value || ""));
+    });
   }
 
   private _filter(value: string): string[] {

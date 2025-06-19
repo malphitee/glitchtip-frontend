@@ -5,9 +5,9 @@
     </mat-card-header>
     <mat-divider></mat-divider>
     <mat-card-content>
-      @if (errors()?.updateName) {
+      @if (errors().updateName) {
         <mat-error class="server-error center-text">{{
-          errors()?.updateName
+          errors().updateName
         }}</mat-error>
       }
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
@@ -22,7 +22,7 @@
         </mat-form-field>
         <gt-loading-button
           [disabled]="this.form.get('slug')?.value === team.slug"
-          [loading]="loading()?.updateName"
+          [loading]="loading().updateName"
           buttonText="Update Name"
           id="update-project-name"
         >
@@ -46,7 +46,7 @@
     </div>
     <gt-loading-button
       buttonText="Delete Team"
-      [loading]="loading()?.deleteTeam"
+      [loading]="loading().deleteTeam"
       (buttonClick)="deleteTeam()"
     >
     </gt-loading-button>
