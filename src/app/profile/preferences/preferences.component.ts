@@ -85,21 +85,22 @@ export class PreferencesComponent implements OnInit {
       }
     });
 
-    effect(() => {
+    const userDetailsInit = effect(() => {
       const user = this.userDetails();
       if (user) {
         this.form.controls.name.setValue(user.name!);
-      }
-      if (user?.options!.timezone) {
-        if (!this.timeZones.includes(user.options.timezone)) {
-          this.timeZones.unshift(user.options.timezone); // Existing TZ always valid
+        if (user.options!.timezone) {
+          if (!this.timeZones.includes(user.options.timezone)) {
+            this.timeZones.unshift(user.options.timezone); // Existing TZ always valid
+          }
+          this.form.controls.timeZone.setValue(user.options.timezone);
         }
-        this.form.controls.timeZone.setValue(user.options.timezone);
-      }
-      if (user?.options!.preferredTheme) {
-        this.form.controls.theme.setValue(user.options.preferredTheme);
-      } else {
-        this.form.controls.theme.setValue("light");
+        if (user.options!.preferredTheme) {
+          this.form.controls.theme.setValue(user.options.preferredTheme);
+        } else {
+          this.form.controls.theme.setValue("light");
+        }
+        userDetailsInit.destroy()
       }
     });
   }
