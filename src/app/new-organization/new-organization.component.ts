@@ -19,12 +19,14 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatCardModule } from "@angular/material/card";
 import { OrganizationsService } from "../api/organizations.service";
 import { Router } from "@angular/router";
+import { Autofocus } from "../shared/autofocus";
 
 @Component({
   templateUrl: "./new-organization.component.html",
   styleUrls: ["./new-organization.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    Autofocus,
     MatCardModule,
     ReactiveFormsModule,
     MatFormFieldModule,
