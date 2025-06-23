@@ -111,6 +111,7 @@ const iconNames = [
   "account_circle",
   "add",
   "brightness_medium",
+  "check_box",
   "check_circle",
   "close",
   "code",
