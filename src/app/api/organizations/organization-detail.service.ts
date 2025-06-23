@@ -184,8 +184,19 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
     );
     // Assume all requests were rejected and stay on form page
     if (forbiddenResult) {
+      const forbiddenError = forbiddenResult.error as any;
+      let forbiddenMessage;
+      if (
+        forbiddenError &&
+        typeof forbiddenError === "object" &&
+        "detail" in forbiddenError
+      ) {
+        forbiddenMessage = forbiddenError.detail;
+      }
       this.setAddOrganizationMemberError(
-        $localize`There was an error, please ensure you are authorized to invite members and have verified your own email address`,
+        forbiddenMessage
+          ? forbiddenMessage
+          : $localize`There was an error. Please try again.`,
       );
       return;
     }
@@ -193,8 +204,8 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
     if (results.find((result) => result.data)) {
       this.snackBar.open(
         throttleResult
-          ? $localize`You have sent more than your allowed number of invitations. Not all of your invitations were sent. Please try again later`
-          : $localize`There were problems with some invited email addresses. Please check your list and try again.`,
+          ? $localize`Too many invitations attempted. Not all invitations were sent. Please try again later`
+          : $localize`There was an error. Please try again.`,
       );
       this.router.navigate([orgSlug, "settings", "members"]);
       return;
@@ -202,8 +213,8 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
 
     this.setAddOrganizationMemberError(
       throttleResult
-        ? $localize`You have sent more than your allowed number of invitations. Please try again later.`
-        : $localize`There was an error. Please check the email address you submitted and try again.`,
+        ? $localize`Too many invitations attempted. Please try again later.`
+        : $localize`There was an error. Please try again.`,
     );
   }
 
