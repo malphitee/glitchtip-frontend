@@ -89,14 +89,14 @@ export interface OrgMemberIn extends OrgMemberUpdate {
 export interface OrganizationLoading {
   addTeamMember: string;
   removeTeamMember: string;
-  addOrganizationMember: boolean;
+  addOrganizationMembers: boolean;
 }
 
 export interface OrganizationErrors {
   createOrganization: string;
   addTeamMember: string;
   removeTeamMember: string;
-  addOrganizationMember: string;
+  addOrganizationMembers: string;
 }
 
 export interface Environment {

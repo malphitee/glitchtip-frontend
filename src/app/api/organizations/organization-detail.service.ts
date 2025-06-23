@@ -31,12 +31,12 @@ const initialState: OrganizationsState = {
     createOrganization: "",
     addTeamMember: "",
     removeTeamMember: "",
-    addOrganizationMember: "",
+    addOrganizationMembers: "",
   },
   loading: {
     addTeamMember: "",
     removeTeamMember: "",
-    addOrganizationMember: false,
+    addOrganizationMembers: false,
   },
   initialLoad: false,
 };
@@ -150,13 +150,69 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
     return result;
   }
 
-  /** Invite a user via email to join an organization */
-  inviteOrganizationMembers(
+  /** Invite a list of users via email to join an organization */
+  async inviteOrganizationMembers(
+    emails: string[],
+    teams: string[],
+    role: MemberRole,
+  ) {
+    const orgSlug = this.organizationsService.activeOrganizationSlug();
+    this.setAddOrganizationMembersLoading();
+    const results = await Promise.all(
+      emails.map(async (email: string) => {
+        return await this.inviteOrganizationMember(orgSlug, email, teams, role);
+      }),
+    );
+
+    if (results.every((result) => result.data)) {
+      this.snackBar.open(
+        results.length > 1
+          ? $localize`Email invites have been sent to the addresses you provided.`
+          : $localize`An email invite has been sent to` +
+              ` ${results[0].data!.email}`,
+      );
+      this.setAddOrganizationMembersComplete();
+      this.router.navigate([orgSlug, "settings", "members"]);
+      return;
+    }
+
+    const forbiddenResult = results.find(
+      (result) => result.response.status === 403,
+    );
+    const throttleResult = results.find(
+      (result) => result.response.status === 429,
+    );
+    // Assume all requests were rejected and stay on form page
+    if (forbiddenResult) {
+      this.setAddOrganizationMemberError(
+        $localize`There was an error, please ensure you are authorized to invite members and have verified your own email address`,
+      );
+      return;
+    }
+    // If any invitations succeeded, we redirect to org members list
+    if (results.find((result) => result.data)) {
+      this.snackBar.open(
+        throttleResult
+          ? $localize`You have sent more than your allowed number of invitations. Not all of your invitations were sent. Please try again later`
+          : $localize`There were problems with some invited email addresses. Please check your list and try again.`,
+      );
+      this.router.navigate([orgSlug, "settings", "members"]);
+      return;
+    }
+
+    this.setAddOrganizationMemberError(
+      throttleResult
+        ? $localize`You have sent more than your allowed number of invitations. Please try again later.`
+        : $localize`There was an error. Please check the email address you submitted and try again.`,
+    );
+  }
+
+  async inviteOrganizationMember(
+    orgSlug: string,
     emailInput: string,
     teamsInput: string[],
     roleInput: MemberRole,
   ) {
-    const orgSlug = this.organizationsService.activeOrganizationSlug();
     const data = {
       email: emailInput,
       orgRole: roleInput,
@@ -166,31 +222,13 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
       sendInvite: true,
       reinvite: true,
     };
-    client
-      .POST("/api/0/organizations/{organization_slug}/members/", {
+    return await client.POST(
+      "/api/0/organizations/{organization_slug}/members/",
+      {
         params: { path: { organization_slug: orgSlug } },
         body: data,
-      })
-      .then((result) => {
-        if (result.data) {
-          this.snackBar.open(
-            `An email invite has been sent to ${result.data.email}`,
-          );
-          this.router.navigate([orgSlug, "settings", "members"]);
-        } else {
-          if (result.response.status === 403) {
-            this.setAddMemberError(
-              "Only organization members with a role of manager or owner can invite new members.",
-            );
-            // } else if (error.detail) {
-            //   this.setAddMemberError(error.error?.detail);
-          } else {
-            this.setAddMemberError(
-              "There was an error processing this request.",
-            );
-          }
-        }
-      });
+      },
+    );
   }
 
   async retrieveOrganizationTeams(orgSlug: string) {
@@ -316,12 +354,9 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
     }
   }
 
-  clearErrorState() {
-    this.setInitialErrorState();
-  }
-
-  private setInitialErrorState() {
+  resetLoadingState() {
     this.setState({
+      loading: initialState.loading,
       errors: initialState.errors,
     });
   }
@@ -346,16 +381,36 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
     });
   }
 
-  private setAddMemberError(error: string) {
+  private setAddOrganizationMembersLoading() {
+    const state = this.state();
+    this.setState({
+      loading: {
+        ...state.loading,
+        addOrganizationMembers: true,
+      },
+    });
+  }
+
+  private setAddOrganizationMembersComplete() {
+    const state = this.state();
+    this.setState({
+      loading: {
+        ...state.loading,
+        addOrganizationMembers: false,
+      },
+    });
+  }
+
+  private setAddOrganizationMemberError(error: string) {
     const state = this.state();
     this.setState({
       errors: {
         ...state.errors,
-        addOrganizationMember: error,
+        addOrganizationMembers: error,
       },
       loading: {
         ...state.loading,
-        addOrganizationMember: false,
+        addOrganizationMembers: false,
       },
     });
   }

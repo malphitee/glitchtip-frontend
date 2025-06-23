@@ -86,23 +86,24 @@ export class NewMemberComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.organizationsService.clearErrorState();
+    this.organizationsService.resetLoadingState();
   }
 
   onSubmit() {
     if (this.form.valid) {
-      console.log("?");
-      const emails = this.form.get("email")?.value;
-      const role = this.form.get("role")?.value;
-      const teams = this.form.get("teams")?.value;
+      const emailString = this.form.get("email")?.value!;
+      const role = this.form.get("role")?.value!;
+      const teams = this.form.get("teams")?.value!;
 
-      emails!.split(",").map((email: string) => {
-        this.organizationsService.inviteOrganizationMembers(
-          email.replace(/\s/g, ""),
-          teams!,
-          role! as any,
-        );
-      });
+      const emails = emailString
+        ?.split(",")
+        .map((email) => email.replace(/\s/g, ""));
+
+      this.organizationsService.inviteOrganizationMembers(
+        emails,
+        teams,
+        role as any,
+      );
     }
   }
 }

@@ -6,7 +6,7 @@
     <mat-divider></mat-divider>
     <mat-card-content>
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        @if (errors().addOrganizationMember; as error) {
+        @if (errors().addOrganizationMembers; as error) {
           <mat-error class="server-error">{{ error }}</mat-error>
         }
         <div>
@@ -95,7 +95,7 @@
         </div>
         <gt-loading-button
           buttonText="Add Member(s)"
-          [loading]="loading().addOrganizationMember"
+          [loading]="loading().addOrganizationMembers"
         ></gt-loading-button>
       </form>
     </mat-card-content>
