@@ -71,9 +71,11 @@ export class ProjectAlertsComponent implements OnInit {
     const dialogRef = this.dialog.open(NewRecipientComponent, {
       data: { emailSelected: this.#service.emailSelected() },
     });
-    dialogRef
-      .afterClosed()
-      .subscribe((result) => this.#service.addAlertRecipient(result));
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.#service.addAlertRecipient(result);
+      }
+    });
   }
 
   openCreateRecipientDialog() {
@@ -81,9 +83,11 @@ export class ProjectAlertsComponent implements OnInit {
     const dialogRef = this.dialog.open(NewRecipientComponent, {
       data: { emailSelected: this.#service.emailSelected() },
     });
-    dialogRef
-      .afterClosed()
-      .subscribe((result) => this.#service.addAlertRecipient(result));
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.#service.addAlertRecipient(result);
+      }
+    });
   }
 
   closeNewAlert() {
