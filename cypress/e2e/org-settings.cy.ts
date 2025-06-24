@@ -15,11 +15,13 @@ describe("Organization Settings", () => {
     cy.get("input[formcontrolname=name]").should('have.value', organization.otherOrg);
     // clear db
     cy.get("#delete-org").click();
+    cy.get("[data-cy='dialog-confirm']").click()
   });
 
   it("deleting only org results in empty org state", () => {
     cy.visit(`/${organization.slug}/settings`);
     cy.get("#delete-org").click();
+    cy.get("[data-cy='dialog-confirm']").click()
     cy.url().should("eq", "http://localhost:4200/");
     cy.contains("In order to use GlitchTip, you'll need to create an");
   });
