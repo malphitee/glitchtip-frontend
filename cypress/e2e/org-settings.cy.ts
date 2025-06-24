@@ -7,7 +7,7 @@ describe("Organization Settings", () => {
     requestLogin();
   });
 
-  it("updates the org name", () => {
+  it("updates the org name, deletes org and returns to empty org state", () => {
     cy.visit(`/${organization.slug}/settings`);
     cy.contains(organization.name);
     cy.get("input[formcontrolname=name]").clear().type(organization.otherOrg);
@@ -16,12 +16,7 @@ describe("Organization Settings", () => {
     // clear db
     cy.get("#delete-org").click();
     cy.get("[data-cy='dialog-confirm']").click()
-  });
-
-  it("deleting only org results in empty org state", () => {
-    cy.visit(`/${organization.slug}/settings`);
-    cy.get("#delete-org").click();
-    cy.get("[data-cy='dialog-confirm']").click()
+    cy.contains("successfully deleted");
     cy.url().should("eq", "http://localhost:4200/");
     cy.contains("In order to use GlitchTip, you'll need to create an");
   });
