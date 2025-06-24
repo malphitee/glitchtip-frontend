@@ -14,7 +14,7 @@ import {
 } from "@angular/forms";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
 import { TeamsService } from "src/app/api/teams/teams.service";
-import { NewTeamComponent } from "../../teams/new-team/new-team.component";
+import { NewTeamComponent } from "../../teams/new-team/new-team";
 import { LoadingButtonComponent } from "../../../shared/loading-button/loading-button.component";
 import { MatIconModule } from "@angular/material/icon";
 import { MatTooltipModule } from "@angular/material/tooltip";

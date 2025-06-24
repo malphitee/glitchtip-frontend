@@ -6,7 +6,7 @@
       hyphens.</p
     >
     <mat-error class="error mat-caption">
-      @for (error of errors; track error) {
+      @for (error of errors(); track error) {
         <span>{{ error }}</span>
       }
     </mat-error>
