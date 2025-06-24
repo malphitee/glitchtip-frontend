@@ -29,11 +29,15 @@ const initialState: OrganizationsState = {
   organizationTeams: [],
   errors: {
     createOrganization: "",
+    updateOrganization: "",
+    deleteOrganization: "",
     addTeamMember: "",
     removeTeamMember: "",
     addOrganizationMembers: "",
   },
   loading: {
+    updateOrganization: false,
+    deleteOrganization: false,
     addTeamMember: "",
     removeTeamMember: "",
     addOrganizationMembers: false,
@@ -99,42 +103,76 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
   }
 
   async updateOrganization(orgName: string) {
+    this.setUpdateOrganizationStart();
     const body = { name: orgName };
     const orgSlug = this.organizationsService.activeOrganizationSlug();
-    const { data } = await client.PUT(
+    const { data, error, response } = await client.PUT(
       "/api/0/organizations/{organization_slug}/",
       {
         params: { path: { organization_slug: orgSlug } },
         body,
       },
     );
-    return data;
+    if (data) {
+      this.setUpdateOrganizationComplete();
+      this.snackBar.open(
+        $localize`The name of your organization has been updated to ${data.name}`,
+      );
+      return;
+    }
+    if (response.status === 403) {
+      this.setUpdateOrganizationError(
+        $localize`Only users with a role of manager or above can update organizations.`,
+      );
+    } else {
+      const errors = handleError(error, response);
+      if (errors.detail.length) {
+        this.setUpdateOrganizationError(errors.detail[0].msg);
+      }
+    }
   }
 
   /** Delete organization: route to home page */
-  deleteOrganization(slug: string) {
-    return client
-      .DELETE("/api/0/organizations/{organization_slug}/", {
+  async deleteOrganization(slug: string, name: string) {
+    this.setDeleteOrganizationStart();
+    const { error, response } = await client.DELETE(
+      "/api/0/organizations/{organization_slug}/",
+      {
         params: { path: { organization_slug: slug } },
-      })
-      .then((result) => {
-        if (result.response.status === 204) {
-          this.organizationsService.organizationsResource.update((orgs) =>
-            orgs?.filter((org) => org.slug !== slug),
-          );
+      },
+    );
 
-          const organizations = this.organizationsService.organizations();
-          if (organizations.length) {
-            this.organizationsService.setActiveOrganizationSlug(
-              organizations[0].slug,
-            );
-          } else {
-            this.organizationsService.setActiveOrganizationSlug(null);
-          }
-          this.router.navigate([""]);
-        }
-        return result;
-      });
+    if (response.status === 204) {
+      this.organizationsService.organizationsResource.update((orgs) =>
+        orgs?.filter((org) => org.slug !== slug),
+      );
+
+      const organizations = this.organizationsService.organizations();
+      if (organizations.length) {
+        this.organizationsService.setActiveOrganizationSlug(
+          organizations[0].slug,
+        );
+      } else {
+        this.organizationsService.setActiveOrganizationSlug(null);
+      }
+      this.setDeleteOrganizationComplete();
+      this.snackBar.open(
+        `You have successfully deleted ${name} from your organizations`,
+      );
+      this.router.navigate([""]);
+      return;
+    }
+
+    if (response.status === 403) {
+      this.setDeleteOrganizationError(
+        $localize`Only users with a role of manager or above can delete organizations.`,
+      );
+    } else {
+      const errors = handleError(error, response);
+      if (errors.detail.length) {
+        this.setDeleteOrganizationError(errors.detail[0].msg);
+      }
+    }
   }
 
   async retrieveOrganizationMembers(orgSlug: string) {
@@ -463,6 +501,58 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
   private setOrganizationTeams(teams: Team[]) {
     this.setState({
       organizationTeams: teams,
+    });
+  }
+
+  private setDeleteOrganizationStart() {
+    const state = this.state();
+    this.setState({
+      loading: { ...state.loading, deleteOrganization: true },
+      errors: {
+        ...state.errors,
+        deleteOrganization: initialState.errors.deleteOrganization,
+      },
+    });
+  }
+
+  private setDeleteOrganizationError(error: string) {
+    const state = this.state();
+    this.setState({
+      loading: { ...state.loading, deleteOrganization: false },
+      errors: { ...state.errors, deleteOrganization: error },
+    });
+  }
+
+  private setDeleteOrganizationComplete() {
+    const state = this.state();
+    this.setState({
+      loading: { ...state.loading, deleteOrganization: false },
+    });
+  }
+
+  private setUpdateOrganizationStart() {
+    const state = this.state();
+    this.setState({
+      loading: { ...state.loading, updateOrganization: true },
+      errors: {
+        ...state.errors,
+        updateOrganization: initialState.errors.updateOrganization,
+      },
+    });
+  }
+
+  private setUpdateOrganizationError(error: string) {
+    const state = this.state();
+    this.setState({
+      loading: { ...state.loading, updateOrganization: false },
+      errors: { ...state.errors, updateOrganization: error },
+    });
+  }
+
+  private setUpdateOrganizationComplete() {
+    const state = this.state();
+    this.setState({
+      loading: { ...state.loading, updateOrganization: false },
     });
   }
 }

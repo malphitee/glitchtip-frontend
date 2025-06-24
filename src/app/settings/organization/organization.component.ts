@@ -1,15 +1,16 @@
-import { Component, OnInit, inject } from "@angular/core";
-import { MatSnackBar } from "@angular/material/snack-bar";
+import { Component, OnDestroy, OnInit, inject } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { tap, take } from "rxjs/operators";
 import { OrganizationDetailService } from "../../api/organizations/organization-detail.service";
 import { LoadingButtonComponent } from "../../shared/loading-button/loading-button.component";
+import { MatDialog } from "@angular/material/dialog";
 import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatCardModule } from "@angular/material/card";
 import { OrganizationsService } from "src/app/api/organizations.service";
 import { toObservable } from "@angular/core/rxjs-interop";
+import { ConfirmDialogComponent } from "src/app/shared/confirm-dialog/confirm-dialog.component";
 
 @Component({
   selector: "gt-organization",
@@ -24,18 +25,16 @@ import { toObservable } from "@angular/core/rxjs-interop";
     LoadingButtonComponent,
   ],
 })
-export class OrganizationComponent implements OnInit {
+export class OrganizationComponent implements OnDestroy, OnInit {
   private organizationsService = inject(OrganizationsService);
   private organizationDetailService = inject(OrganizationDetailService);
-  private snackBar = inject(MatSnackBar);
+  private dialog = inject(MatDialog);
 
   activeOrganizationDetail = this.organizationsService.activeOrganization;
   initialLoad$ = toObservable(this.organizationDetailService.initialLoad);
   activeOrganizationDetail$ = toObservable(this.activeOrganizationDetail);
-  updateError = "";
-  updateLoading = false;
-  deleteError = "";
-  deleteLoading = false;
+  loading = this.organizationDetailService.loading;
+  errors = this.organizationDetailService.errors;
   form = new FormGroup({
     name: new FormControl(""),
   });
@@ -53,46 +52,42 @@ export class OrganizationComponent implements OnInit {
         }),
       )
       .toPromise();
-    this.activeOrganizationDetail$.subscribe((data) =>
-      data ? this.form.patchValue({ name: data.name }) : undefined,
-    );
+    this.activeOrganizationDetail$.subscribe((data) => {
+      this.organizationDetailService.resetLoadingState();
+      if (data) {
+        this.form.patchValue({ name: data.name });
+      }
+    });
   }
 
   get name() {
     return this.form.get("name");
   }
 
-  async updateOrganization() {
-    this.updateLoading = true;
-    const org = await this.organizationDetailService.updateOrganization(
-      this.form.value.name!,
-    );
-    this.updateLoading = false;
-    if (org) {
-      this.snackBar.open(
-        $localize`The name of your organization has been updated to ${org.name}`,
-      );
-    }
+  updateOrganization() {
+    this.organizationDetailService.updateOrganization(this.form.value.name!);
   }
 
   removeOrganization(slug: string, name: string) {
-    if (
-      window.confirm(
-        `Are you sure you want to remove ${name}? You will permanently lose all projects and teams associated with it.`,
-      )
-    ) {
-      this.deleteLoading = true;
-      this.organizationDetailService.deleteOrganization(slug).then((result) => {
-        if (result.response.status === 204) {
-          this.deleteLoading = false;
-          this.snackBar.open(
-            `You have successfully deleted ${name} from your organizations`,
-          );
-        } else {
-          this.deleteLoading = false;
-          this.deleteError = "Error";
-        }
-      });
-    }
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      restoreFocus: false,
+      height: "225px",
+      width: "375px",
+      data: {
+        title: $localize`Remove organization`,
+        message: $localize`Are you sure you want to remove ${name}? You will permanently lose all projects and teams associated with it.`,
+        confirmText: $localize`Remove`,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (confirmed) {
+        this.organizationDetailService.deleteOrganization(slug, name);
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.organizationDetailService.resetLoadingState();
   }
 }
