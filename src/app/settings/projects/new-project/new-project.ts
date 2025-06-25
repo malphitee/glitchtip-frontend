@@ -25,14 +25,13 @@ import { MatInputModule } from "@angular/material/input";
 import { PlatformPickerComponent } from "../platform-picker/platform-picker.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatCardModule } from "@angular/material/card";
-import { NewProjectService } from "./new-project.service";
+import { NewProjectService } from "./new-project-state";
 import { Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
 
 @Component({
-  selector: "gt-new-project",
-  templateUrl: "./new-project.component.html",
-  styleUrls: ["./new-project.component.scss"],
+  templateUrl: "./new-project.html",
+  styleUrls: ["./new-project.scss"],
   imports: [
     MatCardModule,
     MatDialogModule,
@@ -50,7 +49,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [NewProjectService],
 })
-export class NewProjectComponent implements OnInit {
+export class NewProject implements OnInit {
   private teamsService = inject(TeamsService);
   private service = inject(NewProjectService);
   private router = inject(Router);

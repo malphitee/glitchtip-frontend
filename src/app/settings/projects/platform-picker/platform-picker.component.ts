@@ -97,7 +97,7 @@ export class PlatformPickerComponent implements ControlValueAccessor {
       this.lastSelected = this.selected;
     }
     this.selected = index;
-  };
+  }
 
   getPlatformId(platformFromCategoryList: string) {
     const platformInfo = this.platforms.find(
