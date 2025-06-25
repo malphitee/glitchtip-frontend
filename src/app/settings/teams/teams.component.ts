@@ -9,7 +9,7 @@ import {
 import { TeamsService } from "src/app/api/teams/teams.service";
 import { RouterLink } from "@angular/router";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
-import { NewTeamComponent } from "./new-team/new-team.component";
+import { NewTeamComponent } from "./new-team/new-team";
 import { OrganizationDetailService } from "src/app/api/organizations/organization-detail.service";
 import { LoadingButtonComponent } from "../../shared/loading-button/loading-button.component";
 import { MatFormFieldModule } from "@angular/material/form-field";

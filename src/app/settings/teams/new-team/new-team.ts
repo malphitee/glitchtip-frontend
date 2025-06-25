@@ -25,11 +25,11 @@ import { LoadingButtonComponent } from "../../../shared/loading-button/loading-b
 import { OrganizationDetailService } from "src/app/api/organizations/organization-detail.service";
 import { SlugifyDirective } from "./slugify.directive";
 import { slugRegex } from "src/app/shared/validators";
+import { handleError } from "src/app/shared/api/api";
 
 @Component({
-  selector: "gt-new-team",
-  templateUrl: "./new-team.component.html",
-  styleUrls: ["./new-team.component.scss"],
+  templateUrl: "./new-team.html",
+  styleUrls: ["./new-team.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatDialogModule,
@@ -50,7 +50,7 @@ export class NewTeamComponent {
   }>(MAT_DIALOG_DATA);
 
   loading = signal(false);
-  errors: string[] = [];
+  errors = signal<string[]>([]);
   form = new FormGroup({
     slug: new FormControl("", [
       Validators.required,
@@ -66,20 +66,30 @@ export class NewTeamComponent {
     this.dialogRef.close();
   }
 
-  onSubmit() {
+  async onSubmit() {
     if (this.form.valid) {
       this.loading.set(true);
-      this.organizationsService
-        .createTeam(this.form.value.slug!, this.data.orgSlug)
-        .then((result) => {
-          this.loading.set(false);
-          if (result.data) {
-            this.snackBar.open(`${result.data.slug} has been created`);
-          } else if (result.error) {
-            // this.errors = [`${result.response.status}: ${err.status}`];
-          }
-          this.dialogRef.close();
-        });
+      const result = await this.organizationsService.createTeam(
+        this.form.value.slug!,
+        this.data.orgSlug,
+      );
+      this.loading.set(false);
+      if (result.data) {
+        this.snackBar.open(`${result.data.slug} has been created`);
+        this.dialogRef.close();
+      } else {
+        if (result.response.status === 404) {
+          this.errors.set([
+            $localize`You do not have permission to create a team`,
+          ]);
+        } else {
+          this.errors.set(
+            handleError(result.error, result.response).detail.map(
+              (err) => err.msg,
+            ),
+          );
+        }
+      }
     }
   }
 }
