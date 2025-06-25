@@ -18,7 +18,7 @@ import { Router, RouterLink } from "@angular/router";
 import { flattenedPlatforms } from "src/app/settings/projects/platform-picker/platforms-for-picker";
 import { MatButtonModule } from "@angular/material/button";
 import { ProjectAlertsComponent } from "./project-alerts/project-alerts.component";
-import { ProjectEnvironmentsComponent } from "./project-environments/project-environments.component";
+import { ProjectEnvironments } from "./project-environments/project-environments";
 import { CopyInputComponent } from "../../../shared/copy-input/copy-input.component";
 import { PlatformPickerComponent } from "../platform-picker/platform-picker.component";
 import { LoadingButtonComponent } from "../../../shared/loading-button/loading-button.component";
@@ -45,7 +45,7 @@ import { OrganizationsService } from "src/app/api/organizations.service";
     LoadingButtonComponent,
     PlatformPickerComponent,
     CopyInputComponent,
-    ProjectEnvironmentsComponent,
+    ProjectEnvironments,
     ProjectAlertsComponent,
     MatButtonModule,
     RouterLink,
