@@ -24,6 +24,7 @@ import {
 import { mapFormErrors } from "../shared/forms/form.utils";
 import { FormErrorComponent } from "../shared/forms/form-error/form-error.component";
 import { StatefulComponent } from "../shared/stateful-service/signal-state.component";
+import { Autofocus } from "../shared/autofocus";
 
 @Component({
   selector: "gt-reset-password",
@@ -39,7 +40,9 @@ import { StatefulComponent } from "../shared/stateful-service/signal-state.compo
     LoadingButtonComponent,
     MatButtonModule,
     RouterLink,
+    Autofocus,
   ],
+  providers: [ResetPasswordService],
 })
 export class ResetPasswordComponent extends StatefulComponent<
   ResetPasswordState,

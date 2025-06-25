@@ -3,7 +3,7 @@ import {
   ChangeDetectionStrategy,
   inject,
   input,
-  effect,
+  computed,
 } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
 import {
@@ -18,18 +18,13 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatCardModule } from "@angular/material/card";
 import { LoadingButtonComponent } from "../../shared/loading-button/loading-button.component";
 import { InputMatcherDirective } from "../../shared/input-matcher.directive";
-import {
-  ResetPasswordService,
-  ResetPasswordState,
-} from "../reset-password.service";
-import { mapFormErrors } from "src/app/shared/forms/form.utils";
 import { FormErrorComponent } from "src/app/shared/forms/form-error/form-error.component";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { StatefulComponent } from "src/app/shared/stateful-service/signal-state.component";
+import { SetNewPasswordService } from "./set-new-password-state";
 
 @Component({
-  templateUrl: "./set-new-password.component.html",
-  styleUrls: ["./set-new-password.component.scss"],
+  templateUrl: "./set-new-password.html",
+  styleUrls: ["./set-new-password.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatCardModule,
@@ -41,18 +36,17 @@ import { StatefulComponent } from "src/app/shared/stateful-service/signal-state.
     LoadingButtonComponent,
     RouterLink,
   ],
+  providers: [SetNewPasswordService],
 })
-export class SetNewPasswordComponent extends StatefulComponent<
-  ResetPasswordState,
-  ResetPasswordService
-> {
+export class SetNewPassword {
   private router = inject(Router);
-  protected service: ResetPasswordService;
+  protected service = inject(SetNewPasswordService);
   private snackBar = inject(MatSnackBar);
   readonly key = input.required<string>();
 
-  formErrors = this.service.formErrors;
-  success = this.service.success;
+  formErrors = computed(() =>
+    this.service.errors().map((error) => error.message),
+  );
   loading = this.service.loading;
   form = new FormGroup({
     password: new FormControl("", [
@@ -71,15 +65,6 @@ export class SetNewPasswordComponent extends StatefulComponent<
 
   get password2() {
     return this.form.get("password2");
-  }
-
-  constructor() {
-    const service = inject(ResetPasswordService);
-
-    effect(() => mapFormErrors(service.fieldErrors(), this.form));
-    super(service);
-
-    this.service = service;
   }
 
   async onSubmit() {

@@ -1,6 +1,6 @@
 import { Route } from "@angular/router";
 import { ResetPasswordComponent } from "./reset-password.component";
-import { SetNewPasswordComponent } from "./set-new-password/set-new-password.component";
+import { SetNewPassword } from "./set-new-password/set-new-password";
 
 export default [
   {
@@ -9,6 +9,6 @@ export default [
   },
   {
     path: "set-new-password/:key",
-    component: SetNewPasswordComponent,
+    component: SetNewPassword,
   },
 ] as Route[];

@@ -90,23 +90,6 @@ export class AuthenticationService {
     });
   }
 
-  requestPassword(email: string) {
-    return client.POST("/_allauth/browser/v1/auth/password/request", {
-      body: {
-        email,
-      },
-    });
-  }
-
-  resetPassword(key: string, password: string) {
-    return client.POST("/_allauth/browser/v1/auth/password/reset", {
-      body: {
-        key,
-        password,
-      },
-    });
-  }
-
   providerRedirect(
     provider: string,
     callbackUrl = "/",
