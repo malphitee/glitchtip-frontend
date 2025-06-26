@@ -66,7 +66,7 @@ Edit `src/app/foo/foo-state.ts`
 
 ```TypeScript
 import { computed, Injectable, resource, signal } from "@angular/core";
-import { client } from "../api/api";  # openapi-fetch client
+import { client } from "../api/api";  // openapi-fetch client
 
 // This service only runs while it's FooComponent is being used
 // To share service state globally, set @Injectable({providedIn: "root"})
@@ -156,6 +156,27 @@ export class FooComponent implements OnInit {
 }
 ```
 
-Assuming you created a project, you should see a list of them in your browser now. However there is a bug, it will not display more than 50 foos due to pagination. See `src/app/shared/pagination.utils.ts`.
+Assuming you created a project, you should see a list of them in your browser now. However there is a bug, it will not display more than 50 foos due to pagination. See `src/app/shared/api/api-resource-factory.ts`.
+
+- `apiResource` Extends resource to handle openapi-fetch.
+- `apiResource.paginated` Extends resource to include pagination.
+
+```TypeScript
+  // Omitting "paginated" would work, but wouldn't set a paginator computed
+  #foosResource = apiResource.paginated(this.#orgSlug, (params) => {
+    url: "/api/0/organizations/{organization_slug}/projects/",
+    options: {
+      params: {
+        path: { organization_slug: params.orgSlug },
+      },
+    }
+  });
+  paginator = computed(() => this.#foosResource.paginator());
+```
+
+This refactor simplifies resource handling with openapi-fetch and pagination. `paginator` is a computed signal with count, nextPageParams, and previousPageParams.
+
+Use `resource` when you need control and customization.
+Use `apiResource` and related for simple use cases around fetch API data.
 
 This concludes our tutorial. Ask further questions on [Gitter](https://app.gitter.im/#/room/#GlitchTip_community:gitter.im).
