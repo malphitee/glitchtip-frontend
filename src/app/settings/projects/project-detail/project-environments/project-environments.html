@@ -11,13 +11,13 @@
         @if (sortedEnvironments(); as sortedEnvironments) {
           @for (
             sortedEnvironment of sortedEnvironments;
-            track sortedEnvironment
+            track sortedEnvironment.heading
           ) {
             <h2>{{ sortedEnvironment.heading }}</h2>
             <mat-list>
               @for (
                 environment of sortedEnvironment.environments;
-                track environment
+                track environment.id
               ) {
                 <mat-list-item>
                   <div class="environment-list-item">

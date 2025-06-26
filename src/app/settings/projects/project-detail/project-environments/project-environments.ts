@@ -13,8 +13,8 @@ import { MatCardModule } from "@angular/material/card";
 
 @Component({
   selector: "gt-project-environments",
-  templateUrl: "./project-environments.component.html",
-  styleUrls: ["./project-environments.component.scss"],
+  templateUrl: "./project-environments.html",
+  styleUrls: ["./project-environments.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatCardModule,
@@ -24,7 +24,7 @@ import { MatCardModule } from "@angular/material/card";
   ],
   providers: [ProjectEnvironmentsService],
 })
-export class ProjectEnvironmentsComponent implements OnInit {
+export class ProjectEnvironments implements OnInit {
   private service = inject(ProjectEnvironmentsService);
   orgSlug = input.required<string>();
   projectSlug = input.required<string>();
