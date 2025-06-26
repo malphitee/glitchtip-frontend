@@ -40,6 +40,7 @@
               'projects',
               'new',
             ]"
+            [disabled]="!accessProjectWrite()"
             class="new-project-button"
             i18n
             >Create new project in {{ organization.name }}</a

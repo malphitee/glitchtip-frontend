@@ -51,6 +51,7 @@ export class TeamsComponent implements OnInit {
   );
   errors = this.organizationDetailService.errors;
   loading = this.organizationDetailService.loading;
+  accessTeamWrite = this.organizationsService.accessTeamWrite;
 
   memberCountPluralMapping: { [k: string]: string } = {
     "=1": "1 Member",

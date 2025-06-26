@@ -43,6 +43,7 @@ export class MembersComponent implements OnInit {
   orgSlug = input.required<string>({ alias: "org-slug" });
   activeOrganizationDetail = this.organizationsService.activeOrganization;
   members = this.membersService.members;
+  accessMemberWrite = this.organizationsService.accessMemberWrite;
 
   ngOnInit(): void {
     this.organizationDetailService.retrieveOrganizationMembers(this.orgSlug());

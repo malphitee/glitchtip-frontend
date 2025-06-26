@@ -52,6 +52,19 @@ export class OrganizationsService {
   initialLoad = computed(
     () => this.organizationsLoaded() && this.activeOrganizationLoaded(),
   );
+  access = computed(() => this.activeOrganization()?.access || []);
+  accessProjectWrite = computed(() => this.access().includes("project:write"));
+  accessTeamWrite = computed(
+    () =>
+      this.access().includes("project:write") ||
+      this.access().includes("org:write"),
+  );
+  accessMemberWrite = computed(
+    () =>
+      this.access().includes("member:admin") ||
+      this.access().includes("member:write"),
+  );
+  accessOrgAdmin = computed(() => this.access().includes("org:admin"));
 
   constructor() {
     setTimeout(() => this.refresh(), 30000);

@@ -48,6 +48,7 @@
           data-test
           buttonText="Delete Organization"
           [loading]="loading().deleteOrganization"
+          [disabled]="!accessOrgAdmin()"
           (click)="removeOrganization(activeOrg.slug, activeOrg.name)"
           id="delete-org"
         >
