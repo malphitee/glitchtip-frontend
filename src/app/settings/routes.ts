@@ -1,6 +1,6 @@
 import { Route } from "@angular/router";
 import { ProjectsComponent } from "./projects/projects.component";
-import { NewProjectComponent } from "./projects/new-project/new-project.component";
+import { NewProject } from "./projects/new-project/new-project";
 import { ProjectDetailComponent } from "./projects/project-detail/project-detail.component";
 import { SettingsComponent } from "./settings/settings.component";
 import { OrganizationComponent } from "./organization/organization.component";
@@ -20,7 +20,7 @@ export default [
     children: [
       { path: "", component: OrganizationComponent },
       { path: "projects", component: ProjectsComponent },
-      { path: "projects/new", component: NewProjectComponent },
+      { path: "projects/new", component: NewProject },
       { path: "projects/:project-slug", component: ProjectDetailComponent },
       {
         path: "subscription",

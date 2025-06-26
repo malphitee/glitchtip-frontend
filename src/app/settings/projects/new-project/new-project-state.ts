@@ -1,5 +1,5 @@
 import { computed, inject, Injectable } from "@angular/core";
-import { client } from "src/app/shared/api/api";
+import { client, handleError } from "src/app/shared/api/api";
 import { components } from "src/app/api/api-schema";
 import { OrganizationsService } from "src/app/api/organizations.service";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
@@ -27,7 +27,7 @@ export class NewProjectService extends StatefulService<State> {
   }
 
   async createProject(project: ProjectNew, teamSlug: string, orgSlug: string) {
-    const { data, error } = await client.POST(
+    const { data, response, error } = await client.POST(
       "/api/0/teams/{organization_slug}/{team_slug}/projects/",
       {
         params: {
@@ -42,9 +42,16 @@ export class NewProjectService extends StatefulService<State> {
     if (data) {
       this.clearState();
       this.orgService.refreshActiveOrganization();
-    }
-    if (error) {
-      this.setState({ loading: false, error: `${(error as any).status}` });
+    } else if (response.status === 404) {
+      this.setState({
+        loading: false,
+        error: $localize`You lack permission to create a new project`,
+      });
+    } else if (error) {
+      const errors = handleError(response, error);
+      if (errors.detail) {
+        this.setState({ loading: false, error: errors.detail[0].msg });
+      }
     }
     return data;
   }
