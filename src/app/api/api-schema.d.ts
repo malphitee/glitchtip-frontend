@@ -3347,6 +3347,8 @@ export interface components {
             projects: components["schemas"]["ProjectTeamSchema"][];
             /** Teams */
             teams: components["schemas"]["TeamSchema"][];
+            /** Access */
+            access: ("org:read" | "org:write" | "org:admin" | "org:integrations" | "member:read" | "member:write" | "member:admin" | "team:read" | "team:write" | "team:admin" | "project:read" | "project:write" | "project:admin" | "project:releases" | "event:read" | "event:write" | "event:admin")[];
             /**
              * Open Membership
              * @description Allow any organization member to join any team
