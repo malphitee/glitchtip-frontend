@@ -56,6 +56,7 @@ export class ProjectFilterBarComponent implements OnInit {
   projects$ = toObservable(
     this.organizationsService.activeOrganizationProjects,
   );
+  accessProjectWrite = this.organizationsService.accessProjectWrite
 
   /** Projects that are selected in this component but not yet applied */
   selectedProjectIds = signal<number[]>([]);

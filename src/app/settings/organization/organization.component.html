@@ -48,7 +48,8 @@
           data-test
           buttonText="Delete Organization"
           [loading]="loading().deleteOrganization"
-          (click)="removeOrganization(activeOrg.slug, activeOrg.name)"
+          [disabled]="!accessOrgAdmin()"
+          (buttonClick)="removeOrganization(activeOrg.slug, activeOrg.name)"
           id="delete-org"
         >
         </gt-loading-button>

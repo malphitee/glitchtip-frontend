@@ -5,6 +5,7 @@
       mat-flat-button
       color="primary"
       (click)="openCreateTeamDialog()"
+      [disabled]="!accessTeamWrite()"
       id="new-team"
       i18n
       >Create Team</button

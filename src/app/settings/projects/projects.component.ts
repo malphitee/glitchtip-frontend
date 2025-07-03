@@ -32,6 +32,7 @@ export class ProjectsComponent implements OnInit {
   orgSlug = input.required<string>({ alias: "org-slug" });
   activeOrganization = this.organizationsService.activeOrganization;
   projects = this.service.projects;
+  accessProjectWrite = this.organizationsService.accessProjectWrite;
 
   ngOnInit() {
     this.service.orgSlug.set(this.orgSlug());

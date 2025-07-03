@@ -1,7 +1,13 @@
 <section class="l-body mat-typography">
   <header class="page-header">
     <h1 class="mat-headline-4">Organization Members</h1>
-    <a mat-flat-button color="primary" [routerLink]="['new']">Invite Member</a>
+    <a
+      mat-flat-button
+      color="primary"
+      [routerLink]="['new']"
+      [disabled]="!accessMemberWrite()"
+      >Invite Member</a
+    >
   </header>
   <mat-card>
     <mat-card-header>

@@ -149,6 +149,7 @@
                 [buttonText]="'Remove Alert ' + (i + 1)"
                 buttonStyle="stroked"
                 (buttonClick)="removeAlert(alert.id!)"
+                [disabled]="!accessProjectWrite()"
                 [loading]="removeAlertLoading() === alert.id"
               >
               </gt-loading-button>
