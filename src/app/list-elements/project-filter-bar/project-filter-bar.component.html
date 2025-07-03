@@ -71,15 +71,17 @@
     </div>
     @if (orgSlug(); as orgSlug) {
       <div class="nav-action-group">
-        <a
-          mat-stroked-button
-          color="primary"
-          class="nav-action"
-          [routerLink]="['/', orgSlug, 'settings', 'projects', 'new']"
-        >
-          <mat-icon>add</mat-icon>
-          <ng-container i18n>Add Project</ng-container>
-        </a>
+        @if (accessProjectWrite()) {
+          <a
+            mat-stroked-button
+            color="primary"
+            class="nav-action"
+            [routerLink]="['/', orgSlug, 'settings', 'projects', 'new']"
+          >
+            <mat-icon>add</mat-icon>
+            <ng-container i18n>Add Project</ng-container>
+          </a>
+        }
         @if (projects.length > 0) {
           <a
             mat-stroked-button

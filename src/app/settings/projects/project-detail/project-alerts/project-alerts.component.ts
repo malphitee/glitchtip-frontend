@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild, inject, input } from "@angular/core";
+import { OrganizationsService } from "src/app/api/organizations.service";
 import { ProjectAlertsService } from "./project-alerts.service";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
 import { AlertFormComponent } from "./alert-form/alert-form.component";
@@ -34,6 +35,7 @@ type AlertRecipient = components["schemas"]["AlertRecipientSchema"];
 })
 export class ProjectAlertsComponent implements OnInit {
   #service = inject(ProjectAlertsService);
+  organizationsService = inject(OrganizationsService);
   dialog = inject(MatDialog);
   orgSlug = input.required<string>();
   projectSlug = input.required<string>();
@@ -53,6 +55,7 @@ export class ProjectAlertsComponent implements OnInit {
   recipientDialogOpen = this.#service.recipientDialogOpen;
   newAlertLoading = this.#service.newAlertLoading;
   newAlertError = this.#service.newAlertError;
+  accessProjectWrite = this.organizationsService.accessProjectWrite;
 
   ngOnInit(): void {
     this.#service.setParams(this.orgSlug(), this.projectSlug());
