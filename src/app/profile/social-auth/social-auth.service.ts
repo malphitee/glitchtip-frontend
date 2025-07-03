@@ -24,16 +24,16 @@ export class SocialAuthService extends StatefulService<SocialAuthState> {
   user = computed(() => {
     const userDetails = this.userService.user();
     const socialApps = this.socialApps();
-    let socialAccountsWithNames = userDetails?.identities.map(
-      (socialAccount) => {
-        return {
-          ...socialAccount,
-          name: socialApps.find(
-            (socialApp) => socialApp.provider === socialAccount.provider,
-          )?.name,
-        };
-      },
-    );
+    let socialAccountsWithNames = userDetails?.identities
+      ? userDetails?.identities.map((socialAccount) => {
+          return {
+            ...socialAccount,
+            name: socialApps.find(
+              (socialApp) => socialApp.provider === socialAccount.provider,
+            )?.name,
+          };
+        })
+      : [];
     return {
       ...userDetails,
       identities: socialAccountsWithNames,
