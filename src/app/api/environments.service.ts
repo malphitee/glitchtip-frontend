@@ -49,7 +49,11 @@ export class EnvironmentsService {
   environments = computed(() =>
     this.projectSlug() ? this.projectEnvironments() : this.orgEnvironments(),
   );
-  environmentNames = computed(() => this.environments().map((env) => env.name));
+
+  environmentNames = computed(() => {
+    const environments = this.environments();
+    return [...new Set(environments.map((env) => env.name))];
+  });
 
   reload() {
     this.#orgEnvironmentsResource.reload();
