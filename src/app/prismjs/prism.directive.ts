@@ -12,6 +12,7 @@ import { GRAMMAR_MAPPINGS, PRISM_SUPPORTED_GRAMMAR } from "./constants";
 
 import "prismjs/plugins/line-numbers/prism-line-numbers";
 import "prismjs/plugins/line-highlight/prism-line-highlight";
+import "prismjs/components/prism-json";
 import "prismjs/components/prism-csharp";
 import "prismjs/components/prism-python";
 import "prismjs/components/prism-java";

@@ -1,5 +1,5 @@
-import { seedBackend, requestLogin } from "./utils.cy";
-import { organization } from "../fixtures/variables";
+import { seedBackend, requestLogin, getDSN, uniqueId } from "./utils.cy";
+import { organization, project } from "../fixtures/variables";
 
 describe("Issues Page", () => {
   beforeEach(() => {
@@ -42,4 +42,56 @@ describe("Issues Page", () => {
       cy.get('[data-cy="list-title"]').contains("Issues (55)");
     }
   );
+
+  it("should test event detail request body structured and raw views", function () {
+    const testEvent = {
+      message: "Test Event with POST Body",
+      level: "error",
+      event_id: uniqueId(),
+      platform: "javascript",
+      sdk: {
+        name: "sentry.javascript.browser",
+        packages: [{ name: "npm:@sentry/browser", version: "5.29.2" }],
+        version: "5.29.2",
+      },
+      timestamp: Date.now() / 1000,
+      request: {
+        url: "http://localhost:4201/api/test",
+        method: "POST",
+        data: {
+          a: "foo",
+          b: [1, 2]
+        },
+        headers: {
+          "Content-Type": "application/json",
+          "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:87.0) Gecko/20100101 Firefox/87.0"
+        }
+      }
+    };
+    cy.visit(`/${organization.slug}/issues`);
+    cy.wait(1000);
+    cy.get("gt-project-filter-bar mat-expansion-panel-header").click();
+    cy.get("gt-project-filter-bar").contains(project.name).click();
+    cy.get("[data-test-dsn]")
+      .invoke("val")
+      .then((dsn) => {
+        const url = getDSN(dsn as string);
+        cy.request("POST", url, testEvent);
+        cy.wait(3000);
+        cy.visit(`/${organization.slug}/issues`);
+        cy.wait(2000);
+        cy.get(".title-cell").find("a").first().click();
+        cy.wait(2000);
+        cy.get('mat-button-toggle[value="structured"]').should('have.class', 'mat-button-toggle-checked');
+        cy.get('gt-entry-data').contains('a').parent().should('contain', 'foo');
+        cy.get('gt-entry-data').contains('b').parent().should('contain', '[1,2]');
+        cy.get('mat-button-toggle[value="raw"]').click();
+        cy.wait(500);
+        cy.get('mat-button-toggle[value="raw"]').should('have.class', 'mat-button-toggle-checked');
+        cy.get('pre code[gtPrism]').should('contain', '"a": "foo"');
+        cy.get('pre code[gtPrism]').should('contain', '"b": [');
+        cy.get('pre code[gtPrism]').should('contain', '1,');
+        cy.get('pre code[gtPrism]').should('contain', '2');
+      });
+  });
 });
