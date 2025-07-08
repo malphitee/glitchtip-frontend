@@ -1,5 +1,6 @@
 export const PRISM_SUPPORTED_GRAMMAR = [
   "javascript",
+  "json",
   "csharp",
   "python",
   "java",
