@@ -38,6 +38,7 @@ import { EnvironmentsService } from "src/app/api/environments.service";
 type Issue = components["schemas"]["IssueSchema"];
 
 @Component({
+  selector: "gt-issues-page",
   templateUrl: "./issues-page.component.html",
   styleUrls: ["./issues-page.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
