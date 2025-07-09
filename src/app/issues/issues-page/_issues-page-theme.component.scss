@@ -5,7 +5,7 @@
   $primary: map.get($theme, primary);
   $is-dark-theme: map.get($theme, is-dark);
 
-  gt-issues-page {
+  .issues-page-wrapper {
     .bulk-project-select {
       &__inner {
         border-bottom: 1px solid rgba(0, 0, 0, 0.12);
