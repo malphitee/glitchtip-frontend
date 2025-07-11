@@ -5,7 +5,7 @@ import {
   inject,
 } from "@angular/core";
 import { Router } from "@angular/router";
-import { AuthService } from "./auth.service";
+import { AuthService } from "../auth.service";
 
 // This component is used for waiting until the auth status
 // of a redirected social auth user is confirmed before

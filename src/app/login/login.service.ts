@@ -119,7 +119,7 @@ export class LoginService extends StatefulService<LoginState> {
     }
   }
 
-  socialLogin(provider: string, callbackUrl = "/finalize-login") {
+  socialLogin(provider: string, callbackUrl = "/login/finalize") {
     this.setState({ loading: true, errors: [] });
     this.authService.providerRedirect(provider, callbackUrl, "login");
   }
