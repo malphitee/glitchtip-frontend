@@ -1,7 +1,6 @@
 import { RouterStateSnapshot, Routes, TitleStrategy } from "@angular/router";
 import { Injectable } from "@angular/core";
 import { LoggedInComponent } from "./logged-in.component";
-import { FinalizeLogin } from "./finalize-login";
 import { alreadyLoggedInGuard, loggedInGuard } from "./guards";
 import { OrganizationFrameComponent } from "./organization/organization.component";
 
@@ -14,7 +13,8 @@ export const routes: Routes = [
   },
   {
     path: "finalize-login",
-    component: FinalizeLogin,
+    loadComponent: () =>
+      import("./finalize-login").then((m) => m.FinalizeLogin),
     canActivate: [alreadyLoggedInGuard],
     title: "Finalize Login",
   },

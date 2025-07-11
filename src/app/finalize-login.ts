@@ -11,7 +11,7 @@ import { AuthService } from "./auth.service";
 // of a redirected social auth user is confirmed before
 // redirect to the login page or inside the app
 @Component({
-  template: "",
+  template: "<span i18n>Finalizing your login</span>",
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FinalizeLogin {
