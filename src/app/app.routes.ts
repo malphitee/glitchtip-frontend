@@ -1,6 +1,7 @@
 import { RouterStateSnapshot, Routes, TitleStrategy } from "@angular/router";
 import { Injectable } from "@angular/core";
 import { LoggedInComponent } from "./logged-in.component";
+import { FinalizeLogin } from "./finalize-login";
 import { alreadyLoggedInGuard, loggedInGuard } from "./guards";
 import { OrganizationFrameComponent } from "./organization/organization.component";
 
@@ -10,6 +11,12 @@ export const routes: Routes = [
     loadChildren: () => import("./login/routes"),
     canActivate: [alreadyLoggedInGuard],
     title: "Log In",
+  },
+  {
+    path: "finalize-login",
+    component: FinalizeLogin,
+    canActivate: [alreadyLoggedInGuard],
+    title: "Finalize Login",
   },
   {
     path: "register",
