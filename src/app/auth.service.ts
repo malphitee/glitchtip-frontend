@@ -45,19 +45,18 @@ export class AuthService {
     if (data) {
       this.isAuthenticated.set(data.meta.is_authenticated);
       this.initialized.set(true);
+      return;
     }
-    if (error) {
-      if (error.status === 401) {
-        this.isAuthenticated.set(false);
-        if (error.data.flows.find((flow) => flow.id === "mfa_authenticate")) {
-          this.mfaFlows.set(error.data.flows);
-        }
-        this.initialized.set(true);
-      } else {
-        this.initialized.set(true);
-        throw new Error("Unable to check auth status");
+    if (error && error.status === 401) {
+      this.isAuthenticated.set(false);
+      if (error.data.flows.find((flow) => flow.id === "mfa_authenticate")) {
+        this.mfaFlows.set(error.data.flows);
       }
+      this.initialized.set(true);
+      return;
     }
+    this.initialized.set(true);
+    throw new Error("Unable to check auth status");
   }
 
   async login(email: string, password: string) {

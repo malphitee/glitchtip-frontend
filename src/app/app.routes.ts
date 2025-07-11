@@ -12,6 +12,13 @@ export const routes: Routes = [
     title: "Log In",
   },
   {
+    path: "finalize-login",
+    loadComponent: () =>
+      import("./finalize-login").then((m) => m.FinalizeLogin),
+    canActivate: [alreadyLoggedInGuard],
+    title: "Finalize Login",
+  },
+  {
     path: "register",
     loadChildren: () => import("./register/routes"),
     canActivate: [alreadyLoggedInGuard],
