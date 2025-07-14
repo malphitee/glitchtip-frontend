@@ -6,7 +6,7 @@ Not sure which? Elestio and Pikapods both support GlitchTip via a revenue share 
 
 ### System Requirements
 
-GlitchTip requires PostgreSQL (13+), Redis/Valkey, a web service, and a worker service.
+GlitchTip requires PostgreSQL (14+), Redis/Valkey, a web service, and a worker service.
 
 - Recommended system requirements: 1GB RAM, x86 or arm64 CPU
 - Minimum system requirements: 512MB RAM + swap
