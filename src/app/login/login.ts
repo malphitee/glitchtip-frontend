@@ -28,8 +28,8 @@ type SocialApp = components["schemas"]["SocialAppSchema"];
 
 @Component({
   selector: "gt-login",
-  templateUrl: "./login.component.html",
-  styleUrls: ["./login.component.scss"],
+  templateUrl: "./login.html",
+  styleUrls: ["./login.scss"],
   imports: [
     MatCardModule,
     MarkdownComponent,
