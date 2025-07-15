@@ -7,9 +7,16 @@ import { OrganizationFrameComponent } from "./organization/organization.componen
 export const routes: Routes = [
   {
     path: "login",
+    pathMatch: "full",
     loadChildren: () => import("./login/routes"),
     canActivate: [alreadyLoggedInGuard],
     title: "Log In",
+  },
+    {
+    path: "login/finalize",
+    loadComponent: () =>
+      import("./login/finalize-login").then((m) => m.FinalizeLogin),
+    title: "Finalize Login",
   },
   {
     path: "register",
