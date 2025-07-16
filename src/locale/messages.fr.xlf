@@ -619,6 +619,18 @@
         <target> Purchase support: <pc id="0" equivStart="START_LINK" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;mailto:sales@glitchtip.com?subject=Purchase support inquiry&quot; &gt;" dispEnd="&lt;/a &gt;">sales@glitchtip.com</pc></target>
       </segment>
     </unit>
+    <unit id="1223506099460240555">
+      <segment state="initial">
+        <source>There was an error processing your request</source>
+        <target>There was an error processing your request</target>
+      </segment>
+    </unit>
+    <unit id="6410378746872498039">
+      <segment state="initial">
+        <source>There were errors while processing your request</source>
+        <target>There were errors while processing your request</target>
+      </segment>
+    </unit>
     <unit id="1830742686550996935">
       <segment state="initial">
         <source>This organization has no projects.</source>
@@ -645,8 +657,8 @@
     </unit>
     <unit id="100331146953492785">
       <segment state="initial">
-        <source>Connect your <ph id="0" equiv="INTERPOLATION" disp="{{ activeProjectPlatformName() }}"/> project to GlitchTip</source>
-        <target>Connect your <ph id="0" equiv="INTERPOLATION" disp="{{ activeProjectPlatformName() }}"/> project to GlitchTip</target>
+        <source>Connect your <ph id="0" equiv="INTERPOLATION" disp="{{ activeProjectPlatformName$ | async }}"/> project to GlitchTip</source>
+        <target>Connect your <ph id="0" equiv="INTERPOLATION" disp="{{ activeProjectPlatformName$ | async }}"/> project to GlitchTip</target>
       </segment>
     </unit>
     <unit id="3647474424920112919">
@@ -655,10 +667,10 @@
         <target>Connect your project to GlitchTip</target>
       </segment>
     </unit>
-    <unit id="177080935354192505">
+    <unit id="1120098013104989112">
       <segment state="initial">
-        <source>If you go to this project&apos;s <pc id="0" equivStart="START_LINK" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a [routerLink]=&quot;[ &apos;/&apos;, activeOrganizationSlug(), &apos;settings&apos;, &apos;projects&apos;, activeProjectSlug(), ]&quot; &gt;" dispEnd="&lt;/a &gt;"> settings page</pc>, you can pick a platform. If you do, you&apos;ll get more specific instructions about how to get started. </source>
-        <target>If you go to this project&apos;s <pc id="0" equivStart="START_LINK" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a [routerLink]=&quot;[ &apos;/&apos;, activeOrganizationSlug(), &apos;settings&apos;, &apos;projects&apos;, activeProjectSlug(), ]&quot; &gt;" dispEnd="&lt;/a &gt;"> settings page</pc>, you can pick a platform. If you do, you&apos;ll get more specific instructions about how to get started. </target>
+        <source>If you go to this project&apos;s <pc id="0" equivStart="START_LINK" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a [routerLink]=&quot;[ &apos;/&apos;, activeOrganizationSlug$ | async, &apos;settings&apos;, &apos;projects&apos;, activeProjectSlug$ | async ]&quot; &gt;" dispEnd="&lt;/a &gt;"> settings page</pc>, you can pick a platform. If you do, you&apos;ll get more specific instructions about how to get started.</source>
+        <target>If you go to this project&apos;s <pc id="0" equivStart="START_LINK" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a [routerLink]=&quot;[ &apos;/&apos;, activeOrganizationSlug$ | async, &apos;settings&apos;, &apos;projects&apos;, activeProjectSlug$ | async ]&quot; &gt;" dispEnd="&lt;/a &gt;"> settings page</pc>, you can pick a platform. If you do, you&apos;ll get more specific instructions about how to get started.</target>
       </segment>
     </unit>
     <unit id="4739937000925855165">
@@ -895,22 +907,22 @@
         <target>File storage:</target>
       </segment>
     </unit>
-    <unit id="1651520185990416775">
+    <unit id="7229999489442894650">
       <segment state="initial">
-        <source>Total <pc id="0" equivStart="START_LINK" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a [routerLink]=&quot;[]&quot; (click)=&quot;openEventInfoDialog()&quot; &gt;" dispEnd="&lt;/a &gt;">events</pc> used in billing period: <ph id="1" equiv="INTERPOLATION" disp="{{ count.total }}"/> </source>
-        <target>Total <pc id="0" equivStart="START_LINK" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a [routerLink]=&quot;[]&quot; (click)=&quot;openEventInfoDialog()&quot; &gt;" dispEnd="&lt;/a &gt;">events</pc> used in billing period: <ph id="1" equiv="INTERPOLATION" disp="{{ count.total }}"/> </target>
+        <source>Total <pc id="0" equivStart="START_LINK" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a [routerLink]=&quot;[]&quot; (click)=&quot;openEventInfoDialog()&quot; &gt;" dispEnd="&lt;/a &gt;">events</pc> used in billing period: <ph id="1" equiv="INTERPOLATION" disp="{{ count.total }}"/></source>
+        <target>Total <pc id="0" equivStart="START_LINK" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a [routerLink]=&quot;[]&quot; (click)=&quot;openEventInfoDialog()&quot; &gt;" dispEnd="&lt;/a &gt;">events</pc> used in billing period: <ph id="1" equiv="INTERPOLATION" disp="{{ count.total }}"/></target>
       </segment>
     </unit>
     <unit id="1098433909560821849">
       <segment state="initial">
-        <source>Start date for this plan: <ph id="0" equiv="INTERPOLATION" disp="{{ subscription.startDate | date }}"/></source>
-        <target>Start date for this plan: <ph id="0" equiv="INTERPOLATION" disp="{{ subscription.startDate | date }}"/></target>
+        <source>Start date for this plan: <ph id="0" equiv="INTERPOLATION" disp="{{ subscription.start_date | date }}"/></source>
+        <target>Start date for this plan: <ph id="0" equiv="INTERPOLATION" disp="{{ subscription.start_date | date }}"/></target>
       </segment>
     </unit>
     <unit id="1219619838898772490">
       <segment state="initial">
-        <source>Plan cost: <ph id="0" equiv="INTERPOLATION" disp="{{ subscription.effectivePrice | currency }}"/></source>
-        <target>Plan cost: <ph id="0" equiv="INTERPOLATION" disp="{{ subscription.effectivePrice | currency }}"/></target>
+        <source>Plan cost: <ph id="0" equiv="INTERPOLATION" disp="{{ subscription.mainUnitPrice | currency }}"/></source>
+        <target>Plan cost: <ph id="0" equiv="INTERPOLATION" disp="{{ subscription.mainUnitPrice | currency }}"/></target>
       </segment>
     </unit>
     <unit id="5875130684997376720">
@@ -933,14 +945,20 @@
     </unit>
     <unit id="5618100320383468888">
       <segment state="initial">
-        <source>Billing period: <ph id="0" equiv="INTERPOLATION" disp="{{ subscription.currentPeriodStart | date }}"/> to <ph id="1" equiv="INTERPOLATION_1" disp="{{ subscription.currentPeriodEnd | date }}"/></source>
-        <target>Billing period: <ph id="0" equiv="INTERPOLATION" disp="{{ subscription.currentPeriodStart | date }}"/> to <ph id="1" equiv="INTERPOLATION_1" disp="{{ subscription.currentPeriodEnd | date }}"/></target>
+        <source>Billing period: <ph id="0" equiv="INTERPOLATION" disp="{{ subscription.current_period_start | date }}"/> to <ph id="1" equiv="INTERPOLATION_1" disp="{{ subscription.current_period_end | date }}"/></source>
+        <target>Billing period: <ph id="0" equiv="INTERPOLATION" disp="{{ subscription.current_period_start | date }}"/> to <ph id="1" equiv="INTERPOLATION_1" disp="{{ subscription.current_period_end | date }}"/></target>
       </segment>
     </unit>
-    <unit id="7486830422791899026">
+    <unit id="6147245107718647120">
       <segment state="initial">
-        <source>If you have questions about your subscription, please contact us at <pc id="0" equivStart="START_LINK" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;mailto:{{ billingEmail }}&quot;&gt;" dispEnd="&lt;/a &gt;"><ph id="1" equiv="INTERPOLATION" disp="{{ billingEmail }}"/></pc>. </source>
-        <target>If you have questions about your subscription, please contact us at <pc id="0" equivStart="START_LINK" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;mailto:{{ billingEmail }}&quot;&gt;" dispEnd="&lt;/a &gt;"><ph id="1" equiv="INTERPOLATION" disp="{{ billingEmail }}"/></pc>. </target>
+        <source>If you have questions about your subscription, please contact us at <pc id="0" equivStart="START_LINK" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;mailto:{{ billingEmail }}&quot;&gt;" dispEnd="&lt;/a &gt;"><ph id="1" equiv="INTERPOLATION" disp="{{ billingEmail }}"/></pc>.</source>
+        <target>If you have questions about your subscription, please contact us at <pc id="0" equivStart="START_LINK" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;mailto:{{ billingEmail }}&quot;&gt;" dispEnd="&lt;/a &gt;"><ph id="1" equiv="INTERPOLATION" disp="{{ billingEmail }}"/></pc>.</target>
+      </segment>
+    </unit>
+    <unit id="6095052631454715389">
+      <segment state="initial">
+        <source>Manage Subscription</source>
+        <target>Manage Subscription</target>
       </segment>
     </unit>
     <unit id="5799782740550832490">
@@ -1267,16 +1285,22 @@
         <target>Interval (seconds)</target>
       </segment>
     </unit>
-    <unit id="8658719885168030493">
+    <unit id="4140044682969484412">
       <segment state="initial">
-        <source>Must be 60 or higher.</source>
-        <target>Must be 60 or higher.</target>
+        <source> Must be 60 or higher. </source>
+        <target> Must be 60 or higher. </target>
       </segment>
     </unit>
-    <unit id="2168400886938239735">
+    <unit id="3698833851158228660">
       <segment state="initial">
-        <source>Enter an integer.</source>
-        <target>Enter an integer.</target>
+        <source> Must be less than 86400 (24 hours). </source>
+        <target> Must be less than 86400 (24 hours). </target>
+      </segment>
+    </unit>
+    <unit id="3939246603683357406">
+      <segment state="initial">
+        <source>Enter an integer. </source>
+        <target>Enter an integer. </target>
       </segment>
     </unit>
     <unit id="5956316725115867558">
@@ -1341,8 +1365,8 @@
     </unit>
     <unit id="8916408973006340984">
       <segment state="initial">
-        <source>GlitchTip <ph id="0" equiv="INTERPOLATION" disp="{{ version() }}"/></source>
-        <target>GlitchTip <ph id="0" equiv="INTERPOLATION" disp="{{ version() }}"/></target>
+        <source>GlitchTip <ph id="0" equiv="INTERPOLATION" disp="{{ version$ | async }}"/></source>
+        <target>GlitchTip <ph id="0" equiv="INTERPOLATION" disp="{{ version$ | async }}"/></target>
       </segment>
     </unit>
     <unit id="6582573664846559511">
@@ -1671,390 +1695,6 @@
       <segment state="initial">
         <source>minutes</source>
         <target>minutes</target>
-      </segment>
-    </unit>
-    <unit id="168526128992551302">
-      <segment state="initial">
-        <source>You have been added to <ph id="0" equiv="PH" disp="data.orgUser.organization.name"/>.</source>
-        <target>You have been added to <ph id="0" equiv="PH" disp="data.orgUser.organization.name"/>.</target>
-      </segment>
-    </unit>
-    <unit id="8848756484835270621">
-      <segment state="initial">
-        <source> There was an error, probably because you tried to join an organization that you&apos;re already a part of. </source>
-        <target> There was an error, probably because you tried to join an organization that you&apos;re already a part of. </target>
-      </segment>
-    </unit>
-    <unit id="1874370182429640371">
-      <segment state="initial">
-        <source> There was an error. Try again later. </source>
-        <target> There was an error. Try again later. </target>
-      </segment>
-    </unit>
-    <unit id="8396934914861741559">
-      <segment state="initial">
-        <source> This invitation link expired or is invalid. Please issue a new invitation request. </source>
-        <target> This invitation link expired or is invalid. Please issue a new invitation request. </target>
-      </segment>
-    </unit>
-    <unit id="1417995330725483974">
-      <segment state="initial">
-        <source>The name of your organization has been updated to <ph id="0" equiv="PH" disp="data.name"/></source>
-        <target>The name of your organization has been updated to <ph id="0" equiv="PH" disp="data.name"/></target>
-      </segment>
-    </unit>
-    <unit id="6566431624195050143">
-      <segment state="initial">
-        <source>Only users with a role of manager or above can update organizations.</source>
-        <target>Only users with a role of manager or above can update organizations.</target>
-      </segment>
-    </unit>
-    <unit id="7131676118619088880">
-      <segment state="initial">
-        <source>Only users with a role of manager or above can delete organizations.</source>
-        <target>Only users with a role of manager or above can delete organizations.</target>
-      </segment>
-    </unit>
-    <unit id="5974237347502898380">
-      <segment state="initial">
-        <source>Email invites have been sent to the addresses you provided.</source>
-        <target>Email invites have been sent to the addresses you provided.</target>
-      </segment>
-    </unit>
-    <unit id="7753116604377136747">
-      <segment state="initial">
-        <source>An email invite has been sent to</source>
-        <target>An email invite has been sent to</target>
-      </segment>
-    </unit>
-    <unit id="3944070578105872601">
-      <segment state="initial">
-        <source>There was an error. Please try again.</source>
-        <target>There was an error. Please try again.</target>
-      </segment>
-    </unit>
-    <unit id="7823379790822798031">
-      <segment state="initial">
-        <source>Too many invitations attempted. Not all invitations were sent. Please try again later</source>
-        <target>Too many invitations attempted. Not all invitations were sent. Please try again later</target>
-      </segment>
-    </unit>
-    <unit id="7831613273502162805">
-      <segment state="initial">
-        <source>Too many invitations attempted. Please try again later.</source>
-        <target>Too many invitations attempted. Please try again later.</target>
-      </segment>
-    </unit>
-    <unit id="2499193577100705366">
-      <segment state="initial">
-        <source>You have left <ph id="0" equiv="PH" disp="data.slug"/></source>
-        <target>You have left <ph id="0" equiv="PH" disp="data.slug"/></target>
-      </segment>
-    </unit>
-    <unit id="4000360891880872696">
-      <segment state="initial">
-        <source>You joined <ph id="0" equiv="PH" disp="data.slug"/></source>
-        <target>You joined <ph id="0" equiv="PH" disp="data.slug"/></target>
-      </segment>
-    </unit>
-    <unit id="712588482447231923">
-      <segment state="initial">
-        <source>Your team slug has been changed to #<ph id="0" equiv="PH" disp="data.slug"/></source>
-        <target>Your team slug has been changed to #<ph id="0" equiv="PH" disp="data.slug"/></target>
-      </segment>
-    </unit>
-    <unit id="2815134129784182138">
-      <segment state="initial">
-        <source>Something went wrong. Try reloading the page.</source>
-        <target>Something went wrong. Try reloading the page.</target>
-      </segment>
-    </unit>
-    <unit id="6270991639782521904">
-      <segment state="initial">
-        <source>There was an error deleting this comment. Please try again.</source>
-        <target>There was an error deleting this comment. Please try again.</target>
-      </segment>
-    </unit>
-    <unit id="1655069838040430737">
-      <segment state="initial">
-        <source>Event Details</source>
-        <target>Event Details</target>
-      </segment>
-    </unit>
-    <unit id="689538422335046890">
-      <segment state="initial">
-        <source>User Reports</source>
-        <target>User Reports</target>
-      </segment>
-    </unit>
-    <unit id="855933412451231239">
-      <segment state="initial">
-        <source>Comments </source>
-        <target>Comments </target>
-      </segment>
-    </unit>
-    <unit id="3807699453257291879">
-      <segment state="initial">
-        <source>Comments</source>
-        <target>Comments</target>
-      </segment>
-    </unit>
-    <unit id="1554838717931748985">
-      <segment state="initial">
-        <source>Merged</source>
-        <target>Merged</target>
-      </segment>
-    </unit>
-    <unit id="525202038336328287">
-      <segment state="initial">
-        <source>Issue <ph id="0" equiv="PH" disp="id"/> has been deleted.</source>
-        <target>Issue <ph id="0" equiv="PH" disp="id"/> has been deleted.</target>
-      </segment>
-    </unit>
-    <unit id="3206542606001340679">
-      <segment state="initial">
-        <source>Merge</source>
-        <target>Merge</target>
-      </segment>
-    </unit>
-    <unit id="6318415796179463435">
-      <segment state="initial">
-        <source>Merge issues</source>
-        <target>Merge issues</target>
-      </segment>
-    </unit>
-    <unit id="9058835702501543425">
-      <segment state="initial">
-        <source>This action will merge your selected issues into a single issue.</source>
-        <target>This action will merge your selected issues into a single issue.</target>
-      </segment>
-    </unit>
-    <unit id="2347464874722958215">
-      <segment state="initial">
-        <source>There was an error when attempting to load issues.</source>
-        <target>There was an error when attempting to load issues.</target>
-      </segment>
-    </unit>
-    <unit id="2764329308967524576">
-      <segment state="initial">
-        <source>Error, unable to update issue</source>
-        <target>Error, unable to update issue</target>
-      </segment>
-    </unit>
-    <unit id="1277316148999198227">
-      <segment state="initial">
-        <source>Unmerge</source>
-        <target>Unmerge</target>
-      </segment>
-    </unit>
-    <unit id="21729799810425671">
-      <segment state="initial">
-        <source>No title found for this merged issue</source>
-        <target>No title found for this merged issue</target>
-      </segment>
-    </unit>
-    <unit id="3869317699802216328">
-      <segment state="initial">
-        <source>Unable to unmerge selected hashes.</source>
-        <target>Unable to unmerge selected hashes.</target>
-      </segment>
-    </unit>
-    <unit id="7828159368784233084">
-      <segment state="initial">
-        <source>Unmerged seleced hashes.</source>
-        <target>Unmerged seleced hashes.</target>
-      </segment>
-    </unit>
-    <unit id="339150322539484059">
-      <segment state="initial">
-        <source>Finalizing your login</source>
-        <target>Finalizing your login</target>
-      </segment>
-    </unit>
-    <unit id="4461430420011995077">
-      <segment state="initial">
-        <source>Delete Auth Token</source>
-        <target>Delete Auth Token</target>
-      </segment>
-    </unit>
-    <unit id="3333500469510040036">
-      <segment state="initial">
-        <source>Are you sure you want to delete this authentication token?</source>
-        <target>Are you sure you want to delete this authentication token?</target>
-      </segment>
-    </unit>
-    <unit id="7022070615528435141">
-      <segment state="initial">
-        <source>Delete</source>
-        <target>Delete</target>
-      </segment>
-    </unit>
-    <unit id="5963361173550459881">
-      <segment state="initial">
-        <source> There was an error deleting your token, please try again. </source>
-        <target> There was an error deleting your token, please try again. </target>
-      </segment>
-    </unit>
-    <unit id="2420295336574381180">
-      <segment state="initial">
-        <source>Confirming email…</source>
-        <target>Confirming email…</target>
-      </segment>
-    </unit>
-    <unit id="2047102130540283011">
-      <segment state="initial">
-        <source> This e-mail confirmation link expired or is invalid. Please issue a new e-mail confirmation request. </source>
-        <target> This e-mail confirmation link expired or is invalid. Please issue a new e-mail confirmation request. </target>
-      </segment>
-    </unit>
-    <unit id="344300948538394896">
-      <segment state="initial">
-        <source>Your email address has been confirmed.</source>
-        <target>Your email address has been confirmed.</target>
-      </segment>
-    </unit>
-    <unit id="7233514443257462364">
-      <segment state="initial">
-        <source>There was a problem. Try again later.</source>
-        <target>There was a problem. Try again later.</target>
-      </segment>
-    </unit>
-    <unit id="3685661039544326124">
-      <segment state="initial">
-        <source><ph id="0" equiv="PH" disp="email"/> has been removed from your account.</source>
-        <target><ph id="0" equiv="PH" disp="email"/> has been removed from your account.</target>
-      </segment>
-    </unit>
-    <unit id="8983558994144621668">
-      <segment state="initial">
-        <source><ph id="0" equiv="PH" disp="email"/> is now your primary email address.</source>
-        <target><ph id="0" equiv="PH" disp="email"/> is now your primary email address.</target>
-      </segment>
-    </unit>
-    <unit id="781140390035637726">
-      <segment state="initial">
-        <source>Connecting to @sentry/wizard…</source>
-        <target>Connecting to @sentry/wizard…</target>
-      </segment>
-    </unit>
-    <unit id="1232610167578746045">
-      <segment state="initial">
-        <source>Unable to connect to @sentry/wizard</source>
-        <target>Unable to connect to @sentry/wizard</target>
-      </segment>
-    </unit>
-    <unit id="5521710262088082373">
-      <segment state="initial">
-        <source>Successfully connected to @sentry/wizard.</source>
-        <target>Successfully connected to @sentry/wizard.</target>
-      </segment>
-    </unit>
-    <unit id="6776045478354313726">
-      <segment state="initial">
-        <source>Successfully updated <ph id="0" equiv="PH" disp="data.email"/>&apos;s role to <ph id="1" equiv="PH_1" disp="data.roleName"/></source>
-        <target>Successfully updated <ph id="0" equiv="PH" disp="data.email"/>&apos;s role to <ph id="1" equiv="PH_1" disp="data.roleName"/></target>
-      </segment>
-    </unit>
-    <unit id="45527735672619032">
-      <segment state="initial">
-        <source>Successfully transferred organization account ownership to <ph id="0" equiv="PH" disp="data.email"/>.</source>
-        <target>Successfully transferred organization account ownership to <ph id="0" equiv="PH" disp="data.email"/>.</target>
-      </segment>
-    </unit>
-    <unit id="627180059350047308">
-      <segment state="initial">
-        <source>Error attempting to remove <ph id="0" equiv="PH" disp="member.email"/> from organization</source>
-        <target>Error attempting to remove <ph id="0" equiv="PH" disp="member.email"/> from organization</target>
-      </segment>
-    </unit>
-    <unit id="2323166636157815284">
-      <segment state="initial">
-        <source>Successfully removed <ph id="0" equiv="PH" disp="member.email"/> from organization</source>
-        <target>Successfully removed <ph id="0" equiv="PH" disp="member.email"/> from organization</target>
-      </segment>
-    </unit>
-    <unit id="8913962995110224982">
-      <segment state="initial">
-        <source>Remove organization</source>
-        <target>Remove organization</target>
-      </segment>
-    </unit>
-    <unit id="2110065830957672842">
-      <segment state="initial">
-        <source>Are you sure you want to remove <ph id="0" equiv="PH" disp="name"/>? You will permanently lose all projects and teams associated with it.</source>
-        <target>Are you sure you want to remove <ph id="0" equiv="PH" disp="name"/>? You will permanently lose all projects and teams associated with it.</target>
-      </segment>
-    </unit>
-    <unit id="4814285799071780083">
-      <segment state="initial">
-        <source>Remove</source>
-        <target>Remove</target>
-      </segment>
-    </unit>
-    <unit id="3976301030203826563">
-      <segment state="initial">
-        <source>You lack permission to create a new project</source>
-        <target>You lack permission to create a new project</target>
-      </segment>
-    </unit>
-    <unit id="917481646578897614">
-      <segment state="initial">
-        <source><ph id="0" equiv="PH" disp="data.name"/> has been created</source>
-        <target><ph id="0" equiv="PH" disp="data.name"/> has been created</target>
-      </segment>
-    </unit>
-    <unit id="6193408969997737484">
-      <segment state="initial">
-        <source>There was an error loading your alerts. Try refreshing the page.</source>
-        <target>There was an error loading your alerts. Try refreshing the page.</target>
-      </segment>
-    </unit>
-    <unit id="806152040251876311">
-      <segment state="initial">
-        <source>Success: Your recipient has been deleted</source>
-        <target>Success: Your recipient has been deleted</target>
-      </segment>
-    </unit>
-    <unit id="8592656378036261137">
-      <segment state="initial">
-        <source>Your project has been sucessfully deleted</source>
-        <target>Your project has been sucessfully deleted</target>
-      </segment>
-    </unit>
-    <unit id="7589121772315788199">
-      <segment state="initial">
-        <source>The name of your project has been updated to <ph id="0" equiv="PH" disp="resp.name"/></source>
-        <target>The name of your project has been updated to <ph id="0" equiv="PH" disp="resp.name"/></target>
-      </segment>
-    </unit>
-    <unit id="8455768552389044425">
-      <segment state="initial">
-        <source>You do not have permission to create a team</source>
-        <target>You do not have permission to create a team</target>
-      </segment>
-    </unit>
-    <unit id="4935617373107665748">
-      <segment state="initial">
-        <source><ph id="0" equiv="PH" disp="member.email"/> has been added to #<ph id="1" equiv="PH_1" disp="team.slug"/></source>
-        <target><ph id="0" equiv="PH" disp="member.email"/> has been added to #<ph id="1" equiv="PH_1" disp="team.slug"/></target>
-      </segment>
-    </unit>
-    <unit id="8781927759674212057">
-      <segment state="initial">
-        <source><ph id="0" equiv="PH" disp="memberEmail"/> has been removed from #<ph id="1" equiv="PH_1" disp="team.slug"/></source>
-        <target><ph id="0" equiv="PH" disp="memberEmail"/> has been removed from #<ph id="1" equiv="PH_1" disp="team.slug"/></target>
-      </segment>
-    </unit>
-    <unit id="751755198881789855">
-      <segment state="initial">
-        <source>Must be less than 32768.</source>
-        <target>Must be less than 32768.</target>
-      </segment>
-    </unit>
-    <unit id="7167798427319552621">
-      <segment state="initial">
-        <source>There was an error retrieving your uptime monitors.</source>
-        <target>There was an error retrieving your uptime monitors.</target>
       </segment>
     </unit>
   </file>
