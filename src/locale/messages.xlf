@@ -524,17 +524,12 @@
     </unit>
     <unit id="100331146953492785">
       <segment>
-        <source>Connect your <ph id="0" equiv="INTERPOLATION" disp="{{ activeProjectPlatformName$ | async }}"/> project to GlitchTip</source>
+        <source>Connect your <ph id="0" equiv="INTERPOLATION" disp="{{ activeProjectPlatformName() }}"/> project to GlitchTip</source>
       </segment>
     </unit>
-    <unit id="1120098013104989112">
+    <unit id="177080935354192505">
       <segment>
-        <source>If you go to this project&apos;s <pc id="0" equivStart="START_LINK" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a [routerLink]=&quot;[ &apos;/&apos;, activeOrganizationSlug$ | async, &apos;settings&apos;, &apos;projects&apos;, activeProjectSlug$ | async ]&quot; &gt;" dispEnd="&lt;/a &gt;"> settings page</pc>, you can pick a platform. If you do, you&apos;ll get more specific instructions about how to get started.</source>
-      </segment>
-    </unit>
-    <unit id="1223506099460240555">
-      <segment>
-        <source>There was an error processing your request</source>
+        <source>If you go to this project&apos;s <pc id="0" equivStart="START_LINK" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a [routerLink]=&quot;[ &apos;/&apos;, activeOrganizationSlug(), &apos;settings&apos;, &apos;projects&apos;, activeProjectSlug(), ]&quot; &gt;" dispEnd="&lt;/a &gt;"> settings page</pc>, you can pick a platform. If you do, you&apos;ll get more specific instructions about how to get started. </source>
       </segment>
     </unit>
     <unit id="1308044504532512434">
@@ -632,11 +627,6 @@
         <source>Most instructions will have a spot that says &quot;YOUR-GLITCHTIP-DSN-HERE&quot;. Copy the DSN and paste it into that spot.</source>
       </segment>
     </unit>
-    <unit id="6410378746872498039">
-      <segment>
-        <source>There were errors while processing your request</source>
-      </segment>
-    </unit>
     <unit id="6481795403650848876">
       <segment>
         <source>This page is showing instructions on how to connect GlitchTip to your project based on the platform you specified.</source>
@@ -699,7 +689,7 @@
     </unit>
     <unit id="1098433909560821849">
       <segment>
-        <source>Start date for this plan: <ph id="0" equiv="INTERPOLATION" disp="{{ subscription.start_date | date }}"/></source>
+        <source>Start date for this plan: <ph id="0" equiv="INTERPOLATION" disp="{{ subscription.startDate | date }}"/></source>
       </segment>
     </unit>
     <unit id="1109945939275542736">
@@ -709,7 +699,7 @@
     </unit>
     <unit id="1219619838898772490">
       <segment>
-        <source>Plan cost: <ph id="0" equiv="INTERPOLATION" disp="{{ subscription.mainUnitPrice | currency }}"/></source>
+        <source>Plan cost: <ph id="0" equiv="INTERPOLATION" disp="{{ subscription.effectivePrice | currency }}"/></source>
       </segment>
     </unit>
     <unit id="1678548018195726594">
@@ -839,7 +829,7 @@
     </unit>
     <unit id="5618100320383468888">
       <segment>
-        <source>Billing period: <ph id="0" equiv="INTERPOLATION" disp="{{ subscription.current_period_start | date }}"/> to <ph id="1" equiv="INTERPOLATION_1" disp="{{ subscription.current_period_end | date }}"/></source>
+        <source>Billing period: <ph id="0" equiv="INTERPOLATION" disp="{{ subscription.currentPeriodStart | date }}"/> to <ph id="1" equiv="INTERPOLATION_1" disp="{{ subscription.currentPeriodEnd | date }}"/></source>
       </segment>
     </unit>
     <unit id="5799782740550832490">
@@ -852,14 +842,9 @@
         <source>Billing</source>
       </segment>
     </unit>
-    <unit id="6095052631454715389">
+    <unit id="7486830422791899026">
       <segment>
-        <source>Manage Subscription</source>
-      </segment>
-    </unit>
-    <unit id="6147245107718647120">
-      <segment>
-        <source>If you have questions about your subscription, please contact us at <pc id="0" equivStart="START_LINK" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;mailto:{{ billingEmail }}&quot;&gt;" dispEnd="&lt;/a &gt;"><ph id="1" equiv="INTERPOLATION" disp="{{ billingEmail }}"/></pc>.</source>
+        <source>If you have questions about your subscription, please contact us at <pc id="0" equivStart="START_LINK" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;mailto:{{ billingEmail }}&quot;&gt;" dispEnd="&lt;/a &gt;"><ph id="1" equiv="INTERPOLATION" disp="{{ billingEmail }}"/></pc>. </source>
       </segment>
     </unit>
     <unit id="6168919365016053724">
@@ -882,9 +867,9 @@
         <source>To create a new team, press the &quot;Create Team&quot; button in the upper right.</source>
       </segment>
     </unit>
-    <unit id="7229999489442894650">
+    <unit id="1651520185990416775">
       <segment>
-        <source>Total <pc id="0" equivStart="START_LINK" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a [routerLink]=&quot;[]&quot; (click)=&quot;openEventInfoDialog()&quot; &gt;" dispEnd="&lt;/a &gt;">events</pc> used in billing period: <ph id="1" equiv="INTERPOLATION" disp="{{ count.total }}"/></source>
+        <source>Total <pc id="0" equivStart="START_LINK" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a [routerLink]=&quot;[]&quot; (click)=&quot;openEventInfoDialog()&quot; &gt;" dispEnd="&lt;/a &gt;">events</pc> used in billing period: <ph id="1" equiv="INTERPOLATION" disp="{{ count.total }}"/> </source>
       </segment>
     </unit>
     <unit id="7478140689790892603">
@@ -1032,11 +1017,6 @@
         <source>Expected Status</source>
       </segment>
     </unit>
-    <unit id="3698833851158228660">
-      <segment>
-        <source> Must be less than 86400 (24 hours). </source>
-      </segment>
-    </unit>
     <unit id="3724940541438351467">
       <segment>
         <source>Time in seconds GlitchTip will wait for a response from your app. Defaults to 20 seconds.</source>
@@ -1047,14 +1027,14 @@
         <source>Interval (seconds)</source>
       </segment>
     </unit>
-    <unit id="3939246603683357406">
+    <unit id="2168400886938239735">
       <segment>
-        <source>Enter an integer. </source>
+        <source>Enter an integer.</source>
       </segment>
     </unit>
-    <unit id="4140044682969484412">
+    <unit id="8658719885168030493">
       <segment>
-        <source> Must be 60 or higher. </source>
+        <source>Must be 60 or higher.</source>
       </segment>
     </unit>
     <unit id="4970236371480835408">
@@ -1234,7 +1214,7 @@
     </unit>
     <unit id="8916408973006340984">
       <segment>
-        <source>GlitchTip <ph id="0" equiv="INTERPOLATION" disp="{{ version$ | async }}"/></source>
+        <source>GlitchTip <ph id="0" equiv="INTERPOLATION" disp="{{ version() }}"/></source>
       </segment>
     </unit>
     <unit id="911145468998987410">
@@ -1412,6 +1392,326 @@
     <unit id="982745398054129955">
       <segment>
         <source>minutes</source>
+      </segment>
+    </unit>
+    <unit id="1232610167578746045">
+      <segment>
+        <source>Unable to connect to @sentry/wizard</source>
+      </segment>
+    </unit>
+    <unit id="1277316148999198227">
+      <segment>
+        <source>Unmerge</source>
+      </segment>
+    </unit>
+    <unit id="1417995330725483974">
+      <segment>
+        <source>The name of your organization has been updated to <ph id="0" equiv="PH" disp="data.name"/></source>
+      </segment>
+    </unit>
+    <unit id="1554838717931748985">
+      <segment>
+        <source>Merged</source>
+      </segment>
+    </unit>
+    <unit id="1655069838040430737">
+      <segment>
+        <source>Event Details</source>
+      </segment>
+    </unit>
+    <unit id="168526128992551302">
+      <segment>
+        <source>You have been added to <ph id="0" equiv="PH" disp="data.orgUser.organization.name"/>.</source>
+      </segment>
+    </unit>
+    <unit id="1874370182429640371">
+      <segment>
+        <source> There was an error. Try again later. </source>
+      </segment>
+    </unit>
+    <unit id="2047102130540283011">
+      <segment>
+        <source> This e-mail confirmation link expired or is invalid. Please issue a new e-mail confirmation request. </source>
+      </segment>
+    </unit>
+    <unit id="2110065830957672842">
+      <segment>
+        <source>Are you sure you want to remove <ph id="0" equiv="PH" disp="name"/>? You will permanently lose all projects and teams associated with it.</source>
+      </segment>
+    </unit>
+    <unit id="21729799810425671">
+      <segment>
+        <source>No title found for this merged issue</source>
+      </segment>
+    </unit>
+    <unit id="2323166636157815284">
+      <segment>
+        <source>Successfully removed <ph id="0" equiv="PH" disp="member.email"/> from organization</source>
+      </segment>
+    </unit>
+    <unit id="2347464874722958215">
+      <segment>
+        <source>There was an error when attempting to load issues.</source>
+      </segment>
+    </unit>
+    <unit id="2420295336574381180">
+      <segment>
+        <source>Confirming email…</source>
+      </segment>
+    </unit>
+    <unit id="2499193577100705366">
+      <segment>
+        <source>You have left <ph id="0" equiv="PH" disp="data.slug"/></source>
+      </segment>
+    </unit>
+    <unit id="2764329308967524576">
+      <segment>
+        <source>Error, unable to update issue</source>
+      </segment>
+    </unit>
+    <unit id="2815134129784182138">
+      <segment>
+        <source>Something went wrong. Try reloading the page.</source>
+      </segment>
+    </unit>
+    <unit id="3206542606001340679">
+      <segment>
+        <source>Merge</source>
+      </segment>
+    </unit>
+    <unit id="3333500469510040036">
+      <segment>
+        <source>Are you sure you want to delete this authentication token?</source>
+      </segment>
+    </unit>
+    <unit id="339150322539484059">
+      <segment>
+        <source>Finalizing your login</source>
+      </segment>
+    </unit>
+    <unit id="344300948538394896">
+      <segment>
+        <source>Your email address has been confirmed.</source>
+      </segment>
+    </unit>
+    <unit id="3685661039544326124">
+      <segment>
+        <source><ph id="0" equiv="PH" disp="email"/> has been removed from your account.</source>
+      </segment>
+    </unit>
+    <unit id="3807699453257291879">
+      <segment>
+        <source>Comments</source>
+      </segment>
+    </unit>
+    <unit id="3869317699802216328">
+      <segment>
+        <source>Unable to unmerge selected hashes.</source>
+      </segment>
+    </unit>
+    <unit id="3944070578105872601">
+      <segment>
+        <source>There was an error. Please try again.</source>
+      </segment>
+    </unit>
+    <unit id="3976301030203826563">
+      <segment>
+        <source>You lack permission to create a new project</source>
+      </segment>
+    </unit>
+    <unit id="4000360891880872696">
+      <segment>
+        <source>You joined <ph id="0" equiv="PH" disp="data.slug"/></source>
+      </segment>
+    </unit>
+    <unit id="4461430420011995077">
+      <segment>
+        <source>Delete Auth Token</source>
+      </segment>
+    </unit>
+    <unit id="45527735672619032">
+      <segment>
+        <source>Successfully transferred organization account ownership to <ph id="0" equiv="PH" disp="data.email"/>.</source>
+      </segment>
+    </unit>
+    <unit id="4814285799071780083">
+      <segment>
+        <source>Remove</source>
+      </segment>
+    </unit>
+    <unit id="4935617373107665748">
+      <segment>
+        <source><ph id="0" equiv="PH" disp="member.email"/> has been added to #<ph id="1" equiv="PH_1" disp="team.slug"/></source>
+      </segment>
+    </unit>
+    <unit id="525202038336328287">
+      <segment>
+        <source>Issue <ph id="0" equiv="PH" disp="id"/> has been deleted.</source>
+      </segment>
+    </unit>
+    <unit id="5521710262088082373">
+      <segment>
+        <source>Successfully connected to @sentry/wizard.</source>
+      </segment>
+    </unit>
+    <unit id="5963361173550459881">
+      <segment>
+        <source> There was an error deleting your token, please try again. </source>
+      </segment>
+    </unit>
+    <unit id="5974237347502898380">
+      <segment>
+        <source>Email invites have been sent to the addresses you provided.</source>
+      </segment>
+    </unit>
+    <unit id="6193408969997737484">
+      <segment>
+        <source>There was an error loading your alerts. Try refreshing the page.</source>
+      </segment>
+    </unit>
+    <unit id="6270991639782521904">
+      <segment>
+        <source>There was an error deleting this comment. Please try again.</source>
+      </segment>
+    </unit>
+    <unit id="627180059350047308">
+      <segment>
+        <source>Error attempting to remove <ph id="0" equiv="PH" disp="member.email"/> from organization</source>
+      </segment>
+    </unit>
+    <unit id="6318415796179463435">
+      <segment>
+        <source>Merge issues</source>
+      </segment>
+    </unit>
+    <unit id="6566431624195050143">
+      <segment>
+        <source>Only users with a role of manager or above can update organizations.</source>
+      </segment>
+    </unit>
+    <unit id="6776045478354313726">
+      <segment>
+        <source>Successfully updated <ph id="0" equiv="PH" disp="data.email"/>&apos;s role to <ph id="1" equiv="PH_1" disp="data.roleName"/></source>
+      </segment>
+    </unit>
+    <unit id="689538422335046890">
+      <segment>
+        <source>User Reports</source>
+      </segment>
+    </unit>
+    <unit id="7022070615528435141">
+      <segment>
+        <source>Delete</source>
+      </segment>
+    </unit>
+    <unit id="712588482447231923">
+      <segment>
+        <source>Your team slug has been changed to #<ph id="0" equiv="PH" disp="data.slug"/></source>
+      </segment>
+    </unit>
+    <unit id="7131676118619088880">
+      <segment>
+        <source>Only users with a role of manager or above can delete organizations.</source>
+      </segment>
+    </unit>
+    <unit id="7167798427319552621">
+      <segment>
+        <source>There was an error retrieving your uptime monitors.</source>
+      </segment>
+    </unit>
+    <unit id="7233514443257462364">
+      <segment>
+        <source>There was a problem. Try again later.</source>
+      </segment>
+    </unit>
+    <unit id="751755198881789855">
+      <segment>
+        <source>Must be less than 32768.</source>
+      </segment>
+    </unit>
+    <unit id="7589121772315788199">
+      <segment>
+        <source>The name of your project has been updated to <ph id="0" equiv="PH" disp="resp.name"/></source>
+      </segment>
+    </unit>
+    <unit id="7753116604377136747">
+      <segment>
+        <source>An email invite has been sent to</source>
+      </segment>
+    </unit>
+    <unit id="781140390035637726">
+      <segment>
+        <source>Connecting to @sentry/wizard…</source>
+      </segment>
+    </unit>
+    <unit id="7823379790822798031">
+      <segment>
+        <source>Too many invitations attempted. Not all invitations were sent. Please try again later</source>
+      </segment>
+    </unit>
+    <unit id="7828159368784233084">
+      <segment>
+        <source>Unmerged seleced hashes.</source>
+      </segment>
+    </unit>
+    <unit id="7831613273502162805">
+      <segment>
+        <source>Too many invitations attempted. Please try again later.</source>
+      </segment>
+    </unit>
+    <unit id="806152040251876311">
+      <segment>
+        <source>Success: Your recipient has been deleted</source>
+      </segment>
+    </unit>
+    <unit id="8396934914861741559">
+      <segment>
+        <source> This invitation link expired or is invalid. Please issue a new invitation request. </source>
+      </segment>
+    </unit>
+    <unit id="8455768552389044425">
+      <segment>
+        <source>You do not have permission to create a team</source>
+      </segment>
+    </unit>
+    <unit id="855933412451231239">
+      <segment>
+        <source>Comments </source>
+      </segment>
+    </unit>
+    <unit id="8592656378036261137">
+      <segment>
+        <source>Your project has been sucessfully deleted</source>
+      </segment>
+    </unit>
+    <unit id="8781927759674212057">
+      <segment>
+        <source><ph id="0" equiv="PH" disp="memberEmail"/> has been removed from #<ph id="1" equiv="PH_1" disp="team.slug"/></source>
+      </segment>
+    </unit>
+    <unit id="8848756484835270621">
+      <segment>
+        <source> There was an error, probably because you tried to join an organization that you&apos;re already a part of. </source>
+      </segment>
+    </unit>
+    <unit id="8913962995110224982">
+      <segment>
+        <source>Remove organization</source>
+      </segment>
+    </unit>
+    <unit id="8983558994144621668">
+      <segment>
+        <source><ph id="0" equiv="PH" disp="email"/> is now your primary email address.</source>
+      </segment>
+    </unit>
+    <unit id="9058835702501543425">
+      <segment>
+        <source>This action will merge your selected issues into a single issue.</source>
+      </segment>
+    </unit>
+    <unit id="917481646578897614">
+      <segment>
+        <source><ph id="0" equiv="PH" disp="data.name"/> has been created</source>
       </segment>
     </unit>
   </file>
