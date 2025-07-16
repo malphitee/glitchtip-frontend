@@ -136,13 +136,15 @@
         "extract-i18n": {
           "builder": "ng-extract-i18n-merge:ng-extract-i18n-merge",
           "options": {
-            "browserTarget": "glitchtip-frontend:build",
             "format": "xlf2",
             "outputPath": "src/locale",
             "targetFiles": [
               "../locale/messages.fr.xlf",
               "../locale/messages.nb.xlf"
-            ]
+            ],
+            "buildTarget": "glitchtip-frontend:build",
+            "prettyNestedTags": true,
+            "sort": "stableAppendNew"
           }
         },
         "test": {
@@ -274,7 +276,11 @@
           "defaultConfiguration": "development"
         },
         "extract-i18n": {
-          "builder": "@angular/build:extract-i18n"
+          "builder": "@angular/build:extract-i18n",
+          "options": {
+            "prettyNestedTags": true,
+            "sort": "stableAppendNew"
+          }
         },
         "test": {
           "builder": "@angular/build:karma",
