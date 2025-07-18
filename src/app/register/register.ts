@@ -21,13 +21,14 @@ import { mapFormErrors } from "../shared/forms/form.utils";
 import { StatefulComponent } from "../shared/stateful-service/signal-state.component";
 import type { components } from "src/app/api/api-schema";
 import { AcceptInviteService } from "../accept/accept-invite/accept-invite.service";
+import { LoadingButtonComponent } from "../shared/loading-button/loading-button.component";
 
 type SocialApp = components["schemas"]["SocialAppSchema"];
 
 @Component({
   selector: "gt-register",
-  templateUrl: "./register.component.html",
-  styleUrls: ["./register.component.scss"],
+  templateUrl: "./register.html",
+  styleUrls: ["./register.scss"],
   imports: [
     MatCardModule,
     ReactiveFormsModule,
@@ -38,11 +39,12 @@ type SocialApp = components["schemas"]["SocialAppSchema"];
     InputMatcherDirective,
     MatButtonModule,
     AuthSvgComponent,
+    LoadingButtonComponent,
     RouterLink,
   ],
   providers: [provideMarkdown()],
 })
-export class RegisterComponent
+export class Register
   extends StatefulComponent<RegisterState, RegisterService>
   implements OnInit
 {
@@ -68,6 +70,7 @@ export class RegisterComponent
   });
   formErrors = this.service.formErrors;
   acceptInfo = this.acceptService.acceptInfo;
+  loading = this.service.loading;
 
   constructor() {
     const service = inject(RegisterService);

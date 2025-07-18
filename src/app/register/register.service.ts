@@ -30,6 +30,7 @@ export class RegisterService extends StatefulService<RegisterState> {
   fieldErrors = computed(() =>
     reduceParamErrors(this.state().errors.filter((err) => err.param)),
   );
+  loading = computed(() => this.state().loading);
   constructor() {
     super(initialState);
   }

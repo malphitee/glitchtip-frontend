@@ -1,4 +1,4 @@
 import { Route } from "@angular/router";
-import { RegisterComponent } from "./register.component";
+import { Register } from "./register";
 
-export default [{ path: "", component: RegisterComponent }] as Route[];
+export default [{ path: "", component: Register }] as Route[];
