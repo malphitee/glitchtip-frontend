@@ -14,7 +14,7 @@ import { MatCardModule } from "@angular/material/card";
 import { MatDividerModule } from "@angular/material/divider";
 import { MonitorChecks } from "../monitor-checks/monitor-checks";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
-import { MonitorResponseChartComponent } from "../monitor-response-chart/monitor-response-chart.component";
+import { MonitorResponseChart } from "../monitor-response-chart/monitor-response-chart";
 import { MonitorChartComponent } from "../monitor-chart/monitor-chart.component";
 import { TimeForPipe } from "src/app/shared/days-ago.pipe";
 import { MatButtonModule } from "@angular/material/button";
@@ -36,7 +36,7 @@ function booleanDefaultTrueAttribute(value: unknown): boolean {
     RouterModule,
     MonitorChecks,
     CopyInputComponent,
-    MonitorResponseChartComponent,
+    MonitorResponseChart,
     I18nPluralPipe,
     TimeForPipe,
     DecimalPipe,

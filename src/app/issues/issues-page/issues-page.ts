@@ -27,7 +27,6 @@ import { ProjectFilterBarComponent } from "../../list-elements/project-filter-ba
 import { ListTitleComponent } from "../../list-elements/list-title/list-title.component";
 import { OrganizationsService } from "src/app/api/organizations.service";
 
-import type { components } from "src/app/api/api-schema";
 import {
   stringArrAttribute,
   stringAttribute,
@@ -35,11 +34,9 @@ import {
 import { ConfirmDialogComponent } from "src/app/shared/confirm-dialog/confirm-dialog.component";
 import { EnvironmentsService } from "src/app/api/environments.service";
 
-type Issue = components["schemas"]["IssueSchema"];
-
 @Component({
-  templateUrl: "./issues-page.component.html",
-  styleUrls: ["./issues-page.component.scss"],
+  templateUrl: "./issues-page.html",
+  styleUrls: ["./issues-page.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ListTitleComponent,
@@ -244,7 +241,7 @@ export class IssuesPageComponent implements OnInit, OnDestroy {
     this.#environmentsService.projectSlug.set(null);
   }
 
-  trackIssues(index: number, issue: Issue): string {
+  trackIssues(index: number, issue: { id: string }): string {
     return issue.id;
   }
 

@@ -5,6 +5,7 @@ import { client } from "../shared/api/api";
 import { StatefulService } from "../shared/stateful-service/signal-state.service";
 import { getPaginationHeaders, getPaginator } from "../shared/pagination.utils";
 import { IssueStatus } from "./interfaces";
+import { apiResource } from "../shared/api/api-resource-factory";
 
 export interface DataParams {
   orgSlug: string;
@@ -76,7 +77,7 @@ export class IssuesService extends StatefulService<IssuesState> {
               start: params.params.start,
               end: params.params.end,
               sort,
-              project: params.params.project,
+              project: params.params.project?.map((p) => parseInt(p)),
               environment: params.params.environment
                 ? [params.params.environment]
                 : undefined,
@@ -112,24 +113,58 @@ export class IssuesService extends StatefulService<IssuesState> {
   });
   loading = computed(() => this.issuesResource.isLoading());
   issues = computed(() => this.issuesResource.value()?.data);
+  private issueStatsParams = computed(() => {
+    const params = this.params();
+    const issues = this.issues();
+    if (!params || !issues) {
+      return undefined;
+    }
+    return {
+      issueIDs: issues.map((issue) => parseInt(issue.id)),
+      orgSlug: params.orgSlug,
+    };
+  });
+  private issueStatsResource = apiResource(this.issueStatsParams, (params) => ({
+    url: "/api/0/organizations/{organization_slug}/issues-stats/",
+    options: {
+      params: {
+        path: {
+          organization_slug: params.orgSlug,
+        },
+        query: {
+          groups: params.issueIDs,
+        },
+      },
+    },
+  }));
+
   pagination = computed(() => this.issuesResource.value()?.pagination);
   paginator = computed(() => getPaginator(this.pagination()));
   initialLoad = computed(
     () => !this.issuesResource.isLoading() && this.issuesResource.hasValue(),
   );
-
-  selectedIssues = computed(() => this.state().selectedIssues);
-  issuesWithSelected = computed(() => {
+  issueStatsLoading = computed(() => this.issueStatsResource.isLoading());
+  issuesWithStats = computed(() => {
     const issues = this.issues();
-    if (issues === undefined) {
+    if (!issues) {
       return [];
     }
+    // Overwrite stats from the issue API (which is always empty and for compat only)
     return issues.map((issue) => ({
+      ...issue,
+      stats:
+        this.issueStatsResource.value()?.find((stat) => stat.id === issue.id)
+          ?.stats || issue.stats,
+    }));
+  });
+  selectedIssues = computed(() => this.state().selectedIssues);
+  issuesWithSelected = computed(() =>
+    this.issuesWithStats().map((issue) => ({
       ...issue,
       isSelected: this.selectedIssues().includes(issue.id),
       projectSlug: issue.project?.slug,
-    }));
-  });
+    })),
+  );
   areAllSelected = computed(() => {
     const issues = this.issues();
     return (
@@ -240,7 +275,7 @@ export class IssuesService extends StatefulService<IssuesState> {
             organization_slug: orgSlug,
           },
           query: {
-            project: projectIds,
+            project: projectIds?.map((id) => parseInt(id)),
             query,
             start,
             end,

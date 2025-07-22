@@ -553,6 +553,29 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/0/organizations/{organization_slug}/issues-stats/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieve Statistics for a Set of Issues
+         * @description Retrieves aggregated statistics for a given list of issue groups.
+         *
+         *     This endpoint returns data for the last 24 hours, formatted as a series of
+         *     [timestamp, count] pairs.
+         */
+        get: operations["apps_issue_events_api_issues_issue_stats"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/0/issues/{issue_id}/user-reports/": {
         parameters: {
             query?: never;
@@ -3099,19 +3122,13 @@ export interface components {
         /** IssueFilters */
         IssueFilters: {
             /** Id */
-            id?: number[];
-            /**
-             * Start
-             * Format: date-time
-             */
-            start?: string;
-            /**
-             * End
-             * Format: date-time
-             */
-            end?: string;
+            id?: number[] | null;
+            /** Start */
+            start?: string | null;
+            /** End */
+            end?: string | null;
             /** Project */
-            project?: string[];
+            project?: number[] | null;
             /** Environment */
             environment?: string[] | null;
             /** Query */
@@ -3208,6 +3225,46 @@ export interface components {
             count: number;
             /** Key */
             key: string;
+        };
+        /** IssueStatsFilters */
+        IssueStatsFilters: {
+            /** Groups */
+            groups: number[];
+            /**
+             * Statsperiod
+             * @default 24h
+             * @enum {string}
+             */
+            statsPeriod: "14d" | "24h";
+        };
+        /**
+         * IssueStatsResponse
+         * @description Defines the structure for a single issue's statistics in the response.
+         */
+        IssueStatsResponse: {
+            /** Id */
+            id: string;
+            /** Count */
+            count: string;
+            /** Usercount */
+            userCount: number;
+            /** Firstseen */
+            firstSeen: string;
+            /** Lastseen */
+            lastSeen: string;
+            /** Isunhandled */
+            isUnhandled: boolean;
+            stats: components["schemas"]["StatsDetailSchema"];
+        };
+        /**
+         * StatsDetailSchema
+         * @description Represents the 24-hour statistics block.
+         */
+        StatsDetailSchema: {
+            /** Stats 24H */
+            stats_24h?: number[][] | null;
+            /** Stats 14D */
+            stats_14d?: number[][] | null;
         };
         /** IssueHashSchema */
         IssueHashSchema: {
@@ -3599,8 +3656,11 @@ export interface components {
         };
         /** TransactionEventSchema */
         TransactionEventSchema: {
-            /** Event Id */
-            event_id?: string | null;
+            /**
+             * Event Id
+             * Format: uuid
+             */
+            event_id?: string;
             /**
              * Timestamp
              * @description Datetime reported by client as the time the measurement finished
@@ -5357,10 +5417,10 @@ export interface operations {
     apps_issue_events_api_issues_list_issues: {
         parameters: {
             query?: {
-                id?: number[];
-                start?: string;
-                end?: string;
-                project?: string[];
+                id?: number[] | null;
+                start?: string | null;
+                end?: string | null;
+                project?: number[] | null;
                 environment?: string[] | null;
                 query?: string | null;
                 sort?: "last_seen" | "first_seen" | "count" | "priority" | "-last_seen" | "-first_seen" | "-count" | "-priority";
@@ -5391,10 +5451,10 @@ export interface operations {
     apps_issue_events_api_issues_update_issues: {
         parameters: {
             query?: {
-                id?: number[];
-                start?: string;
-                end?: string;
-                project?: string[];
+                id?: number[] | null;
+                start?: string | null;
+                end?: string | null;
+                project?: number[] | null;
                 environment?: string[] | null;
                 query?: string | null;
             };
@@ -5424,10 +5484,10 @@ export interface operations {
     apps_issue_events_api_issues_delete_issues: {
         parameters: {
             query?: {
-                id?: number[];
-                start?: string;
-                end?: string;
-                project?: string[];
+                id?: number[] | null;
+                start?: string | null;
+                end?: string | null;
+                project?: number[] | null;
                 environment?: string[] | null;
                 query?: string | null;
             };
@@ -5453,10 +5513,10 @@ export interface operations {
     apps_issue_events_api_issues_list_project_issues: {
         parameters: {
             query?: {
-                id?: number[];
-                start?: string;
-                end?: string;
-                project?: string[];
+                id?: number[] | null;
+                start?: string | null;
+                end?: string | null;
+                project?: number[] | null;
                 environment?: string[] | null;
                 query?: string | null;
                 sort?: "last_seen" | "first_seen" | "count" | "priority" | "-last_seen" | "-first_seen" | "-count" | "-priority";
@@ -5505,6 +5565,31 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["IssueTagSchema"][];
+                };
+            };
+        };
+    };
+    apps_issue_events_api_issues_issue_stats: {
+        parameters: {
+            query: {
+                groups: number[];
+                statsPeriod?: "14d" | "24h";
+            };
+            header?: never;
+            path: {
+                organization_slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IssueStatsResponse"][];
                 };
             };
         };

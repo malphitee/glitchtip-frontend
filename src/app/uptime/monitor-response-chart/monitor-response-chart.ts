@@ -16,13 +16,17 @@ import { NgxChartsModule } from "@swimlane/ngx-charts";
 
 @Component({
   selector: "gt-monitor-response-chart",
-  templateUrl: "./monitor-response-chart.component.html",
-  styleUrls: ["./monitor-response-chart.component.scss"],
+  templateUrl: "./monitor-response-chart.html",
+  styles: `
+    .chart-container {
+      height: 250;
+      width: 100%;
+      float: right;
+    }
+  `,
   imports: [NgxChartsModule],
 })
-export class MonitorResponseChartComponent
-  implements AfterViewInit, OnInit, OnDestroy
-{
+export class MonitorResponseChart implements AfterViewInit, OnInit, OnDestroy {
   private changeDetector = inject(ChangeDetectorRef);
 
   @Input() data?: ResponseTimeSeries[] | null;

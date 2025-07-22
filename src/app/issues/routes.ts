@@ -1,5 +1,5 @@
 import { Route } from "@angular/router";
-import { IssuesPageComponent } from "./issues-page/issues-page.component";
+import { IssuesPageComponent } from "./issues-page/issues-page";
 import { IssueDetailComponent } from "./issue-detail/issue-detail.component";
 import { CommentsComponent } from "./comments/comments.component";
 import { EventDetailComponent } from "./issue-detail/event-detail/event-detail.component";

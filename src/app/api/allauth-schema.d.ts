@@ -2093,6 +2093,21 @@ export interface components {
             username?: components["schemas"]["Username"];
         } | {
             /** @enum {string} */
+            method: "password_reset";
+            at: components["schemas"]["Timestamp"];
+            email: components["schemas"]["Email"];
+        } | {
+            /** @enum {string} */
+            method: "code";
+            at: components["schemas"]["Timestamp"];
+            email: components["schemas"]["Email"];
+        } | {
+            /** @enum {string} */
+            method: "code";
+            at: components["schemas"]["Timestamp"];
+            phone: components["schemas"]["Phone"];
+        } | {
+            /** @enum {string} */
             method: "password";
             at: components["schemas"]["Timestamp"];
             /** @enum {boolean} */
@@ -2408,23 +2423,26 @@ export interface components {
          */
         ProviderAccountID: string;
         User: {
-            /** @description The user ID.
-             *      */
-            id?: number | string;
+            /**
+             * @description The user ID.
+             * @example 123
+             */
+            id?: string;
             /**
              * @description The display name for the user.
-             *
              * @example Magic Wizard
              */
             display?: string;
             /**
+             * @description The email address.
+             * @example email@domain.org
+             */
+            email?: string;
+            /**
              * @description Whether or not the account has a password set.
-             *
              * @example true
              */
             has_usable_password?: boolean;
-            email?: components["schemas"]["Email"];
-            username?: components["schemas"]["Username"];
         };
         EmailAddress: {
             email: components["schemas"]["Email"];
