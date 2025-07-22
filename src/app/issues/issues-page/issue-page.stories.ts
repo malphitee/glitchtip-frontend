@@ -1,10 +1,10 @@
 import { signal } from "@angular/core";
-import { IssuesPageComponent } from "./issues-page.component";
+import { IssuesPage } from "./issues-page";
 import { issueList } from "./issues-test-data";
 
 export default {
   title: "Issues/Issues Page",
-  component: IssuesPageComponent,
+  component: IssuesPage,
 };
 
 const sampleProjects = [

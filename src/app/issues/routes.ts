@@ -1,5 +1,5 @@
 import { Route } from "@angular/router";
-import { IssuesPageComponent } from "./issues-page/issues-page";
+import { IssuesPage } from "./issues-page/issues-page";
 import { IssueDetailComponent } from "./issue-detail/issue-detail.component";
 import { CommentsComponent } from "./comments/comments.component";
 import { EventDetailComponent } from "./issue-detail/event-detail/event-detail.component";
@@ -9,7 +9,7 @@ import { MergedComponent } from "./merged/merged.component";
 export default [
   {
     path: "",
-    component: IssuesPageComponent,
+    component: IssuesPage,
   },
   {
     path: ":issue-id",

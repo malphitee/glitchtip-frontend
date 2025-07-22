@@ -56,7 +56,7 @@ import { EnvironmentsService } from "src/app/api/environments.service";
   ],
   providers: [IssuesService],
 })
-export class IssuesPageComponent implements OnInit, OnDestroy {
+export class IssuesPage implements OnInit, OnDestroy {
   dialog = inject(MatDialog);
   protected service = inject(IssuesService);
   protected router = inject(Router);
