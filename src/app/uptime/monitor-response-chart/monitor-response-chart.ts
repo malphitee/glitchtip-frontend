@@ -29,7 +29,40 @@ export class MonitorResponseChart implements AfterViewInit, OnDestroy {
   // Manages observation of the chart's container element for size changes.
   private resizeObserver?: ResizeObserver;
 
-  @Input() data?: ResponseTimeSeries[] | null;
+  chartData: ResponseTimeSeries[] = [];
+
+  @Input()
+  set data(value: ResponseTimeSeries[] | null | undefined) {
+    if (!value) {
+      this.chartData = [];
+      return;
+    }
+
+    // Process the data to add a phantom point to any single-point series.
+    this.chartData = value.map((series) => {
+      // If a series has exactly one point, we need to duplicate it.
+      if (series.series.length === 1) {
+        const originalPoint = series.series[0];
+
+        // Create a phantom point 1 millisecond after the original.
+        // This is visually imperceptible on the time axis.
+        const phantomPoint = {
+          name: new Date(originalPoint.name.getTime() + 2000),
+          value: originalPoint.value,
+        };
+
+        // Return a new series object containing both points.
+        return {
+          ...series,
+          series: [originalPoint, phantomPoint],
+        };
+      }
+
+      // If the series has 0 or 2+ points, return it unmodified.
+      return series;
+    });
+  }
+
   @Input() scale?: {
     yScaleMin: number;
     yScaleMax: number;
