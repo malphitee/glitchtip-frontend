@@ -52,7 +52,7 @@
     "@github/webauthn-json": "^2.1.1",
     "@micro-sentry/angular": "^7.1.1",
     "@stripe/stripe-js": "^7.3.1",
-    "@swimlane/ngx-charts": "^22.0.0",
+    "@swimlane/ngx-charts": "^23.0.0-alpha.0",
     "date-fns": "^4.1.0",
     "express": "^4.18.2",
     "ngx-markdown": "^20.0.0",
@@ -114,18 +114,5 @@
     "typescript": "^5.8.2",
     "wait-on": "^5.3.0",
     "xliff": "^6.2.2"
-  },
-  "overrides": {
-    "@swimlane/ngx-charts": {
-      "@angular/animations": "^20.0.0",
-      "@angular/cdk": "$@angular/cdk",
-      "@angular/common": "$@angular/common",
-      "@angular/compiler": "$@angular/compiler",
-      "@angular/core": "$@angular/core",
-      "@angular/forms": "$@angular/forms",
-      "@angular/platform-browser": "$@angular/platform-browser",
-      "@angular/platform-browser-dynamic": "$@angular/platform-browser-dynamic",
-      "@angular/router": "$@angular/router"
-    }
   }
 }
