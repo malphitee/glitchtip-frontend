@@ -1,4 +1,4 @@
-@if (chartData.length > 0) { @if (scale) {
+@if (chartData().length > 0 && scale()) {
 <div #containerRef class="chart-container">
   <ngx-charts-area-chart
     [showXAxisLabel]="false"
@@ -7,13 +7,13 @@
     [yAxis]="true"
     [gradient]="true"
     [animations]="false"
-    [view]="view"
+    [view]="view()"
     yAxisLabel="Response Time (ms)"
     [customColors]="customColors"
-    [xScaleMin]="scale.xScaleMin.getTime()"
-    [yScaleMin]="scale.yScaleMin"
-    [yScaleMax]="scale.yScaleMax"
-    [results]="chartData"
+    [xScaleMin]="scale()!.xScaleMin.getTime()"
+    [yScaleMin]="scale()!.yScaleMin"
+    [yScaleMax]="scale()!.yScaleMax"
+    [results]="chartData()"
   >
     <ng-template #tooltipTemplate let-model="model">
       {{ model.name | date: "short" }}<br />
@@ -25,4 +25,4 @@
     </ng-template>
   </ngx-charts-area-chart>
 </div>
-} }
+}

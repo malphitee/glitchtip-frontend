@@ -1,15 +1,15 @@
 import {
   Component,
-  Input,
-  ViewChild,
   ElementRef,
-  AfterViewInit,
   OnDestroy,
-  inject,
-  ChangeDetectorRef,
+  ViewChild,
+  computed,
+  input,
+  signal,
 } from "@angular/core";
 import { ResponseTimeSeries } from "../uptime.interfaces";
-import { NgxChartsModule } from "@swimlane/ngx-charts";
+import { AreaChartModule } from "@swimlane/ngx-charts";
+import { DatePipe } from "@angular/common";
 
 @Component({
   selector: "gt-monitor-response-chart",
@@ -21,84 +21,75 @@ import { NgxChartsModule } from "@swimlane/ngx-charts";
       float: right;
     }
   `,
-  imports: [NgxChartsModule],
+  imports: [AreaChartModule, DatePipe],
 })
-export class MonitorResponseChart implements AfterViewInit, OnDestroy {
-  private changeDetector = inject(ChangeDetectorRef);
-
+export class MonitorResponseChart implements OnDestroy {
   // Manages observation of the chart's container element for size changes.
   private resizeObserver?: ResizeObserver;
+  private _containerRef?: ElementRef<HTMLDivElement>;
 
-  chartData: ResponseTimeSeries[] = [];
+  data = input<ResponseTimeSeries[] | null | undefined>();
+  scale = input<{
+    yScaleMin: number;
+    yScaleMax: number;
+    xScaleMin: Date;
+  }>();
 
-  @Input()
-  set data(value: ResponseTimeSeries[] | null | undefined) {
-    if (!value) {
-      this.chartData = [];
-      return;
+  chartData = computed(() => {
+    const currentData = this.data();
+    if (!currentData) {
+      return [];
     }
 
-    // Process the data to add a phantom point to any single-point series.
-    this.chartData = value.map((series) => {
-      // If a series has exactly one point, we need to duplicate it.
+    return currentData.map((series) => {
       if (series.series.length === 1) {
         const originalPoint = series.series[0];
-
-        // Create a phantom point 1 millisecond after the original.
-        // This is visually imperceptible on the time axis.
         const phantomPoint = {
           name: new Date(originalPoint.name.getTime() + 2000),
           value: originalPoint.value,
         };
-
-        // Return a new series object containing both points.
         return {
           ...series,
           series: [originalPoint, phantomPoint],
         };
       }
-
-      // If the series has 0 or 2+ points, return it unmodified.
       return series;
     });
-  }
+  });
 
-  @Input() scale?: {
-    yScaleMin: number;
-    yScaleMax: number;
-    xScaleMin: Date;
-  };
-
-  @ViewChild("containerRef") containerRef!: ElementRef<HTMLDivElement>;
-
-  view: [number, number] = [0, 250];
+  view = signal<[number, number]>([0, 250]);
   customColors = [
     { name: "Up", value: "#54a65a" },
     { name: "Down", value: "#e22a46" },
   ];
 
-  ngAfterViewInit(): void {
-    // After the view initializes, the container element is available in the DOM.
-    // We instantiate and attach the ResizeObserver here to monitor it.
-    this.resizeObserver = new ResizeObserver((entries) => {
-      // This callback fires when the observed element's size changes.
-      // It provides an array of entries; we only need the first for our container.
-      const entry = entries[0];
-      const { width } = entry.contentRect;
-      this.view = [width, 250];
+  // ViewChild setter handles the ResizeObserver setup.
+  @ViewChild("containerRef")
+  set containerRef(element: ElementRef<HTMLDivElement> | undefined) {
+    if (element) {
+      this._containerRef = element;
+      this.initializeResizeObserver();
+    } else if (this._containerRef) {
+      this.resizeObserver?.disconnect();
+      this._containerRef = undefined;
+    }
+  }
 
-      // In a zoneless application, asynchronous callbacks from browser APIs like
-      // ResizeObserver do not automatically trigger change detection. We must
-      // explicitly tell Angular to update the view with the new dimensions.
-      this.changeDetector.detectChanges();
+  initializeResizeObserver(): void {
+    this.resizeObserver?.disconnect();
+
+    this.resizeObserver = new ResizeObserver((entries) => {
+      const { width } = entries[0].contentRect;
+
+      this.view.set([width, 250]);
     });
 
-    this.resizeObserver.observe(this.containerRef.nativeElement);
+    if (this._containerRef) {
+      this.resizeObserver.observe(this._containerRef.nativeElement);
+    }
   }
 
   ngOnDestroy(): void {
-    // To prevent memory leaks, it is crucial to disconnect the observer
-    // when the component is destroyed, stopping it from watching the element.
     this.resizeObserver?.disconnect();
   }
 }
