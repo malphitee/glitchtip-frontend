@@ -1,76 +1,95 @@
 import {
   Component,
-  Input,
-  ViewChild,
   ElementRef,
-  AfterViewInit,
-  HostListener,
-  OnInit,
-  ChangeDetectorRef,
   OnDestroy,
-  inject,
+  ViewChild,
+  computed,
+  input,
+  signal,
 } from "@angular/core";
-import { debounceTime, fromEvent, Subscription } from "rxjs";
 import { ResponseTimeSeries } from "../uptime.interfaces";
-import { NgxChartsModule } from "@swimlane/ngx-charts";
+import { AreaChartModule } from "@swimlane/ngx-charts";
+import { DatePipe } from "@angular/common";
 
 @Component({
   selector: "gt-monitor-response-chart",
   templateUrl: "./monitor-response-chart.html",
   styles: `
     .chart-container {
-      height: 250;
+      height: 250px;
       width: 100%;
       float: right;
     }
   `,
-  imports: [NgxChartsModule],
+  imports: [AreaChartModule, DatePipe],
 })
-export class MonitorResponseChart implements AfterViewInit, OnInit, OnDestroy {
-  private changeDetector = inject(ChangeDetectorRef);
+export class MonitorResponseChart implements OnDestroy {
+  // Manages observation of the chart's container element for size changes.
+  private resizeObserver?: ResizeObserver;
+  private _containerRef?: ElementRef<HTMLDivElement>;
 
-  @Input() data?: ResponseTimeSeries[] | null;
-  @Input() scale?: {
+  data = input<ResponseTimeSeries[] | null | undefined>();
+  scale = input<{
     yScaleMin: number;
     yScaleMax: number;
     xScaleMin: Date;
-  };
+  }>();
 
-  @ViewChild("containerRef") containerRef?: ElementRef;
-  //Ngx-charts does not do continuous resizing, but only adjusts after window resizing completes.
-  //This is a workaround to force continous resizing
-  @HostListener("window:resize")
-  windowResize() {
-    this.resizeChart();
-  }
+  chartData = computed(() => {
+    const currentData = this.data();
+    if (!currentData) {
+      return [];
+    }
 
-  delayedResize$?: Subscription;
-  //Keeping these dimensions in state to avoid ngx-chart bleeding off edge of mat-card
-  view: [number, number] = [0, 0];
+    return currentData.map((series) => {
+      if (series.series.length === 1) {
+        const originalPoint = series.series[0];
+        const phantomPoint = {
+          name: new Date(originalPoint.name.getTime() + 2000),
+          value: originalPoint.value,
+        };
+        return {
+          ...series,
+          series: [originalPoint, phantomPoint],
+        };
+      }
+      return series;
+    });
+  });
+
+  view = signal<[number, number]>([0, 250]);
   customColors = [
     { name: "Up", value: "#54a65a" },
     { name: "Down", value: "#e22a46" },
   ];
-  ngOnInit(): void {
-    this.delayedResize$ = fromEvent(window, "resize")
-      .pipe(debounceTime(400))
-      .subscribe(() => {
-        this.resizeChart();
-        this.changeDetector.detectChanges();
-      });
+
+  // ViewChild setter handles the ResizeObserver setup.
+  @ViewChild("containerRef")
+  set containerRef(element: ElementRef<HTMLDivElement> | undefined) {
+    if (element) {
+      this._containerRef = element;
+      this.initializeResizeObserver();
+    } else if (this._containerRef) {
+      this.resizeObserver?.disconnect();
+      this._containerRef = undefined;
+    }
   }
 
-  ngAfterViewInit(): void {
-    this.resizeChart();
-  }
+  initializeResizeObserver(): void {
+    this.resizeObserver?.disconnect();
 
-  resizeChart() {
-    if (this.containerRef) {
-      this.view = [this.containerRef.nativeElement.offsetWidth, 250];
+    this.resizeObserver = new ResizeObserver((entries) => {
+      const { width } = entries[0].contentRect;
+
+      this.view.set([width, 250]);
+    });
+
+    if (this._containerRef) {
+      this.resizeObserver.observe(this._containerRef.nativeElement);
     }
   }
 
   ngOnDestroy(): void {
-    this.delayedResize$?.unsubscribe();
+    this.resizeObserver?.disconnect();
   }
 }
