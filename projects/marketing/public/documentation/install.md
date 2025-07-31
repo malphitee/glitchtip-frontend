@@ -250,6 +250,34 @@ If using Redis Sentinel, additional settings are required. `REDIS_URL` will not 
 
 Other Celery broker and cache types may work but are not tested. Consider submitting a merge request to add support for your preferred solution.
 
+### Advanced database permissions
+
+A best practice is to assign the least privledged role needed to each GlitchTip service.
+
+- web - Read and write access to rows.
+- worker - Requires CREATE and DROP table as worker will manage partitions by default
+- migrate - Requires all permissions for the schema, including ALTER table. It doesn't need to be a superuser or manage roles.
+
+A simple example is to assign a single limited user to web.
+
+```sql
+CREATE ROLE glitchtip_app WITH LOGIN PASSWORD 'replace_with_app_password';
+GRANT CONNECT ON DATABASE your_database_name TO glitchtip_app;
+
+-- Grant basic usage on the public schema.
+GRANT USAGE ON SCHEMA public TO glitchtip_app;
+
+-- Grant read/write permissions on all EXISTING tables and sequences.
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO glitchtip_app;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO glitchtip_app;
+
+-- Grant permissions for FUTURE tables created by your migration user.
+ALTER DEFAULT PRIVILEGES FOR ROLE glitchtip_migrate_user IN SCHEMA public
+   GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO glitchtip_app;
+ALTER DEFAULT PRIVILEGES FOR ROLE glitchtip_migrate_user IN SCHEMA public
+   GRANT USAGE, SELECT ON SEQUENCES TO glitchtip_app;
+```
+
 ### File storage
 
 Storage is necessary to enable file uploads, such as sourcemaps. GlitchTip can support both local storage and remote storage via [django-storages](https://django-storages.readthedocs.io/en/latest/).
