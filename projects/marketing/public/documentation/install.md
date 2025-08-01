@@ -255,8 +255,8 @@ Other Celery broker and cache types may work but are not tested. Consider submit
 A best practice is to assign the least privledged role needed to each GlitchTip service.
 
 - web - Read and write access to rows.
-- worker - Requires CREATE and DROP table as worker will manage partitions by default
-- migrate - Requires all permissions for the schema, including ALTER table. It doesn't need to be a superuser or manage roles.
+- worker and migrate - Requires all permissions for the schema, including CREATE/DROP/ALTER table. It doesn't need to be a superuser or manage roles.
+Both services manage partitions, therefore they need to be the same role (owner of tables).
 
 A simple example is to assign a single limited user to web.
 
