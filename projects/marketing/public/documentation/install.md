@@ -272,9 +272,9 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO glitchtip
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO glitchtip_app;
 
 -- Grant permissions for FUTURE tables created by your migration user.
-ALTER DEFAULT PRIVILEGES FOR ROLE glitchtip_migrate_user IN SCHEMA public
+ALTER DEFAULT PRIVILEGES FOR ROLE glitchtip_app IN SCHEMA public
    GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO glitchtip_app;
-ALTER DEFAULT PRIVILEGES FOR ROLE glitchtip_migrate_user IN SCHEMA public
+ALTER DEFAULT PRIVILEGES FOR ROLE glitchtip_app IN SCHEMA public
    GRANT USAGE, SELECT ON SEQUENCES TO glitchtip_app;
 ```
 
