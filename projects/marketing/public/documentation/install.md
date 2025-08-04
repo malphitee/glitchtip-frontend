@@ -263,19 +263,41 @@ A simple example is to assign a single limited user to web.
 ```sql
 CREATE ROLE glitchtip_app WITH LOGIN PASSWORD 'replace_with_app_password';
 GRANT CONNECT ON DATABASE your_database_name TO glitchtip_app;
-
--- Grant basic usage on the public schema.
 GRANT USAGE ON SCHEMA public TO glitchtip_app;
 
--- Grant read/write permissions on all EXISTING tables and sequences.
+-- Grant read/write permissions on all EXISTING tables, sequences, and functions.
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO glitchtip_app;
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO glitchtip_app;
+GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public TO glitchtip_app;
 
--- Grant permissions for FUTURE tables created by your migration user.
-ALTER DEFAULT PRIVILEGES FOR ROLE glitchtip_app IN SCHEMA public
+-- Grant read/write permissions on all FUTURE tables, sequences, and functions.
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
    GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO glitchtip_app;
-ALTER DEFAULT PRIVILEGES FOR ROLE glitchtip_app IN SCHEMA public
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
    GRANT USAGE, SELECT ON SEQUENCES TO glitchtip_app;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+   GRANT EXECUTE ON FUNCTIONS TO glitchtip_app;
+```
+
+Here's an example for the migrate/worker role.
+
+```sql
+CREATE ROLE glitchtip_maintainer WITH LOGIN PASSWORD 'replace_with_maintainer_password';
+GRANT CONNECT ON DATABASE your_database_name TO glitchtip_maintainer;
+GRANT CREATE, USAGE ON SCHEMA public TO glitchtip_maintainer;
+
+-- Grant full permissions for all existing tables, sequences, and functions.
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO glitchtip_maintainer;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO glitchtip_maintainer;
+GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO glitchtip_maintainer;
+
+-- Grant full permissions for any new tables this role creates in the future.
+ALTER DEFAULT PRIVILEGES FOR ROLE glitchtip_maintainer IN SCHEMA public
+   GRANT ALL PRIVILEGES ON TABLES TO glitchtip_maintainer;
+ALTER DEFAULT PRIVILEGES FOR ROLE glitchtip_maintainer IN SCHEMA public
+   GRANT ALL PRIVILEGES ON SEQUENCES TO glitchtip_maintainer;
+ALTER DEFAULT PRIVILEGES FOR ROLE glitchtip_maintainer IN SCHEMA public
+   GRANT ALL PRIVILEGES ON FUNCTIONS TO glitchtip_maintainer;
 ```
 
 ### File storage
