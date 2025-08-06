@@ -1,8 +1,8 @@
 # GlitchTip Installation Guide
 
-GlitchTip can be run with Docker. We recommend [Docker Compose](documentation/install#docker-compose), [DigitalOcean App Platform](documentation/install#digitalocean-app-platform), [PikaPods](documentation/install#pikapods), or [Elestio](documentation/install#elestio). A [Helm](documentation/install#helm) chart is available for Kubernetes.
+GlitchTip can be run with Docker. We recommend [Docker Compose](documentation/install#docker-compose), [PikaPods](documentation/install#pikapods), [Elestio](documentation/install#elestio), or [Nodion](documentation/install#nodion). A [Helm](documentation/install#helm) chart is available for Kubernetes.
 
-Not sure which? Elestio and Pikapods both support GlitchTip via a revenue share program.
+Not sure which? Elestio, Pikapods, and Nodion all support GlitchTip via a revenue share program.
 
 ### System Requirements
 
@@ -151,6 +151,16 @@ Sign up and run GlitchTip on PikaPods [here](https://www.pikapods.com/pods?run=g
 Elestio is a managed hosting provider that supports multiple cloud providers, many worldwide regions, and on-premise. Elestio comes with email server support out of box, making it easier to configure.
 
 Sign up and run GlitchTip on Elestio [here](https://elest.io/open-source/glitchtip). They have detailed documentation about [running GlitchTip](https://elest.io/open-source/glitchtip/resources/installation-guide). Consider adding a volume if you plan to store many events. After setting it up, go to the service URL, login, and create an organization.
+
+## Nodion
+
+<a href="https://www.nodion.com/en/deploy/glitchtip/">
+<img src="https://nodion-static.nodioncdn.com/nodion-button-m.svg" alt="Run on Nodion" style="width:200px;"/>
+</a>
+
+Nodion is a managed hosting provider that offers easy deployment and management of open source applications with automated backups and monitoring.
+
+Sign up and run GlitchTip on Nodion [here](https://www.nodion.com/en/deploy/glitchtip/).
 
 ### Upgrading and Configuration
 
