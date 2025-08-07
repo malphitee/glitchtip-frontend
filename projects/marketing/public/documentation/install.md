@@ -71,6 +71,59 @@ Install and run certbot. Follow [instructions](https://certbot.eff.org/instructi
 
 Database migrations will automatically happen.
 
+## PikaPods
+
+<a href="https://www.pikapods.com/pods?run=glitchtip">
+<img src="https://www.pikapods.com/static/run-button.svg" alt="Run on PikaPods" style="width:200px;"/>
+</a>
+
+PikaPods is an affordable and managed hosting provider aimed at running open source applications.
+
+Sign up and run GlitchTip on PikaPods [here](https://www.pikapods.com/pods?run=glitchtip). Set the required environment variables including `EMAIL_URL`. If you don't need email, you may set it to `consolemail://` and email will output to logs. See configuration [docs](https://glitchtip.com/documentation/install#configuration).
+
+## Elestio
+
+<a href="https://elest.io/open-source/glitchtip">
+<img src="https://elest.io/images/logos/deploy-to-elestio-btn.png" alt="Run on Elestio" style="width:200px;"/>
+</a>
+
+Elestio is a managed hosting provider that supports multiple cloud providers, many worldwide regions, and on-premise. Elestio comes with email server support out of box, making it easier to configure.
+
+Sign up and run GlitchTip on Elestio [here](https://elest.io/open-source/glitchtip). They have detailed documentation about [running GlitchTip](https://elest.io/open-source/glitchtip/resources/installation-guide). Consider adding a volume if you plan to store many events. After setting it up, go to the service URL, login, and create an organization.
+
+Elestio, by default, will configure and upgrade GlitchTip for you. Larger or complex instances may benefit from adjusting the configuration via environment variables. To edit these, go to your GlitchTip service, Overview, Software, Update config. The syntax is the same as Docker Compose.
+
+See configuration [docs](https://glitchtip.com/documentation/install#configuration).
+
+## Nodion
+
+<a href="https://www.nodion.com/en/deploy/glitchtip/">
+<img src="https://nodion-static.nodioncdn.com/nodion-button-m.svg" alt="Run on Nodion" style="width:200px;"/>
+</a>
+
+Nodion is a managed hosting provider that offers easy deployment and management of open source applications with automated backups and monitoring.
+
+Sign up and run GlitchTip on Nodion [here](https://www.nodion.com/en/deploy/glitchtip/).
+
+Nodion allows adjusting many environment variables for configuration. See configuration [docs](https://glitchtip.com/documentation/install#configuration).
+
+## Helm
+
+Installing GlitchTip with Helm for Kubernetes is a good option for high throughput sites and users who are very comfortable using Kubernetes.
+
+app.glitchtip.com uses this method with a managed DigitalOcean database.
+
+1. Add our Helm chart repo `helm repo add glitchtip https://gitlab.com/api/v4/projects/16325141/packages/helm/stable`
+2. Review our [values.yaml](https://gitlab.com/glitchtip/glitchtip-helm-chart/-/blob/master/values.yaml) and [values.sample.yaml](https://gitlab.com/glitchtip/glitchtip-helm-chart/-/blob/master/values.sample.yaml). At a minimum, decide if using helm postgresql and set env.secret.SECRET_KEY
+3. Install the chart `helm install glitchtip glitchtip/glitchtip -f your-values.yaml`. You'll need to specify your own values.yml file or make use of `--set`.
+
+For postgresql, we recommend an externally managed database and providing only the `DATABASE_URL` environment variable. If using helm managed postgresql, then make sure to consider:
+
+- If you uninstall the chart, it will not delete the pvc. If you reinstall the chart, it won't have the correct password because of this.
+- postgresql helm chart does not support major upgrades (such as 14.0 to 15.0). It will fail to start. You could export to a sql file and import if downtime is acceptable. Minor updates are supported.
+
+For high availability, production servers we recommend using multiple Kubernetes Nodes, an ingress and/or load balancer, a pod disruption budget, anti-affinity, and a managed PostgreSQL high availability database.
+
 ## DigitalOcean App Platform
 
 Get started by clicking here. Note this is a referral link and is a great way to help fund GlitchTip.
@@ -132,66 +185,13 @@ If you haven't already, you'll need to set up email via environment variables.
 
 By default, the docker image tag is "latest". Click Deploy to upgrade to the latest GlitchTip docker image.
 
-## PikaPods
-
-<a href="https://www.pikapods.com/pods?run=glitchtip">
-<img src="https://www.pikapods.com/static/run-button.svg" alt="Run on PikaPods" style="width:200px;"/>
-</a>
-
-PikaPods is an affordable and managed hosting provider aimed at running open source applications.
-
-Sign up and run GlitchTip on PikaPods [here](https://www.pikapods.com/pods?run=glitchtip). Set the required environment variables including `EMAIL_URL`. If you don't need email, you may set it to `consolemail://` and email will output to logs. See configuration [docs](https://glitchtip.com/documentation/install#configuration).
-
-## Elestio
-
-<a href="https://elest.io/open-source/glitchtip">
-<img src="https://github.com/elestio-examples/glitchtip/raw/main/deploy-on-elestio.png" alt="Run on Elestio" style="width:200px;"/>
-</a>
-
-Elestio is a managed hosting provider that supports multiple cloud providers, many worldwide regions, and on-premise. Elestio comes with email server support out of box, making it easier to configure.
-
-Sign up and run GlitchTip on Elestio [here](https://elest.io/open-source/glitchtip). They have detailed documentation about [running GlitchTip](https://elest.io/open-source/glitchtip/resources/installation-guide). Consider adding a volume if you plan to store many events. After setting it up, go to the service URL, login, and create an organization.
-
-## Nodion
-
-<a href="https://www.nodion.com/en/deploy/glitchtip/">
-<img src="https://nodion-static.nodioncdn.com/nodion-button-m.svg" alt="Run on Nodion" style="width:200px;"/>
-</a>
-
-Nodion is a managed hosting provider that offers easy deployment and management of open source applications with automated backups and monitoring.
-
-Sign up and run GlitchTip on Nodion [here](https://www.nodion.com/en/deploy/glitchtip/).
-
-### Upgrading and Configuration
-
-Elestio, by default, will configure and upgrade GlitchTip for you. Larger or complex instances may benefit from adjusting the configuration via environment variables. To edit these, go to your GlitchTip service, Overview, Software, Update config. The syntax is the same as Docker Compose.
-
-See configuration [docs](https://glitchtip.com/documentation/install#configuration).
-
-## Helm
-
-Installing GlitchTip with Helm for Kubernetes is a good option for high throughput sites and users who are very comfortable using Kubernetes.
-
-app.glitchtip.com uses this method with a managed DigitalOcean database.
-
-1. Add our Helm chart repo `helm repo add glitchtip https://gitlab.com/api/v4/projects/16325141/packages/helm/stable`
-2. Review our [values.yaml](https://gitlab.com/glitchtip/glitchtip-helm-chart/-/blob/master/values.yaml) and [values.sample.yaml](https://gitlab.com/glitchtip/glitchtip-helm-chart/-/blob/master/values.sample.yaml). At a minimum, decide if using helm postgresql and set env.secret.SECRET_KEY
-3. Install the chart `helm install glitchtip glitchtip/glitchtip -f your-values.yaml`. You'll need to specify your own values.yml file or make use of `--set`.
-
-For postgresql, we recommend an externally managed database and providing only the `DATABASE_URL` environment variable. If using helm managed postgresql, then make sure to consider:
-
-- If you uninstall the chart, it will not delete the pvc. If you reinstall the chart, it won't have the correct password because of this.
-- postgresql helm chart does not support major upgrades (such as 14.0 to 15.0). It will fail to start. You could export to a sql file and import if downtime is acceptable. Minor updates are supported.
-
-For high availability, production servers we recommend using multiple Kubernetes Nodes, an ingress and/or load balancer, a pod disruption budget, anti-affinity, and a managed PostgreSQL high availability database.
-
 ## Installing Without Docker
 
 This method is not recommended and assumes the reader knows how to deploy Django, Celery, SSL, and a web server. It requires manual upgrades.
 
 1. `git clone` or download the latest Django backend [release tag](https://gitlab.com/glitchtip/glitchtip-backend/-/tags). Take note of the version number.
 2. Download the latest frontend code at `wget https://gitlab.com/api/v4/projects/15449363/jobs/artifacts/<VERSION HERE>/download?job=build-assets -O assets.zip`. Replace the VERSION HERE with the same version from step 1. It must be exact, including the "v".
-3. Extract the zip file and move the `dist/glitchtip-frontend` directory to the glitchtip-backend's dist folder. If you installed glitchtip to `/opt/glitchtip` then this might look like `unzip assets.zip; mv dist/glitchtip-frontend /opt/glitchtip/dist`. Note this step involves removing the directory called "glitchtip-frontend".
+3. Extract the zip file and move the `dist/glitchtip-frontend` directory to the glitchtip-backend's dist folder. If you installed glitchtip to `/opt/glitchtip` then this might look like `unzip assets.zip; mv dist/glitchtip-frontend/browser /opt/glitchtip/dist`. Note the `mv` command will move the directory called "glitchtip-frontend".
 4. Create a Python virtual environment (or other preferred way to run Python). Install [uv](https://docs.astral.sh/uv/) and run `uv sync` to install Python dependencies.
 5. Set required [environment variables](https://glitchtip.com/documentation/install#configuration).
 6. Migrate the database with `./manage.py migrate`
@@ -220,7 +220,7 @@ Optional environment variables:
 - `GLITCHTIP_MAX_TRANSACTION_EVENT_LIFE_DAYS` (Default to max event life days) Transaction events older than this will be deleted.
 - `GLITCHTIP_MAX_FILE_LIFE_DAYS` (Defaults to 2 \* max event life days) Files older than this will be deleted. Files with any reference to a recent event are excluded. For example, a year old file that is used for an active release with event data, will not be deleted.
 - `REDIS_URL` Set redis/valkey host explicitly. Example: `redis://:password@host:port/database`. You may also set them separately with `REDIS_HOST`, `REDIS_PORT`, `REDIS_DATABASE`, and `REDIS_PASSWORD`.
-- `DATABASE_URL` Set PostgreSQL connect string. PostgreSQL 11 and above are supported.
+- `DATABASE_URL` Set PostgreSQL connect string. PostgreSQL 14 and above are supported.
 - `CELERY_BROKER_URL` set celery broker url explicitly. Defaults to `REDIS_URL`
 - `CACHE_URL` use alternative cache backend for django, defaults to `REDIS_URL`
 - Content Security Policy (CSP) headers are enabled by default. In most cases there is no need to change these. However, you may add environment variables as documented in [django-csp](https://django-csp.readthedocs.io/en/latest/configuration.html#policy-settings) to modify them. For example, set `CSP_DEFAULT_SRC='self',scripts.example.com` to modify the default CSP header. Note the usage of comma separated values and single quotes on certain values such as 'self'.
@@ -266,7 +266,7 @@ A best practice is to assign the least privledged role needed to each GlitchTip 
 
 - web - Read and write access to rows.
 - worker and migrate - Requires all permissions for the schema, including CREATE/DROP/ALTER table. It doesn't need to be a superuser or manage roles.
-Both services manage partitions, therefore they need to be the same role (owner of tables).
+  Both services manage partitions, therefore they need to be the same role (owner of tables).
 
 A simple example is to assign a single limited user to web.
 
