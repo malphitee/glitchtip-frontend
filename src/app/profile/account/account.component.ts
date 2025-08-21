@@ -39,8 +39,10 @@ export class AccountComponent implements OnDestroy {
       )
     ) {
       this.userService.deleteUser().then((result) => {
-        this.authService.expireAuth();
-        window.location.href = "/login";
+        if (result) {
+          this.authService.expireAuth();
+          window.location.href = "/login";
+        }
       });
     }
   }

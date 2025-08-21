@@ -21,9 +21,7 @@
         able to delete their account.</p
       >
       @if (userDeleteError(); as error) {
-        <mat-error>
-          {{ error }}
-        </mat-error>
+        <mat-error>{{ error }}</mat-error>
       }
     </div>
     <gt-loading-button

@@ -1,6 +1,6 @@
 import { computed, effect, inject, Injectable } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { client } from "../../shared/api/api";
+import { client, handleError } from "../../shared/api/api";
 import { components } from "../api-schema";
 import { AuthService } from "src/app/auth.service";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
@@ -69,18 +69,29 @@ export class UserService extends StatefulService<UserState> {
     this.userResource.reload();
   }
 
-  deleteUser() {
+  async deleteUser() {
     this.setUserDeleteLoadingStart();
-    return client
-      .DELETE("/api/0/users/{user_id}/", {
-        params: { path: mePath },
-      })
-      .then((result) => {
-        if (result.error) {
-          // TODO get error message
-          this.setUserDeleteError("Unable to delete user");
-        }
-      });
+    const { error, response } = await client.DELETE("/api/0/users/{user_id}/", {
+      params: { path: mePath },
+    });
+    if (response.ok) {
+      return true;
+    }
+
+    if (response.status === 400) {
+      this.setUserDeleteError(
+        $localize`Could not delete account. Delete or transfer ownership of all organizations you are the owner of before deleting your user account.`,
+      );
+    } else {
+      const errors = handleError(error, response);
+      if (errors.detail.length) {
+        this.setUserDeleteError(
+          errors.detail[0].msg ||
+            $localize`There was an error deleting your account. Please try again.`,
+        );
+      }
+    }
+    return false;
   }
 
   updateUser(name: string, options: UserOptions) {
