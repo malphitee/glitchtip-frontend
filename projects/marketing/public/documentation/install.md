@@ -224,7 +224,8 @@ Optional environment variables:
 - `CELERY_BROKER_URL` set celery broker url explicitly. Defaults to `REDIS_URL`
 - `CACHE_URL` use alternative cache backend for django, defaults to `REDIS_URL`
 - Content Security Policy (CSP) headers are enabled by default. In most cases there is no need to change these. However, you may add environment variables as documented in [django-csp](https://django-csp.readthedocs.io/en/latest/configuration.html#policy-settings) to modify them. For example, set `CSP_DEFAULT_SRC='self',scripts.example.com` to modify the default CSP header. Note the usage of comma separated values and single quotes on certain values such as 'self'.
-- `ENABLE_USER_REGISTRATION` (Default True) When True, any user will be able to register. When False, user self-signup is disabled after the first user is registered. Subsequent users must be created by a superuser on the backend and organization invitations may only be sent to existing users.
+- `ENABLE_USER_REGISTRATION` (Default True) When True, any user will be able to register through the self-signup. When False, user self-signup is disabled after the first user is registered. Subsequent users must use social apps if enabled or be created by a superuser on the backend and organization invitations may only be sent to existing users.
+- `ENABLE_SOCIAL_APPS_USER_REGISTRATION` (Default `ENABLE_USER_REGISTRATION`) When True, any user will be able to register through social apps. When False, unregistered user login is disabled after the first user is registered. Subsequent users must use the self-signup or be created by a superuser on the backend.
 - `ENABLE_ORGANIZATION_CREATION` (Default False) When False, only superusers will be able to create new organizations after the first. When True, any user can create a new organization.
 
 ### Server configuration
