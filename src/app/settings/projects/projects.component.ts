@@ -12,6 +12,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { DatePipe } from "@angular/common";
 import { SettingsProjectsService } from "./projects.service";
 import { OrganizationsService } from "src/app/api/organizations.service";
+import { TopAppBar } from "src/app/shared/top-app-bar/top-app-bar";
 
 @Component({
   templateUrl: "./projects.component.html",
@@ -22,6 +23,7 @@ import { OrganizationsService } from "src/app/api/organizations.service";
     EmptyProjectsComponent,
     ProjectCardComponent,
     DatePipe,
+    TopAppBar,
   ],
   providers: [SettingsProjectsService],
 })

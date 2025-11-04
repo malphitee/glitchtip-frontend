@@ -1,4 +1,4 @@
-@import "variables";
+@use "variables" as vars;
 
 mat-card {
   margin-top: 24px;
@@ -19,7 +19,7 @@ mat-card {
     justify-content: center;
   }
 
-  @media (max-width: $large - 1) {
+  @media (max-width: vars.$large - 1) {
     flex-direction: column;
     justify-content: center;
 
@@ -39,7 +39,7 @@ form {
     justify-content: space-between;
     align-items: center;
 
-    @media (max-width: $large - 1) {
+    @media (max-width: vars.$large - 1) {
       flex-direction: column;
       align-items: flex-start;
       margin-bottom: 24px;
@@ -64,7 +64,7 @@ mat-radio-group {
     margin-right: 32px;
   }
 
-  @media (max-width: $large - 1) {
+  @media (max-width: vars.$large - 1) {
     flex-direction: column;
     align-items: flex-start;
 

@@ -2,17 +2,16 @@ $font-path: "../fonts";
 $font-sans-serif: "Plex Sans";
 $font-mono: "Plex Mono";
 
+$shape-radius: 4px;
+
 $side-nav-width: 240px;
 
-// Breakpoints
-
-// These are the material breakpoints. Unless you find a way to customize them,
-// you'll have to use them sometimes
-$extra-small: 0px;
+// These are the min width breakpoints used in the Angular CDK
+$Xsmall: 0px;
 $small: 600px;
 $medium: 960px;
 $large: 1280px;
-$extra-large: 1920px;
+$Xlarge: 1920px;
 
 // Come up with a better name, I dare you
 $tablet: 768px;

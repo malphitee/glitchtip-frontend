@@ -1,44 +1,32 @@
-@import "variables";
-
-$iconWidth: 56px;
-
-.top-content {
-  display: flex;
-  justify-content: space-between;
-}
+@use "variables" as vars;
 
 table {
   width: 100%;
-
-  td:first-child {
-    padding-left: 24px;
-  }
-
-  td:last-child {
-    padding-right: 24px;
-  }
 }
 
 .wrapper {
   width: 100%;
 }
 
-.name-and-url-cell {
-  padding: 8px 0px 8px 0px;
+.pagination-container {
+  width: 100%;
+  display: flex;
+  justify-content: right;
+}
+
+.mat-column-name {
+  max-width: 400px;
+
+  @media screen and (max-width: vars.$large - 1) {
+    max-width: 300px;
+  }
+  @media screen and (max-width: vars.$medium - 1) {
+    max-width: 200px;
+  }
 }
 
 .name-and-url-container {
-  width: 500px;
-
-  @media screen and (max-width: $large - 1) {
-    width: 300px;
-  }
-  @media screen and (max-width: $medium - 1) {
-    width: 200px;
-  }
-  @media screen and (max-width: $tablet - 1) {
-    width: 160px;
-  }
+  width: 100%;
 
   a {
     white-space: nowrap;
@@ -48,42 +36,69 @@ table {
     max-width: fit-content;
   }
 
+  .monitor-link {
+    text-decoration: underline;
+  }
+
   div {
     width: inherit;
 
-    .mat-caption {
+    .caption-text {
       color: inherit;
     }
   }
 }
 
+.mat-column-checkChart {
+  width: 40%;
+  min-width: 300px;
+}
+
 .chart-container {
-  padding: 0;
-
-  @media screen and (max-width: $small - 1) {
-    display: none;
-  }
-
   .monitor-chart {
     margin-left: 10px;
   }
 }
 
-.status {
-  @media screen and (max-width: $small - 1) {
+.mat-column-status {
+  width: 150px;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  @media screen and (max-width: vars.$small - 1) {
     padding-left: 40px;
   }
 }
 
+.add-monitor-button {
+  @media screen and (max-width: vars.$small - 1) {
+    mat-icon {
+      display: none;
+    }
+  }
+}
+
+.add-monitor-text-short {
+  @media screen and (min-width: vars.$small) {
+    display: none;
+  }
+}
+
+.add-monitor-text-long {
+  @media screen and (max-width: vars.$small - 1) {
+    display: none;
+  }
+}
+
 .status-color {
-  position: relative;
-  padding: 0 0 0 24px;
-  &:after {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 3px;
+  &--true {
+    border-left: 3px solid var(--success-color);
+  }
+
+  &--false {
+    border-left: 3px solid var(--mat-sys-error);
+  }
+
+  &-- {
+    border-left: 3px solid var(--mat-sys-surface-variant);
   }
 }

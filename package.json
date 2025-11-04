@@ -14,8 +14,6 @@
     "postinstall": "patch-package",
     "lint": "ng lint",
     "cy:open": "cypress open",
-    "screenshot": "SCREENSHOT=true cypress run --spec cypress/integration/screenshot-run.ts --env screenshot=true",
-    "cy:openscreenshot": "cypress open --env screenshot=true",
     "cy:run": "cypress run",
     "e2e": "concurrently \"npm run start -- --no-hmr\" \"wait-on http-get://localhost:4200 && npm run cy:run\" --kill-others --success first",
     "build-stats": "ng build -c production --stats-json",
@@ -57,6 +55,7 @@
     "date-fns": "^4.1.0",
     "express": "^4.18.2",
     "ngx-markdown": "^20.0.0",
+    "ngx-mat-select-search": "^8.0.2",
     "openapi-fetch": "^0.14.0",
     "qrcode": "^1.5.4",
     "rxjs": "^7.8.1",
@@ -79,8 +78,8 @@
     "@babel/core": "^7.7.2",
     "@chromatic-com/storybook": "^4.0.1",
     "@cypress/webpack-preprocessor": "^6.0.2",
-    "@storybook/addon-docs": "~9.0.18",
-    "@storybook/angular": "~9.0.18",
+    "@storybook/addon-docs": "~9.1.1",
+    "@storybook/angular": "~9.1.1",
     "@types/d3": "^7.4.0",
     "@types/express": "^4.17.17",
     "@types/fs-extra": "^11.0.4",
@@ -96,7 +95,7 @@
     "cypress": "^14.5.1",
     "cypress-localstorage-commands": "^2.2.7",
     "eslint": "^9.0.0",
-    "eslint-plugin-storybook": "^9.0.18",
+    "eslint-plugin-storybook": "^9.1.1",
     "fs-extra": "^11.3.0",
     "glob": "^11.0.1",
     "jasmine-core": "^5.0.0",
@@ -116,5 +115,6 @@
     "typescript": "^5.9.2",
     "wait-on": "^5.3.0",
     "xliff": "^6.2.2"
-  }
+  },
+  "packageManager": "pnpm@10.13.1+sha512.37ebf1a5c7a30d5fabe0c5df44ee8da4c965ca0c5af3dbab28c3a1681b70a256218d05c81c9c0dcf767ef6b8551eb5b960042b9ed4300c59242336377e01cfad"
 }

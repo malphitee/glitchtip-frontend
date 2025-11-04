@@ -11,7 +11,7 @@
             <form
               [formGroup]="form"
               (ngSubmit)="onSubmit()"
-              id="create-organization-form"
+              data-cy="create-organization-form"
             >
               @if (error(); as error) {
                 <mat-error>{{ error }}</mat-error>
@@ -23,6 +23,7 @@
                   gtAutofocus
                   formControlName="name"
                   i18n-placeholder
+                  data-cy="create-organization-input"
                 />
               </mat-form-field>
               <button id="submit" mat-flat-button color="primary" i18n

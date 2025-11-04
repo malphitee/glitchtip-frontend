@@ -1,8 +1,8 @@
 <section class="l-body">
   <header class="page-header">
-    <h2 class="mat-headline-4" i18n>Subscription</h2>
+    <h2 class="section-header-text" i18n>Subscription</h2>
     @if (fromStripe()) {
-      <span class="mat-subtitle-1">Redirected from Stripe</span>
+      <span class="body-text-strong">Redirected from Stripe</span>
     }
   </header>
   @if (subscriptionLoading() || subscriptionRefreshTimeout()) {
@@ -36,7 +36,7 @@
               subscription.status === "past_due"
             ) {
               @if (subscription.status === "active") {
-                <p class="mat-body-1">
+                <p class="body-text">
                   @if (subscription.effectivePrice === 0) {
                     <ng-container i18n
                       >You have selected the free plan. Please consider making a
@@ -58,12 +58,12 @@
                 </p>
               }
               @if (subscription.status === "trialing") {
-                <p class="mat-body-1 no-bottom-margin" i18n
+                <p class="body-text no-bottom-margin" i18n
                   >This organization has a trial subscription to GlitchTip.</p
                 >
               }
               @if (subscription.status === "past_due") {
-                <p class="mat-body-1" i18n
+                <p class="body-text" i18n
                   >This organization has a subscription to GlitchTip, but the
                   payment is past due.</p
                 >
@@ -137,14 +137,14 @@
                   </div>
                 }
                 <ul>
-                  <li class="mat-body-1" i18n
+                  <li class="body-text" i18n
                     >Start date for this plan:
                     {{ subscription.startDate | date }}</li
                   >
-                  <li class="mat-body-1" i18n
+                  <li class="body-text" i18n
                     >Plan cost: {{ subscription.effectivePrice | currency }}</li
                   >
-                  <li class="mat-body-1">
+                  <li class="body-text">
                     <ng-container i18n>Billing</ng-container>:
                     @if (
                       subscription.collectionMethod === "charge_automatically"
@@ -155,14 +155,14 @@
                       <ng-container i18n>Send invoice</ng-container>
                     }
                   </li>
-                  <li class="mat-body-1" i18n
+                  <li class="body-text" i18n
                     >Billing period:
                     {{ subscription.currentPeriodStart | date }} to
                     {{ subscription.currentPeriodEnd | date }}</li
                   >
                 </ul>
               </ng-container>
-              <p class="mat-body-1" i18n
+              <p class="body-text" i18n
                 >If you have questions about your subscription, please contact
                 us at <a href="mailto:{{ billingEmail }}">{{ billingEmail }}</a
                 >.
@@ -175,7 +175,7 @@
                 buttonText="Manage Subscription"
               />
             } @else {
-              <p class="mat-body-1" i18n
+              <p class="body-text" i18n
                 >This organization does not have an active subscription to
                 GlitchTip. Pick a plan to get started.</p
               >

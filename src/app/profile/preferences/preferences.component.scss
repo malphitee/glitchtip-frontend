@@ -1,11 +1,15 @@
-@import "variables";
+@use "variables" as vars;
 
 mat-form-field {
   margin-bottom: 10px;
 
-  @media screen and (max-width: $small - 1) {
+  @media screen and (max-width: vars.$small - 1) {
     margin-bottom: 20px;
   }
+}
+
+.invalid {
+  color: var(--mat-sys-error);
 }
 
 .half-width {

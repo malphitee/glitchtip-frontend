@@ -1,4 +1,4 @@
-@import "variables";
+@use "variables" as vars;
 
 mat-card-header {
   display: flex;
@@ -13,7 +13,7 @@ mat-card-header {
   mat-form-field {
     margin-top: -5px;
 
-    @media (max-width: $small - 1) {
+    @media (max-width: vars.$small - 1) {
       width: 100%;
     }
   }

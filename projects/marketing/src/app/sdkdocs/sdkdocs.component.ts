@@ -1,10 +1,16 @@
-import { AfterViewChecked, Component, OnInit, ViewEncapsulation, inject } from "@angular/core";
+import {
+  AfterViewChecked,
+  Component,
+  OnInit,
+  ViewEncapsulation,
+  inject,
+} from "@angular/core";
 
 import { HighlightService } from "../shared/highlight.service";
 import { MarkdownComponent } from "ngx-markdown";
 import { ActivatedRoute } from "@angular/router";
 import { MatCard, MatCardContent } from "@angular/material/card";
-import { flattenedPlatforms } from "src/app/settings/projects/platform-picker/platforms-for-picker";
+import { flattenedPlatforms } from "src/app/settings/projects/new-project/platform-picker/platforms-for-picker";
 
 @Component({
   imports: [MarkdownComponent, MatCard, MatCardContent],

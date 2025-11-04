@@ -1,15 +1,12 @@
-@import "variables";
-
-$iconWidth: 56px;
-
 table {
   width: 100%;
   margin-bottom: 40px;
-  table-layout: fixed;
 }
 
-.table-header {
-  padding: 20px 0 8px;
+.pagination-buttons-container {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .name {
@@ -19,10 +16,6 @@ table {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
-}
-
-.empty-states {
-  padding: 1.5em 24px 0.5em;
 }
 
 .releases-list-link {

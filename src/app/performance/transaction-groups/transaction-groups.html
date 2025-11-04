@@ -1,41 +1,41 @@
-@if (paginator(); as paginator) {
+<gt-list-app-bar
+  listTitle="Transaction groups"
+  [searchHits]="paginator()?.count"
+  [queriedProjects]="projects()"
+  [displayAddProject]="true"
+  [queriedTimeRangeStart]="start()"
+  [queriedTimeRangeEnd]="end()"
+  [includeTimeRangeSelect]="true"
+/>
 <section class="l-body l-body--full-width mat-elevation-z0">
-  <header class="page-header">
-    <gt-list-title
-      title="Transaction Groups"
-      [searchHits]="paginator.count"
-    ></gt-list-title>
-  </header>
-  <gt-project-filter-bar></gt-project-filter-bar>
-  @if (transactionGroupsDisplay(); as transactionGroups) {
-  <div>
+  @if (environmentNames(); as environments) {
+  <gt-data-filter-bar
+    [environmentForm]="environmentForm"
+    [sortForm]="sortForm"
+    [sorts]="sorts"
+    (sortByChanged)="sortByChanged($event)"
+    [organizationEnvironments]="environments"
+    (filterByEnvironment)="filterByEnvironment($event)"
+  ></gt-data-filter-bar>
+  } @if (transactionGroupsDisplay(); as transactionGroups) {
+  <div class="table-container">
     <table
       mat-table
       class="mat-elevation-z2"
       [dataSource]="transactionGroupsDisplay()"
     >
-      <ng-container matColumnDef="actions">
-        <th
-          mat-header-cell
-          *matHeaderCellDef
-          [attr.colspan]="displayedColumns.length"
-          class="table-header"
-        >
-          @if (environmentNames(); as environments) {
-          <gt-data-filter-bar
-            [dateForm]="dateForm"
-            [environmentForm]="environmentForm"
-            [sortForm]="sortForm"
-            [searchForm]="searchForm"
-            [sorts]="sorts"
-            [organizationEnvironments]="environments"
-            (dateFormSubmission)="onDateFormSubmit($event)"
-            (dateFormReset)="dateFormReset()"
-            (filterByEnvironment)="filterByEnvironment($event)"
-            (sortByChanged)="sortByChanged($event)"
-            (searchSubmit)="searchSubmit()"
-          ></gt-data-filter-bar>
-          }
+      <ng-container matColumnDef="header-spacing">
+        <!-- Empty cell for spacing -->
+        <th mat-header-cell [attr.colspan]="1" *matHeaderCellDef> </th>
+      </ng-container>
+      <ng-container matColumnDef="pagination">
+        <th mat-header-cell *matHeaderCellDef class="table-header__actions">
+          <div>
+            <gt-pagination-buttons
+              [paginator]="paginator()"
+              [loading]="loading()"
+            />
+          </div>
         </th>
       </ng-container>
       <ng-container matColumnDef="name-and-project">
@@ -51,7 +51,11 @@
                 [matTooltip]="setTitleTooltip(group)"
                 [matTooltipDisabled]="tooltipDisabled"
               >
-                <a [routerLink]="group.id" queryParamsHandling="merge">
+                <a
+                  [routerLink]="group.id"
+                  class="table-group-label"
+                  queryParamsHandling="merge"
+                >
                   @if (group.method) {
                   <span>{{ group.method }}&nbsp;</span>
                   } {{ group.transaction }} @if (!group.method) {
@@ -86,21 +90,16 @@
           {{ group.avgDuration | humanizeDuration }}
         </td>
       </ng-container>
-      <ng-container matColumnDef="pagination">
-        <td
-          mat-footer-cell
-          *matFooterCellDef
-          [attr.colspan]="displayedColumns.length"
-          class="footer"
-        >
-          <gt-list-footer [paginator]="paginator"> </gt-list-footer>
-        </td>
-      </ng-container>
-      <tr mat-header-row *matHeaderRowDef="['actions']"></tr>
       <tr
         mat-header-row
-        class="overlay"
-        *matHeaderRowDef="displayedColumns"
+        *matHeaderRowDef="['header-spacing', 'pagination']; sticky: true"
+        class="table-header"
+        [attr.colspan]="2"
+      ></tr>
+      <tr
+        mat-header-row
+        class="table-header performance-table-header"
+        *matHeaderRowDef="displayedColumns; sticky: true"
         [class.u-hidden]="transactionGroups.length === 0"
       ></tr>
       <tr
@@ -108,16 +107,16 @@
         *matRowDef="let row; columns: displayedColumns"
         class="monitor-row"
       ></tr>
-      <tr class="mat-row" *matNoDataRow>
-        <td class="mat-cell" [attr.colspan]="displayedColumns.length">
-          <div class="empty-states">
+      <tr *matNoDataRow>
+        <td [attr.colspan]="displayedColumns.length">
+          <div class="table-empty-states">
             @if ( (initialLoadComplete()) === true && (loading()) === false ) {
             @if ((errors())?.length) { @if ((errors())?.length === 1) {
-            <h3 class="mat-headline-4">
+            <h3 class="body-text-strong">
               There was an error processing your request
             </h3>
             } @else {
-            <h3 class="mat-headline-4">
+            <h3 class="body-text-strong">
               There were errors while processing your request
             </h3>
             }
@@ -126,17 +125,15 @@
               <li>{{ error }}</li>
               }
             </ul>
-            } @else { No transaction groups were found. } }
+            } @else {
+            <div i18n class="body-text-strong"
+              >No transaction groups were found.</div
+            >
+            } }
           </div>
         </td>
       </tr>
-      <tr
-        mat-footer-row
-        class="pagination-row"
-        *matFooterRowDef="['pagination']"
-      ></tr>
     </table>
   </div>
   }
 </section>
-}

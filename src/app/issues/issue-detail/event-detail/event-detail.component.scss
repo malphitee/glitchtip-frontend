@@ -1,4 +1,5 @@
-@import "variables";
+@use "@angular/material" as mat;
+@use "variables" as vars;
 
 section {
   margin-bottom: 16px;
@@ -12,7 +13,7 @@ section {
   display: flex;
   justify-content: space-between;
 
-  @media screen and (max-width: $small - 1) {
+  @media screen and (max-width: vars.$small - 1) {
     flex-direction: column-reverse;
   }
 
@@ -27,7 +28,7 @@ section {
   }
 
   .navigation-buttons {
-    @media screen and (max-width: $small - 1) {
+    @media screen and (max-width: vars.$small - 1) {
       margin: 0 auto 8px;
     }
   }
@@ -66,6 +67,21 @@ gt-entry-request {
   float: left;
   list-style: none;
   transition: 0.3s;
+  border: 1px solid var(--mat-sys-outline);
+  background-color: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  box-shadow: var(--mat-sys-shadow-1);
+  display: flex;
+  align-items: center;
+
+  &:hover {
+    background-color: var(--mat-sys-surface-container-highest);
+    box-shadow: var(--mat-sys-shadow-2);
+  }
+}
+
+.pseudo-chip-link {
+  white-space: nowrap;
 }
 
 .pseudo-chip-key {
@@ -76,4 +92,23 @@ gt-entry-request {
 
 .pseudo-chip-value {
   vertical-align: -0.07em;
+}
+
+.pseudo-chip-external-link {
+  display: flex !important;
+  max-height: 1em;
+  max-width: 1em;
+}
+
+.pseudo-chip-external-link mat-icon {
+  font-size: 1em;
+}
+
+.pseudo-chip-divider {
+  content: '';
+  display: inline-block;
+  width: 1px;
+  height: 1.2em;
+  background-color: var(--mat-sys-outline);
+  margin: 0 8px;
 }

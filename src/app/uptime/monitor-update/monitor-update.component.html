@@ -1,8 +1,9 @@
-<section class="l-body">
-  <gt-detail-header
-    backLinkText="View monitor details"
-    [title]="['Update Monitor', null]"
-  >
+<gt-top-app-bar>
+  <ng-container slot="left">
+    <gt-back-link backLinkText="View monitor details" />
+  </ng-container>
+
+  <ng-container slot="right">
     <button
       mat-icon-button
       class="medium-icon-button"
@@ -11,7 +12,9 @@
     >
       <mat-icon>delete</mat-icon>
     </button>
-  </gt-detail-header>
+  </ng-container>
+</gt-top-app-bar>
+<section class="l-body">
   @if (monitor(); as monitor) {
     <gt-monitor-form
       [monitorSettings]="monitor"

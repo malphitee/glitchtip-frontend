@@ -1,6 +1,8 @@
-<section class="l-body mat-typography">
-  <header class="page-header">
-    <h1 class="mat-headline-4">Organization Members</h1>
+<gt-top-app-bar>
+  <ng-container slot="left">
+    <h1 class="section-header-text">Organization Members</h1>
+  </ng-container>
+  <ng-container slot="right">
     <a
       mat-flat-button
       color="primary"
@@ -8,7 +10,9 @@
       [disabled]="!accessMemberWrite()"
       >Invite Member</a
     >
-  </header>
+  </ng-container>
+</gt-top-app-bar>
+<section class="l-body">
   <mat-card>
     <mat-card-header>
       <mat-card-title>
@@ -26,7 +30,7 @@
               </a>
               @if (member.isOwner) {
                 <mat-chip
-                  class="mat-caption"
+                  class="caption-text"
                   color="primary"
                   highlighted="true"
                 >
@@ -34,7 +38,7 @@
                 </mat-chip>
               }
               @if (member.pending) {
-                <mat-chip class="mat-caption" color="primary">
+                <mat-chip class="caption-text" color="primary">
                   Invite Pending
                 </mat-chip>
               }

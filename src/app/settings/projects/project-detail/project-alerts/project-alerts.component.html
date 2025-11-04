@@ -31,7 +31,7 @@
             [newAlert]="true"
             (alertSubmit)="newAlertProperties($event)"
           ></gt-alert-form>
-          <h4 class="mat-body-strong">Recipients:</h4>
+          <h4 class="body-text-strong">Recipients:</h4>
           @if (newProjectAlertRecipients()?.length === 0) {
             <p class="no-recipients no-recipients-new" i18n
               >This alert isn't being sent anywhere. Select "Add An Alert
@@ -95,7 +95,7 @@
                     attr.aria-label="Delete Alert For {{ recipient.url }}"
                     (click)="removeNewAlertRecipient(recipient.url)"
                   >
-                    <mat-icon>delete_outline</mat-icon>
+                    <mat-icon>delete</mat-icon>
                   </button>
                 </div>
               </li>
@@ -168,7 +168,7 @@
               [errorAlert]="alert.errorAlert"
               (alertSubmit)="updateProperties($event, alert)"
             ></gt-alert-form>
-            <h4 class="mat-body-strong">Recipients:</h4>
+            <h4 class="body-text-strong">Recipients:</h4>
             @if (deleteRecipientError(); as error) {
               <p class="error recipients-error">
                 {{ error }}
@@ -244,7 +244,7 @@
                         attr.aria-label="Delete Alert {{ i + 0 }}"
                         (click)="removeAlertRecipient(recipient, alert)"
                       >
-                        <mat-icon>delete_outline</mat-icon>
+                        <mat-icon>delete</mat-icon>
                       </button>
                     }
                   </div>

@@ -1,4 +1,7 @@
+@use "variables" as vars;
+
 .auth-form-wrapper {
+  background-color: var(--mat-sys-surface-container-low);
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -39,7 +42,7 @@
   mat-form-field {
     margin-bottom: 10px;
 
-    @media screen and (max-width: $small - 1) {
+    @media screen and (max-width: vars.$small - 1) {
       margin-bottom: 20px;
     }
   }

@@ -1,3 +1,4 @@
+import { BreakpointObserver, Breakpoints } from "@angular/cdk/layout";
 import {
   Component,
   ChangeDetectionStrategy,
@@ -7,6 +8,8 @@ import {
   computed,
   OnInit,
   OnDestroy,
+  signal,
+  ViewChild,
 } from "@angular/core";
 import { DatePipe, I18nPluralPipe } from "@angular/common";
 import { FormControl, FormGroup } from "@angular/forms";
@@ -15,44 +18,51 @@ import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatDialog } from "@angular/material/dialog";
 import { MatIconModule } from "@angular/material/icon";
 import { MatSelectChange } from "@angular/material/select";
-import { MatTableModule } from "@angular/material/table";
+import { MatTable, MatTableModule } from "@angular/material/table";
 import { Router, ActivatedRoute, RouterLink } from "@angular/router";
 import { IssuesService } from "../issues.service";
+import { SettingsService } from "src/app/api/settings.service";
 import { IssueStatus } from "../interfaces";
 import { DaysAgoPipe, DaysOldPipe } from "../../shared/days-ago.pipe";
 import { IssueZeroStatesComponent } from "../issue-zero-states/issue-zero-states.component";
-import { ListFooterComponent } from "../../list-elements/list-footer/list-footer.component";
 import { DataFilterBarComponent } from "../../list-elements/data-filter-bar/data-filter-bar.component";
-import { ProjectFilterBarComponent } from "../../list-elements/project-filter-bar/project-filter-bar.component";
-import { ListTitleComponent } from "../../list-elements/list-title/list-title.component";
 import { OrganizationsService } from "src/app/api/organizations.service";
-
+import { MatCardModule } from "@angular/material/card";
+import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import {
   stringArrAttribute,
   stringAttribute,
 } from "src/app/shared/shared.utils";
 import { ConfirmDialogComponent } from "src/app/shared/confirm-dialog/confirm-dialog.component";
 import { EnvironmentsService } from "src/app/api/environments.service";
+import { ListAppBar } from "src/app/list-elements/list-app-bar/list-app-bar";
+import { IssueChart } from "./charts/issue-chart";
+import { PaginationButtons } from "src/app/list-elements/pagination-buttons/pagination-buttons";
+import { toSignal } from "@angular/core/rxjs-interop";
+import { MatMenuModule } from "@angular/material/menu";
 
 @Component({
   templateUrl: "./issues-page.html",
   styleUrls: ["./issues-page.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ListTitleComponent,
-    ProjectFilterBarComponent,
     MatTableModule,
     DataFilterBarComponent,
     MatCheckboxModule,
+    MatCardModule,
     MatButtonModule,
     MatIconModule,
+    MatMenuModule,
     RouterLink,
-    ListFooterComponent,
     IssueZeroStatesComponent,
     DatePipe,
     DaysAgoPipe,
     DaysOldPipe,
     I18nPluralPipe,
+    ListAppBar,
+    IssueChart,
+    MatButtonToggleModule,
+    PaginationButtons,
   ],
   providers: [IssuesService],
 })
@@ -61,8 +71,11 @@ export class IssuesPage implements OnInit, OnDestroy {
   protected service = inject(IssuesService);
   protected router = inject(Router);
   protected route = inject(ActivatedRoute);
+  protected breakPointObserver = inject(BreakpointObserver);
   private organizationsService = inject(OrganizationsService);
+  private settingsService = inject(SettingsService);
   #environmentsService = inject(EnvironmentsService);
+  @ViewChild(MatTable) table?: MatTable<any>;
 
   orgSlug = input.required<string>({ alias: "org-slug" });
   cursor = input(undefined, { transform: stringAttribute });
@@ -73,7 +86,6 @@ export class IssuesPage implements OnInit, OnDestroy {
   projects = input([], { alias: "project", transform: stringArrAttribute });
   environment = input(undefined, { transform: stringAttribute });
 
-  displayedColumns: string[] = ["select", "title", "events"];
   paginator = this.service.paginator;
   loading = this.service.loading;
   initialLoad = this.service.initialLoad;
@@ -95,6 +107,7 @@ export class IssuesPage implements OnInit, OnDestroy {
   });
 
   issues = this.service.issuesWithSelected;
+
   areAllSelected = this.service.areAllSelected;
   multipleProjectIssuesSelected = computed(() => {
     let selectedProjects = this.issues()
@@ -103,6 +116,23 @@ export class IssuesPage implements OnInit, OnDestroy {
     let selectedProjectsSet = new Set(selectedProjects);
     return selectedProjectsSet.size > 1;
   });
+
+  allColumns = ["select", "title", "trend", "events"];
+  xSmallScreenColumns = ["select", "title"];
+  mediumScreenColumns = ["select", "title", "events"];
+  isLargeScreen = signal(true);
+  displayedColumns = signal(this.allColumns);
+  breakPointSignal = toSignal(
+    this.breakPointObserver.observe([
+      Breakpoints.Medium,
+      Breakpoints.Small,
+      Breakpoints.XSmall,
+    ]),
+  );
+  statsPeriod = this.service.statsPeriod;
+  statsChartDataFrame = this.service.statsChartDataFrame;
+  issueStatsLoading = this.service.issueStatsLoading;
+  serverTimeZone = this.settingsService.serverTimeZone;
   thereAreSelectedIssues = this.service.thereAreSelectedIssues;
   allResultsSelected = this.service.allResultsSelected;
   numberOfSelectedIssues = this.service.numberOfSelectedIssues;
@@ -142,10 +172,6 @@ export class IssuesPage implements OnInit, OnDestroy {
   availableEnvironments = computed(() =>
     this.#environmentsService.environmentNames(),
   );
-  // this.appliedProjectCount() !== 1
-  //   ? this.organizationDetailService.organizationEnvironmentsProcessed()
-  //   : this.projectEnvironmentsService.visibleEnvironments(),
-  // );
 
   constructor() {
     effect(() => {
@@ -223,13 +249,27 @@ export class IssuesPage implements OnInit, OnDestroy {
         environment: environment ?? "",
       });
     });
+    // Ensure sticky headers stay properly aligned
+    // After showing/hiding headers based on whether or
+    // not there are issue query results
     effect(() => {
-      const start = this.start();
-      const end = this.end();
-      this.dateForm.setValue({
-        startDate: start ? new Date(start.replace("Z", "")) : null,
-        endDate: end ? new Date(end.replace("Z", "")) : null,
-      });
+      this.issues();
+      if (this.table) {
+        this.table.updateStickyHeaderRowStyles();
+      }
+    });
+    effect(() => {
+      const breakPointResult = this.breakPointSignal();
+      if (breakPointResult?.matches) {
+        this.displayedColumns.set(this.mediumScreenColumns);
+        if (breakPointResult.breakpoints[Breakpoints.XSmall]) {
+          this.displayedColumns.set(this.xSmallScreenColumns);
+        }
+        this.isLargeScreen.set(false);
+      } else {
+        this.displayedColumns.set(this.allColumns);
+        this.isLargeScreen.set(true);
+      }
     });
   }
 
@@ -243,25 +283,6 @@ export class IssuesPage implements OnInit, OnDestroy {
 
   trackIssues(index: number, issue: { id: string }): string {
     return issue.id;
-  }
-
-  onDateFormSubmit(queryParams: object) {
-    this.router.navigate([], {
-      queryParams,
-      queryParamsHandling: "merge",
-    });
-  }
-
-  dateFormReset() {
-    this.router.navigate([], {
-      queryParams: {
-        cursor: null,
-        start: null,
-        end: null,
-      },
-      queryParamsHandling: "merge",
-    });
-    this.dateForm.setValue({ startDate: null, endDate: null });
   }
 
   searchSubmit() {
@@ -342,5 +363,9 @@ export class IssuesPage implements OnInit, OnDestroy {
       queryParams: { cursor: null, environment: event.value },
       queryParamsHandling: "merge",
     });
+  }
+
+  toggleStatsPeriod(period: "24h" | "14d") {
+    this.statsPeriod.set(period);
   }
 }

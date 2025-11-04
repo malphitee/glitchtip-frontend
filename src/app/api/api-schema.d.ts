@@ -1724,6 +1724,8 @@ export interface components {
             iPaidForGlitchTip: boolean;
             /** Enableuserregistration */
             enableUserRegistration: boolean;
+            /** Enablesocialappsuserregistration */
+            enableSocialAppsUserRegistration: boolean;
             /** Enableorganizationcreation */
             enableOrganizationCreation: boolean;
             /** Stripepublickey */
@@ -2089,19 +2091,6 @@ export interface components {
             /** Timestamp */
             timestamp?: string | null;
         };
-        /** EventException */
-        EventException: {
-            /** Type */
-            type?: string | null;
-            /** Value */
-            value?: string | null;
-            /** Module */
-            module?: string | null;
-            /** Thread Id */
-            thread_id?: string | null;
-            mechanism?: components["schemas"]["ExceptionMechanism"] | null;
-            stacktrace?: components["schemas"]["StackTrace"] | null;
-        };
         /** EventGeo */
         EventGeo: {
             /** City */
@@ -2117,16 +2106,17 @@ export interface components {
         EventIngestSchema: {
             /** Platform */
             platform?: string | null;
+            /** Errors */
+            errors?: unknown[] | null;
             /**
              * Event Id
              * Format: uuid
              */
             event_id: string;
-            /**
-             * Timestamp
-             * Format: date-time
-             */
-            timestamp?: string;
+            /** Timestamp */
+            timestamp?: string | {
+                [key: string]: unknown;
+            } | null;
             /**
              * Level
              * @default error
@@ -2159,15 +2149,11 @@ export interface components {
             } | null;
             /** Fingerprint */
             fingerprint?: (string | null)[] | null;
-            /** Errors */
-            errors?: unknown[] | null;
-            /** Exception */
-            exception?: components["schemas"]["EventException"][] | components["schemas"]["ValueEventException"] | null;
+            exception?: components["schemas"]["IngestValueEventException"] | null;
             /** Message */
             message?: string | components["schemas"]["EventMessage"] | null;
             template?: components["schemas"]["EventTemplate"] | null;
-            /** Breadcrumbs */
-            breadcrumbs?: components["schemas"]["EventBreadcrumb"][] | components["schemas"]["ValueEventBreadcrumb"] | null;
+            breadcrumbs?: components["schemas"]["ValueEventBreadcrumb"] | null;
             sdk?: components["schemas"]["ClientSDKInfo"] | null;
             request?: components["schemas"]["IngestRequest"] | null;
             /** Contexts */
@@ -2234,6 +2220,12 @@ export interface components {
             handled?: boolean | null;
             /** Synthetic */
             synthetic?: boolean | null;
+            /** Is Exception Group */
+            is_exception_group?: boolean | null;
+            /** Parent Id */
+            parent_id?: number | null;
+            /** Source */
+            source?: string | null;
             /** Meta */
             meta?: {
                 [key: string]: unknown;
@@ -2281,6 +2273,20 @@ export interface components {
             /** Supports Geometry Shaders */
             supports_geometry_shaders?: boolean | null;
         };
+        /** IngestEventException */
+        IngestEventException: {
+            /** Type */
+            type?: string | null;
+            /** Value */
+            value?: string | null;
+            /** Module */
+            module?: string | null;
+            /** Thread Id */
+            thread_id?: string | null;
+            mechanism?: components["schemas"]["ExceptionMechanism"] | null;
+            stacktrace?: components["schemas"]["StackTrace"] | null;
+            raw_stacktrace?: components["schemas"]["StackTrace"] | null;
+        };
         /** IngestRequest */
         IngestRequest: {
             /** Api Target */
@@ -2317,6 +2323,24 @@ export interface components {
                     [key: string]: unknown;
                 } | null;
             } | null;
+        };
+        /** IngestValueEventException */
+        IngestValueEventException: {
+            /** Values */
+            values: components["schemas"]["IngestEventException"][];
+        };
+        /** LockReason */
+        LockReason: {
+            /** Type */
+            type: number;
+            /** Address */
+            address?: string | null;
+            /** Package Name */
+            package_name?: string | null;
+            /** Class Name */
+            class_name?: string | null;
+            /** Thread Id */
+            thread_id?: string | null;
         };
         /** OSContext */
         OSContext: {
@@ -2411,6 +2435,10 @@ export interface components {
             function?: string | null;
             /** Raw Function */
             raw_function?: string | null;
+            /** Function Id */
+            function_id?: string | null;
+            /** Symbol */
+            symbol?: string | null;
             /** Module */
             module?: string | null;
             /** Lineno */
@@ -2431,6 +2459,7 @@ export interface components {
             in_app?: boolean | null;
             /** Stack Start */
             stack_start?: boolean | null;
+            lock?: components["schemas"]["LockReason"] | null;
             /** Vars */
             vars?: {
                 [key: string]: string | {
@@ -2498,11 +2527,6 @@ export interface components {
         ValueEventBreadcrumb: {
             /** Values */
             values: components["schemas"]["EventBreadcrumb"][];
-        };
-        /** ValueEventException */
-        ValueEventException: {
-            /** Values */
-            values: components["schemas"]["EventException"][];
         };
         /** EnvelopeIngestOut */
         EnvelopeIngestOut: {
@@ -2584,6 +2608,8 @@ export interface components {
              * @default
              */
             url: string | "" | null;
+            /** Tagstoadd */
+            tagsToAdd?: string[] | null;
         };
         /** ProjectAlertIn */
         ProjectAlertIn: {
@@ -2614,6 +2640,8 @@ export interface components {
              * Format: uri
              */
             url: string;
+            /** Tagstoadd */
+            tagsToAdd?: string[] | null;
         };
         /** AssemblePayload */
         AssemblePayload: {
@@ -2752,6 +2780,19 @@ export interface components {
                 [key: string]: unknown;
             };
         };
+        /**
+         * EventProcessingError
+         * @description Represents a single error encountered during event processing,
+         *     matching the Sentry event schema.
+         */
+        EventProcessingError: {
+            /** Type */
+            type: string;
+            /** Name */
+            name?: string | null;
+            /** Value */
+            value?: unknown | null;
+        };
         /** ExceptionEntry */
         ExceptionEntry: {
             /**
@@ -2768,6 +2809,8 @@ export interface components {
         IssueEventSchema: {
             /** Platform */
             platform?: string | null;
+            /** Errors */
+            errors?: components["schemas"]["EventProcessingError"][] | null;
             /** Id.Hex */
             "id.hex": string;
             /** Eventid */
@@ -2884,6 +2927,8 @@ export interface components {
         IssueEventDetailSchema: {
             /** Platform */
             platform?: string | null;
+            /** Errors */
+            errors?: components["schemas"]["EventProcessingError"][] | null;
             /** Id.Hex */
             "id.hex": string;
             /** Eventid */
@@ -2980,6 +3025,8 @@ export interface components {
         IssueEventJsonSchema: {
             /** Platform */
             platform?: string | null;
+            /** Errors */
+            errors?: components["schemas"]["EventProcessingError"][] | null;
             /** Id.Hex */
             "id.hex": string;
             /**
@@ -3261,10 +3308,10 @@ export interface components {
          * @description Represents the 24-hour statistics block.
          */
         StatsDetailSchema: {
-            /** Stats 24H */
-            stats_24h?: number[][] | null;
-            /** Stats 14D */
-            stats_14d?: number[][] | null;
+            /** 24H */
+            "24h"?: number[][] | null;
+            /** 14D */
+            "14d"?: number[][] | null;
         };
         /** IssueHashSchema */
         IssueHashSchema: {

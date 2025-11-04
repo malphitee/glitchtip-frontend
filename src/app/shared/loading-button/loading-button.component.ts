@@ -1,7 +1,6 @@
 import {
   Component,
   ChangeDetectionStrategy,
-  Input,
   input,
   output,
 } from "@angular/core";
@@ -13,12 +12,10 @@ import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
   selector: "gt-loading-button",
   imports: [MatButtonModule, MatIconModule, MatProgressSpinnerModule],
   templateUrl: "./loading-button.component.html",
-  styleUrls: ["./loading-button.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoadingButtonComponent {
   readonly buttonText = input<string>();
-  @Input() icon?: string;
   readonly loading = input<boolean>();
   readonly disabled = input<boolean>();
   /** For fullWidth to work, you may need to set width: 100% to app-loading-button */

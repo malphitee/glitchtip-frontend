@@ -12,12 +12,14 @@ interface UserState {
   userDeleteError: string | null;
   userDeleteLoading: boolean;
   disconnectLoading: number | null;
+  throttleWarningDismissedOrgs: string[];
 }
 
 const initialState: UserState = {
   userDeleteError: null,
   userDeleteLoading: false,
   disconnectLoading: null,
+  throttleWarningDismissedOrgs: [],
 };
 
 const mePath = { user_id: "me" } as const;
@@ -37,6 +39,10 @@ export class UserService extends StatefulService<UserState> {
     },
   }));
   user = computed(() => this.userResource.value());
+  // Tracks throttle warnings dismissed by user in current session
+  throttleWarningDismissedOrgs = computed(
+    () => this.state().throttleWarningDismissedOrgs,
+  );
   activeUserEmail = computed(() => this.user()?.email);
   readonly userDeleteError = computed(() => this.state().userDeleteError);
   readonly userDeleteLoading = computed(() => this.state().userDeleteLoading);
@@ -122,6 +128,15 @@ export class UserService extends StatefulService<UserState> {
 
   reload() {
     this.userResource.reload();
+  }
+
+  dismissThrottleWarning(orgSlug: string) {
+    const state = this.state();
+    this.setState({
+      throttleWarningDismissedOrgs: state.throttleWarningDismissedOrgs.concat([
+        orgSlug,
+      ]),
+    });
   }
 
   private setUserDeleteLoadingStart() {

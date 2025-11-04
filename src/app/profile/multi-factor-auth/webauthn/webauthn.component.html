@@ -56,9 +56,9 @@
       </form>
     }
     @if (authenticators().length > 0) {
-      <p class="mat-body-strong">Security keys</p>
+      <p class="body-text-strong">Security keys</p>
       <div class="negative-margin">
-        <div class="mat-body-strong">
+        <div class="body-text-strong">
           <div class="key_headings">
             <div>Name</div>
             <div>Last used</div>
@@ -90,7 +90,7 @@
             attr.aria-label="Delete {{ key.name }}"
             (click)="deleteWebAuthn(key.id)"
           >
-            <mat-icon>delete_outline</mat-icon>
+            <mat-icon>delete</mat-icon>
           </button>
         </div>
       }
