@@ -27,15 +27,15 @@ table {
 }
 
 .status-button-group {
-    button {
-      font-size: 0.95em;
-      line-height: 30px;
-      padding: 0 12px;
+  button {
+    font-size: 0.95em;
+    line-height: 30px;
+    padding: 0 12px;
 
-      &:not(:last-of-type) {
-        margin-right: 10px;
-      }
+    &:not(:last-of-type) {
+      margin-right: 10px;
     }
+  }
 }
 
 .hideLowerBorder {
@@ -110,13 +110,18 @@ table {
   }
 }
 
+.resolved-icon,
+.unresolved-icon,
 .mute-icon {
-  vertical-align: middle;
   margin-right: 5px;
+  padding-right: 4px;
+  color: var(--mat-sys-outline);
+  border-right: 1px solid var(--mat-sys-outline);
+  vertical-align: middle;
 }
 
-.title-cell {
-  padding-right: 10px;
+.mute-icon {
+  color: var(--mat-sys-outline-variant);
 }
 
 .small-screen-event-count {

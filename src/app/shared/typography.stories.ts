@@ -89,6 +89,7 @@ const iconNames = [
   "light_mode",
   "menu",
   "more",
+  "more_vert",
   "more_horiz",
   "notifications_off",
   "open_in_new",
