@@ -36,7 +36,7 @@ export class MonitorChecksService {
             },
             query: {
               cursor: params.params.cursor,
-              is_change: params.params.isChange,
+              is_change: params.params.isChange ? true : null,
             },
           },
         },
