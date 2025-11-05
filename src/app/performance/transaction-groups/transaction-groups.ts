@@ -18,12 +18,12 @@ import {
   stringAttribute,
 } from "src/app/shared/shared.utils";
 import { HumanizeDurationPipe } from "../../shared/seconds-or-ms.pipe";
-import { ListFooterComponent } from "../../list-elements/list-footer/list-footer.component";
 import { DataFilterBarComponent } from "../../list-elements/data-filter-bar/data-filter-bar.component";
-import { ProjectFilterBarComponent } from "../../list-elements/project-filter-bar/project-filter-bar.component";
-import { ListTitleComponent } from "../../list-elements/list-title/list-title.component";
 import { OrganizationsService } from "src/app/api/organizations.service";
 import { EnvironmentsService } from "src/app/api/environments.service";
+import { MatCardModule } from "@angular/material/card";
+import { ListAppBar } from "src/app/list-elements/list-app-bar/list-app-bar";
+import { PaginationButtons } from "src/app/list-elements/pagination-buttons/pagination-buttons";
 
 @Component({
   selector: "gt-transaction-groups",
@@ -31,14 +31,14 @@ import { EnvironmentsService } from "src/app/api/environments.service";
   styleUrls: ["./transaction-groups.scss"],
   imports: [
     I18nPluralPipe,
-    ListTitleComponent,
-    ProjectFilterBarComponent,
     MatTableModule,
+    MatCardModule,
     DataFilterBarComponent,
     MatTooltipModule,
     RouterLink,
-    ListFooterComponent,
     HumanizeDurationPipe,
+    ListAppBar,
+    PaginationButtons,
   ],
   providers: [PerformanceService],
 })
@@ -65,10 +65,6 @@ export class TransactionGroups implements OnInit {
       value: "",
       disabled: true,
     }),
-  });
-  dateForm = new FormGroup({
-    startDate: new FormControl(""),
-    endDate: new FormControl(""),
   });
   environmentForm = new FormGroup({
     environment: new FormControl({ value: "", disabled: true }),
@@ -157,41 +153,16 @@ export class TransactionGroups implements OnInit {
 
   ngOnInit() {
     this.route.queryParams.subscribe((_) => {
-      const start: string | undefined = this.route.snapshot.queryParams.start;
-      const end: string | undefined = this.route.snapshot.queryParams.end;
       const sort: string | undefined = this.route.snapshot.queryParams.sort;
       const query: string | undefined = this.route.snapshot.queryParams.query;
       this.sortForm.setValue({
         sort: sort !== undefined ? sort : "-avg_duration",
-      });
-      this.dateForm.setValue({
-        startDate: (start ? new Date(start.replace("Z", "")) : null) as any,
-        endDate: (end ? new Date(end.replace("Z", "")) : null) as any,
       });
       this.searchForm.setValue({
         query: query !== undefined ? query : "",
       });
     });
     this.#environmentsService.reload();
-  }
-
-  onDateFormSubmit(queryParams: object) {
-    this.router.navigate([], {
-      queryParams,
-      queryParamsHandling: "merge",
-    });
-  }
-
-  dateFormReset() {
-    this.router.navigate([], {
-      queryParams: {
-        cursor: null,
-        start: null,
-        end: null,
-      },
-      queryParamsHandling: "merge",
-    });
-    this.dateForm.setValue({ startDate: null, endDate: null });
   }
 
   sortByChanged(event: MatSelectChange) {

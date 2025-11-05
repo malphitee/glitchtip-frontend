@@ -9,6 +9,7 @@ import { loadTranslations } from "@angular/localize";
 import { AppComponent } from "./app/app.component";
 import { provideMicroSentry } from "@micro-sentry/angular";
 import { MAT_SNACK_BAR_DEFAULT_OPTIONS } from "@angular/material/snack-bar";
+import { MAT_CARD_CONFIG } from "@angular/material/card";
 import { routes, TemplatePageTitleStrategy } from "./app/app.routes";
 import { bootstrapApplication } from "@angular/platform-browser";
 import { LessAnnoyingErrorStateMatcher } from "./app/shared/less-annoying-error-state-matcher";
@@ -101,6 +102,10 @@ const bootstrap = () =>
       {
         provide: MAT_SNACK_BAR_DEFAULT_OPTIONS,
         useValue: { duration: snackBarDuration },
+      },
+      {
+        provide: MAT_CARD_CONFIG,
+        useValue: { appearance: 'outlined' },
       },
       { provide: ErrorHandler, useClass: CustomMicroSentryErrorHandler },
       { provide: TitleStrategy, useClass: TemplatePageTitleStrategy },

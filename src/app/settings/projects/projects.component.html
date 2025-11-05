@@ -1,6 +1,8 @@
-<section class="l-body">
-  <header class="page-header">
-    <h1 class="mat-headline-4" i18n>Projects</h1>
+<gt-top-app-bar>
+  <ng-container slot="left">
+    <h1 class="section-header-text" i18n>Projects</h1>
+  </ng-container>
+  <ng-container slot="right">
     <a
       mat-flat-button
       [routerLink]="['new']"
@@ -9,7 +11,9 @@
       [disabled]="!accessProjectWrite()"
       >Create New Project</a
     >
-  </header>
+  </ng-container>
+</gt-top-app-bar>
+<section class="l-body">
   <div>
     @if (projects()?.length === 0) {
       <gt-empty-projects [activeOrgOnly]="true"></gt-empty-projects>

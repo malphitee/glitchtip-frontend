@@ -1,5 +1,5 @@
 import { seedBackend } from "./utils.cy";
-import { user } from "../fixtures/users";
+import { seededUser1 } from "../fixtures/users";
 
 describe("Login", () => {
   it("should show validation errors", () => {
@@ -13,8 +13,8 @@ describe("Login", () => {
     seedBackend();
 
     cy.visit("/login");
-    cy.get("input[formcontrolname=email]").type(user.email);
-    cy.get("input[formcontrolname=password]").type(user.password);
+    cy.get("input[formcontrolname=email]").type(seededUser1.email);
+    cy.get("input[formcontrolname=password]").type(seededUser1.password);
     cy.get("#submit").click();
     cy.url().should("eq", "http://localhost:4200/");
   });

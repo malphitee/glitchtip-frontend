@@ -1,13 +1,11 @@
 @if (activeProject(); as project) {
   <section class="l-body">
-    <gt-detail-header
-      [title]="'Settings for ' + project.name"
-      backLinkText="Back to Projects"
-    />
+    <gt-back-link backLinkText="Back to Projects" />
+    <gt-detail-header [title]="'Settings for ' + project.name" />
     @if (project.isMember === false) {
       <mat-card
         ><mat-card-content class="note-padding">
-          <p class="mat-body-strong" i18n>Note</p>
+          <p class="body-text-strong" i18n>Note</p>
           <p i18n>
             Because you are an admin for {{ project.organization.name }}, you
             have access to all of its projects. However, if you want to view
@@ -64,26 +62,59 @@
           (ngSubmit)="updatePlatform(project.name)"
           class="platform-form"
         >
-          <gt-platform-picker
-            formControlName="platform"
-            template="dropdown"
-          ></gt-platform-picker>
-          @if (platform && platform.value !== "") {
-            <a
-              href="https://glitchtip.com/sdkdocs/{{ platform.value }}"
-              target="_blank"
-              class="documentation-link"
-              i18n
+          <mat-form-field class="platform-form-field" appearance="outline">
+            <mat-label>Platform</mat-label>
+            <input
+              data-cy="platform-input"
+              type="text"
+              matInput
+              formControlName="platform"
+              [matAutocomplete]="auto"
+            />
+            <button
+              class="small-icon-button"
+              [class.invalid]="platformCtrl.invalid"
+              [disabled]="platformCtrl.value === ''"
+              mat-icon-button
+              matSuffix
+              type="button"
+              (click)="clearFilter()"
             >
-              Platform Documentation
-            </a>
-          }
-          <gt-loading-button
-            [disabled]="platform?.value === project.platform"
-            buttonText="Update Platform"
-            id="update-project-platform"
-          >
-          </gt-loading-button>
+              <mat-icon>close</mat-icon>
+            </button>
+            <mat-autocomplete
+              #auto="matAutocomplete"
+              [displayWith]="getPlatformName.bind(this)"
+            >
+              @for (platform of filteredPlatforms(); track platform.id) {
+                <mat-option data-cy="platform-option" [value]="platform.id">
+                  {{ platform.name }}
+                </mat-option>
+              }
+            </mat-autocomplete>
+            @if (platformCtrl.errors?.invalidAutocompleteString) {
+              <mat-error i18n>Select a valid platform</mat-error>
+            }
+          </mat-form-field>
+          <div class="docs-and-submit-container">
+            @if (platformCtrl && platformCtrl.value !== "") {
+              <a
+                href="https://glitchtip.com/sdkdocs/{{ platformCtrl.value }}"
+                target="_blank"
+                i18n
+              >
+                Platform Documentation
+              </a>
+            }
+            <gt-loading-button
+              [disabled]="
+                platformCtrl.value === project.platform || platformCtrl.invalid
+              "
+              buttonText="Update Platform"
+              id="update-project-platform"
+            >
+            </gt-loading-button>
+          </div>
         </form>
       </mat-card-content>
     </mat-card>
@@ -91,7 +122,7 @@
       <mat-card>
         <mat-card-header class="vertical-card-header">
           <mat-card-title i18n>Client Keys (DSN)</mat-card-title>
-          <p class="mat-caption" i18n>
+          <p class="caption-text" i18n>
             Data Source Name: The code that connects your project to GlitchTip.
             Install a library into your project, then configure it with the DSN
             so that it knows how to send errors to your GlitchTip account.

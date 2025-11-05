@@ -7,8 +7,8 @@
     <mat-card-content>
       <div class="default-settings">
         <div class="default-alerts">
-          <p class="mat-body-strong">Send me project alerts</p>
-          <p class="mat-body-1">
+          <p class="body-text-strong">Send me project alerts</p>
+          <p class="body-text">
             This is the default setting for project alerts. You can change the
             setting per project below.
           </p>
@@ -39,7 +39,7 @@
             </mat-button-toggle-group>
           </div>
           @if (subscribeByDefaultError(); as error) {
-            <mat-error class="mat-small">{{ error }}</mat-error>
+            <mat-error class="caption-text">{{ error }}</mat-error>
           }
         </div>
       </div>
@@ -57,8 +57,8 @@
       @if (projectViewExpanded()) {
         @for (projects of groupedProjects() | keyvalue; track projects) {
           <div>
-            <div class="org-name mat-h3 mat-body-strong">
-              {{ projects.value[0].organization.name }}
+            <div class="org-name mat-h3 body-text-strong">
+              {{ projects.value[0].organization.name }} blah
             </div>
             <div class="border">
               @for (project of projects.value; track project; let i = $index) {
@@ -111,7 +111,7 @@
                       </mat-button-toggle-group>
                     </div>
                     @if ((projectAlertsError())?.id === project.id) {
-                      <mat-error class="mat-small">{{
+                      <mat-error class="caption-text">{{
                         (projectAlertsError())?.error
                       }}</mat-error>
                     }

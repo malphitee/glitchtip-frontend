@@ -11,13 +11,13 @@
         <mat-icon class="image">help</mat-icon>
       }
       <div class="spacer">
-        <p class="mat-body-strong">{{ contexts.title }}</p>
+        <p class="body-text-strong">{{ contexts.title }}</p>
         @if (
           !contexts.title.includes("Unknown") &&
           contexts.key &&
           contexts.subtitle
         ) {
-          <p class="mat-small mat-caption">
+          <p class="caption-text caption-text">
             <span class="bold">{{ contexts.key }}:&nbsp;</span
             ><span class="spacer-small">{{ contexts.subtitle }}</span>
           </p>

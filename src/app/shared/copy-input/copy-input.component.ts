@@ -15,6 +15,7 @@ import { MatInputModule } from "@angular/material/input";
 @Component({
   selector: "gt-copy-input",
   templateUrl: "./copy-input.component.html",
+  styleUrls: ["./copy-input.component.scss"],
   imports: [ClipboardModule, MatIconModule, MatInputModule, MatButtonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

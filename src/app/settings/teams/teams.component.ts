@@ -18,6 +18,7 @@ import { MatCardModule } from "@angular/material/card";
 import { MatButtonModule } from "@angular/material/button";
 import { OrganizationsService } from "src/app/api/organizations.service";
 import { I18nPluralPipe } from "@angular/common";
+import { TopAppBar } from "src/app/shared/top-app-bar/top-app-bar";
 
 @Component({
   selector: "gt-teams",
@@ -32,6 +33,7 @@ import { I18nPluralPipe } from "@angular/common";
     MatDividerModule,
     MatFormFieldModule,
     LoadingButtonComponent,
+    TopAppBar,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

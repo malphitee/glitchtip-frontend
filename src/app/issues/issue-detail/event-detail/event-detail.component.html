@@ -1,7 +1,7 @@
 @if (initialLoadComplete() && event() === null) {
   <section class="mat-typography">
     <h2>Event not found</h2>
-    <p class="mat-body-1">
+    <p class="body-text">
       This may be because the URL is pointing to an event that doesn't exist or
       was deleted.
     </p>
@@ -67,10 +67,19 @@
                 [routerLink]="['/', orgSlug(), 'issues']"
                 [queryParams]="generateQuery(tag)"
                 queryParamsHandling="merge"
+                class="pseudo-chip-link"
               >
                 <span class="pseudo-chip-key">{{ tag.key }}</span>
-                <span class="pseudo-chip-value">{{ tag.value }}</span></a
-              >
+                <span class="pseudo-chip-value">
+                  {{ tag.value }}
+                </span>
+              </a>
+               @if (isValidUrl(tag.value)) {
+                 <span class="pseudo-chip-divider"></span>
+                 <a [href]="tag.value" target="_blank" rel="noopener noreferrer" class="pseudo-chip-external-link">
+                  <mat-icon color="primary">open_in_new</mat-icon>
+                 </a>
+               }
             </li>
           }
         </ul>

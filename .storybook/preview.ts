@@ -20,7 +20,7 @@ import { withColorScheme } from "./decorators/with-color-scheme.decorator";
 })
 class ParentComponent {
   constructor(private matIconRegistry: MatIconRegistry) {
-    this.matIconRegistry.setDefaultFontSetClass("material-symbols-outlined");
+    this.matIconRegistry.setDefaultFontSetClass("material-symbols-filled");
     document.documentElement.classList.add("light");
   }
 }

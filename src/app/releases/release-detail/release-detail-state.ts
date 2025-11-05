@@ -4,6 +4,19 @@ import { apiResource } from "src/app/shared/api/api-resource-factory";
 @Injectable()
 export class ReleaseDetailService {
   params = signal<{ orgSlug: string; version: string } | undefined>(undefined);
+  queryParams = signal<{ cursor: string | undefined } | undefined>(undefined);
+  releaseFilesParams = computed(() => {
+    const params = this.params();
+    const queryParams = this.queryParams();
+    if (!params || !queryParams) {
+      return undefined;
+    }
+    return {
+      orgSlug: params?.orgSlug,
+      version: params?.version,
+      cursor: queryParams?.cursor,
+    };
+  });
   #releaseResource = apiResource(this.params, (params) => ({
     url: "/api/0/organizations/{organization_slug}/releases/{version}/",
     options: {
@@ -15,17 +28,23 @@ export class ReleaseDetailService {
       },
     },
   }));
-  #releaseFilesResource = apiResource.paginated(this.params, (params) => ({
-    url: "/api/0/organizations/{organization_slug}/releases/{version}/files/",
-    options: {
-      params: {
-        path: {
-          organization_slug: params.orgSlug,
-          version: params.version,
+  #releaseFilesResource = apiResource.paginated(
+    this.releaseFilesParams,
+    (params) => ({
+      url: "/api/0/organizations/{organization_slug}/releases/{version}/files/",
+      options: {
+        params: {
+          path: {
+            organization_slug: params.orgSlug,
+            version: params.version,
+          },
+          query: {
+            cursor: params.cursor,
+          },
         },
       },
-    },
-  }));
+    }),
+  );
   release = computed(() => this.#releaseResource.value());
   releaseFiles = computed(() => this.#releaseFilesResource.value()?.data || []);
   releaseFileErrors = computed(

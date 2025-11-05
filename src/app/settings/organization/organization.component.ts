@@ -11,6 +11,7 @@ import { MatCardModule } from "@angular/material/card";
 import { OrganizationsService } from "src/app/api/organizations.service";
 import { toObservable } from "@angular/core/rxjs-interop";
 import { ConfirmDialogComponent } from "src/app/shared/confirm-dialog/confirm-dialog.component";
+import { TopAppBar } from "src/app/shared/top-app-bar/top-app-bar";
 
 @Component({
   selector: "gt-organization",
@@ -23,6 +24,7 @@ import { ConfirmDialogComponent } from "src/app/shared/confirm-dialog/confirm-di
     MatFormFieldModule,
     MatInputModule,
     LoadingButtonComponent,
+    TopAppBar
   ],
 })
 export class OrganizationComponent implements OnDestroy, OnInit {

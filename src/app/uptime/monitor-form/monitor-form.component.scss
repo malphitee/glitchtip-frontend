@@ -1,8 +1,8 @@
-@import "variables";
+@use "variables" as vars;
 
 mat-form-field {
   margin-bottom: 4px;
-  @media screen and (max-width: $medium - 1) {
+  @media screen and (max-width: vars.$medium - 1) {
     margin-bottom: 12px;
   }
 }
@@ -39,7 +39,7 @@ form {
   width: 700px;
   margin-top: 10px;
 
-  @media screen and (max-width: $medium - 1) {
+  @media screen and (max-width: vars.$medium - 1) {
     width: auto;
   }
 
@@ -52,7 +52,7 @@ form {
   width: 370px;
   margin-bottom: 0;
 
-  @media screen and (max-width: $tablet - 1) {
+  @media screen and (max-width: vars.$tablet - 1) {
     width: 200px;
     margin-bottom: 5px;
 

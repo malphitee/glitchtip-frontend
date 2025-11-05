@@ -1,19 +1,21 @@
-@import "variables";
+@use "variables" as vars;
 
 .page-header {
   flex-wrap: wrap;
 
-  @media screen and (max-width: $small - 1) {
-    flex-direction: column;
-    align-items: flex-start;
+  & {
+    @media screen and (max-width: vars.$small - 1) {
+      flex-direction: column;
+      align-items: flex-start;
+    }
   }
 }
 
-.mat-headline-4 {
+.section-header-text {
   margin: 0;
 }
 
-.mat-caption {
+.caption-text {
   font-weight: 500;
 }
 
@@ -33,7 +35,7 @@ mat-chip {
     justify-content: space-between;
     flex-wrap: wrap;
 
-    @media (max-width: $large - 1) {
+    @media (max-width: vars.$large - 1) {
       flex-direction: column;
       align-items: flex-start;
     }
@@ -50,13 +52,13 @@ mat-chip {
   }
 
   .email-and-badge {
-    * {
-      margin: 0 16px 0 0;
-    }
-
     align-items: center;
     flex: 1 1 0%;
     flex-wrap: wrap;
+
+    * {
+      margin: 0 16px 0 0;
+    }
 
     a {
       margin-right: 16px;
@@ -68,7 +70,7 @@ mat-chip {
       margin: 0 0 0 16px;
     }
 
-    @media (max-width: $large - 1) {
+    @media (max-width: vars.$large - 1) {
       flex-direction: column-reverse;
       align-items: flex-start;
 
@@ -87,7 +89,7 @@ mat-chip {
     padding-left: 16px;
     padding-right: 16px;
 
-    @media (max-width: $large - 1) {
+    @media (max-width: vars.$large - 1) {
       padding: 0;
     }
   }

@@ -1,6 +1,6 @@
 <section class="l-body">
   <header class="page-header">
-    <h2 class="mat-headline-4" i18n>System Info</h2>
+    <h2 class="section-header-text" i18n>System Info</h2>
   </header>
   <mat-card>
     <mat-card-header>
@@ -9,15 +9,15 @@
     <mat-divider></mat-divider>
     <mat-card-content>
       <dl>
-        <dt class="mat-body-strong">Server timezone</dt>
+        <dt class="body-text-strong">Server timezone</dt>
         <dd>{{ serverTimeZone() }}</dd>
-        <dt class="mat-body-strong">Organization creation</dt>
+        <dt class="body-text-strong">Organization creation</dt>
         <dd>{{ enableUserRegistration() ? "Enabled" : "Disabled" }}</dd>
-        <dt class="mat-body-strong">User registration</dt>
+        <dt class="body-text-strong">User registration</dt>
         <dd>{{ enableUserRegistration() ? "Enabled" : "Disabled" }}</dd>
-        <dt class="mat-body-strong">GlitchTip version</dt>
+        <dt class="body-text-strong">GlitchTip version</dt>
         <dd>{{ version() }}</dd>
-        <dt class="mat-body-strong">GlitchTip instance name</dt>
+        <dt class="body-text-strong">GlitchTip instance name</dt>
         <dd>
           <markdown class="system-info-instance-name">
             {{ instanceName() }}

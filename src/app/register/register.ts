@@ -57,6 +57,8 @@ export class Register
 
   tags = "";
   socialApps = this.settings.socialApps;
+  enableUserRegistration = this.settings.enableUserRegistration
+  enableSocialAppsUserRegistration = this.settings.enableSocialAppsUserRegistration
   form = new FormGroup({
     email: new FormControl("", [Validators.required, Validators.email]),
     password: new FormControl("", [

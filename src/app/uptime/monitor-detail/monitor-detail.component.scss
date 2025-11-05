@@ -38,3 +38,8 @@ mat-progress-spinner {
     overflow-wrap: break-word;
   }
 }
+
+.top-bar-actions {
+  display: flex;
+  gap: 8px;
+}

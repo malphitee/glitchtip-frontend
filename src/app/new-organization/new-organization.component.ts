@@ -75,7 +75,8 @@ export class NewOrganizationsComponent {
           }
           if (data && this.settingsService.billingEnabled()) {
             this.router.navigate([data.slug, "settings", "subscription"]);
-          } else {
+          } else if (data) {
+            this.organizationsService.setActiveOrganizationSlug(data.slug);
             this.router.navigate(["/"]);
           }
         });

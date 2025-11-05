@@ -206,31 +206,15 @@ export function parseErrorMessage(err: HttpErrorResponse): string[] {
 }
 
 export function setTheme(preferredTheme?: string | null) {
-  function setDark() {
-    document.documentElement.classList.remove("light");
-    document.documentElement.classList.add("dark");
-    localStorage.setItem("theme", "dark");
-  }
-
-  function setLight() {
-    document.documentElement.classList.remove("dark");
-    document.documentElement.classList.add("light");
+  if (preferredTheme === "light") {
+    document.documentElement.style.setProperty("color-scheme", "light");
     localStorage.setItem("theme", "light");
-  }
-
-  const systemTheme = matchMedia("(prefers-color-scheme: dark)");
-  const isSystem = preferredTheme === "system";
-
-  if (isSystem) {
-    if (systemTheme.matches) {
-      setDark();
-    } else {
-      setLight();
-    }
   } else if (preferredTheme === "dark") {
-    setDark();
+    document.documentElement.style.setProperty("color-scheme", "dark");
+    localStorage.setItem("theme", "dark");
   } else {
-    setLight();
+    document.documentElement.style.setProperty("color-scheme", "light dark");
+    localStorage.removeItem("theme");
   }
 }
 

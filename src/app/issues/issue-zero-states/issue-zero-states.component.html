@@ -1,8 +1,8 @@
 <div class="empty-states">
   @if (displayZeroStates()) {
     @if (orgHasAProject() === false) {
-      <h3 class="mat-headline-4" i18n>This organization has no projects.</h3>
-      <p class="mat-body-1" i18n
+      <h3 class="section-header-text" i18n>This organization has no projects.</h3>
+      <p class="body-text" i18n
         >To add a project to this organization, press the
         "Add&nbsp;Project"&nbsp;button.</p
       >
@@ -31,13 +31,13 @@
         @if (showOnboarding()) {
           <div class="install-wrapper">
             @if (activeProjectPlatform(); as activeProjectPlatform) {
-              <div class="install-instructions mat-body-1">
+              <div class="install-instructions body-text">
                 @if (
                   activeProjectPlatform !== "other" &&
                   activeProjectPlatform !== "" &&
                   activeProjectPlatformName()
                 ) {
-                  <h2 class="mat-headline-4" i18n
+                  <h2 class="section-header-text" i18n
                     >Connect your {{ activeProjectPlatformName() }} project to
                     GlitchTip</h2
                   >
@@ -45,7 +45,7 @@
                     src="/static/sdk-docs/{{ activeProjectPlatform }}.md"
                   ></markdown>
                 } @else {
-                  <h2 class="mat-headline-4" i18n
+                  <h2 class="section-header-text" i18n
                     >Connect your project to GlitchTip</h2
                   >
                   <markdown src="/static/sdk-docs/all-sdks.md"></markdown>
@@ -53,12 +53,12 @@
                 }
               </div>
             } @else {
-              <div class="install-instructions mat-body-1">
-                <h2 class="mat-headline-4" i18n
+              <div class="install-instructions body-text">
+                <h2 class="section-header-text" i18n
                   >Connect your project to GlitchTip</h2
                 >
                 <markdown src="/static/sdk-docs/all-sdks.md"></markdown>
-                <p class="mat-body-1" i18n
+                <p class="body-text" i18n
                   >If you go to this project's
                   <a
                     [routerLink]="[
@@ -77,8 +77,8 @@
             }
             @if (firstProjectKey(); as projectKey) {
               <div class="dsn">
-                <h2 class="mat-headline-4">DSN</h2>
-                <p class="mat-body-1" i18n
+                <h2 class="section-header-text">DSN</h2>
+                <p class="body-text" i18n
                   >Most instructions will have a spot that says
                   "YOUR-GLITCHTIP-DSN-HERE". Copy the DSN and paste it into that
                   spot.</p
@@ -96,10 +96,10 @@
                 @if (activeProjectPlatform()) {
                   @if (activeProjectPlatform() !== "other") {
                     <h2 class="mat-body-strong" i18n>What's this all about?</h2>
-                    <div class="mat-body-1">
+                    <div class="body-text">
                       <markdown src="/static/sdk-docs/all-sdks.md"></markdown>
                     </div>
-                    <p class="mat-body-1" i18n
+                    <p class="body-text" i18n
                       >This page is showing instructions on how to connect
                       GlitchTip to your project based on the platform you
                       specified.</p
@@ -111,15 +111,15 @@
           </div>
         } @else {
           <!-- No issues match the filters, in general -->
-          <h3 class="mat-headline-4" i18n>No events match your filters.</h3>
-          <p class="mat-body-1" i18n
+          <h3 class="section-header-text" i18n>No events match your filters.</h3>
+          <p class="body-text" i18n
             >Try changing your search parameters to get something to show
             here.</p
           >
         }
       } @else {
         <h3 i18n>No events match your filters.</h3>
-        <p class="mat-body-1" i18n
+        <p class="body-text" i18n
           >You have multiple projects selected. Select a single project to learn
           more about why there's nothing here.</p
         >

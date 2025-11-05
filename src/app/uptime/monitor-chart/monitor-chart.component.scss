@@ -1,5 +1,3 @@
-@import "variables";
-
 div {
   display: flex;
   flex-direction: row;
@@ -13,5 +11,18 @@ div {
     min-height: 14px;
     min-width: 10px;
     margin-right: 7px;
+  }
+
+  .up-check {
+    background-color: var(--success-color);
+  }
+
+  .down-check {
+    background-color: var(--mat-sys-error);
+  }
+
+  .no-check {
+    background-color: var(--mat-sys-surface-variant);
+    opacity: 0.6;
   }
 }

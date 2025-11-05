@@ -1,5 +1,5 @@
 @use "@angular/material" as mat;
-@import "variables";
+@use "variables" as vars;
 
 form {
   padding-bottom: 8px;
@@ -58,14 +58,14 @@ mat-form-field {
   margin-top: -15px;
   margin-bottom: 5px;
 
-  @media screen and (max-width: $medium - 1) {
+  @media screen and (max-width: vars.$medium - 1) {
     margin-top: 5px;
     margin-bottom: 5px;
   }
 }
 
 .update {
-  @media screen and (max-width: $large - 1) {
+  @media screen and (max-width: vars.$large - 1) {
     margin-top: 10px;
   }
 }
