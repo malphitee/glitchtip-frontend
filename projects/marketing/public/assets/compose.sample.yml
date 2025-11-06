@@ -1,5 +1,6 @@
 x-environment: &default-environment
   DATABASE_URL: postgres://postgres:postgres@postgres:5432/postgres
+  VALKEY_URL: redis://valkey:6379 # Or set to blank string to disable
   SECRET_KEY: change_me_to_something_random # best to run openssl rand -hex 32
   PORT: 8000 # If changing, change the web service port too
   EMAIL_URL: consolemail:// # Example smtp://email:password@smtp_url:port https://glitchtip.com/documentation/install#configuration
@@ -9,17 +10,17 @@ x-environment: &default-environment
 
 x-depends_on: &default-depends_on
   - postgres
-  - redis
+  - valkey # Comment out when disabling valkey
 
 services:
   postgres:
-    image: postgres:17
+    image: postgres:18
     environment:
       POSTGRES_HOST_AUTH_METHOD: "trust" # Consider removing this and setting a password
     restart: unless-stopped
     volumes:
       - pg-data:/var/lib/postgresql/data
-  redis:
+  valkey: # Optional, but offers better performance. Remove and set VALKEY_URL to disable.
     image: valkey/valkey
     restart: unless-stopped
   web:
