@@ -68,7 +68,9 @@
   <section class="l-body l-body--full-width">
     <div class="issue-header-wrapper">
       <div class="status-indicator" [class]="'level--' + issue.level">
-        <mat-icon>{{ statusIcon() }}</mat-icon>
+        <mat-icon class="material-symbols-outlined">{{
+          statusIcon()
+        }}</mat-icon>
       </div>
 
       <gt-detail-header [title]="issueTitle()!" [subtitle]="issueSubtitle()" />

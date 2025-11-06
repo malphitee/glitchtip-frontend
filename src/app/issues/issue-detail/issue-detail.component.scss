@@ -108,41 +108,36 @@ table.mat-table {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  min-height: 48px;
-  border-radius: 4px;
-  flex-shrink: 0;
-  align-self: stretch;
+  position: relative; 
 
   mat-icon {
-    color: var(--mat-sys-on-primary);
-    font-size: 24px;
-    width: 24px;
-    height: 24px;
+    color: var(--mat-sys-outline);
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+    margin: 8px;
   }
 
-  &.level--sample {
-    background-color: var(--mat-sys-outline);
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    right: 0;
+    width: 4px;
+    border-radius: 4px; 
   }
 
-  &.level--debug {
-    background-color: var(--mat-sys-outline-variant);
-  }
+  &.level--sample::after   { background-color: var(--mat-sys-outline); }
+  &.level--debug::after    { background-color: var(--mat-sys-outline-variant); }
+  &.level--info::after     { background-color: var(--info-color); }
+  &.level--warning::after  { background-color: var(--warning-color); }
+  &.level--error::after    { background-color: var(--mat-sys-error); }
 
-  &.level--info {
-    background-color: var(--info-color);
-  }
 
-  &.level--warning {
-    background-color: var(--warning-color);
-  }
-
-  &.level--error {
-    background-color: var(--mat-sys-error);
-  }
-
-  &.level--fatal {
-    background-image: repeating-linear-gradient(
+  &.level--fatal::after {
+    background: repeating-linear-gradient(
       -60deg,
       var(--mat-sys-error),
       var(--mat-sys-error) 5px,
