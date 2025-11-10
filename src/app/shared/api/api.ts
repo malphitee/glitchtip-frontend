@@ -67,8 +67,8 @@ const csrfMiddleware: Middleware = {
 };
 
 const authErrorResponseMiddleware: Middleware = {
-  async onResponse({ response }) {
-    if (localStorage.getItem("isAuthenticated") !== "true") {
+  async onResponse({ response, schemaPath }) {
+    if (schemaPath === "/_allauth/browser/v1/auth/session") {
       return;
     }
     if (
