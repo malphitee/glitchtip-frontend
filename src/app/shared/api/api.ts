@@ -57,13 +57,16 @@ export function handleError(
   return { detail: [{ msg: UNHANDLED_ERROR }] };
 }
 
-const customOpenApiMiddleware: Middleware = {
+const csrfMiddleware: Middleware = {
   async onRequest({ request }) {
     if (["DELETE", "POST", "PUT", "PATCH"].includes(request.method)) {
       request.headers.set("X-CSRFToken", getCSRFToken()!);
     }
     return request;
   },
+};
+
+const authErrorResponseMiddleware: Middleware = {
   async onResponse({ response }) {
     if (localStorage.getItem("isAuthenticated") !== "true") {
       return;
@@ -74,7 +77,7 @@ const customOpenApiMiddleware: Middleware = {
         response.statusText === "Authentication credentials were not provided.")
     ) {
       localStorage.setItem("isAuthenticated", "false");
-      window.location.href = "/"
+      window.location.href = "/";
     }
   },
 };
@@ -89,4 +92,5 @@ if (baseElement) {
 }
 export type apiPaths = paths & allauthPaths;
 export const client = createClient<apiPaths>(options);
-client.use(customOpenApiMiddleware);
+client.use(csrfMiddleware);
+client.use(authErrorResponseMiddleware);
