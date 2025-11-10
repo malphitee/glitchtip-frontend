@@ -30,7 +30,7 @@ import { IssueStatusUpdateDropdownComponent } from "src/app/shared/issue-status-
 import { IssueStatus } from "../interfaces";
 
 const STATUS_CONFIG = {
-  resolved: { label: "Resolved", icon: "done_outline" },
+  resolved: { label: "Resolved", icon: "done" },
   unresolved: { label: "Unresolved", icon: "priority_high" },
   ignored: { label: "Ignored", icon: "notifications_off" },
 } as const;
