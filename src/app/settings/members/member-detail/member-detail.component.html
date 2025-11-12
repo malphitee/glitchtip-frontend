@@ -1,6 +1,11 @@
+<gt-top-app-bar>
+  <ng-container slot="left">
+    <gt-back-link backLinkText="Back to members" />
+  </ng-container>
+</gt-top-app-bar>
 @if (member(); as member) {
   <section class="l-body">
-    <gt-detail-header [title]="member.email" backLinkText="Back to Members" />
+    <gt-detail-header [title]="member.email" />
     <mat-card>
       <mat-card-header>
         <mat-card-title il8n>Basics</mat-card-title>
