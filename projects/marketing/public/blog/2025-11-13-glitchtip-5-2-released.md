@@ -28,7 +28,7 @@ Our existing (experimental) `bin/start-all-in-one.sh` script has been updated to
 
 Adventurous users should try this out and report any issues on GitLab. With Docker Compose, you can set the command to `bin/start-all-in-one.sh` and remove the worker/beat services.
 
-Our settings have also been slightly simplified. DISABLE_SERVER_SIDE_CURSORS now defaults to False, as this setting leads to errors when using more than one app server. Over time, we are moving to a model where more settings have "just works" defaults, but can still be overwritten by advanced users. We don't intend any of these changes to be breaking, but if you do have a problem, then please open a GitLab issue.
+Our settings have also been slightly simplified. `DISABLE_SERVER_SIDE_CURSORS` now defaults to False, as this setting leads to errors when using more than one app server. Over time, we are moving to a model where more settings have "just works" defaults, but can still be overwritten by advanced users. We don't intend any of these changes to be breaking, but if you do have a problem, then please open a GitLab issue.
 
 Finally our design refresh uses slightly LESS JavaScript.
 
