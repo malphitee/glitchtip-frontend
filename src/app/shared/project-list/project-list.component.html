@@ -1,6 +1,6 @@
 <section class="l-body">
   @if (
-    projects()?.length === 0 &&
+    projects().length === 0 &&
     activeOrganization() === undefined &&
     orgServiceInitialLoad()
   ) {
@@ -45,7 +45,7 @@
             >Create new project in {{ organization.name }}
           </a>
         </header>
-        @if (organization.projects?.length === 0) {
+        @if (organization.projects.length === 0) {
           <gt-empty-projects
             [activeOrgOnly]="activeOrgOnly"
           ></gt-empty-projects>
