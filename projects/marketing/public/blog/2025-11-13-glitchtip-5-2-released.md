@@ -10,7 +10,7 @@ published: true
     <img src="/assets/blog-images/issue-list-page.png" alt="New Material Design 3 Issue List Page">
 </div>
 
-Our headline feature for GlitchTip 5.2 is a design refresh, based on the Material Design 3 system. A new graph on the issues list page allows you to see recent trends of events in the past 24 hours or two weeks. Dark mode is improved as well.
+Our headline feature for GlitchTip 5.2 is a design refresh, based on the Material Design 3 system. A new graph on the issues list page allows you to see recent trends of events in the past 24 hours or two weeks. Dark mode has been improved as well.
 
 ## Security Improvement
 
@@ -22,7 +22,7 @@ GlitchTip 5.2 includes a denial of service (DOS) vulnerability fix from the brot
     <img src="/assets/blog-images/term-resources.png" alt="Terminal showing lower resource usage in Docker">
 </div>
 
-GlitchTip 5.2 has experimental support for PostgreSQL as our only database. Valkey (or Redis) are no longer required. If you set VALKEY_URL to an empty string, GlitchTip will now utilize Postgres for cache, celery, and sessions. This requires less ram, but yields slower performance.
+GlitchTip 5.2 has experimental support for PostgreSQL as our only database. Valkey (or Redis) are no longer required. If you set `VALKEY_URL` to an empty string, GlitchTip will now utilize Postgres for cache, celery, and sessions. This requires less ram, but yields slower performance.
 
 Our existing (experimental) `bin/start-all-in-one.sh` script has been updated to support scaling. Previously, running more than one instance would start multiple celery beat schedulers. This has been improved to start just one. Without Valkey, you can now run GlitchTip on as low as 256mb ram. We recommend this only for the most shoe-string of budgets. Larger instances should not use the all-in-one instance.
 
@@ -34,14 +34,17 @@ Finally our design refresh uses slightly LESS JavaScript.
 
 ## Community Contributions
 
-GitHub user vltansky let us know about GlitchTip MCP, used for connecting with AI models in the standardized MCP convention. https://github.com/vltansky/glitchtip-mcp The GlitchTip team remains firmly committed to our open-source, no-bloat, no-forced-AI philosophy, ensuring user data is never sent to third parties for model training or usage. Opting into communicating with these models is well within our scope. We would consider a contribution to add MCP support directly to GlitchTip using Python, so long as it's disabled by default. Please note that glitchtip-mcp is not affiliated with the core GlitchTip team.
-GitLab user tytan652 contributed a highly requested feature to control social authentication registration. ENABLE_SOCIAL_APPS_USER_REGISTRATION can now be set independently of ENABLE_USER_REGISTRATION. This allows users to enabled authentication using only single sign on.
-GitLab user vanschelven, from Bugsink, notified us of a new DOS mitigation in brotli. Our Renovate bot updated brotli and core contributor bufke applied the fix. Our existing mitigation already limited memory usage to under 1GB, but this patch greatly improves it. Users concerned about DOS attacks should upgrade as soon as possible. Read me about the brotli DOS vulnerability and mitigation at https://github.com/advisories/GHSA-2qfp-q593-8484
-See a full list of contributors at https://gitlab.com/groups/glitchtip/-/contribution_analytics?start_date=2025-08-07 thank you to all contributors, especially the more important and less headline worthy changes that make GlitchTip better!
+GitHub user vltansky let us know about [GlitchTip MCP](https://github.com/vltansky/glitchtip-mcp), used for connecting with AI models in the standardized MCP convention. The GlitchTip team remains firmly committed to our open-source, no-bloat, no-forced-AI philosophy, ensuring user data is never sent to third parties for model training or usage. Opting into communicating with these models is well within our scope. We would consider a contribution to add MCP support directly to GlitchTip using Python, so long as it's disabled by default. Please note that glitchtip-mcp is not affiliated with the core GlitchTip team.
+
+GitLab user tytan652 contributed a highly requested feature to control social authentication registration. `ENABLE_SOCIAL_APPS_USER_REGISTRATION` can now be set independently of `ENABLE_USER_REGISTRATION`. This allows users to enabled authentication using only single sign on.
+
+GitLab user vanschelven, from Bugsink, notified us of a new DOS mitigation in brotli. Our Renovate bot updated brotli and core contributor bufke applied the fix. Our existing mitigation already limited memory usage to under 1GB, but this patch greatly improves it. Users concerned about DOS attacks should upgrade as soon as possible. Read me about the brotli DOS vulnerability and mitigation [here](https://github.com/advisories/GHSA-2qfp-q593-8484).
+
+See a full list of contributors on our [GlitchTip group](https://gitlab.com/groups/glitchtip/-/contribution_analytics?start_date=2025-08-07) on GitLab. Thank you to all contributors, especially those making the more important and less headline worthy changes that make GlitchTip better!
 
 ## Helm migrate away from Bitnami images
 
-Bitnami, in the past, has offered free helm charts for many popular projects including Postgres and Valkey. They've since abandoned these offerings. Our 6.0 release of glitchtip-helm-chart introduces breaking changes to replace Postgres and Valkey charts with alternatives.
+Bitnami, in the past, has offered free helm charts for many popular projects including Postgres and Valkey. They have since abandoned these offerings. Our 6.0 release of `glitchtip-helm-chart` introduces breaking changes to replace Postgres and Valkey charts with alternatives.
 
 ## What's next?
 
