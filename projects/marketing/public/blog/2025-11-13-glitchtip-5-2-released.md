@@ -19,7 +19,7 @@ GlitchTip 5.2 includes a denial of service (DOS) vulnerability fix from the brot
 ## Simplified Architecture and Lower Resource Footprint
 
 <div style="width: 800px; max-width: 100%; margin: 0 auto;">
-    <img src="/assets/blog-images/term-resources.png" alt="Terminal showing lower resource usage in Docker">
+    <img src="/assets/blog-images/terminal-resources.png" alt="Terminal showing lower resource usage in Docker">
 </div>
 
 GlitchTip 5.2 has experimental support for PostgreSQL as our only database. Valkey (or Redis) are no longer required. If you set `VALKEY_URL` to an empty string, GlitchTip will now utilize Postgres for cache, celery, and sessions. This requires less ram, but yields slower performance.
