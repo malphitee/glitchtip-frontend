@@ -1,7 +1,7 @@
 @use "@angular/material" as mat;
 @import "prismjs/themes/prism.css";
 $font-path: "../../../src/assets/fonts";
-@import "../../../src/assets/styles/themes";
+@import "../src/app/styles/themes";
 @import "../../../src/assets/styles/variables";
 @import "../../../src/assets/styles/font-files";
 @import "../../../src/assets/styles/resets";
