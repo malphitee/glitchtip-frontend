@@ -74,7 +74,7 @@
       <mat-nav-list>
         <mat-tree
           #tree
-          [dataSource]="menuData"
+          [dataSource]="menuData$"
           [childrenAccessor]="childrenAccessor"
         >
           <!-- Default template for navigable items -->
@@ -97,13 +97,6 @@
               </mat-list-item>
             }
           </mat-tree-node>
-
-          <!-- Hide subscription route when billing is not enabled -->
-          <mat-tree-node
-            *matTreeNodeDef="let node; when: hideBilling"
-            matTreeNodePadding
-            style="display: none"
-          />
 
           <!-- Template for expandable nav nodes -->
           <mat-tree-node

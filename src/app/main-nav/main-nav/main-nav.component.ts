@@ -4,6 +4,7 @@ import {
   inject,
   computed,
 } from "@angular/core";
+import { toObservable } from "@angular/core/rxjs-interop";
 import { Router } from "@angular/router";
 import { MainNavService } from "../main-nav.service";
 import { SettingsService } from "src/app/api/settings.service";
@@ -20,7 +21,11 @@ import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatSidenavModule } from "@angular/material/sidenav";
 import { AuthService } from "src/app/auth.service";
 import { OrganizationsService } from "src/app/api/organizations.service";
-import { MatSelect, MatSelectChange, MatSelectModule } from "@angular/material/select";
+import {
+  MatSelect,
+  MatSelectChange,
+  MatSelectModule,
+} from "@angular/material/select";
 
 interface NavNode {
   name: string;
@@ -94,7 +99,7 @@ const MENU_DATA: NavNode[] = [
     name: $localize`Profile`,
     useExactRoute: true,
     children: [
-      { name: $localize`Account`, route: ["profile"], useExactRoute: true, },
+      { name: $localize`Account`, route: ["profile"], useExactRoute: true },
       { name: $localize`MFA`, route: ["profile", "multi-factor-auth"] },
       {
         name: $localize`Notifications`,
@@ -133,15 +138,10 @@ export class MainNavComponent {
   private settingsService = inject(SettingsService);
   private userService = inject(UserService);
 
-  menuData: NavNode[] = MENU_DATA;
-
   childrenAccessor = (node: NavNode) => node.children ?? [];
 
   hasChild = (_: number, node: NavNode) =>
     !!node.children && node.children.length > 0;
-
-  hideBilling = (_: number, node: NavNode) =>
-    node.requiresBilling && !this.billingEnabled();
 
   getRouteWithOrgSlug(route: string[]) {
     return route.map((item) =>
@@ -176,6 +176,18 @@ export class MainNavComponent {
       this.organizationsService.organizationsCount(),
   );
 
+  menuData = computed(() => {
+    const billingEnabled = this.billingEnabled();
+    return MENU_DATA.map((node) => {
+      if (node.children && !billingEnabled) {
+        node.children = node.children.filter((child) => !child.requiresBilling);
+      }
+      return node;
+    });
+  });
+
+  menuData$ = toObservable(this.menuData);
+
   async logout() {
     await this.auth.logout();
     window.location.href = "/login";
@@ -189,12 +201,15 @@ export class MainNavComponent {
     this.mainNav.getClosedNav();
   }
 
-  onOrgSelectChange(event: MatSelectChange<string | undefined>, component: MatSelect) {
+  onOrgSelectChange(
+    event: MatSelectChange<string | undefined>,
+    component: MatSelect,
+  ) {
     if (event.value) {
       this.organizationsService.setActiveOrganizationSlug(event.value);
     } else {
-      component.value = this.activeOrganizationSlug()
-      this.router.navigate(["organizations", "new"])
+      component.value = this.activeOrganizationSlug();
+      this.router.navigate(["organizations", "new"]);
     }
   }
 
@@ -203,5 +218,4 @@ export class MainNavComponent {
     this.userService.reload();
     this.organizationsService.reload();
   }
-
 }
