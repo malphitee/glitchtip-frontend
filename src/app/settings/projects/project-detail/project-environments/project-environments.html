@@ -21,7 +21,7 @@
               ) {
                 <mat-list-item>
                   <div class="environment-list-item">
-                    <span class="mat-body-1">
+                    <span class="body-text">
                       {{ environment.name }}
                     </span>
                     <gt-loading-button
@@ -36,7 +36,7 @@
             </mat-list>
           }
         } @else {
-          <p class="mat-body-1">
+          <p class="body-text">
             If you initialize an open-source Sentry SDK with an environment, it
             will tag events with that environment and GlitchTip will keep a
             record of them. The environments persist even if the event that

@@ -1,4 +1,4 @@
-@import "variables";
+@use "variables" as vars;
 
 .transaction-group-404 h1 {
   text-align: left;
@@ -9,7 +9,7 @@
   align-items: flex-start;
   margin-bottom: 30px;
 
-  @media screen and (max-width: $medium - 1) {
+  @media screen and (max-width: vars.$medium - 1) {
     flex-direction: column-reverse;
   }
 
@@ -17,7 +17,7 @@
     flex: 75%;
     overflow: hidden;
 
-    @media screen and (max-width: $medium - 1) {
+    @media screen and (max-width: vars.$medium - 1) {
       width: 100%;
     }
   }
@@ -25,7 +25,7 @@
   .right {
     flex: 25%;
 
-    @media screen and (max-width: $medium - 1) {
+    @media screen and (max-width: vars.$medium - 1) {
       width: 100%;
       margin-bottom: 30px;
     }
@@ -35,7 +35,7 @@
 .detail-card {
   margin-right: 16px;
 
-  @media screen and (max-width: $medium - 1) {
+  @media screen and (max-width: vars.$medium - 1) {
     margin-right: 0;
   }
 

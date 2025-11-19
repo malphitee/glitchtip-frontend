@@ -1,6 +1,11 @@
+<gt-top-app-bar>
+  <ng-container slot="left">
+    <gt-back-link backLinkText="Back to members" />
+  </ng-container>
+</gt-top-app-bar>
 @if (member(); as member) {
   <section class="l-body">
-    <gt-detail-header [title]="member.email" backLinkText="Back to Members" />
+    <gt-detail-header [title]="member.email" />
     <mat-card>
       <mat-card-header>
         <mat-card-title il8n>Basics</mat-card-title>
@@ -8,15 +13,15 @@
       <mat-divider></mat-divider>
       <mat-card-content class="basics-content">
         <div class="column">
-          <div class="mat-body-strong" i18n>Email</div>
+          <div class="body-text-strong" i18n>Email</div>
           <div>{{ member.email }}</div>
         </div>
         <div class="column">
-          <div class="mat-body-strong" i18n>Role</div>
+          <div class="body-text-strong" i18n>Role</div>
           <div>{{ member.roleName }}</div>
         </div>
         <div class="column">
-          <div class="mat-body-strong" i18n>Added</div>
+          <div class="body-text-strong" i18n>Added</div>
           <div>{{ member.dateCreated | date }}</div>
         </div>
         @if (member.isOwner) {
@@ -84,7 +89,7 @@
         </div>
         <div class="role-scopes">
           @if (selectedRoleScopes(); as scopes) {
-            <div class="mat-body-strong" i18n>Scopes:</div>
+            <div class="body-text-strong" i18n>Scopes:</div>
             <div>{{ scopes }}</div>
           }
         </div>

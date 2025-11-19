@@ -68,7 +68,7 @@ build-assets:
 
 build-docker:
   stage: build
-  image: docker:stable
+  image: docker:cli
   services:
     - docker:dind
   dependencies:

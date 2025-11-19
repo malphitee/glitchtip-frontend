@@ -71,6 +71,7 @@ export class LoginComponent
 
   socialApps = this.settings.socialApps;
   enableUserRegistration = this.settings.enableUserRegistration;
+  enableSocialAppsUserRegistration = this.settings.enableSocialAppsUserRegistration;
 
   constructor() {
     const service = inject(LoginService);

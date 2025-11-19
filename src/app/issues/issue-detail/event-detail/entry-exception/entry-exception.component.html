@@ -6,15 +6,16 @@
           <h3>Exception</h3>
           @if (group.value === "full-data") {
             <div class="spacer">
-              (<a mat-button (click)="getFlippedFrames()"
-                >most recent call
+              <button mat-button (click)="getFlippedFrames()">
+                (most recent call
                 @if (isReversed()) {
                   <span>first</span>
                 }
                 @if (isReversed() === false) {
                   <span>last</span>
-                }</a
-              >)
+                }
+                )
+              </button>
             </div>
           }
         </div>

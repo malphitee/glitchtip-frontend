@@ -1,5 +1,5 @@
 @use "@angular/material" as mat;
-@import "variables";
+@use "variables" as vars;
 
 .wrapper {
   padding: 8px;
@@ -24,5 +24,5 @@ p {
 }
 
 div {
-  font-family: $font-mono;
+  font-family: vars.$font-mono;
 }

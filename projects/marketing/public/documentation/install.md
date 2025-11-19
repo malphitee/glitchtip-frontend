@@ -6,23 +6,22 @@ Not sure which? Elestio, Pikapods, and Nodion all support GlitchTip via a revenu
 
 ### System Requirements
 
-GlitchTip requires PostgreSQL (14+), Redis/Valkey, a web service, and a worker service.
+GlitchTip requires PostgreSQL (14+), a web service, and a worker service. Valkey (or redis) is optional.
 
 - Recommended system requirements: 1GB RAM, x86 or arm64 CPU
-- Minimum system requirements: 512MB RAM + swap
+- Minimum system requirements: 256MB RAM + swap when using all-in-one setup.
 
 Disk usage varies on usage and event size. As a rough guide, a 1 million event per month instance may require 30GB of disk.
 
-For best performance, use a proxy or load balancer that supports request buffering and handles chunked Transfer-Encoding, such as nginx.
+For best performance, use a proxy or load balancer that supports request buffering and handles chunked Transfer-Encoding, such as nginx. Enable Valkey for faster or larger instances.
 
 ## Docker Compose
 
 Docker Compose is a simple way to run GlitchTip on a single server.
 
 1. Install Docker and Docker Compose. On Debian/Ubuntu this is `sudo apt install docker-compose docker.io`
-2. Copy [docker-compose.sample.yml](/assets/docker-compose.sample.yml) to your server as `docker-compose.yml`.
-3. Edit the environment section of docker-compose.yml. See the Configuration section below.
-4. Start docker service `docker compose up -d` now the service should be running on port 8000. Older versions of docker compose should use `docker-compose` without a space.
+2. Copy [compose.sample.yml](/assets/compose.sample.yml) or [compose.minimal.yml](/assets/compose.minimal.yml) to your server as `compose.yml`. Use "sample" for a more scalable and robust installation. Use "minimal" for trial or small instances when you want the lightest system requirements possible. Minimal omits Valkey and uses an all-on-one Python process. It's safe to pick one and switch later.
+3. Edit the environment section of compose.yml. See the Configuration section below.
 
 It's highly recommended configuring SSL next. Use nginx or preferred solution.
 
@@ -66,8 +65,8 @@ Install and run certbot. Follow [instructions](https://certbot.eff.org/instructi
 
 ### Upgrading
 
-1. Pull latest docker image `docker-compose pull`
-1. Restart `docker-compose stop` and `docker-compose up -d`
+1. Pull latest docker image `docker compose pull`
+1. Restart `docker compose stop` and `docker compose up -d`
 
 Database migrations will automatically happen.
 
@@ -137,8 +136,8 @@ Get started by clicking here. Note this is a referral link and is a great way to
 - One 512 MB RAM | 1 vCPU is fine to start with.
 - Click Create app.
 
-Next you must create a "Caching" managed database, which is redis/valkey. You can either do so via the web interface or through yaml.
-Call it "glitchtip-redis" and ensure it's in the same region as your app.
+Next you must create a "Caching" managed database, which is valkey. You can either do so via the web interface or through yaml.
+Call it "glitchtip-valkey" and ensure it's in the same region as your app.
 
 If you want to use yaml, you can copy [app-platform.yaml](https://gitlab.com/glitchtip/glitchtip/-/blob/master/app-platform.yaml) to your local computer. Edit the following
 
@@ -152,18 +151,18 @@ At a minimum, set the `SECRET_KEY` to a random string of letters.
 
 See [Configuration](https://glitchtip.com/documentation/install#configuration) for more information.
 
-### Redis
+### Valkey
 
-GlitchTip requires Redis/Valkey for sending notification, managing events, and more. Go to https://cloud.digitalocean.com/databases/ and create a new redis database. For almost all size instances, the 1 GB RAM | 1 vCPU instance is sufficient. Enter your redis database's name in the glitchtip-redis section. Let's assume it's named "glitchtip-redis". Both "name" and "cluster_name" must be the same value.
+GlitchTip requires Valkey for sending notification, managing events, and more. Go to https://cloud.digitalocean.com/databases/ and create a new valkey database. For almost all size instances, the 1 GB RAM | 1 vCPU instance is sufficient. Enter your valkey database's name in the glitchtip-valkey section. Let's assume it's named "glitchtip-valkey". Both "name" and "cluster_name" must be the same value.
 
 ```
-- name: glitchtip-redis
+- name: glitchtip-valkey
   engine: REDIS
   production: true
-  cluster_name: glitchtip-redis
+  cluster_name: glitchtip-valkey
 ```
 
-Ensure the environment variable "REDIS_URL" uses the same name. If you didn't name your redis instance "glitchtip-redis" then make sure to update it.
+Ensure the environment variable "VALKEY_URL" uses the same name. If you didn't name your Valkey instance "glitchtip-valkey" then make sure to update it.
 
 ### Deploying
 
@@ -196,7 +195,7 @@ This method is not recommended and assumes the reader knows how to deploy Django
 5. Set required [environment variables](https://glitchtip.com/documentation/install#configuration).
 6. Migrate the database with `./manage.py migrate`
 7. Collect static files `./manage.py collectstatic`
-8. Configure Django uWSGI application with your favorite web server such as nginx or apache. Ensure SSL is configured.
+8. Configure the Django application with your favorite web server such as nginx or apache. Ensure SSL is configured. See `./bin/*` for run scripts to use or as examples.
 9. Start celery with preferred init system. For example systemd or supervisor.
 
 To upgrade, follow the same steps with the latest version tag. Include migrating the database and collectstatic.
@@ -219,12 +218,13 @@ Optional environment variables:
 - `GLITCHTIP_MAX_EVENT_LIFE_DAYS` (Default 90) Events and associated data older than this will be deleted.
 - `GLITCHTIP_MAX_TRANSACTION_EVENT_LIFE_DAYS` (Default to max event life days) Transaction events older than this will be deleted.
 - `GLITCHTIP_MAX_FILE_LIFE_DAYS` (Defaults to 2 \* max event life days) Files older than this will be deleted. Files with any reference to a recent event are excluded. For example, a year old file that is used for an active release with event data, will not be deleted.
-- `REDIS_URL` Set redis/valkey host explicitly. Example: `redis://:password@host:port/database`. You may also set them separately with `REDIS_HOST`, `REDIS_PORT`, `REDIS_DATABASE`, and `REDIS_PASSWORD`.
+- `VALKEY_URL` Set valkey host explicitly. Example: `redis://:password@host:port/database`. You may also set them separately with `VALKEY_HOST`, `VALKEY_PORT`, `VALKEY_DATABASE`, and `VALKEY_PASSWORD`. For compability reasons, REDIS_* will also work. Set to empty string to disable VALKEY and utilize Postgres for celery broker, cache, and session storage.
 - `DATABASE_URL` Set PostgreSQL connect string. PostgreSQL 14 and above are supported.
-- `CELERY_BROKER_URL` set celery broker url explicitly. Defaults to `REDIS_URL`
-- `CACHE_URL` use alternative cache backend for django, defaults to `REDIS_URL`
+- `CELERY_BROKER_URL` set celery broker url explicitly. Defaults to `VALKEY_URL`
+- `CACHE_URL` use alternative cache backend for django, defaults to `VALKEY_URL`
 - Content Security Policy (CSP) headers are enabled by default. In most cases there is no need to change these. However, you may add environment variables as documented in [django-csp](https://django-csp.readthedocs.io/en/latest/configuration.html#policy-settings) to modify them. For example, set `CSP_DEFAULT_SRC='self',scripts.example.com` to modify the default CSP header. Note the usage of comma separated values and single quotes on certain values such as 'self'.
-- `ENABLE_USER_REGISTRATION` (Default True) When True, any user will be able to register. When False, user self-signup is disabled after the first user is registered. Subsequent users must be created by a superuser on the backend and organization invitations may only be sent to existing users.
+- `ENABLE_USER_REGISTRATION` (Default True) When True, any user will be able to register through the self-signup. When False, user self-signup is disabled after the first user is registered. Subsequent users must use social apps if enabled or be created by a superuser on the backend and organization invitations may only be sent to existing users.
+- `ENABLE_SOCIAL_APPS_USER_REGISTRATION` (Default `ENABLE_USER_REGISTRATION`) When True, any user will be able to register through social apps. When False, unregistered user login is disabled after the first user is registered. Subsequent users must use the self-signup or be created by a superuser on the backend.
 - `ENABLE_ORGANIZATION_CREATION` (Default False) When False, only superusers will be able to create new organizations after the first. When True, any user can create a new organization.
 
 ### Server configuration
@@ -244,19 +244,19 @@ See [more information](https://docs.celeryq.dev/en/stable/django/first-steps-wit
 
 ### Advanced settings for cache and celery
 
-By default, redis/valkey is used for the celery broker and cache. It's possible to use cache (and thus redis) for sessions, but is disabled by default in favor of PostgreSQL. At this time, redis data is important to be available but is not necessarily worth backing up.
+By default, Valkey is used for the celery broker, cache, and sessions. Valkey data is important to be available but is not necessarily worth backing up. When Valkey is disabled, Postgres will be used instead. Redis is also likely to work, but less tested.
 
-- `SESSION_ENGINE` Controls where Django stores session data [See Django documentation](https://docs.djangoproject.com/en/4.0/ref/settings/#std-setting-SESSION_ENGINE). To make this use redis, set to `"django.contrib.sessions.backends.cache"`.
+- `SESSION_ENGINE` Controls where Django stores session data [See Django documentation](https://docs.djangoproject.com/en/4.0/ref/settings/#std-setting-SESSION_ENGINE).
 - `SESSION_COOKIE_AGE` The age of session cookies, in seconds. Defaults to [Django default](https://docs.djangoproject.com/en/4.0/ref/settings/#std-setting-SESSION_COOKIE_AGE)
 
-If using Redis Sentinel, additional settings are required. `REDIS_URL` will not work with Sentinel. Set the following:
+If using Sentinel, additional settings are required. `VALKEY_URL` will not work with Sentinel. Set the following:
 
-- `CELERY_BROKER_URL` Example: `"sentinel://:<password>@redis:26379/0"`. Note the sentinel protocol. See [Celery documentation](https://docs.celeryq.dev/en/stable/getting-started/backends-and-brokers/redis.html).
+- `CELERY_BROKER_URL` Example: `"sentinel://:<password>@valkey:26379/0"`. Note the sentinel protocol. See [Celery documentation](https://docs.celeryq.dev/en/stable/getting-started/backends-and-brokers/redis.html).
 - `CELERY_BROKER_MASTER_NAME` Set to the master name. Defaults to the upstream default `mymaster`.
-- `CELERY_BROKER_SENTINEL_KWARGS_PASSWORD` Set when using a password with Redis Sentinel
-- `CACHE_URL` Example `"redis://mymaster/1?client_class=django_redis.client.SentinelClient&connection_pool_class=redis.sentinel.SentinelConnectionPool&password=<password>` Password may be omitted if not using one. See [django-redis documentation](https://github.com/jazzband/django-redis). Take note how settings such as "PARSER_CLASS" map via the query parameter "parserClass".
-- `CACHE_SENTINEL_URL` Set to host:port of the sentinel instance. Do not include the protocol nor password. For example `redis:26379`.
-- `CACHE_SENTINEL_PASSWORD` Set when using a password with Redis Sentinel
+- `CELERY_BROKER_SENTINEL_KWARGS_PASSWORD` Set when using a password with Sentinel
+- `CACHE_URL` Example `"redis://mymaster/1?client_class=django_valkey.client.SentinelClient&connection_pool_class=valkey.sentinel.SentinelConnectionPool&password=<password>` Password may be omitted if not using one. See [django-valkey documentation](https://django-valkey.readthedocs.io/). Take note how settings such as "PARSER_CLASS" map via the query parameter "parserClass".
+- `CACHE_SENTINEL_URL` Set to host:port of the sentinel instance. Do not include the protocol nor password. For example `valkey:26379`.
+- `CACHE_SENTINEL_PASSWORD` Set when using a password with Sentinel
 
 Other Celery broker and cache types may work but are not tested. Consider submitting a merge request to add support for your preferred solution.
 
@@ -351,7 +351,7 @@ For local storage with Docker, use a volume. Refer to Kubernetes or Docker Compo
 
 ### Search Language
 
-GlitchTip uses PostgreSQL full-text search. It will use the default PostgreSQL "text_search_config". In most cases there is no need to modify this. However, you may wish to change it as described [here](https://www.postgresql.org/docs/13/textsearch-configuration.html). This only affects search terms, it does not affect the site language. For example, if your preferred reading language is French and your code and user base uses English, you should pick English.
+GlitchTip uses PostgreSQL full-text search. It will use the default PostgreSQL "text_search_config". In most cases there is no need to modify this. However, you may wish to change it as described [here](https://www.postgresql.org/docs/18/textsearch-configuration.html). This only affects search terms, it does not affect the site language. For example, if your preferred reading language is French and your code and user base uses English, you should pick English.
 
 ## Django Admin
 
@@ -392,13 +392,3 @@ To do that, navigate to `/admin/socialaccount/socialapp/` as mentioned above, cl
   ```json
   { "server_url": "https://my-idp.example.com/auth/realms/my-realm/.well-known/openid-configuration" }
   ```
-
-# Custom domain and settings
-
-It's possible to edit django-allauth settings via environment variables. The following are supported.
-
-- `SOCIALACCOUNT_PROVIDERS_gitlab_GITLAB_URL`
-- `SOCIALACCOUNT_PROVIDERS_gitea_GITEA_URL`
-- `SOCIALACCOUNT_PROVIDERS_nextcloud_SERVER`
-
-For more information, refer to django-allauth's [providers documentation](https://django-allauth.readthedocs.io/en/latest/socialaccount/providers/index.html). If your OAuth provider or a needed configuration option is supported by django-allauth but not GlitchTip, please open a merge request to add support.

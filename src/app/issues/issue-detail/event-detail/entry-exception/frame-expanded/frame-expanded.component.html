@@ -27,7 +27,7 @@
     @for (varList of vars | keyvalue; track varList) {
       <mat-divider></mat-divider>
       <div class="vars padding">
-        <dt class="mat-body-strong">{{ varList.key }}:</dt>
+        <dt class="body-text-strong">{{ varList.key }}:</dt>
         <dd>
           <pre>{{ checkType(varList.value) }}</pre>
         </dd>

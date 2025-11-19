@@ -18,6 +18,9 @@ import { filter, Subscription } from "rxjs";
 import { OrganizationsService } from "../api/organizations.service";
 import { SettingsService } from "../api/settings.service";
 import { SubscriptionService } from "../api/subscriptions/subscription.service";
+import { UserService } from "../api/user/user.service";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { OverLimitSnackbar } from "./over-limit-snackbar/over-limit-snackbar";
 
 @Component({
   imports: [RouterOutlet],
@@ -29,6 +32,8 @@ export class OrganizationFrameComponent implements OnDestroy, OnInit {
   router = inject(Router);
   settings = inject(SettingsService);
   subscription = inject(SubscriptionService);
+  user = inject(UserService);
+  private snackBar = inject(MatSnackBar);
   private firstChildRoute: string = "";
   private subscriptions: Subscription[] = [];
   private isNavigationFromBackButton = false;
@@ -75,6 +80,28 @@ export class OrganizationFrameComponent implements OnDestroy, OnInit {
       const activeOrgSlug = this.organizationService.activeOrganizationSlug();
       if (billingEnabled && activeOrgSlug) {
         this.subscription.checkIfUserHasSubscription(activeOrgSlug);
+      }
+    });
+
+    effect(() => {
+      const activeOrgSlug = this.organizationService.activeOrganizationSlug();
+      const billingEnabled = this.settings.billingEnabled();
+      const activeOrg = this.organizationService.activeOrganization();
+      const warningDismissed = this.user
+        .throttleWarningDismissedOrgs()
+        .includes(activeOrgSlug);
+      const snackbarDurationSeconds = 60;
+
+      if (billingEnabled && activeOrg?.eventThrottleRate && !warningDismissed) {
+        const snackBarRef = this.snackBar.openFromComponent(OverLimitSnackbar, {
+          data: activeOrgSlug,
+          verticalPosition: "top",
+          duration: snackbarDurationSeconds * 1000,
+        });
+
+        snackBarRef
+          .afterDismissed()
+          .subscribe(() => this.user.dismissThrottleWarning(activeOrgSlug));
       }
     });
   }

@@ -1,5 +1,5 @@
 @use "@angular/material" as mat;
-@import "variables";
+@use "variables" as vars;
 
 .exception {
   margin-bottom: 16px;
@@ -10,7 +10,7 @@
     align-items: center;
     margin-bottom: 8px;
 
-    @media screen and (max-width: $small - 1) {
+    @media screen and (max-width: vars.$small - 1) {
       flex-direction: column;
     }
   }
@@ -25,6 +25,12 @@
 
   .spacer {
     margin-left: 8px;
+    display: flex;
+    justify-content: center;
+  }
+
+  button {
+    margin-top: 18px;
   }
 
   .subtitle {
@@ -77,4 +83,9 @@
   .disabled-panel {
     color: var(--mat-expansion-container-text-color);
   }
+}
+
+// TODO: Adjust color for focus interactions
+.highlighted {
+  background-color: var(--mat-sys-surface-container);
 }

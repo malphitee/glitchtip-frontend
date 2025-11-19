@@ -45,7 +45,7 @@
             <mat-error> Choose a monitor type </mat-error>
           }
         </mat-form-field>
-        <div class="help-text mat-caption">
+        <div class="help-text caption-text">
           @if (formMonitorType.value === "Ping") {
             <span i18n>
               GlitchTip will "ping" the specified URL using an HTTP HEAD request
@@ -67,7 +67,7 @@
             </span>
           }
           @if (formMonitorType.value === "Heartbeat") {
-            <p class="mat-caption" i18n
+            <p class="caption-text" i18n
               >GlitchTip will await requests from your site to ensure it is
               active. If it doesn't receive the request, the site will be marked
               as Down.</p
@@ -147,7 +147,7 @@
           </mat-select>
         </mat-form-field>
 
-        <div class="help-text mat-caption" i18n
+        <div class="help-text caption-text" i18n
           >Uptime email notifications are sent to the team assigned to the
           associated project.</div
         >
@@ -197,7 +197,7 @@
               data-cy="expected-body"
             />
           </mat-form-field>
-          <div class="help-text mat-caption">
+          <div class="help-text caption-text">
             <span i18n
               >If string isn't found in response body, the monitor will report
               as down</span
@@ -229,7 +229,7 @@
         </mat-form-field>
         @if (totalEventsAllowed(); as totalEventsAllowed) {
           @if (intervalPerMonth(); as intervalPerMonth) {
-            <div class="help-text mat-caption">
+            <div class="help-text caption-text">
               @if (intervalPerMonth <= totalEventsAllowed) {
                 This will use approximately
                 {{ intervalPerMonth | number: "1.0-0" }}
@@ -269,7 +269,7 @@
               </mat-error>
             }
           </mat-form-field>
-          <div class="help-text mat-caption">
+          <div class="help-text caption-text">
             <span i18n
               >Time in seconds GlitchTip will wait for a response from your app.
               Defaults to 20 seconds.</span

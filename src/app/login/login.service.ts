@@ -121,6 +121,15 @@ export class LoginService extends StatefulService<LoginState> {
 
   socialLogin(provider: string, callbackUrl = "/login/finalize") {
     this.setState({ loading: true, errors: [] });
+    
+    // Include next parameter in callback URL if present
+    const nextUrl = this.route.snapshot.queryParamMap.get("next");
+    if (nextUrl) {
+      const url = new URL(callbackUrl, window.location.origin);
+      url.searchParams.set("next", nextUrl);
+      callbackUrl = url.pathname + url.search;
+    }
+    
     this.authService.providerRedirect(provider, callbackUrl, "login");
   }
 

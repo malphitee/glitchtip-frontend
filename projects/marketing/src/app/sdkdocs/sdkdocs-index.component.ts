@@ -1,7 +1,7 @@
 import { Component, ViewEncapsulation } from "@angular/core";
 import { MatCard, MatCardContent } from "@angular/material/card";
 import { RouterLink } from "@angular/router";
-import { platforms } from "src/app/settings/projects/platform-picker/platforms";
+import { platforms } from "src/app/settings/projects/new-project/platform-picker/platforms";
 
 // const SDK_DOCS_ROUTE = "/sdkdocs/";
 // const sdkBlacklist = [

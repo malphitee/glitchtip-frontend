@@ -66,6 +66,22 @@ const csrfMiddleware: Middleware = {
   },
 };
 
+const authErrorResponseMiddleware: Middleware = {
+  async onResponse({ response, schemaPath }) {
+    if (schemaPath === "/_allauth/browser/v1/auth/session") {
+      return;
+    }
+    if (
+      (response.status === 401 && response.statusText === "Unauthorized") ||
+      (response.status === 403 &&
+        response.statusText === "Authentication credentials were not provided.")
+    ) {
+      localStorage.setItem("isAuthenticated", "false");
+      window.location.href = "/";
+    }
+  },
+};
+
 const options: ClientOptions = {};
 const baseElement = document.querySelector("base");
 if (baseElement) {
@@ -77,3 +93,4 @@ if (baseElement) {
 export type apiPaths = paths & allauthPaths;
 export const client = createClient<apiPaths>(options);
 client.use(csrfMiddleware);
+client.use(authErrorResponseMiddleware);

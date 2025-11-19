@@ -24,6 +24,8 @@ import { MemberDetailService } from "src/app/settings/members/member-detail/memb
 import { MemberRole } from "src/app/api/organizations/organizations.interface";
 import { LoadingButtonComponent } from "../../../shared/loading-button/loading-button.component";
 import { DetailHeaderComponent } from "src/app/shared/detail/header/header.component";
+import { BackLinkComponent } from "src/app/shared/detail/back-link/back-link.component";
+import { TopAppBar } from "src/app/shared/top-app-bar/top-app-bar";
 
 @Component({
   templateUrl: "./member-detail.component.html",
@@ -40,6 +42,8 @@ import { DetailHeaderComponent } from "src/app/shared/detail/header/header.compo
     ReactiveFormsModule,
     MatFormFieldModule,
     MatRadioModule,
+    TopAppBar,
+    BackLinkComponent,
     LoadingButtonComponent,
     MatListModule,
     DetailHeaderComponent,

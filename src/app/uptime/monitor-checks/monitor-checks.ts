@@ -3,13 +3,12 @@ import {
   Component,
   input,
   inject,
-  computed,
   effect,
 } from "@angular/core";
-import { MatButtonModule } from "@angular/material/button";
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import { MatTableModule } from "@angular/material/table";
 import { Router, RouterModule } from "@angular/router";
-import { ListFooterComponent } from "src/app/list-elements/list-footer/list-footer.component";
+import { PaginationButtons } from "src/app/list-elements/pagination-buttons/pagination-buttons";
 import { HumanizeDurationPipe } from "src/app/shared/seconds-or-ms.pipe";
 import { DownReason } from "../uptime.interfaces";
 import { reasonTextConversions } from "../uptime.utils";
@@ -24,12 +23,12 @@ type MonitorDetail = components["schemas"]["MonitorDetailSchema"];
   styleUrls: ["./monitor-checks.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ListFooterComponent,
     HumanizeDurationPipe,
     DatePipe,
     MatTableModule,
-    MatButtonModule,
+    MatButtonToggleModule,
     RouterModule,
+    PaginationButtons,
   ],
   providers: [MonitorChecksService],
 })
@@ -44,14 +43,9 @@ export class MonitorChecks {
   readonly cursor = input.required<string | undefined>();
   monitorChecks = this.service.monitorChecks;
   paginator = this.service.paginator;
-  displayedColumns = computed(() =>
-    [
-      "status",
-      "reason",
-      this.isChange() ? undefined : "responseTime",
-      "startCheck",
-    ].filter((column) => !!column),
-  );
+  loading = this.service.loading;
+  initialLoadComplete = this.service.initialLoadComplete
+  displayedColumns = ["status", "reason", "responseTime", "startCheck"];
 
   constructor() {
     effect(() => {
@@ -85,7 +79,6 @@ export class MonitorChecks {
         cursor: null,
         isChange,
       },
-      queryParamsHandling: "merge",
     });
   }
 }

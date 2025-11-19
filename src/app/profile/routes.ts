@@ -1,5 +1,5 @@
 import { Route } from "@angular/router";
-import { ProfileComponent } from "./profile.component";
+import { ProfilWrapperComponent } from "./profile-wrapper.component";
 import { ConfirmEmailComponent } from "./confirm-email/confirm-email.component";
 import { AuthTokensComponent } from "./auth-tokens/auth-tokens.component";
 import { NewTokenComponent } from "./auth-tokens/new-token/new-token.component";
@@ -11,8 +11,9 @@ import { Wizard } from "./wizard/wizard";
 export default [
   {
     path: "",
-    component: ProfileComponent,
+    component: ProfilWrapperComponent,
     children: [
+      { path: "", component: AccountComponent },
       { path: "auth-tokens", component: AuthTokensComponent },
       { path: "auth-tokens/new", component: NewTokenComponent },
 

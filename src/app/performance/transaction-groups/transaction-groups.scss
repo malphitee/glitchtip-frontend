@@ -1,25 +1,20 @@
-@import "variables";
-
-$iconWidth: 56px;
+@use "variables" as vars;
 
 table {
   width: 100%;
-  margin-bottom: 40px;
 
   &.fixedLayout {
     table-layout: fixed;
   }
 }
 
-.table-header {
-  padding: 20px 24px 8px;
-}
-
-.mat-column-name-and-project {
+.mat-column-name-and-project, .mat-column-header-spacing {
+  width: 90%;
   padding-left: 24px;
 }
 
-.mat-column-avgDuration {
+.mat-column-avgDuration, .mat-column-pagination {
+  width: 10%;
   padding-right: 24px;
 }
 
@@ -28,13 +23,13 @@ table {
   padding-top: 8px;
   padding-bottom: 8px;
 
-  @media screen and (max-width: $large - 1) {
+  @media screen and (max-width: vars.$large - 1) {
     width: 300px;
   }
-  @media screen and (max-width: $medium - 1) {
+  @media screen and (max-width: vars.$medium - 1) {
     width: 200px;
   }
-  @media screen and (max-width: $tablet - 1) {
+  @media screen and (max-width: vars.$tablet - 1) {
     width: 160px;
   }
 
@@ -48,7 +43,7 @@ table {
   div {
     width: inherit;
 
-    .mat-caption {
+    .caption-text {
       color: inherit;
     }
   }
@@ -56,8 +51,4 @@ table {
 
 .avg-duration-cell {
   width: 140px;
-}
-
-.empty-states {
-  padding: 1.5em 24px 0.5em;
 }

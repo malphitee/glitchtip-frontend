@@ -1,14 +1,15 @@
 @if (initialLoadComplete() && issue() === null) {
+  <gt-top-app-bar />
   <section class="l-body l-body--full-width">
     @if (organization(); as organization) {
       <mat-card class="auth-form issue-404">
         <mat-card-content>
-          <h1 class="mat-headline-4" i18n>Issue not found</h1>
-          <p class="mat-body-1" i18n
+          <h1 class="section-header-text" i18n>Issue not found</h1>
+          <p class="body-text" i18n
             >This may be because the URL is pointing to an issue that doesn't
             exist or was deleted.</p
           >
-          <p class="mat-body-1" i18n
+          <p class="body-text" i18n
             >It's also possible that this issue was reported to a project that
             you are not able to access.</p
           >
@@ -26,36 +27,55 @@
   </section>
 }
 @if (issue(); as issue) {
+  <gt-top-app-bar>
+    <ng-container slot="left">
+      <gt-back-link
+        [backLinkText]="
+          isMobile() ? 'Issues' : 'All issues for ' + issue.project.name
+        "
+        [backLinkParams]="generateBackLink(issue.project.id)"
+      />
+    </ng-container>
+    <ng-container slot="right">
+      <div class="top-bar-actions">
+        @if (isMobile()) {
+          <gt-issue-status-update-dropdown
+            [selectedValue]="issue.status"
+            (optionSelected)="updateIssueStatus($event)"
+          />
+        } @else {
+          <mat-button-toggle-group
+            [value]="issue.status"
+            (change)="updateIssueStatus($event.value)"
+          >
+            @for (option of statusOptions; track option.value) {
+              <mat-button-toggle [value]="option.value">
+                {{ option.label }}
+              </mat-button-toggle>
+            }
+          </mat-button-toggle-group>
+        }
+        <button
+          mat-icon-button
+          class="medium-icon-button"
+          (click)="deleteIssue()"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </ng-container>
+  </gt-top-app-bar>
   <section class="l-body l-body--full-width">
-    <gt-detail-header
-      [backLinkText]="'View all issues for ' + issue.project.name"
-      [backLinkParams]="generateBackLink(issue.project.id)"
-      [title]="issueTitle()!"
-      [subtitle]="issueSubtitle()"
-    >
-      @if (issue?.status !== "resolved") {
-        <button mat-flat-button color="primary" (click)="markResolved()">
-          <mat-icon aria-hidden="true">done</mat-icon>
-          Resolve
-        </button>
-      }
-      @if (issue?.status !== "unresolved") {
-        <button mat-flat-button color="primary" (click)="markUnresolved()">
-          <mat-icon aria-hidden="true">done</mat-icon>
-          Reopen
-        </button>
-      }
-      @if (issue?.status !== "ignored") {
-        <button mat-stroked-button (click)="markIgnored()"> Ignore </button>
-      }
-      <button
-        mat-icon-button
-        class="medium-icon-button"
-        (click)="deleteIssue()"
-      >
-        <mat-icon>delete</mat-icon>
-      </button>
-    </gt-detail-header>
+    <div class="issue-header-wrapper">
+      <div class="status-indicator" [class]="'level--' + issue.level">
+        <mat-icon>{{
+          statusIcon()
+        }}</mat-icon>
+      </div>
+
+      <gt-detail-header [title]="issueTitle()!" [subtitle]="issueSubtitle()" />
+    </div>
+
     <div class="row">
       <mat-card class="event-detail-card left">
         <div class="tab-nav-container">
@@ -138,32 +158,32 @@
         </mat-card-content>
       </mat-card>
       <aside class="right">
-        <mat-card>
+        <mat-card appearance="outlined">
           <mat-card-content>
             <dl>
               <div>
-                <dt class="mat-caption">Issue #</dt>
-                <dd class="mat-body-1">{{ issue?.shortId }}</dd>
+                <dt class="caption-text">Issue #</dt>
+                <dd class="body-text">{{ issue?.shortId }}</dd>
               </div>
               <div>
-                <dt class="mat-caption">Events</dt>
-                <dd class="mat-body-1">{{ issue?.count }}</dd>
+                <dt class="caption-text">Events</dt>
+                <dd class="body-text">{{ issue?.count }}</dd>
               </div>
               <div>
-                <dt class="mat-caption">Level</dt>
-                <dd class="mat-body-1">{{ issue.level | titlecase }}</dd>
+                <dt class="caption-text">Level</dt>
+                <dd class="body-text">{{ issue.level | titlecase }}</dd>
               </div>
               <div>
-                <dt class="mat-caption">First Seen</dt>
-                <dd class="mat-body-1">{{ issue.firstSeen | daysAgo }}</dd>
-                <dd class="mat-caption">
+                <dt class="caption-text">First Seen</dt>
+                <dd class="body-text">{{ issue.firstSeen | daysAgo }}</dd>
+                <dd class="caption-text">
                   {{ issue?.firstSeen | date: "long" }}
                 </dd>
               </div>
               <div>
-                <dt class="mat-caption">Last Seen</dt>
-                <dd class="mat-body-1">{{ issue.lastSeen | daysAgo }}</dd>
-                <dd class="mat-caption">
+                <dt class="caption-text">Last Seen</dt>
+                <dd class="body-text">{{ issue.lastSeen | daysAgo }}</dd>
+                <dd class="caption-text">
                   {{ issue?.lastSeen | date: "long" }}
                 </dd>
               </div>

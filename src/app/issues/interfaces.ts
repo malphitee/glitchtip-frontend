@@ -213,7 +213,7 @@ export interface UpdateStatusResponse {
 
 // not in issues api reference, but is in issue list data
 
-type StatsPeriod = "24h" | "14d" | "30d" | "";
+export type StatsPeriod = "24h" | "14d";
 
 type Stats = { [StatPeriod in StatsPeriod]?: number[][] };
 
@@ -335,4 +335,13 @@ export interface IssueTagsAdjusted extends IssueTags {
 interface TopValueAdjusted extends TopValue {
   percentRounded: number;
   percent: number;
+}
+
+export interface StatsDataPointBase {
+  name: string;
+  timestamp: number;
+}
+
+export interface FormattedStatsDataPoint extends StatsDataPointBase {
+  value: number;
 }

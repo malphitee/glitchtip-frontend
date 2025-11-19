@@ -65,7 +65,7 @@
         @if (socialApps(); as socialApps) {
           @if (socialApps.length) {
             <div class="or">
-              <span class="mat-body-strong" i18n>or</span>
+              <span class="body-text-strong" i18n>or</span>
             </div>
           }
           <div class="o-auth">
@@ -86,17 +86,17 @@
           </div>
         }
         <div class="sign-up">
-          @if (enableUserRegistration()) {
-            <p class="mat-body-1">
+          @if (enableUserRegistration() || enableSocialAppsUserRegistration()) {
+            <p class="body-text">
               <ng-container i18n>New to GlitchTip?</ng-container>
-              <a routerLink="../register" i18n>Sign Up</a>
+              <a class="auth-link" routerLink="../register" i18n>Sign Up</a>
             </p>
           }
-          <p class="mat-body-1">
-            <a routerLink="/reset-password" i18n>Reset Password</a>
+          <p class="body-text">
+            <a class="auth-link" routerLink="/reset-password" i18n>Reset Password</a>
           </p>
 
-          <p markdown>
+          <p class="alternative-instance" markdown>
             {{ instanceName() }}
           </p>
         </div>

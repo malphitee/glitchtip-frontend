@@ -22,7 +22,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatOptionModule } from "@angular/material/core";
 import { MatSelectModule } from "@angular/material/select";
 import { MatInputModule } from "@angular/material/input";
-import { PlatformPickerComponent } from "../platform-picker/platform-picker.component";
+import { PlatformPickerComponent } from "./platform-picker/platform-picker.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatCardModule } from "@angular/material/card";
 import { NewProjectService } from "./new-project-state";

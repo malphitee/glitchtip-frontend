@@ -12,6 +12,7 @@ export default defineConfig({
     setupNodeEvents(on, config) {
       return require("./cypress/plugins/index.js")(on, config);
     },
+    viewportWidth: 1280,
     experimentalRunAllSpecs: true,
     baseUrl: "http://localhost:4200",
   },

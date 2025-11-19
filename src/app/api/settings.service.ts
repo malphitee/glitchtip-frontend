@@ -23,6 +23,9 @@ export class SettingsService {
   enableUserRegistration = computed(
     () => this.settings()?.enableUserRegistration,
   );
+  enableSocialAppsUserRegistration = computed(
+    () => this.settings()?.enableSocialAppsUserRegistration,
+  );
   enableOrganizationCreation = computed(
     () => this.settings()?.enableOrganizationCreation,
   );

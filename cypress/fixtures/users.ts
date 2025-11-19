@@ -1,5 +1,10 @@
-export const user = {
-  email: "cypresstest@example.com",
+export const seededUser1 = {
+  email: "seeded-user@example.com",
+  password: "hunter22",
+};
+
+export const seededUser2 = {
+  email: "second-seeded-user@example.com",
   password: "hunter22",
 };
 

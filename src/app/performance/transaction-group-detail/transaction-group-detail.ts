@@ -6,6 +6,8 @@ import { DetailHeaderComponent } from "src/app/shared/detail/header/header.compo
 import { TransactionGroupDetailService } from "./transaction-group-detail-state";
 import { HumanizeDurationPipe } from "../../shared/seconds-or-ms.pipe";
 import { OrganizationsService } from "src/app/api/organizations.service";
+import { BackLinkComponent } from "src/app/shared/detail/back-link/back-link.component";
+import { TopAppBar } from "src/app/shared/top-app-bar/top-app-bar";
 
 @Component({
   selector: "gt-transaction-group-detail",
@@ -15,6 +17,8 @@ import { OrganizationsService } from "src/app/api/organizations.service";
     MatCardModule,
     RouterLink,
     MatIconModule,
+    TopAppBar,
+    BackLinkComponent,
     HumanizeDurationPipe,
     DetailHeaderComponent,
   ],

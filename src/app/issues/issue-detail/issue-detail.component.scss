@@ -1,4 +1,4 @@
-@import "variables";
+@use "variables" as vars;
 
 .issue-404 {
   h1 {
@@ -38,7 +38,7 @@ dl {
     border-bottom: 1px solid rgba(0, 0, 0, 0.12);
   }
 
-  @media screen and (max-width: $medium - 1) {
+  @media screen and (max-width: vars.$medium - 1) {
     margin-right: 0;
   }
 
@@ -61,7 +61,7 @@ mat-grid-list {
   align-items: flex-start;
   margin-bottom: 30px;
 
-  @media screen and (max-width: $medium - 1) {
+  @media screen and (max-width: vars.$medium - 1) {
     flex-direction: column-reverse;
   }
 
@@ -69,7 +69,7 @@ mat-grid-list {
     flex: 75%;
     overflow: hidden;
 
-    @media screen and (max-width: $medium - 1) {
+    @media screen and (max-width: vars.$medium - 1) {
       width: 100%;
     }
   }
@@ -77,7 +77,7 @@ mat-grid-list {
   .right {
     flex: 25%;
 
-    @media screen and (max-width: $medium - 1) {
+    @media screen and (max-width: vars.$medium - 1) {
       width: 100%;
       margin-bottom: 30px;
     }
@@ -90,4 +90,59 @@ table.mat-table {
 
 .report-badge > span {
   text-overflow: initial;
+}
+
+.issue-header-wrapper {
+  display: flex;
+
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.top-bar-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative; 
+
+  mat-icon {
+    color: var(--mat-sys-outline);
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+    margin: 8px;
+  }
+
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    right: 0;
+    width: 4px;
+    border-radius: 4px; 
+  }
+
+  &.level--sample::after   { background-color: var(--mat-sys-outline); }
+  &.level--debug::after    { background-color: var(--mat-sys-outline-variant); }
+  &.level--info::after     { background-color: var(--info-color); }
+  &.level--warning::after  { background-color: var(--warning-color); }
+  &.level--error::after    { background-color: var(--mat-sys-error); }
+
+
+  &.level--fatal::after {
+    background: repeating-linear-gradient(
+      -60deg,
+      var(--mat-sys-error),
+      var(--mat-sys-error) 5px,
+      var(--mat-sys-surface) 5px,
+      var(--mat-sys-surface) 10px
+    );
+  }
 }

@@ -1,6 +1,10 @@
+<gt-top-app-bar>
+  <ng-container slot="left">
+    <gt-back-link backLinkText="Back to Teams" />
+  </ng-container>
+</gt-top-app-bar>
 <section class="l-body">
-  <gt-detail-header backLinkText="Back to Teams" [title]="'#' + teamSlug()!" />
-
+  <gt-detail-header [title]="'#' + teamSlug()!" />
   <nav mat-tab-nav-bar mat-stretch-tabs="false" [tabPanel]="tabPanel">
     @for (link of navLinks; track link) {
       <a

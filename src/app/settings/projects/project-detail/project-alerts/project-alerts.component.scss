@@ -1,8 +1,11 @@
 @use "@angular/material" as mat;
-@import "variables";
+@use "variables" as vars;
 
 mat-card-header {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
   margin-bottom: 12px;
 
   mat-card-title {
@@ -40,7 +43,7 @@ mat-card-header {
   display: flex;
   justify-content: flex-end;
 
-  @media screen and (max-width: $medium - 1) {
+  @media screen and (max-width: vars.$medium - 1) {
     padding-top: 10px;
     justify-content: flex-start;
   }
@@ -68,6 +71,10 @@ mat-card-header {
 }
 
 .alert-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
   padding-top: 16px;
 }
 
@@ -110,7 +117,7 @@ mat-card-header {
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
   padding: 8px 0;
 
-  @media screen and (max-width: $large - 1) {
+  @media screen and (max-width: vars.$large - 1) {
     width: 100%;
   }
 

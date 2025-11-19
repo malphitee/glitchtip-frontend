@@ -39,7 +39,7 @@ export class MonitorListService {
     },
   });
   loading = computed(() => this.monitorsResource.isLoading());
-  monitors = computed(() => this.monitorsResource.value()?.data);
+  monitors = computed(() => this.monitorsResource.value()?.data ?? []);
   pagination = computed(() => this.monitorsResource.value()?.pagination);
   paginator = computed(() => getPaginator(this.pagination()));
   activeOrganizationSlug = this.organizationsService.activeOrganizationSlug;

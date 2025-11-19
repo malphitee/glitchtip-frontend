@@ -1,9 +1,9 @@
 @if (tags()?.length) {
-  <mat-card>
+  <mat-card appearance="outlined">
     <mat-card-content>
-      <h3 class="mat-body-strong">Tags</h3>
+      <h3 class="body-text-strong">Tags</h3>
       @for (tag of tags(); track tag.key) {
-        <p class="top-value mat-caption">
+        <p class="top-value caption-text">
           <span class="key">{{ tag.key }}</span>
           <span>
             {{ tag.topValues[0].value }}: {{ tag.topValues[0].percentRounded }}%

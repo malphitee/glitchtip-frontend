@@ -1,4 +1,4 @@
-import { user } from "../fixtures/users";
+import { seededUser1 } from "../fixtures/users";
 
 export function seedBackend(generateExtras = false, seedIssues = false) {
   let paramString = generateExtras ? "?extras=true" : ""
@@ -24,8 +24,8 @@ export function requestLogin() {
         method: "POST",
         url,
         body: {
-          email: user.email,
-          password: user.password,
+          email: seededUser1.email,
+          password: seededUser1.password,
         },
         headers: { "X-CSRFToken": csrfToken },
       });

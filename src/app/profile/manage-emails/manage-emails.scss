@@ -1,4 +1,4 @@
-@import "variables";
+@use "variables" as vars;
 
 .email-list-item {
   height: auto;
@@ -59,11 +59,11 @@ mat-chip {
   justify-content: space-between;
   padding-top: 7px;
 
-  @media (max-width: $large - 1) {
+  @media (max-width: vars.$large - 1) {
     flex-wrap: wrap;
   }
 
-  @media (max-width: $medium - 1) {
+  @media (max-width: vars.$medium - 1) {
     flex-direction: column;
   }
 
@@ -76,7 +76,7 @@ mat-chip {
   gt-loading-button {
     margin-top: 12px;
 
-    @media (max-width: $medium - 1) {
+    @media (max-width: vars.$medium - 1) {
       margin-top: 8px;
     }
   }

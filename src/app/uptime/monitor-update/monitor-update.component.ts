@@ -7,13 +7,13 @@ import { MatIconModule } from "@angular/material/icon";
 import { MonitorFormComponent } from "../monitor-form/monitor-form.component";
 import { MonitorInput } from "../uptime.interfaces";
 import { MonitorService, MonitorState } from "../monitor.service";
-import { DetailHeaderComponent } from "src/app/shared/detail/header/header.component";
 import { StatefulComponent } from "src/app/shared/stateful-service/signal-state.component";
+import { BackLinkComponent } from "src/app/shared/detail/back-link/back-link.component";
+import { TopAppBar } from "src/app/shared/top-app-bar/top-app-bar";
 
 @Component({
   selector: "gt-monitor-update",
   templateUrl: "./monitor-update.component.html",
-  styleUrls: ["./monitor-update.component.scss"],
   imports: [
     RouterModule,
     MatButtonModule,
@@ -21,7 +21,8 @@ import { StatefulComponent } from "src/app/shared/stateful-service/signal-state.
     MatDividerModule,
     MatIconModule,
     MonitorFormComponent,
-    DetailHeaderComponent,
+    BackLinkComponent,
+    TopAppBar,
   ],
 })
 export class MonitorUpdateComponent

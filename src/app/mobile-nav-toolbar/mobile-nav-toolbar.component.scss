@@ -1,18 +1,15 @@
 @use "@angular/material" as mat;
-@import "variables";
+@use "variables" as vars;
 
 mat-toolbar {
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
   display: none;
-  cursor: pointer; // The whole toolbar is clickable
+  cursor: pointer;
 
-  @media (max-width: $tablet - 1) {
+  @media (max-width: vars.$tablet - 1) {
     display: flex;
-    padding-left: 0;
-  }
-
-  .sidenav-toggle {
-    height: 100%;
-    transform: translateY(-1px);
+    flex-direction: row;
+    align-items: center;
   }
 }
 
@@ -20,4 +17,5 @@ mat-toolbar {
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
+  margin-left: 5px;
 }

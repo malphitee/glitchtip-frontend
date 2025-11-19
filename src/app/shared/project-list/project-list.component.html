@@ -1,12 +1,12 @@
 <section class="l-body">
   @if (
-    projects()?.length === 0 &&
+    projects().length === 0 &&
     activeOrganization() === undefined &&
     orgServiceInitialLoad()
   ) {
     <mat-card>
       <mat-card-content>
-        <p class="mat-body-1" i18n
+        <p class="body-text" i18n
           >In order to use GlitchTip, you'll need to create an organization.</p
         >
         <a
@@ -19,15 +19,14 @@
       </mat-card-content>
     </mat-card>
   }
-
   @for (organization of orgsAndProjects(); track organization.id) {
     @if (
       !activeOrgOnly ||
       (activeOrgOnly && organization.id === activeOrganization()?.id)
     ) {
       <section class="org-projects-section">
-        <header class="page-header">
-          <h2 class="mat-headline-4">
+        <header class="projects-section-header">
+          <h2 class="section-header-text">
             {{ activeOrgOnly ? "Projects" : organization.name }}
           </h2>
           <a
@@ -43,10 +42,10 @@
             [disabled]="!accessProjectWrite()"
             class="new-project-button"
             i18n
-            >Create new project in {{ organization.name }}</a
-          >
+            >Create new project in {{ organization.name }}
+          </a>
         </header>
-        @if (organization.projects?.length === 0) {
+        @if (organization.projects.length === 0) {
           <gt-empty-projects
             [activeOrgOnly]="activeOrgOnly"
           ></gt-empty-projects>

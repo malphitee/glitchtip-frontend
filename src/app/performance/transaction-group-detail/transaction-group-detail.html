@@ -1,3 +1,8 @@
+<gt-top-app-bar>
+  <ng-container slot="left">
+    <gt-back-link backLinkText="View all transaction groups" />
+  </ng-container>
+</gt-top-app-bar>
 @if ((initialLoadComplete()) && (transactionGroup()) === null) {
 <section class="l-body l-body--full-width">
   @if (organization(); as organization) {
@@ -28,7 +33,6 @@
 <section class="l-body l-body--full-width">
   <gt-detail-header
     [title]="[group.transaction, null]"
-    backLinkText="View all transaction groups"
   />
   <div class="row">
     <aside class="right">
