@@ -1,7 +1,7 @@
 @use "@angular/material" as mat;
 @import "prismjs/themes/prism.css";
 $font-path: "../../../src/assets/fonts";
-@import "../../../src/assets/styles/themes";
+@import "../src/app/styles/themes";
 @import "../../../src/assets/styles/variables";
 @import "../../../src/assets/styles/font-files";
 @import "../../../src/assets/styles/resets";
@@ -26,7 +26,7 @@ $font-path: "../../../src/assets/fonts";
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
-@include mat.all-component-themes($candy-app-theme);
+@include mat.m2-theme($candy-app-theme);
 
 // Responsive type maybe?
 @media screen and (max-width: 767px) {

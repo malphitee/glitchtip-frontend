@@ -10,7 +10,7 @@
     </ng-template>
     <div class="plans mat-elevation-z1">
       @for (product of planOptions; track product; let i = $index) {
-        <mat-card>
+        <mat-card appearance="outlined">
           <mat-card-header>
             <mat-card-title>{{ product.name }}</mat-card-title>
           </mat-card-header>
@@ -62,7 +62,7 @@
       </div>
     </ng-template>
     <div class="plans mat-elevation-z1">
-      <mat-card>
+      <mat-card appearance="outlined">
         <mat-card-header>
           <mat-card-title>Free and open source</mat-card-title>
         </mat-card-header>
@@ -96,7 +96,7 @@
           </div>
         </mat-card-content>
       </mat-card>
-      <mat-card>
+      <mat-card appearance="outlined">
         <mat-card-header>
           <mat-card-title>Premium Support</mat-card-title>
         </mat-card-header>
@@ -132,7 +132,7 @@
           </div>
         </mat-card-content>
       </mat-card>
-      <mat-card>
+      <mat-card appearance="outlined">
         <mat-card-header>
           <mat-card-title>Enterprise Support</mat-card-title>
         </mat-card-header>
