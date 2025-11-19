@@ -49,11 +49,6 @@ h2.mat-headline-4 {
   margin: 0px 0 20px;
 }
 
-.plans {
-  mat-card {
-    @media (min-width: $large) {
-      border-right: 1px solid
-        mat.m2-get-color-from-palette(mat.$m2-gray-palette, 300);
-    }
-  }
+mat-card {
+  border-color: mat.m2-get-color-from-palette(mat.$m2-gray-palette, 300);
 }
