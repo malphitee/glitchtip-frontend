@@ -1,60 +1,104 @@
-# Hosted GlitchTip Architecture Overview
+# Hosted GlitchTip: Architecture & Security Compliance
 
-The intention of this page is to inform users of hosted GlitchTip how it's deployed and potentially help with compliance needs.
+This document outlines the infrastructure, security controls, and data policies for the Hosted GlitchTip SaaS. Our architecture is designed to ensure data residency, transparency, and security, adhering to principles found in HIPAA, SOC II, and ISO 27001 frameworks.
 
-Burke Software does not share user data with any third parties. We do rely on DigitalOcean for hosting, Cloudflare for our CDN, and Mailgun for sending email.
+## Core Infrastructure & Third-Party Processors
+
+Burke Software functions as a data processor. We do not sell or share user data with third parties. We utilize a minimized set of industry-standard sub-processors:
+
+- Hosting (US): DigitalOcean NYC1 (New York, USA) - https://app.glitchtip.com
+- Hosting (EU): DigitalOcean FRA1 (Frankfurt, Germany) - https://eu.glitchtip.com
+- CDN: Cloudflare
+- Transactional Email: Mailgun (Data residency matches the server region: US or EU)
+- Analytics: Plausible (Privacy-focused, GDPR compliant, no cookies) runs solely on this marketing website https://glitchtip.com and not on our GlitchTip hosted servers (ex: https://app.glitchtip.com)
+- Payments: Stripe (PCI-DSS Service Provider Level 1)
 
 ![](/assets/glitchtip-saas.png)
 
-The US Server (https://app.glitchtip.com) is hosted on NYC1 (United States).
-The EU Server (https://eu.glitchtip.com) is hosted on FRA1 (Germany).
+## Security by Design
 
-## Platform Architecture and Transparency
+### Data Isolation and Encryption
 
-- User data is stored in Postgres using managed DigitalOcean Postgres service.
-  - This includes error data as sent by the Sentry SDK. Burke Software employees only inspect such data with explicit permission by end users and do so only for quality assurance purposes.
-  - Our database cluster is only available within our DigitalOcean Kubernetes cluster's "Trusted Source". It is not internet accessible.
-  - Authentication requires SSL and is stored in Kubernetes Secrets. Authentication information is not kept in any git repository.
-- Our web servers are run in Kubernetes using managed DigitalOcean Kubernetes. The EU server is run on Digital Ocean App Platform.
-- Analytics are stored in Plausible, a privacy focused analytics platform.
-- Web traffic passes through Cloudflare CDN
-- Transactional email is sent via Mailgun. The EU server uses Mailgun's EU region.
-- This marketing page is served via GitLab Pages.
-- Subscriptions and payment are handled by Stripe. Burke Software does not store credit card information. Only subscription related information is sent to Stripe. Error data is not shared.
-- Docker images used for both hosted GlitchTip and self-hosting are hosted on both [GitLab](https://gitlab.com/glitchtip/glitchtip-frontend/container_registry) and [Docker Hub](https://hub.docker.com/r/glitchtip/glitchtip). These images are built in [GitLab CI](https://gitlab.com/glitchtip/glitchtip-frontend/-/pipelines).
-- Cookies are used for session based authentication and are required for using GlitchTip. Cookies are never shared with third parties.
-- Event data is purged after 90 days. Users who wish to purge all account information should email [support@glitchtip.com](mailto:support@glitchtip.com).
-- Mozilla Observatory rates app.glitchtip.com as "A+". View [report](https://observatory.mozilla.org/analyze/app.glitchtip.com). To keep users safe, we utilize strict Content Security Policy, secure cookies, HTTPS, and HSTS.
-- PostgreSQL users are provisioned using principle of least privilege.
+- Storage: User data is stored in managed DigitalOcean PostgreSQL clusters.
+- Network Isolation: The database cluster is isolated within a Private VPC (Virtual Private Cloud) and is accessible strictly via the Kubernetes cluster’s "Trusted Source" allowlist. It is not accessible via the public internet.
+- Encryption:
+  - In Transit: All data transmission requires TLS 1.2+ (HTTPS).
+  - At Rest: DigitalOcean Managed Storage provides encryption at rest.
+- Secrets Management: Application credentials and keys are managed via Kubernetes Secrets and are never committed to version control.
 
-## Disaster Recovery
+### Access Controls
 
-Hosted GlitchTip relies on DigitalOcean’s [Managed Kubernetes](https://www.digitalocean.com/docs/kubernetes/) and [Managed PostgreSQL](https://www.digitalocean.com/docs/databases/postgresql/) for a robust, fault tolerant platform. DigitalOcean publishes their Droplet Policies [here](https://www.digitalocean.com/docs/droplets/resources/policies/#droplet-service-level-agreement-sla). Individual services including Kubernetes Nodes, Kubernetes Pods, and Database Clusters automatically restore themselves.
+- Least Privilege: We operate on a strict principle of least privilege. Access to production infrastructure is restricted to the Principal Engineers at Burke Software.
+- Audit Trails: Infrastructure changes are managed via OpenTofu (Infrastructure as Code). All access requests and infrastructure changes are version-controlled and logged via GitLab.
+- Authentication: Administrative access to hosting environments requires Single Sign On (SSO) and hardware-backed Two-Factor Authentication (2FA/YubiKey).
 
-US hosted GlitchTip assets are deployed to DigitalOcean’s NYC1 region. EU hosted GlitchTip is in region FRA1. Hosted GlitchTip is susceptible to region wide availability issues. DigitalOcean publishes status [here](https://status.digitalocean.com/).
+### Application Security
 
-Due to the nature and architecture of GlitchTip, service interruptions on GlitchTip will not lead to customer application disruptions.
+- CSP & Headers: GlitchTip utilizes strict Content Security Policy (CSP), HSTS, and Secure Cookies.
+- Independent Rating: Mozilla Observatory rates app.glitchtip.com as "A+". [View Report](https://developer.mozilla.org/en-US/observatory/analyze?host=app.glitchtip.com).
+- Data Retention: Event data is automatically purged after 90 days.
+- Container Security: Docker images are built in isolated GitLab CI pipelines and hosted on GitLab Container Registry and [Docker Hub](https://hub.docker.com/r/glitchtip/glitchtip)).
 
-### Recovery Time Objective
+## Disaster Recovery & Availability
 
-In the majority of cases, recovery time from underlying infrastructure is determined by DigitalOcean. In cases where GlitchTip itself has a service interruption, our recovery time objective is within 1 hour during EST business hours and is best effort outside of business hours.
+Hosted GlitchTip relies on DigitalOcean’s Managed Kubernetes and Managed PostgreSQL for high availability.
 
-### Recovery Point Objective
+- Redundancy: Individual services (Kubernetes Pods) and Database Clusters are configured to self-heal.
+- Failover: In the event of a service interruption, our architecture ensures that the GlitchTip ingestion API fails closed; service interruptions on GlitchTip will not disrupt your application's core functionality.
+- Backups: Database snapshots are taken daily and retained for 7 days to ensure Recovery Point Objective (RPO) capabilities.
+- Status: Platform status is available at [DigitalOcean Status](https://status.digitalocean.com/).
 
-Hosted GlitchTip data is saved in DigitalOcean’s Managed PostgreSQL and is backed up once per day and retained for 7 days.
+### Incident Response Targets
 
-Hosted GlitchTip infrastructure is configured using OpenTofu and is not publicly available. All changes to infrastructure are managed in gitlab.com where history is saved indefinitely.
+While we utilize automated recovery for infrastructure, our internal targets for service-level incidents are:
 
-## Process controls
+- Response Time Objective: 1 hour (during EST business hours) / Best Effort (off-hours).
+- Recovery Time Objective (RTO): 8 hours.
 
-- Burke Software employees are required to utilize Single Sign On via Google Apps and Two-Factor authentication when accessing privileged hosting services including DigitalOcean and GitLab version control systems.
-- Authorization for hosting services is provisioned via OpenTofu in a private git repository. All permission requests are logged via git commits.
+## Security Incident Response Policy
 
-## Security policy
+Burke Software maintains a response policy to address potential security events. This policy is designed to align with the notification requirements of GDPR and HIPAA.
 
-The GlitchTip team aims to update server and browser packages at least monthly. Additionally, Django security releases are monitored and considered for hot fix release. Additional paid support guarantees are available. Email [sales@glitchtip.com](mailto:sales@glitchtip.com).
+### 1. Detection and Analysis
 
-Found a security vulnerability? [Open a private issue on GitLab](https://gitlab.com/glitchtip). Please do not report results of automated tools, such as dependency bots. If you believe an automated tool would be helpful, discuss on Gitter first.
-Do not post messages asking for payment, GlitchTip is an open source project.
+Roles are divided into a Technical Lead (investigation/remediation) and a Compliance Lead (communication). A security incident is declared upon discovery by staff or notification via automated security alerts.
 
-Need more information? Email us at [sales@glitchtip.com](mailto:sales@glitchtip.com)
+### 2. Containment and Eradication
+
+Upon verification of an incident, the Technical Lead will:
+
+- Isolate affected Kubernetes Pods or services.
+- Rotate relevant API keys and secrets.
+- Preserve system logs for forensic analysis.
+
+### 3. Notification
+
+If a breach of customer data is confirmed, Burke Software will notify the affected customer's designated contact without undue delay and no later than 72 hours after discovery.
+
+The notification will include:
+
+- A description of the breach.
+- The data types involved.
+- Mitigation steps taken.
+
+### 4. Post-Incident Review
+
+Following resolution, a root cause analysis is conducted to update policy and prevent recurrence. Documentation is retained for a minimum of six years.
+
+## HIPAA Compliance
+
+Hosted GlitchTip's security controls (encryption, access logs, backup retention) are designed to align with the HIPAA Security Rule.
+
+Standard Plans: Suitable for organizations that need HIPAA-aligned security controls but do not require a Business Associate Agreement (BAA).
+
+Enterprise Plans: For organizations requiring a signed Business Associate Agreement (BAA), please contact sales@glitchtip.com.
+
+## Vulnerability Disclosure
+
+We are committed to keeping GlitchTip secure.
+
+- Patch Management: We aim to update server and browser dependencies monthly.
+- Reporting: If you find a security vulnerability, please open a [private issue on GitLab](https://gitlab.com/glitchtip).
+- Note: Please do not report results of automated scanners (e.g., dependency bots) without manual verification. We do not offer a bug bounty program at this time.
+
+For additional security questions or vendor risk assessment inquiries, please email sales@glitchtip.com.
