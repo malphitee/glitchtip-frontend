@@ -32,6 +32,12 @@ Burke Software functions as a data processor. We do not sell or share user data 
 - Audit Trails: Infrastructure changes are managed via OpenTofu (Infrastructure as Code). All access requests and infrastructure changes are version-controlled and logged via GitLab.
 - Authentication: Administrative access to hosting environments requires Single Sign On (SSO) and hardware-backed Two-Factor Authentication (2FA/YubiKey).
 
+### Workstation Security
+
+- Encryption: All employee workstations utilize Full Disk Encryption (e.g., LUKS) to prevent unauthorized data access in the event of theft or loss.
+- Auto-Lock: Workstations are configured to automatically lock after a short period of inactivity.
+- Endpoint Protection: Development machines are kept up-to-date with the latest security patches and utilize local firewall restrictions.
+
 ### Application Security
 
 - CSP & Headers: GlitchTip utilizes strict Content Security Policy (CSP), HSTS, and Secure Cookies.
