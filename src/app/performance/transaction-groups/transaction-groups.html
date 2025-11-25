@@ -98,8 +98,8 @@
       ></tr>
       <tr
         mat-header-row
-        class="table-header performance-table-header"
-        *matHeaderRowDef="displayedColumns; sticky: true"
+        class="performance-table-header"
+        *matHeaderRowDef="displayedColumns"
         [class.u-hidden]="transactionGroups.length === 0"
       ></tr>
       <tr

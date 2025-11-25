@@ -53,8 +53,7 @@
       ></tr>
       <tr
         mat-header-row
-        class="table-header"
-        *matHeaderRowDef="displayedColumns; sticky: true"
+        *matHeaderRowDef="displayedColumns"
         [class.u-hidden]="releases.length === 0 && !isLoading()"
       ></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>

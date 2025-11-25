@@ -1,4 +1,5 @@
 @use "variables" as vars;
+@use '@angular/material' as mat;
 
 $iconWidth: 56px;
 $selectColumnWidth: 60px;
@@ -28,8 +29,8 @@ table {
 
 .status-button-group {
   button {
-    font-size: 0.95em;
-    line-height: 30px;
+    font-size: 0.85em;
+    line-height: 25px;
     padding: 0 12px;
 
     &:not(:last-of-type) {
@@ -58,16 +59,6 @@ table {
     font-family: vars.$font-sans-serif;
     font-size: 14px;
     font-weight: 500;
-  }
-}
-
-// Fragile hack to fix fact that mat table only successfully adjusts
-// 'top' rule of sticky table headers on first change of
-// showBulkSelect() but not on subsequent changes
-// TODO: Find a way to avoid this.
-.stickyHack {
-  th {
-    top: 119px !important;
   }
 }
 
