@@ -75,8 +75,8 @@ table {
 .mat-column-title {
   overflow-wrap: anywhere;
   hyphens: auto;
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
 
   @media screen and (min-width: vars.$large) {
     width: 400px;
@@ -157,8 +157,7 @@ table {
   }
 }
 
-.stats-cell-content,
-.stats-header-content {
+.stats-cell-content {
   display: flex;
   justify-content: center;
 }
@@ -168,33 +167,4 @@ table {
   align-items: center;
   justify-content: space-between;
   width: 270px;
-}
-
-.stats-period-toggle-container {
-  display: flex;
-  gap: 6px;
-
-  .stats-period-btn {
-    padding: 2px 8px;
-    border: none;
-    background: transparent;
-    font-size: 12px;
-    min-width: 28px;
-    text-align: center;
-
-    &:disabled {
-      font-weight: bold;
-      color: var(--mat-sys-on-surface);
-    }
-
-    &:enabled {
-      color: var(--mat-sys-outline);
-      cursor: pointer;
-
-      &:hover {
-        background-color: var(--mat-sys-outline-variant);
-        border-radius: 3px;
-      }
-    }
-  }
 }

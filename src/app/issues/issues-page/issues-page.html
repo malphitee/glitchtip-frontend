@@ -13,8 +13,10 @@
       [environmentForm]="environmentForm"
       [searchForm]="form"
       [sortForm]="sortForm"
+      [currentStatsPeriod]="statsPeriod()"
       [sorts]="sorts"
       [organizationEnvironments]="availableEnvironments"
+      (onStatsPeriodToggle)="toggleStatsPeriod($event)"
       (filterByEnvironment)="filterByEnvironment($event)"
       (searchSubmit)="searchSubmit()"
       (sortByChanged)="sortByChanged($event)"
@@ -275,28 +277,8 @@
             </td>
           </ng-container>
           <ng-container matColumnDef="trend">
-            <th mat-header-cell *matHeaderCellDef>
-              <div class="stats-header-content">
-                <div class="stats-header-container">
-                  <span>Trend</span>
-                  <div class="stats-period-toggle-container">
-                    <button
-                      class="stats-period-btn"
-                      [disabled]="statsPeriod() === '24h'"
-                      (click)="toggleStatsPeriod('24h')"
-                    >
-                      24h
-                    </button>
-                    <button
-                      class="stats-period-btn"
-                      [disabled]="statsPeriod() === '14d'"
-                      (click)="toggleStatsPeriod('14d')"
-                    >
-                      14d
-                    </button>
-                  </div>
-                </div>
-              </div>
+            <th mat-header-cell *matHeaderCellDef class="stats-header-content">
+              Trend
             </th>
             <td
               mat-cell
