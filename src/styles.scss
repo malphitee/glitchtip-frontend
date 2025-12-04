@@ -163,6 +163,20 @@ mat-sidenav-container {
     max-width: 100%;
   }
 
+  &--flex {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    height: calc(100vh - vars.$top-app-bar-height);
+    padding-top: 15px;
+    margin-top: 0;
+    margin-bottom: 0;
+
+    @media screen and (max-width: vars.$small - 1) {
+      height: calc(100vh - vars.$top-app-bar-height - vars.$mobile-nav-height);
+    }
+  }
+
   @media screen and (max-width: vars.$small - 1) {
     padding-left: 15px;
     padding-right: 15px;
@@ -318,15 +332,11 @@ gt-pagination-buttons {
 .table-container {
   @include mat.checkbox-density(-5);
   @include mat.table-density(-3);
-  height: 75vh;
+  flex: 1;
   overflow-y: auto;
+  margin-bottom: 40px;
   border: 1px solid var(--mat-sys-outline-variant);
   border-radius: 4px;
-  margin-bottom: 40px;
-
-  @media screen and (max-width: vars.$small - 1) {
-    height: 60vh;
-  }
 }
 
 .table-header {
