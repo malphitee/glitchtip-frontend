@@ -51,6 +51,10 @@
       @if (isLargeScreen()) {
         @if (currentStatsPeriod(); as statsPeriod) {
           <mat-button-toggle-group
+            matTooltipPosition="above"
+            matTooltip="Set trend charts period"
+            [matTooltipShowDelay]="500"
+            i18n-matTooltip
             [value]="statsPeriod"
             (change)="emitOnStatsPeriodToggle($event)"
           >

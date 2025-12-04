@@ -8,6 +8,7 @@ import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatInputModule } from "@angular/material/input";
 import { MatSelectChange, MatSelectModule } from "@angular/material/select";
 import { MatButtonToggleChange, MatButtonToggleModule } from "@angular/material/button-toggle";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 @Component({
   selector: "gt-data-filter-bar",
@@ -20,6 +21,7 @@ import { MatButtonToggleChange, MatButtonToggleModule } from "@angular/material/
     MatOptionModule,
     MatSelectModule,
     MatButtonToggleModule,
+    MatTooltipModule,
     NgTemplateOutlet,
   ],
   templateUrl: "./data-filter-bar.component.html",
