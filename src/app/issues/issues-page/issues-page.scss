@@ -1,5 +1,5 @@
 @use "variables" as vars;
-@use '@angular/material' as mat;
+@use "@angular/material" as mat;
 
 $iconWidth: 56px;
 $selectColumnWidth: 60px;
@@ -79,12 +79,8 @@ table {
   padding-bottom: 5px;
 
   @media screen and (min-width: vars.$large) {
-    width: 400px;
+    width: 450px;
   }
-}
-
-.mat-column-trend {
-  flex-grow: 1;
 }
 
 .mat-column-events {
@@ -162,9 +158,8 @@ table {
   justify-content: center;
 }
 
-.stats-header-container {
+.stats-header-label {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   width: 270px;
 }
