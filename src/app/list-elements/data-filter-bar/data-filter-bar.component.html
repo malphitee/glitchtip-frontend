@@ -48,14 +48,16 @@
       }
     </div>
     <div class="right-block">
-      @if (currentStatsPeriod(); as statsPeriod) {
-        <mat-button-toggle-group
-          [value]="statsPeriod"
-          (change)="emitOnStatsPeriodToggle($event)"
-        >
-          <mat-button-toggle value="24h"> 24h </mat-button-toggle>
-          <mat-button-toggle value="14d"> 14d </mat-button-toggle>
-        </mat-button-toggle-group>
+      @if (isLargeScreen()) {
+        @if (currentStatsPeriod(); as statsPeriod) {
+          <mat-button-toggle-group
+            [value]="statsPeriod"
+            (change)="emitOnStatsPeriodToggle($event)"
+          >
+            <mat-button-toggle value="24h">24h</mat-button-toggle>
+            <mat-button-toggle value="14d">14d</mat-button-toggle>
+          </mat-button-toggle-group>
+        }
       }
       <form [formGroup]="sortForm" class="sort-form">
         <mat-form-field appearance="outline" subscriptSizing="dynamic">

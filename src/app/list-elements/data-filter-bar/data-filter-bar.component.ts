@@ -48,7 +48,7 @@ export class DataFilterBarComponent {
 
   constructor() {
     this.breakPointObserver
-      .observe([Breakpoints.Small, Breakpoints.XSmall])
+      .observe([Breakpoints.Medium, Breakpoints.Small, Breakpoints.XSmall])
       .subscribe((result) => {
         if (result.matches) {
           this.isLargeScreen.set(false);
