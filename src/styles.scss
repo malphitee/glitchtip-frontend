@@ -344,8 +344,6 @@ gt-pagination-buttons {
 }
 
 .table-header__actions {
-  @include mat.button-density(-2);
-
   height: fit-content;
   padding-top: 5px !important;
   padding-bottom: 5px !important;
