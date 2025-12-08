@@ -40,6 +40,7 @@ export class DataFilterBarComponent {
   @Input() searchForm?: FormGroup;
   protected breakPointObserver = inject(BreakpointObserver);
   readonly organizationEnvironments = input<string[]>([]);
+  statsPeriodToggleDisabled = input(true)
   onStatsPeriodToggle = output<"24h" | "14d">()
 
   readonly filterByEnvironment = output<MatSelectChange>();

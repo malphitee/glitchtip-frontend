@@ -17,6 +17,7 @@
       [sorts]="sorts"
       [organizationEnvironments]="availableEnvironments"
       (onStatsPeriodToggle)="toggleStatsPeriod($event)"
+      [statsPeriodToggleDisabled]="issues().length === 0"
       (filterByEnvironment)="filterByEnvironment($event)"
       (searchSubmit)="searchSubmit()"
       (sortByChanged)="sortByChanged($event)"
