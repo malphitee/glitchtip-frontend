@@ -66,8 +66,17 @@ export class ListAppBar {
   activeOrgHasNoProjects = computed(
     () => this.organizationsService.activeOrganizationProjects().length === 0,
   );
+  activeOrgProjects = this.organizationsService.activeOrganizationProjects;
   activeOrgSlug = this.organizationsService.activeOrganizationSlug;
   accessProjectWrite = this.organizationsService.accessProjectWrite;
+  singleQueriedProjectSlug = computed(() => {
+    const queriedProjects = this.queriedProjects();
+    const activeOrgProjects = this.activeOrgProjects();
+    return queriedProjects?.length === 1
+      ? activeOrgProjects.find((project) => project.id === queriedProjects[0])
+          ?.slug
+      : undefined;
+  });
 
   smallBreakpointSignal = toSignal(
     this.breakPointObserver.observe([Breakpoints.Small, Breakpoints.XSmall]),

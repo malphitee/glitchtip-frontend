@@ -34,11 +34,14 @@
   width: 150px;
 }
 
-@media screen and (min-width: vars.$medium) {
-  .project-multiselect-container {
-    padding: 0 24px 0 0;
-  }
+.project-multiselect-container {
+  padding: 0 10px 0 0;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
 
+@media screen and (min-width: vars.$medium) {
   .time-range-select-container {
     padding: 0 0 0 24px;
     display: flex;
@@ -61,6 +64,8 @@
     .project-multiselect-container {
       flex: 1;
       display: flex;
+      align-items: center;
+      gap: 10px;
       justify-content: flex-start;
     }
 
