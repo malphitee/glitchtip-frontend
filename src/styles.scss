@@ -356,3 +356,13 @@ gt-pagination-buttons {
 .table-empty-states {
   padding: 1.5em 24px 0.5em;
 }
+
+// TODO: Find a better way to match this height with the height of mat formfield items
+.mat-button-toggle-group {
+  height: 40px;
+  align-items: center;
+
+  .mat-button-toggle-label-content {
+    line-height: 38px !important;
+  }
+}
