@@ -6,3 +6,5 @@
     shape: vars.$shape-radius,
   )
 );
+
+@include mat.button-toggle-density(-5);

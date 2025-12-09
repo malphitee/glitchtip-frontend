@@ -7,7 +7,7 @@
   [queriedTimeRangeEnd]="end()"
   [includeTimeRangeSelect]="true"
 />
-<section class="l-body l-body--full-width mat-elevation-z0">
+<section class="l-body l-body--full-width l-body--flex mat-elevation-z0">
   @if (environmentNames(); as environments) {
   <gt-data-filter-bar
     [environmentForm]="environmentForm"
@@ -67,7 +67,7 @@
                 }
               </span>
             </div>
-            <div class="mat-caption">
+            <div class="caption-text">
               @if ((appliedProjectCount()) !== 1) {
               <span> {{ group.projectSlug }} </span>
               }
@@ -98,8 +98,8 @@
       ></tr>
       <tr
         mat-header-row
-        class="table-header performance-table-header"
-        *matHeaderRowDef="displayedColumns; sticky: true"
+        class="performance-table-header"
+        *matHeaderRowDef="displayedColumns"
         [class.u-hidden]="transactionGroups.length === 0"
       ></tr>
       <tr

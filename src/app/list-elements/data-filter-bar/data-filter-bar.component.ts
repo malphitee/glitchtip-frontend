@@ -7,6 +7,8 @@ import { MatNativeDateModule, MatOptionModule } from "@angular/material/core";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatInputModule } from "@angular/material/input";
 import { MatSelectChange, MatSelectModule } from "@angular/material/select";
+import { MatButtonToggleChange, MatButtonToggleModule } from "@angular/material/button-toggle";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 @Component({
   selector: "gt-data-filter-bar",
@@ -18,6 +20,8 @@ import { MatSelectChange, MatSelectModule } from "@angular/material/select";
     ReactiveFormsModule,
     MatOptionModule,
     MatSelectModule,
+    MatButtonToggleModule,
+    MatTooltipModule,
     NgTemplateOutlet,
   ],
   templateUrl: "./data-filter-bar.component.html",
@@ -31,10 +35,13 @@ export class DataFilterBarComponent {
       display: string;
     }[]
   >();
+  currentStatsPeriod = input<"24h" | "14d">()
   @Input() environmentForm?: FormGroup;
   @Input() searchForm?: FormGroup;
   protected breakPointObserver = inject(BreakpointObserver);
   readonly organizationEnvironments = input<string[]>([]);
+  statsPeriodToggleDisabled = input(true)
+  onStatsPeriodToggle = output<"24h" | "14d">()
 
   readonly filterByEnvironment = output<MatSelectChange>();
   readonly searchSubmit = output();
@@ -44,7 +51,7 @@ export class DataFilterBarComponent {
 
   constructor() {
     this.breakPointObserver
-      .observe([Breakpoints.Small, Breakpoints.XSmall])
+      .observe([Breakpoints.Medium, Breakpoints.Small, Breakpoints.XSmall])
       .subscribe((result) => {
         if (result.matches) {
           this.isLargeScreen.set(false);
@@ -52,5 +59,9 @@ export class DataFilterBarComponent {
           this.isLargeScreen.set(true);
         }
       });
+  }
+
+  emitOnStatsPeriodToggle(event: MatButtonToggleChange) {
+    this.onStatsPeriodToggle.emit(event.value)
   }
 }

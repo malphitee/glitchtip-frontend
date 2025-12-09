@@ -4,14 +4,15 @@ table {
   width: 100%;
 }
 
-.wrapper {
-  width: 100%;
-}
-
 .pagination-container {
   width: 100%;
   display: flex;
   justify-content: right;
+}
+
+.mat-mdc-cell {
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 
 .mat-column-name {
