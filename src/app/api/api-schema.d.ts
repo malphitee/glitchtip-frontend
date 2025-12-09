@@ -1830,15 +1830,20 @@ export interface components {
             id: string;
             options: components["schemas"]["UserOptions"];
             /**
-             * Email
+             * Username
              * Format: email
              */
-            email: string;
+            username: string;
             /**
              * Datejoined
              * Format: date-time
              */
             dateJoined: string;
+            /**
+             * Email
+             * Format: email
+             */
+            email: string;
             /** Haspasswordauth */
             hasPasswordAuth: boolean;
             /** Identities */
@@ -1887,43 +1892,23 @@ export interface components {
             /** Task Id */
             task_id?: string | null;
         };
-        /** AppContext */
         AppContext: {
             /**
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
              */
             type: "app";
-            /** App Start Time */
-            app_start_time?: string | null;
-            /** Device App Hash */
-            device_app_hash?: string | null;
-            /** Build Type */
-            build_type?: string | null;
-            /** App Identifier */
-            app_identifier?: string | null;
-            /** App Name */
-            app_name?: string | null;
-            /** App Version */
-            app_version?: string | null;
-            /** App Build */
-            app_build?: string | null;
-            /** App Memory */
-            app_memory?: number | null;
-            /** In Foreground */
-            in_foreground?: boolean | null;
+        } & {
+            [key: string]: unknown;
         };
-        /** BrowserContext */
         BrowserContext: {
             /**
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
              */
             type: "browser";
-            /** Name */
-            name: string;
-            /** Version */
-            version?: string | null;
+        } & {
+            [key: string]: unknown;
         };
         /** ClientSDKInfo */
         ClientSDKInfo: {
@@ -1959,114 +1944,28 @@ export interface components {
                 [key: string]: unknown;
             };
         };
-        /** CultureContext */
         CultureContext: {
             /**
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
              */
             type: "culture";
-            /** Calendar */
-            calendar?: string | null;
-            /** Display Name */
-            display_name?: string | null;
-            /** Locale */
-            locale?: string | null;
-            /** Is 24 Hour Format */
-            is_24_hour_format?: boolean | null;
-            /** Timezone */
-            timezone?: string | null;
+        } & {
+            [key: string]: unknown;
         };
         /** DebugMeta */
         DebugMeta: {
             /** Images */
             images: (components["schemas"]["SourceMapImage"] | components["schemas"]["OtherDebugImage"])[];
         };
-        /** DeviceContext */
         DeviceContext: {
             /**
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
              */
             type: "device";
-            /** Name */
-            name?: string | null;
-            /** Family */
-            family?: string | null;
-            /** Model */
-            model?: string | null;
-            /** Model Id */
-            model_id?: string | null;
-            /** Arch */
-            arch?: string | null;
-            /** Battery Level */
-            battery_level?: number | null;
-            /** Orientation */
-            orientation?: string | null;
-            /** Manufacturer */
-            manufacturer?: string | null;
-            /** Brand */
-            brand?: string | null;
-            /** Screen Resolution */
-            screen_resolution?: string | null;
-            /** Screen Height Pixels */
-            screen_height_pixels?: number | null;
-            /** Screen Width Pixels */
-            screen_width_pixels?: number | null;
-            /** Screen Density */
-            screen_density?: number | null;
-            /** Screen Dpi */
-            screen_dpi?: number | null;
-            /** Online */
-            online?: boolean | null;
-            /** Charging */
-            charging?: boolean | null;
-            /** Low Memory */
-            low_memory?: boolean | null;
-            /** Simulator */
-            simulator?: boolean | null;
-            /** Memory Size */
-            memory_size?: number | null;
-            /** Free Memory */
-            free_memory?: number | null;
-            /** Usable Memory */
-            usable_memory?: number | null;
-            /** Storage Size */
-            storage_size?: number | null;
-            /** Free Storage */
-            free_storage?: number | null;
-            /** External Storage Size */
-            external_storage_size?: number | null;
-            /** External Free Storage */
-            external_free_storage?: number | null;
-            /** Boot Time */
-            boot_time?: string | null;
-            /** Timezone */
-            timezone?: string | null;
-            /** Language */
-            language?: string | null;
-            /** Processor Count */
-            processor_count?: number | null;
-            /** Cpu Description */
-            cpu_description?: string | null;
-            /** Processor Frequency */
-            processor_frequency?: number | null;
-            /** Device Type */
-            device_type?: string | null;
-            /** Battery Status */
-            battery_status?: string | null;
-            /** Device Unique Identifier */
-            device_unique_identifier?: string | null;
-            /** Supports Vibration */
-            supports_vibration?: boolean | null;
-            /** Supports Accelerometer */
-            supports_accelerometer?: boolean | null;
-            /** Supports Gyroscope */
-            supports_gyroscope?: boolean | null;
-            /** Supports Audio */
-            supports_audio?: boolean | null;
-            /** Supports Location Service */
-            supports_location_service?: boolean | null;
+        } & {
+            [key: string]: unknown;
         };
         /** EventBreadcrumb */
         EventBreadcrumb: {
@@ -2235,43 +2134,14 @@ export interface components {
                 [key: string]: unknown;
             } | null;
         };
-        /** GPUContext */
         GPUContext: {
             /**
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
              */
             type: "gpu";
-            /** Name */
-            name: string;
-            /** Version */
-            version?: string | null;
-            /** Id */
-            id?: string | null;
-            /** Vendor Id */
-            vendor_id?: string | null;
-            /** Vendor Name */
-            vendor_name?: string | null;
-            /** Memory Size */
-            memory_size?: number | null;
-            /** Api Type */
-            api_type?: string | null;
-            /** Multi Threaded Rendering */
-            multi_threaded_rendering?: boolean | null;
-            /** Npot Support */
-            npot_support?: string | null;
-            /** Max Texture Size */
-            max_texture_size?: number | null;
-            /** Graphics Shader Level */
-            graphics_shader_level?: string | null;
-            /** Supports Draw Call Instancing */
-            supports_draw_call_instancing?: boolean | null;
-            /** Supports Ray Tracing */
-            supports_ray_tracing?: boolean | null;
-            /** Supports Compute Shaders */
-            supports_compute_shaders?: boolean | null;
-            /** Supports Geometry Shaders */
-            supports_geometry_shaders?: boolean | null;
+        } & {
+            [key: string]: unknown;
         };
         /** IngestEventException */
         IngestEventException: {
@@ -2342,27 +2212,14 @@ export interface components {
             /** Thread Id */
             thread_id?: string | null;
         };
-        /** OSContext */
         OSContext: {
             /**
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
              */
             type: "os";
-            /** Name */
-            name: string;
-            /** Version */
-            version?: string | null;
-            /** Build */
-            build?: string | null;
-            /** Kernel Version */
-            kernel_version?: string | null;
-            /** Rooted */
-            rooted?: boolean | null;
-            /** Theme */
-            theme?: string | null;
-            /** Raw Description */
-            raw_description?: string | null;
+        } & {
+            [key: string]: unknown;
         };
         /** OtherDebugImage */
         OtherDebugImage: {
@@ -2389,19 +2246,14 @@ export interface components {
             /** Status Code */
             status_code: number;
         };
-        /** RuntimeContext */
         RuntimeContext: {
             /**
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
              */
             type: "runtime";
-            /** Name */
-            name?: string | null;
-            /** Version */
-            version?: string | null;
-            /** Raw Description */
-            raw_description?: string | null;
+        } & {
+            [key: string]: unknown;
         };
         /** SourceMapImage */
         SourceMapImage: {
@@ -2491,37 +2343,14 @@ export interface components {
                 [key: string]: unknown;
             };
         };
-        /** TraceContext */
         TraceContext: {
             /**
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
              */
             type: "trace";
-            /** Trace Id */
-            trace_id: string;
-            /** Span Id */
-            span_id: string;
-            /** Parent Span Id */
-            parent_span_id?: string | null;
-            /** Op */
-            op?: string | null;
-            /** Status */
-            status?: string | null;
-            /** Exclusive Time */
-            exclusive_time?: number | null;
-            /** Client Sample Rate */
-            client_sample_rate?: number | null;
-            /** Tags */
-            tags?: {
-                [key: string]: unknown;
-            } | unknown[] | null;
-            /** Dynamic Sampling Context */
-            dynamic_sampling_context?: {
-                [key: string]: unknown;
-            } | null;
-            /** Origin */
-            origin?: string | null;
+        } & {
+            [key: string]: unknown;
         };
         /** ValueEventBreadcrumb */
         ValueEventBreadcrumb: {
@@ -2811,12 +2640,12 @@ export interface components {
             platform?: string | null;
             /** Errors */
             errors?: components["schemas"]["EventProcessingError"][] | null;
-            /** Id.Hex */
-            "id.hex": string;
+            /** Id */
+            id: string;
             /** Eventid */
             eventID: string;
-            /** Issue.Project Id */
-            "issue.project_id": number;
+            /** Projectid */
+            projectID: number;
             /** Groupid */
             groupID: string;
             /**
@@ -2831,14 +2660,14 @@ export interface components {
             dateReceived: string;
             /** Dist */
             dist?: string | null;
-            /** Transaction */
-            transaction?: string | null;
-            /** Data.Modules */
-            "data.modules"?: {
+            /** Culprit */
+            culprit?: string | null;
+            /** Packages */
+            packages?: {
                 [key: string]: string | null;
             } | null;
-            /** Get Type Display */
-            get_type_display: string;
+            /** Type */
+            type: string;
             /** Message */
             message: string;
             /** Metadata */
@@ -2911,8 +2740,10 @@ export interface components {
             url?: string | null;
             /** Headers */
             headers?: (string | null)[][] | null;
-            /** Querystring */
-            queryString?: (string | null)[][] | null;
+            /** Query */
+            query?: (string | null)[][] | null;
+            /** Inferredcontenttype */
+            readonly inferredContentType: string | null;
         };
         /** RequestEntry */
         RequestEntry: {
@@ -2929,12 +2760,12 @@ export interface components {
             platform?: string | null;
             /** Errors */
             errors?: components["schemas"]["EventProcessingError"][] | null;
-            /** Id.Hex */
-            "id.hex": string;
+            /** Id */
+            id: string;
             /** Eventid */
             eventID: string;
-            /** Issue.Project Id */
-            "issue.project_id": number;
+            /** Projectid */
+            projectID: number;
             /** Groupid */
             groupID: string;
             /**
@@ -2949,14 +2780,14 @@ export interface components {
             dateReceived: string;
             /** Dist */
             dist?: string | null;
-            /** Transaction */
-            transaction?: string | null;
-            /** Data.Modules */
-            "data.modules"?: {
+            /** Culprit */
+            culprit?: string | null;
+            /** Packages */
+            packages?: {
                 [key: string]: string | null;
             } | null;
-            /** Get Type Display */
-            get_type_display: string;
+            /** Type */
+            type: string;
             /** Message */
             message: string;
             /** Metadata */
@@ -2996,8 +2827,8 @@ export interface components {
         };
         /** UserReportSchema */
         UserReportSchema: {
-            /** Event Id.Hex */
-            "event_id.hex": string;
+            /** Eventid */
+            eventID: string;
             /** Event */
             event: {
                 [key: string]: string;
@@ -3027,44 +2858,46 @@ export interface components {
             platform?: string | null;
             /** Errors */
             errors?: components["schemas"]["EventProcessingError"][] | null;
-            /** Id.Hex */
-            "id.hex": string;
+            /** Event Id */
+            event_id: string;
+            /** Timestamp */
+            timestamp: number;
             /**
-             * Timestamp
+             * Datetime
              * Format: date-time
              */
-            timestamp: string;
-            /** Data.Breadcrumbs */
-            "data.breadcrumbs"?: unknown | null;
-            /** Issue.Project Id */
-            "issue.project_id": number;
-            /** Get Level Display */
-            get_level_display: string | null;
-            /** Data.Exception */
-            "data.exception"?: unknown | null;
-            /** Data.Modules */
-            "data.modules"?: {
+            datetime: string;
+            /** Breadcrumbs */
+            breadcrumbs?: unknown | null;
+            /** Project */
+            project: number;
+            /** Level */
+            level: string | null;
+            /** Exception */
+            exception?: unknown | null;
+            /** Modules */
+            modules?: {
                 [key: string]: string;
             } | null;
-            /** Data.Contexts */
-            "data.contexts"?: {
+            /** Contexts */
+            contexts?: {
                 [key: string]: unknown;
             } | null;
-            /** Data.Sdk */
-            "data.sdk"?: {
+            /** Sdk */
+            sdk?: {
                 [key: string]: unknown;
             } | null;
-            /** Get Type Display */
-            get_type_display: string | null;
-            /** Data.Request */
-            "data.request"?: unknown | null;
-            /** Data.Environment */
-            "data.environment"?: string | null;
-            /** Data.Extra */
-            "data.extra"?: {
+            /** Type */
+            type: string | null;
+            /** Request */
+            request?: unknown | null;
+            /** Environment */
+            environment?: string | null;
+            /** Extra */
+            extra?: {
                 [key: string]: unknown;
             } | null;
-            "data.user"?: components["schemas"]["EventUser"] | null;
+            user?: components["schemas"]["EventUser"] | null;
             /** Title */
             title: string;
             /** Transaction */
@@ -3187,17 +3020,17 @@ export interface components {
             id: string;
             /** Count */
             count: string;
-            /** Get Type Display */
-            get_type_display: string;
-            /** Get Level Display */
-            get_level_display: string;
-            /** Get Status Display */
-            get_status_display: string;
+            /** Type */
+            type: string;
+            /** Level */
+            level: string;
+            /** Status */
+            status: string;
             project: components["schemas"]["ProjectReference"];
-            /** Short Id Display */
-            short_id_display: string;
-            /** Num Comments */
-            num_comments: number;
+            /** Shortid */
+            shortId: string;
+            /** Numcomments */
+            numComments: number;
             /**
              * Stats
              * @default {
@@ -3233,15 +3066,15 @@ export interface components {
             /** Matchingeventid */
             matchingEventId?: string | null;
             /**
-             * First Seen
+             * Firstseen
              * Format: date-time
              */
-            first_seen: string;
+            firstSeen: string;
             /**
-             * Last Seen
+             * Lastseen
              * Format: date-time
              */
-            last_seen: string;
+            lastSeen: string;
             /** Title */
             title: string;
             /** Metadata */
@@ -3334,10 +3167,10 @@ export interface components {
             /** Id */
             id: string;
             /**
-             * Created
+             * Datecreated
              * Format: date-time
              */
-            created: string;
+            dateCreated: string;
             /**
              * Status
              * @default {
@@ -3396,10 +3229,10 @@ export interface components {
             /** Id */
             id: string;
             /**
-             * Created
+             * Datecreated
              * Format: date-time
              */
-            created: string;
+            dateCreated: string;
             /**
              * Status
              * @default {
@@ -3514,7 +3347,7 @@ export interface components {
              */
             isPublic: boolean;
             /** Scrubipaddresses */
-            scrubIpAddresses: boolean;
+            scrubIPAddresses: boolean;
             /**
              * Datecreated
              * Format: date-time
@@ -3540,10 +3373,10 @@ export interface components {
             /** Slug */
             slug: string;
             /**
-             * Created
+             * Datecreated
              * Format: date-time
              */
-            created: string;
+            dateCreated: string;
             /** Ismember */
             isMember: boolean;
             /** Membercount */
@@ -3746,8 +3579,8 @@ export interface components {
             avgDuration: number | null;
             /** Transactioncount */
             transactionCount: number;
-            /** Project Id */
-            project_id: number;
+            /** Project */
+            project: number;
             /** ID */
             id?: number | null;
             /** Transaction */
@@ -3808,7 +3641,7 @@ export interface components {
              */
             isPublic: boolean;
             /** Scrubipaddresses */
-            scrubIpAddresses: boolean;
+            scrubIPAddresses: boolean;
             /**
              * Datecreated
              * Format: date-time
@@ -3893,7 +3726,7 @@ export interface components {
              */
             isPublic: boolean;
             /** Scrubipaddresses */
-            scrubIpAddresses: boolean;
+            scrubIPAddresses: boolean;
             /**
              * Datecreated
              * Format: date-time
@@ -3924,24 +3757,31 @@ export interface components {
          */
         ProjectKeySchema: {
             /** Name */
-            name: string | null;
+            name?: string | null;
             rateLimit?: components["schemas"]["KeyRateLimit"] | null;
             /**
-             * Created
+             * Datecreated
              * Format: date-time
              */
-            created: string;
+            dateCreated: string;
             /**
-             * Public Key
+             * Id
              * Format: uuid
              */
-            public_key: string;
+            id: string;
             /** Dsn */
             dsn: {
                 [key: string]: string;
             };
-            /** Project Id */
-            project_id: number;
+            /** Label */
+            label: string | null;
+            /**
+             * Public
+             * Format: uuid
+             */
+            public: string;
+            /** Projectid */
+            projectID: number;
         };
         /** ProjectKeyIn */
         ProjectKeyIn: {
@@ -4116,10 +3956,10 @@ export interface components {
             /** Slug */
             slug: string;
             /**
-             * Created
+             * Datecreated
              * Format: date-time
              */
-            created: string;
+            dateCreated: string;
             /** Ismember */
             isMember: boolean;
             /** Membercount */
@@ -4345,15 +4185,20 @@ export interface components {
             id: string;
             options: components["schemas"]["UserOptions"];
             /**
-             * Email
+             * Username
              * Format: email
              */
-            email: string;
+            username: string;
             /**
              * Datejoined
              * Format: date-time
              */
             dateJoined: string;
+            /**
+             * Email
+             * Format: email
+             */
+            email: string;
             /** Haspasswordauth */
             hasPasswordAuth: boolean;
             /** Identities */
@@ -4439,15 +4284,17 @@ export interface components {
         ReleaseSchema: {
             /** Ref */
             ref?: string | null;
-            /** Released */
-            released: string | null;
+            /** Datereleased */
+            dateReleased: string | null;
             /** Version */
             version: string;
             /**
-             * Created
+             * Datecreated
              * Format: date-time
              */
-            created: string;
+            dateCreated: string;
+            /** Shortversion */
+            shortVersion: string;
             /** Projects */
             projects: components["schemas"]["NameSlugProjectSchema"][];
             /** Url */
@@ -4492,18 +4339,18 @@ export interface components {
             /** Id */
             id: string;
             /**
-             * Created
+             * Datecreated
              * Format: date-time
              */
-            created: string;
-            /** File.Checksum */
-            "file.checksum"?: string | null;
-            /** File.Headers */
-            "file.headers"?: {
+            dateCreated: string;
+            /** Sha1 */
+            sha1?: string | null;
+            /** Headers */
+            headers?: {
                 [key: string]: string;
             } | null;
-            /** File.Name */
-            "file.name": string;
+            /** Name */
+            name: string;
         };
         /** AssembleSchema */
         AssembleSchema: {
@@ -7511,7 +7358,7 @@ export interface operations {
     apps_wizard_api_setup_wizard_hash: {
         parameters: {
             query?: {
-                auth?: string;
+                auth?: string | null;
             };
             header?: never;
             path: {
@@ -7533,7 +7380,7 @@ export interface operations {
     apps_wizard_api_setup_wizard_delete: {
         parameters: {
             query?: {
-                auth?: string;
+                auth?: string | null;
             };
             header?: never;
             path: {
