@@ -4,8 +4,9 @@ import {
   parseRequestOptionsFromJSON,
 } from "@github/webauthn-json/browser-ponyfill";
 import { AuthenticationService } from "./api/allauth/authentication.service";
-import { AuthFlow } from "./api/allauth/allauth.interfaces";
+import { components } from "./api/allauth-schema";
 
+type AuthFlow = components["schemas"]["Flow"];
 const initialIsAuthenticated = localStorage.getItem("isAuthenticated");
 
 @Injectable({

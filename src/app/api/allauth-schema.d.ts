@@ -19,7 +19,6 @@ export interface paths {
          *     this endpoint. The data returned is not user/authentication
          *     dependent. Hence, it suffices to only fetch this data once at boot
          *     time of your application.
-         *
          */
         get: {
             parameters: {
@@ -53,7 +52,6 @@ export interface paths {
         /**
          * Login
          * @description Login using a username-password or email-password combination.
-         *
          */
         post: {
             parameters: {
@@ -74,8 +72,7 @@ export interface paths {
                         "application/json": components["schemas"]["ErrorResponse"];
                     };
                 };
-                /** @description Not authenticated.
-                 *      */
+                /** @description Not authenticated. */
                 401: {
                     headers: {
                         [name: string]: unknown;
@@ -84,8 +81,7 @@ export interface paths {
                         "application/json": components["schemas"]["AuthenticationResponse"];
                     };
                 };
-                /** @description Conflict. For example, when logging in when a user is already logged in.
-                 *      */
+                /** @description Conflict. For example, when logging in when a user is already logged in. */
                 409: {
                     headers: {
                         [name: string]: unknown;
@@ -117,7 +113,6 @@ export interface paths {
          *     required depends on the configuration of django-allauth. Additionally,
          *     if a custom signup form is used there may be other custom properties
          *     required.
-         *
          */
         post: {
             parameters: {
@@ -129,8 +124,7 @@ export interface paths {
             requestBody: components["requestBodies"]["Signup"];
             responses: {
                 200: components["responses"]["AuthenticatedByPassword"];
-                /** @description An input error occurred.
-                 *      */
+                /** @description An input error occurred. */
                 400: {
                     headers: {
                         [name: string]: unknown;
@@ -139,8 +133,7 @@ export interface paths {
                         "application/json": components["schemas"]["ErrorResponse"];
                     };
                 };
-                /** @description Not authenticated.
-                 *      */
+                /** @description Not authenticated. */
                 401: {
                     headers: {
                         [name: string]: unknown;
@@ -149,8 +142,7 @@ export interface paths {
                         "application/json": components["schemas"]["AuthenticationResponse"];
                     };
                 };
-                /** @description Forbidden. For example, when signup is closed.
-                 *      */
+                /** @description Forbidden. For example, when signup is closed. */
                 403: {
                     headers: {
                         [name: string]: unknown;
@@ -159,8 +151,7 @@ export interface paths {
                         "application/json": components["schemas"]["ForbiddenResponse"];
                     };
                 };
-                /** @description Conflict. For example, when signing up while user is logged in.
-                 *      */
+                /** @description Conflict. For example, when signing up while user is logged in. */
                 409: {
                     headers: {
                         [name: string]: unknown;
@@ -188,7 +179,6 @@ export interface paths {
          * Get email verification information
          * @description Obtain email verification information, given the token that was sent to
          *     the user by email.
-         *
          */
         get: {
             parameters: {
@@ -203,8 +193,7 @@ export interface paths {
             requestBody?: never;
             responses: {
                 200: components["responses"]["EmailVerificationInfo"];
-                /** @description An input error occurred.
-                 *      */
+                /** @description An input error occurred. */
                 400: {
                     headers: {
                         [name: string]: unknown;
@@ -213,8 +202,7 @@ export interface paths {
                         "application/json": components["schemas"]["ErrorResponse"];
                     };
                 };
-                /** @description Conflict. The email verification (by code) flow is not pending.
-                 *      */
+                /** @description Conflict. The email verification (by code) flow is not pending. */
                 409: {
                     headers: {
                         [name: string]: unknown;
@@ -238,14 +226,12 @@ export interface paths {
          *     the email verification was successful, yet, the user is still not signed
          *     in. For example, in case `ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION` is set to
          *     `False`, a 401 is returned when verifying as part of login/signup.
-         *
          */
         post: {
             parameters: {
                 query?: never;
                 header?: {
-                    /** @description Session token. Only needed when `client` is equal to `app`.
-                     *      */
+                    /** @description Session token. Only needed when `client` is equal to `app`. */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
                 path?: never;
@@ -254,8 +240,7 @@ export interface paths {
             requestBody?: components["requestBodies"]["VerifyEmail"];
             responses: {
                 200: components["responses"]["Authenticated"];
-                /** @description An input error occurred.
-                 *      */
+                /** @description An input error occurred. */
                 400: {
                     headers: {
                         [name: string]: unknown;
@@ -265,8 +250,7 @@ export interface paths {
                     };
                 };
                 401: components["responses"]["Unauthenticated"];
-                /** @description Conflict. The email verification (by code) flow is not pending.
-                 *      */
+                /** @description Conflict. The email verification (by code) flow is not pending. */
                 409: {
                     headers: {
                         [name: string]: unknown;
@@ -296,14 +280,12 @@ export interface paths {
          * Resend email verification code
          * @description Requests a new email verification code.
          *     Requires `ACCOUNT_EMAIL_VERIFICATION_SUPPORTS_RESEND = True`.
-         *
          */
         post: {
             parameters: {
                 query?: never;
                 header?: {
-                    /** @description Session token. Only needed when `client` is equal to `app`.
-                     *      */
+                    /** @description Session token. Only needed when `client` is equal to `app`. */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
                 path?: never;
@@ -312,8 +294,7 @@ export interface paths {
             requestBody?: never;
             responses: {
                 200: components["responses"]["StatusOK"];
-                /** @description Conflict. The email verification (by code) flow is not pending.
-                 *      */
+                /** @description Conflict. The email verification (by code) flow is not pending. */
                 409: {
                     headers: {
                         [name: string]: unknown;
@@ -345,14 +326,12 @@ export interface paths {
          * @description Complete the phone number verification process. Note that a status code
          *     of 401 does not imply failure. It merely indicates that the phone number
          *     verification was successful, yet, the user is still not signed in.
-         *
          */
         post: {
             parameters: {
                 query?: never;
                 header?: {
-                    /** @description Session token. Only needed when `client` is equal to `app`.
-                     *      */
+                    /** @description Session token. Only needed when `client` is equal to `app`. */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
                 path?: never;
@@ -361,8 +340,7 @@ export interface paths {
             requestBody?: components["requestBodies"]["VerifyPhone"];
             responses: {
                 200: components["responses"]["Authenticated"];
-                /** @description An input error occurred.
-                 *      */
+                /** @description An input error occurred. */
                 400: {
                     headers: {
                         [name: string]: unknown;
@@ -372,8 +350,7 @@ export interface paths {
                     };
                 };
                 401: components["responses"]["Unauthenticated"];
-                /** @description Conflict. The phone verification flow is not pending.
-                 *      */
+                /** @description Conflict. The phone verification flow is not pending. */
                 409: {
                     headers: {
                         [name: string]: unknown;
@@ -403,14 +380,12 @@ export interface paths {
          * Resend phone number verification code
          * @description Requests a new phone number verification code.
          *     Requires `ACCOUNT_PHONE_VERIFICATION_SUPPORTS_RESEND = True`.
-         *
          */
         post: {
             parameters: {
                 query?: never;
                 header?: {
-                    /** @description Session token. Only needed when `client` is equal to `app`.
-                     *      */
+                    /** @description Session token. Only needed when `client` is equal to `app`. */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
                 path?: never;
@@ -419,8 +394,7 @@ export interface paths {
             requestBody?: never;
             responses: {
                 200: components["responses"]["StatusOK"];
-                /** @description Conflict. The phone verification flow is not pending.
-                 *      */
+                /** @description Conflict. The phone verification flow is not pending. */
                 409: {
                     headers: {
                         [name: string]: unknown;
@@ -455,14 +429,12 @@ export interface paths {
          *     flows that can be performed to reauthenticate. One such flow is the flow
          *     with ID `reauthenticate`, which allows for the user to input the
          *     password. This is the endpoint related towards that flow.
-         *
          */
         post: {
             parameters: {
                 query?: never;
                 header?: {
-                    /** @description Session token. Only needed when `client` is equal to `app`.
-                     *      */
+                    /** @description Session token. Only needed when `client` is equal to `app`. */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
                 path?: never;
@@ -510,7 +482,6 @@ export interface paths {
          *
          *     In case password reset is configured to use (stateless) links, you will
          *     receive a 200 on a successful password reset request.
-         *
          */
         post: {
             parameters: {
@@ -522,8 +493,7 @@ export interface paths {
             requestBody: components["requestBodies"]["RequestPassword"];
             responses: {
                 200: components["responses"]["StatusOK"];
-                /** @description An input error occurred.
-                 *      */
+                /** @description An input error occurred. */
                 400: {
                     headers: {
                         [name: string]: unknown;
@@ -556,7 +526,6 @@ export interface paths {
          *     `ACCOUNT_PASSWORD_RESET_BY_CODE_ENABLED`. Note that in case of a code,
          *     the number of requests you can make is limited (by
          *     `ACCOUNT_PASSWORD_RESET_BY_CODE_MAX_ATTEMPTS`).
-         *
          */
         get: {
             parameters: {
@@ -571,8 +540,7 @@ export interface paths {
             requestBody?: never;
             responses: {
                 200: components["responses"]["PasswordResetInfo"];
-                /** @description An input error occurred.
-                 *      */
+                /** @description An input error occurred. */
                 400: {
                     headers: {
                         [name: string]: unknown;
@@ -581,8 +549,7 @@ export interface paths {
                         "application/json": components["schemas"]["ErrorResponse"];
                     };
                 };
-                /** @description Conflict. There is no password reset (by code) flow pending.
-                 *      */
+                /** @description Conflict. There is no password reset (by code) flow pending. */
                 409: {
                     headers: {
                         [name: string]: unknown;
@@ -602,7 +569,6 @@ export interface paths {
          *     `True`), or, the user will need to proceed to the login page.  In case
          *     of the former, a `200` status code is returned, in case of the latter a
          *     401.
-         *
          */
         post: {
             parameters: {
@@ -624,8 +590,7 @@ export interface paths {
                     };
                 };
                 401: components["responses"]["Authentication"];
-                /** @description Conflict. There is no password reset (by code) flow pending.
-                 *      */
+                /** @description Conflict. There is no password reset (by code) flow pending. */
                 409: {
                     headers: {
                         [name: string]: unknown;
@@ -657,7 +622,6 @@ export interface paths {
          *     this endpoint results in a user facing redirect (302), this call is only
          *     available in a browser, and must be called in a synchronous (non-XHR)
          *     manner.
-         *
          */
         post: {
             parameters: {
@@ -702,14 +666,12 @@ export interface paths {
          *     the API. Then, when the (device) authentication completes and the mobile
          *     app receives an access and/or ID token, it can hand over these tokens
          *     via this endpoint to authenticate on the server.
-         *
          */
         post: {
             parameters: {
                 query?: never;
                 header?: {
-                    /** @description Session token. Only needed when `client` is equal to `app`.
-                     *      */
+                    /** @description Session token. Only needed when `client` is equal to `app`. */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
                 path?: never;
@@ -736,8 +698,7 @@ export interface paths {
                         "application/json": components["schemas"]["AuthenticationResponse"];
                     };
                 };
-                /** @description Forbidden. For example, when signup is closed.
-                 *      */
+                /** @description Forbidden. For example, when signup is closed. */
                 403: {
                     headers: {
                         [name: string]: unknown;
@@ -769,7 +730,6 @@ export interface paths {
          *     the missing data before the user is fully signed up and authenticated.
          *     The information available so far, such as the pending provider account,
          *     can be retrieved via this endpoint.
-         *
          */
         get: {
             parameters: {
@@ -781,8 +741,7 @@ export interface paths {
             requestBody?: never;
             responses: {
                 200: components["responses"]["ProviderSignup"];
-                /** @description Conflict. The provider signup flow is not pending.
-                 *      */
+                /** @description Conflict. The provider signup flow is not pending. */
                 409: {
                     headers: {
                         [name: string]: unknown;
@@ -800,7 +759,6 @@ export interface paths {
          *     insufficient information received from the provider to automatically
          *     complete the signup process, an additional step is needed to complete
          *     the missing data before the user is fully signed up and authenticated.
-         *
          */
         post: {
             parameters: {
@@ -830,8 +788,7 @@ export interface paths {
                         "application/json": components["schemas"]["AuthenticationResponse"];
                     };
                 };
-                /** @description Forbidden. For example, when signup is closed.
-                 *      */
+                /** @description Forbidden. For example, when signup is closed. */
                 403: {
                     headers: {
                         [name: string]: unknown;
@@ -840,8 +797,7 @@ export interface paths {
                         "application/json": components["schemas"]["ForbiddenResponse"];
                     };
                 };
-                /** @description Conflict. The provider signup flow is not pending.
-                 *      */
+                /** @description Conflict. The provider signup flow is not pending. */
                 409: {
                     headers: {
                         [name: string]: unknown;
@@ -872,14 +828,12 @@ export interface paths {
          * @description If, during authentication,  a response with status 401 is encountered where one of the pending
          *     flows has ID `mfa_authenticate`, that indicates that the Two-Factor Authentication stage needs to
          *     be completed.
-         *
          */
         post: {
             parameters: {
                 query?: never;
                 header?: {
-                    /** @description Session token. Only needed when `client` is equal to `app`.
-                     *      */
+                    /** @description Session token. Only needed when `client` is equal to `app`. */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
                 path?: never;
@@ -924,20 +878,18 @@ export interface paths {
          *     with ID `mfa_reauthenticate`, which allows for the user to input an
          *     authenticator code (e.g. TOTP or recovery code). This is the endpoint
          *     related towards that flow.
-         *
          */
         post: {
             parameters: {
                 query?: never;
                 header?: {
-                    /** @description Session token. Only needed when `client` is equal to `app`.
-                     *      */
+                    /** @description Session token. Only needed when `client` is equal to `app`. */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
                 path?: never;
                 cookie?: never;
             };
-            requestBody?: never;
+            requestBody: components["requestBodies"]["MFAAuthenticate"];
             responses: {
                 200: components["responses"]["AuthenticatedByPasswordAnd2FA"];
                 /** @description An input error occurred. */
@@ -968,14 +920,12 @@ export interface paths {
          * Get WebAuthn credential request options for 2FA
          * @description Returns the WebAuthn credential request options, that can be
          *     processed using `parseRequestOptionsFromJSON()` on the frontend.
-         *
          */
         get: {
             parameters: {
                 query?: never;
                 header?: {
-                    /** @description Session token. Only needed when `client` is equal to `app`.
-                     *      */
+                    /** @description Session token. Only needed when `client` is equal to `app`. */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
                 path?: never;
@@ -990,14 +940,12 @@ export interface paths {
         /**
          * Perform 2FA using WebAuthn
          * @description Perform Two-Factor Authentication using a WebAuthn credential.
-         *
          */
         post: {
             parameters: {
                 query?: never;
                 header?: {
-                    /** @description Session token. Only needed when `client` is equal to `app`.
-                     *      */
+                    /** @description Session token. Only needed when `client` is equal to `app`. */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
                 path?: never;
@@ -1034,14 +982,12 @@ export interface paths {
          * Get WebAuthn credential request options for reauthentication
          * @description Returns the WebAuthn credential request options, that can be
          *     processed using `parseRequestOptionsFromJSON()` on the frontend.
-         *
          */
         get: {
             parameters: {
                 query?: never;
                 header?: {
-                    /** @description Session token. Only needed when `client` is equal to `app`.
-                     *      */
+                    /** @description Session token. Only needed when `client` is equal to `app`. */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
                 path?: never;
@@ -1056,14 +1002,12 @@ export interface paths {
         /**
          * Reauthenticate using WebAuthn
          * @description Reauthenticate the user using a WebAuthn credential.
-         *
          */
         post: {
             parameters: {
                 query?: never;
                 header?: {
-                    /** @description Session token. Only needed when `client` is equal to `app`.
-                     *      */
+                    /** @description Session token. Only needed when `client` is equal to `app`. */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
                 path?: never;
@@ -1100,14 +1044,12 @@ export interface paths {
          * Get WebAuthn credential request options for login
          * @description Returns the WebAuthn credential request options, that can be
          *     processed using `parseRequestOptionsFromJSON()` on the frontend.
-         *
          */
         get: {
             parameters: {
                 query?: never;
                 header?: {
-                    /** @description Session token. Only needed when `client` is equal to `app`.
-                     *      */
+                    /** @description Session token. Only needed when `client` is equal to `app`. */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
                 path?: never;
@@ -1125,14 +1067,12 @@ export interface paths {
          *     expected after a successful request.  The 401 can, for example, occur
          *     when the credential passed was valid, but the email attached to the
          *     account still requires verification.
-         *
          */
         post: {
             parameters: {
                 query?: never;
                 header?: {
-                    /** @description Session token. Only needed when `client` is equal to `app`.
-                     *      */
+                    /** @description Session token. Only needed when `client` is equal to `app`. */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
                 path?: never;
@@ -1150,8 +1090,7 @@ export interface paths {
                         "application/json": components["schemas"]["ErrorResponse"];
                     };
                 };
-                /** @description Not authenticated.
-                 *      */
+                /** @description Not authenticated. */
                 401: {
                     headers: {
                         [name: string]: unknown;
@@ -1180,7 +1119,6 @@ export interface paths {
         /**
          * Confirm login code
          * @description Use this endpoint to pass along the received "special" login code.
-         *
          */
         post: {
             parameters: {
@@ -1201,8 +1139,7 @@ export interface paths {
                         "application/json": components["schemas"]["ErrorResponse"];
                     };
                 };
-                /** @description Not authenticated.
-                 *      */
+                /** @description Not authenticated. */
                 401: {
                     headers: {
                         [name: string]: unknown;
@@ -1211,8 +1148,7 @@ export interface paths {
                         "application/json": components["schemas"]["AuthenticationResponse"];
                     };
                 };
-                /** @description Conflict. The "login by code" flow is not pending.
-                 *      */
+                /** @description Conflict. The "login by code" flow is not pending. */
                 409: {
                     headers: {
                         [name: string]: unknown;
@@ -1241,8 +1177,7 @@ export interface paths {
             parameters: {
                 query?: never;
                 header?: {
-                    /** @description Session token. Only needed when `client` is equal to `app`.
-                     *      */
+                    /** @description Session token. Only needed when `client` is equal to `app`. */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
                 path?: never;
@@ -1257,19 +1192,16 @@ export interface paths {
         post?: never;
         /**
          * Disconnect a third-party provider account
-         *
          * @description Disconnect a third-party provider account, returning the remaining
          *     accounts that are still connected. The disconnect is not allowed if it
          *     would leave the account unusable. For example, if no password was
          *     set up yet.
-         *
          */
         delete: {
             parameters: {
                 query?: never;
                 header?: {
-                    /** @description Session token. Only needed when `client` is equal to `app`.
-                     *      */
+                    /** @description Session token. Only needed when `client` is equal to `app`. */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
                 path?: never;
@@ -1303,15 +1235,13 @@ export interface paths {
         };
         /**
          * List email addresses
-         * @description Retrieves the list of email addreses of the account.
-         *
+         * @description Retrieves the list of email addresses of the account.
          */
         get: {
             parameters: {
                 query?: never;
                 header?: {
-                    /** @description Session token. Only needed when `client` is equal to `app`.
-                     *      */
+                    /** @description Session token. Only needed when `client` is equal to `app`. */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
                 path?: never;
@@ -1328,14 +1258,12 @@ export interface paths {
          * @description Requests for (another) email verification email to be sent. Note that
          *     sending emails is rate limited, so when you send too many requests the
          *     email will not be sent.
-         *
          */
         put: {
             parameters: {
                 query?: never;
                 header?: {
-                    /** @description Session token. Only needed when `client` is equal to `app`.
-                     *      */
+                    /** @description Session token. Only needed when `client` is equal to `app`. */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
                 path?: never;
@@ -1353,8 +1281,7 @@ export interface paths {
                         "application/json": components["schemas"]["ErrorResponse"];
                     };
                 };
-                /** @description Too many email verification mails were already sent.
-                 *      */
+                /** @description Too many email verification mails were already sent. */
                 403: {
                     headers: {
                         [name: string]: unknown;
@@ -1367,7 +1294,6 @@ export interface paths {
         };
         /**
          * Add/Change email address
-         *
          * @description The following functionality is available:
          *
          *       - Adding a new email address for an already signed in user (`ACCOUNT_CHANGE_EMAIL = False`).
@@ -1375,14 +1301,12 @@ export interface paths {
          *       - Change to a new email address during the email verification process at signup (`ACCOUNT_EMAIL_VERIFICATION_SUPPORTS_CHANGE = True`).
          *
          *     In all cases, an email verification mail will be sent containing a link or code that needs to be verified.
-         *
          */
         post: {
             parameters: {
                 query?: never;
                 header?: {
-                    /** @description Session token. Only needed when `client` is equal to `app`.
-                     *      */
+                    /** @description Session token. Only needed when `client` is equal to `app`. */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
                 path?: never;
@@ -1401,8 +1325,7 @@ export interface paths {
                     };
                 };
                 401: components["responses"]["AuthenticationOrReauthentication"];
-                /** @description Conflict. For example, when no user is authenticated and no email verification flow is pending.
-                 *      */
+                /** @description Conflict. For example, when no user is authenticated and no email verification flow is pending. */
                 409: {
                     headers: {
                         [name: string]: unknown;
@@ -1416,14 +1339,12 @@ export interface paths {
         /**
          * Remove an email address
          * @description Used to remove an email address.
-         *
          */
         delete: {
             parameters: {
                 query?: never;
                 header?: {
-                    /** @description Session token. Only needed when `client` is equal to `app`.
-                     *      */
+                    /** @description Session token. Only needed when `client` is equal to `app`. */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
                 path?: never;
@@ -1449,14 +1370,12 @@ export interface paths {
          * Change primary email address
          * @description Used to change primary email address to a different one. Note that only verified email addresses
          *     can be marked as primary.
-         *
          */
         patch: {
             parameters: {
                 query?: never;
                 header?: {
-                    /** @description Session token. Only needed when `client` is equal to `app`.
-                     *      */
+                    /** @description Session token. Only needed when `client` is equal to `app`. */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
                 path?: never;
@@ -1489,14 +1408,12 @@ export interface paths {
          * Get the phone number
          * @description Retrieves the phone number of the account, if any. Note that while the
          *     endpoint returns a list of phone numbers, at most one entry is returned.
-         *
          */
         get: {
             parameters: {
                 query?: never;
                 header?: {
-                    /** @description Session token. Only needed when `client` is equal to `app`.
-                     *      */
+                    /** @description Session token. Only needed when `client` is equal to `app`. */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
                 path?: never;
@@ -1511,7 +1428,6 @@ export interface paths {
         put?: never;
         /**
          * Change the phone number
-         *
          * @description The following functionality is available:
          *
          *     - Initiate the phone number change process for signed in users.
@@ -1522,14 +1438,12 @@ export interface paths {
          *     In both cases, after posting a new phone number, proceed with the phone
          *     verification endpoint to confirm the change of the phone number by
          *     posting the verification code.
-         *
          */
         post: {
             parameters: {
                 query?: never;
                 header?: {
-                    /** @description Session token. Only needed when `client` is equal to `app`.
-                     *      */
+                    /** @description Session token. Only needed when `client` is equal to `app`. */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
                 path?: never;
@@ -1556,8 +1470,7 @@ export interface paths {
                     };
                 };
                 401: components["responses"]["AuthenticationOrReauthentication"];
-                /** @description Conflict. For example, when no user is authenticated and no phone verification flow is pending.
-                 *      */
+                /** @description Conflict. For example, when no user is authenticated and no phone verification flow is pending. */
                 409: {
                     headers: {
                         [name: string]: unknown;
@@ -1586,8 +1499,7 @@ export interface paths {
             parameters: {
                 query?: never;
                 header?: {
-                    /** @description Session token. Only needed when `client` is equal to `app`.
-                     *      */
+                    /** @description Session token. Only needed when `client` is equal to `app`. */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
                 path?: never;
@@ -1618,14 +1530,12 @@ export interface paths {
         /**
          * TOTP authenticator status
          * @description Retrieve the information about the current TOTP authenticator, if any.
-         *
          */
         get: {
             parameters: {
                 query?: never;
                 header?: {
-                    /** @description Session token. Only needed when `client` is equal to `app`.
-                     *      */
+                    /** @description Session token. Only needed when `client` is equal to `app`. */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
                 path?: never;
@@ -1644,14 +1554,12 @@ export interface paths {
          * @description The code should be provided from the consuming TOTP authenticator
          *     application which was generated using the TOTP authenticator secret
          *     retrieved from the TOTP authenticator status endpoint.
-         *
          */
         post: {
             parameters: {
                 query?: never;
                 header?: {
-                    /** @description Session token. Only needed when `client` is equal to `app`.
-                     *      */
+                    /** @description Session token. Only needed when `client` is equal to `app`. */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
                 path?: never;
@@ -1669,6 +1577,7 @@ export interface paths {
                         "application/json": components["schemas"]["ErrorResponse"];
                     };
                 };
+                401: components["responses"]["ReauthenticationRequired"];
                 409: components["responses"]["AddAuthenticatorConflict"];
             };
         };
@@ -1676,14 +1585,12 @@ export interface paths {
          * Deactivate TOTP
          * @description Deactivates TOTP authentication. If the user authentication is not
          *     sufficiently recent, a reauthentication flow (`401`) will is presented.
-         *
          */
         delete: {
             parameters: {
                 query?: never;
                 header?: {
-                    /** @description Session token. Only needed when `client` is equal to `app`.
-                     *      */
+                    /** @description Session token. Only needed when `client` is equal to `app`. */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
                 path?: never;
@@ -1710,14 +1617,12 @@ export interface paths {
         /**
          * List recovery codes
          * @description List recovery codes.
-         *
          */
         get: {
             parameters: {
                 query?: never;
                 header?: {
-                    /** @description Session token. Only needed when `client` is equal to `app`.
-                     *      */
+                    /** @description Session token. Only needed when `client` is equal to `app`. */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
                 path?: never;
@@ -1736,8 +1641,7 @@ export interface paths {
             parameters: {
                 query?: never;
                 header?: {
-                    /** @description Session token. Only needed when `client` is equal to `app`.
-                     *      */
+                    /** @description Session token. Only needed when `client` is equal to `app`. */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
                 path?: never;
@@ -1772,17 +1676,20 @@ export interface paths {
         };
         /**
          * Get WebAuthn credential creation options
-         *
          * @description Returns the WebAuthn credential creation options, that can be
          *     processed using `parseCreationOptionsFromJSON()` on the frontend.
-         *
          */
         get: {
             parameters: {
-                query?: never;
+                query?: {
+                    /**
+                     * @description When present (regardless of its value), enables passwordless sign-in via a WebAuthn credential (Passkey),
+                     *     but may enforce additional multi-factor authentication (MFA) requirements. Omit the parameter to disable.
+                     */
+                    passwordless?: components["parameters"]["PasswordLess"];
+                };
                 header?: {
-                    /** @description Session token. Only needed when `client` is equal to `app`.
-                     *      */
+                    /** @description Session token. Only needed when `client` is equal to `app`. */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
                 path?: never;
@@ -1797,18 +1704,15 @@ export interface paths {
         };
         /**
          * Rename a WebAuthn credential
-         *
          * @description You can alter the name of a WebAuthn credential by PUT'ting the ID and
          *     name of the authenticator representing that credential. You can obtain
          *     the credentials via the "List authenticators" endpoint.
-         *
          */
         put: {
             parameters: {
                 query?: never;
                 header?: {
-                    /** @description Session token. Only needed when `client` is equal to `app`.
-                     *      */
+                    /** @description Session token. Only needed when `client` is equal to `app`. */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
                 path?: never;
@@ -1820,14 +1724,12 @@ export interface paths {
                 401: components["responses"]["ReauthenticationRequired"];
             };
         };
-        /** Add a WebAuthn credential
-         *      */
+        /** Add a WebAuthn credential */
         post: {
             parameters: {
                 query?: never;
                 header?: {
-                    /** @description Session token. Only needed when `client` is equal to `app`.
-                     *      */
+                    /** @description Session token. Only needed when `client` is equal to `app`. */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
                 path?: never;
@@ -1840,14 +1742,12 @@ export interface paths {
                 409: components["responses"]["AddAuthenticatorConflict"];
             };
         };
-        /** Delete a WebAuthn credential
-         *      */
+        /** Delete a WebAuthn credential */
         delete: {
             parameters: {
                 query?: never;
                 header?: {
-                    /** @description Session token. Only needed when `client` is equal to `app`.
-                     *      */
+                    /** @description Session token. Only needed when `client` is equal to `app`. */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
                 path?: never;
@@ -1873,17 +1773,14 @@ export interface paths {
         };
         /**
          * Get authentication status
-         *
          * @description Retrieve information about the authentication status for the current
          *     session.
-         *
          */
         get: {
             parameters: {
                 query?: never;
                 header?: {
-                    /** @description Session token. Only needed when `client` is equal to `app`.
-                     *      */
+                    /** @description Session token. Only needed when `client` is equal to `app`. */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
                 path?: never;
@@ -1901,14 +1798,12 @@ export interface paths {
         /**
          * Logout
          * @description Logs out the user from the current session.
-         *
          */
         delete: {
             parameters: {
                 query?: never;
                 header?: {
-                    /** @description Session token. Only needed when `client` is equal to `app`.
-                     *      */
+                    /** @description Session token. Only needed when `client` is equal to `app`. */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
                 path?: never;
@@ -1939,14 +1834,12 @@ export interface paths {
          *     password must be provider.  However, accounts that were created by
          *     signing up using a third-party provider do not have a password set. In
          *     that case, the current password is not required.
-         *
          */
         post: {
             parameters: {
                 query?: never;
                 header?: {
-                    /** @description Session token. Only needed when `client` is equal to `app`.
-                     *      */
+                    /** @description Session token. Only needed when `client` is equal to `app`. */
                     "X-Session-Token"?: components["parameters"]["SessionToken"];
                 };
                 path?: never;
@@ -1979,8 +1872,7 @@ export interface components {
             id: number;
             last_seen_at?: components["schemas"]["Timestamp"];
         };
-        /** @description Configuration of the Django `allauth.account` app.
-         *      */
+        /** @description Configuration of the Django `allauth.account` app. */
         AccountConfiguration: {
             login_methods?: ("email" | "username")[];
             is_open_for_signup: boolean;
@@ -1988,8 +1880,7 @@ export interface components {
             login_by_code_enabled: boolean;
             password_reset_by_code_enabled?: boolean;
         };
-        /** @description An authentication related response.
-         *      */
+        /** @description An authentication related response. */
         AuthenticationResponse: {
             /** @enum {integer} */
             status: 401;
@@ -2007,12 +1898,10 @@ export interface components {
             status: 409;
         };
         EndSessions: {
-            /** @description The IDs of the sessions that are to be ended.
-             *      */
+            /** @description The IDs of the sessions that are to be ended. */
             sessions: number[];
         };
-        /** @description A phone number.
-         *      */
+        /** @description A phone number. */
         PhoneNumber: {
             /** @example +314159265359 */
             phone: string;
@@ -2022,7 +1911,8 @@ export interface components {
             status: components["schemas"]["StatusOK"];
             data: components["schemas"]["PhoneNumber"][];
         };
-        /** @example {
+        /**
+         * @example {
          *       "status": 202,
          *       "data": [
          *         {
@@ -2030,21 +1920,20 @@ export interface components {
          *           "verified": false
          *         }
          *       ]
-         *     } */
+         *     }
+         */
         PhoneNumberChangeResponse: {
             status: components["schemas"]["StatusAccepted"];
             data: components["schemas"]["PhoneNumber"][];
         };
-        /** @description A response indicating reauthentication is required.
-         *      */
+        /** @description A response indicating reauthentication is required. */
         ReauthenticationResponse: {
             /** @enum {integer} */
             status: 401;
-            data: components["schemas"]["Authenticated"];
+            data: components["schemas"]["ReauthenticationRequired"];
             meta: components["schemas"]["AuthenticatedMeta"];
         };
-        /** @description The session is expired or invalid.
-         *      */
+        /** @description The session is expired or invalid. */
         SessionGoneResponse: {
             /** @enum {integer} */
             status: 410;
@@ -2054,13 +1943,11 @@ export interface components {
         BaseAuthenticationMeta: {
             /**
              * @description The session token (`app` clients only).
-             *
              * @example ufwcig0zen9skyd545jc0fkq813ghar2
              */
             session_token?: string;
             /**
              * @description The access token (`app` clients only).
-             *
              * @example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdW
              */
             access_token?: string;
@@ -2074,15 +1961,22 @@ export interface components {
         };
         Flow: {
             /** @enum {string} */
-            id: "login" | "mfa_authenticate" | "mfa_reauthenticate" | "provider_redirect" | "provider_signup" | "provider_token" | "reauthenticate" | "signup" | "verify_email" | "verify_phone";
+            id: "login" | "login_by_code" | "mfa_authenticate" | "mfa_reauthenticate" | "provider_redirect" | "provider_signup" | "provider_token" | "reauthenticate" | "signup" | "verify_email" | "verify_phone";
             provider?: components["schemas"]["Provider"];
             /** @enum {boolean} */
             is_pending?: true;
+            /** @description Matches `settings.MFA_SUPPORTED_TYPES`. */
+            types?: components["schemas"]["AuthenticatorType"][];
         };
         Authenticated: {
             user: components["schemas"]["User"];
-            /** @description A list of methods used to authenticate.
-             *      */
+            /** @description A list of methods used to authenticate. */
+            methods: components["schemas"]["AuthenticationMethod"][];
+        };
+        ReauthenticationRequired: {
+            flows: components["schemas"]["Flow"][];
+            user: components["schemas"]["User"];
+            /** @description A list of methods used to authenticate. */
             methods: components["schemas"]["AuthenticationMethod"][];
         };
         AuthenticationMethod: {
@@ -2141,26 +2035,22 @@ export interface components {
         };
         /**
          * @description The client ID (in case of OAuth2 or OpenID Connect based providers)
-         *
          * @example 123.apps.googleusercontent.com
          */
         ClientID: string;
         ProviderToken: {
             provider: components["schemas"]["ProviderID"];
             process: components["schemas"]["Process"];
-            /** @description The token.
-             *      */
+            /** @description The token. */
             token: {
                 client_id: components["schemas"]["ClientID"];
                 /**
                  * @description The ID token.
-                 *
                  * @example eyJhbGciOiJI
                  */
                 id_token?: string;
                 /**
                  * @description The access token.
-                 *
                  * @example 36POk6yJV_adQs
                  */
                 access_token?: string;
@@ -2197,7 +2087,6 @@ export interface components {
              *          authenticated at this point, or another flow is pending
              *          (e.g. email verification, or, provider signup). In case of
              *          errors a `?error=` is passed to the frontend callback URL.
-             *
              * @example https://app.project.org/account/provider/callback
              */
             callback_url: string;
@@ -2224,22 +2113,29 @@ export interface components {
         };
         /**
          * @description The username.
-         *
          * @example wizard
          */
         Username: string;
         /**
          * @description The email address.
-         *
          * @example email@domain.org
          */
         Email: string;
         /**
          * @description The phone number.
-         *
          * @example +314159265359
          */
         Phone: string;
+        /**
+         * @description The access token.
+         * @example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdW
+         */
+        AccessToken: string;
+        /**
+         * @description The refresh token.
+         * @example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.QV30
+         */
+        RefreshToken: string;
         Login: {
             password: components["schemas"]["Password"];
         } & ({
@@ -2255,30 +2151,25 @@ export interface components {
         StatusAccepted: 202;
         /**
          * @description Authenticator ID.
-         *
          * @example 123
          */
         AuthenticatorID: number;
-        /** @description Configuration of the Django `allauth.socialaccount` app.
-         *      */
+        /** @description Configuration of the Django `allauth.socialaccount` app. */
         SocialAccountConfiguration: {
             providers: components["schemas"]["ProviderList"];
         };
-        /** @description Configuration of the Django `allauth.mfa` app.
-         *      */
+        /** @description Configuration of the Django `allauth.mfa` app. */
         MFAConfiguration: {
-            /** @description Matches `settings.MFA_SUPPORTED_TYPES`.
-             *      */
+            /** @description Matches `settings.MFA_SUPPORTED_TYPES`. */
             supported_types: components["schemas"]["AuthenticatorType"][];
         };
-        /** @description Configuration of the Django `allauth.usersessions` app.
-         *      */
+        /** @description Configuration of the Django `allauth.usersessions` app. */
         UserSessionsConfiguration: {
-            /** @description Matches `settings.USERSESSIONS_TRACK_ACTIVITY`.
-             *      */
+            /** @description Matches `settings.USERSESSIONS_TRACK_ACTIVITY`. */
             track_activity: boolean;
         };
-        /** @example {
+        /**
+         * @example {
          *       "status": 200,
          *       "data": {
          *         "account": {
@@ -2308,7 +2199,8 @@ export interface components {
          *           "track_activity": false
          *         }
          *       }
-         *     } */
+         *     }
+         */
         ConfigurationResponse: {
             data: {
                 account: components["schemas"]["AccountConfiguration"];
@@ -2343,31 +2235,26 @@ export interface components {
         OptionalTimestamp: components["schemas"]["Timestamp"];
         /**
          * @description An epoch based timestamp (trivial to parse using: `new Date(value)*1000`)
-         *
          * @example 1711555057.065702
          */
         Timestamp: number;
         /**
          * @description An authenticator code.
-         *
          * @example 314159
          */
         AuthenticatorCode: string;
         /**
          * @description An one-time code.
-         *
          * @example NQ3TM5
          */
         Code: string;
         /**
          * @description The type of authenticator.
-         *
          * @enum {string}
          */
-        AuthenticatorType: "recovery_codes" | "totp";
+        AuthenticatorType: "recovery_codes" | "totp" | "webauthn";
         /**
          * @description The password.
-         *
          * @example Alohomora!
          */
         Password: string;
@@ -2380,19 +2267,16 @@ export interface components {
             errors?: {
                 /**
                  * @description An error code.
-                 *
                  * @example invalid
                  */
                 code: string;
                 /**
                  * @description The name of the input parameter that was incorrect.
-                 *
                  * @example email
                  */
                 param?: string;
                 /**
                  * @description A human readable error message.
-                 *
                  * @example Enter a valid email address.
                  */
                 message: string;
@@ -2405,20 +2289,17 @@ export interface components {
          *     account exists, a signup will occur. If set to `connect`, the provider
          *     account will be connected to the list of provider accounts for the
          *     currently authenticated user.
-         *
          * @example login
          * @enum {string}
          */
         Process: "login" | "connect";
         /**
          * @description The provider ID.
-         *
          * @example google
          */
         ProviderID: string;
         /**
          * @description The provider specific account ID.
-         *
          * @example goo12345
          */
         ProviderAccountID: string;
@@ -2427,12 +2308,12 @@ export interface components {
              * @description The user ID.
              * @example 123
              */
-            id?: string;
+            id?: number;
             /**
              * @description The display name for the user.
              * @example Magic Wizard
              */
-            display?: string;
+            display: string;
             /**
              * @description The email address.
              * @example email@domain.org
@@ -2442,7 +2323,7 @@ export interface components {
              * @description Whether or not the account has a password set.
              * @example true
              */
-            has_usable_password?: boolean;
+            has_usable_password: boolean;
         };
         EmailAddress: {
             email: components["schemas"]["Email"];
@@ -2465,33 +2346,28 @@ export interface components {
             id: components["schemas"]["AuthenticatorID"];
             /** @example Master key */
             name: string;
-            /** @description Whether or not this authenticator represents a passkey. Absent if it is not specified.
-             *      */
+            /** @description Whether or not this authenticator represents a passkey. Absent if it is not specified. */
             is_passwordless?: boolean;
         };
         RecoveryCodesAuthenticator: components["schemas"]["BaseAuthenticator"] & {
             /**
              * @description The authenticator type.
-             *
              * @enum {string}
              */
             type: "recovery_codes";
             /**
              * @description The total number of recovery codes that initially were available.
-             *
              * @example 10
              */
             total_code_count: number;
             /**
              * @description The number of recovery codes that are unused.
-             *
              * @example 7
              */
             unused_code_count: number;
         };
         SensitiveRecoveryCodesAuthenticator: components["schemas"]["RecoveryCodesAuthenticator"] & {
-            /** @description The list of unused codes.
-             *      */
+            /** @description The list of unused codes. */
             unused_codes: components["schemas"]["AuthenticatorCode"][];
         };
         AuthenticatorList: (components["schemas"]["TOTPAuthenticator"] | components["schemas"]["RecoveryCodesAuthenticator"] | components["schemas"]["WebAuthnAuthenticator"])[];
@@ -2499,37 +2375,31 @@ export interface components {
         Provider: {
             /**
              * @description The provider ID.
-             *
              * @example google
              */
             id: string;
             /**
              * @description The name of the provider.
-             *
              * @example Google
              */
             name: string;
             /**
              * @description The client ID (in case of OAuth2 or OpenID Connect based providers)
-             *
              * @example 123.apps.googleusercontent.com
              */
             client_id?: string;
             /**
              * @description The OIDC discovery or well-known URL (in case of OAuth2 or OpenID Connect based providers)
-             *
              * @example https://accounts.google.com/.well-known/openid-configuration
              */
             openid_configuration_url?: string;
-            /** @description The authentication flows the provider integration supports.
-             *      */
+            /** @description The authentication flows the provider integration supports. */
             flows: ("provider_redirect" | "provider_token")[];
         };
         ProviderAccount: {
             uid: components["schemas"]["ProviderAccountID"];
             /**
              * @description A name derived from the third-party provider account data.
-             *
              * @example Wizzkid
              */
             display: string;
@@ -2546,7 +2416,8 @@ export interface components {
             };
         };
         WebAuthnCredentialRequestOptions: {
-            /** @example {
+            /**
+             * @example {
              *       "status": 200,
              *       "data": {
              *         "request_options": {
@@ -2558,11 +2429,13 @@ export interface components {
              *           }
              *         }
              *       }
-             *     } */
+             *     }
+             */
             request_options: Record<string, never>;
         };
         WebAuthnCredentialCreationOptions: {
-            /** @example {
+            /**
+             * @example {
              *       "status": 200,
              *       "data": {
              *         "request_options": {
@@ -2574,10 +2447,12 @@ export interface components {
              *           }
              *         }
              *       }
-             *     } */
+             *     }
+             */
             creation_options: Record<string, never>;
         };
-        /** @example {
+        /**
+         * @example {
          *       "credential": {
          *         "type": "public-key",
          *         "id": "-J4JNfPfnLyRSMK4R...",
@@ -2591,12 +2466,12 @@ export interface components {
          *         },
          *         "clientExtensionResults": {}
          *       }
-         *     } */
+         *     }
+         */
         WebAuthnCredential: Record<string, never>;
     };
     responses: {
-        /** @description The account prohibits adding an authenticator, e.g. because of an unverified email address.
-         *      */
+        /** @description The account prohibits adding an authenticator, e.g. because of an unverified email address. */
         AddAuthenticatorConflict: {
             headers: {
                 [name: string]: unknown;
@@ -2614,8 +2489,7 @@ export interface components {
                 "application/json": components["schemas"]["AuthenticationResponse"];
             };
         };
-        /** @description List of authenticators.
-         *      */
+        /** @description List of authenticators. */
         Authenticators: {
             headers: {
                 [name: string]: unknown;
@@ -2627,8 +2501,7 @@ export interface components {
                 };
             };
         };
-        /** @description Authenticated by password.
-         *      */
+        /** @description Authenticated by password. */
         AuthenticatedByPassword: {
             headers: {
                 [name: string]: unknown;
@@ -2637,8 +2510,7 @@ export interface components {
                 "application/json": components["schemas"]["AuthenticatedResponse"];
             };
         };
-        /** @description Authenticated by code.
-         *      */
+        /** @description Authenticated by code. */
         AuthenticatedByCode: {
             headers: {
                 [name: string]: unknown;
@@ -2647,8 +2519,7 @@ export interface components {
                 "application/json": components["schemas"]["AuthenticatedResponse"];
             };
         };
-        /** @description Authenticated by password and 2FA.
-         *      */
+        /** @description Authenticated by password and 2FA. */
         AuthenticatedByPasswordAnd2FA: {
             headers: {
                 [name: string]: unknown;
@@ -2657,8 +2528,7 @@ export interface components {
                 "application/json": components["schemas"]["AuthenticatedResponse"];
             };
         };
-        /** @description The response indicates authentication or re-authentication is required.
-         *      */
+        /** @description The response indicates authentication or re-authentication is required. */
         AuthenticationOrReauthentication: {
             headers: {
                 [name: string]: unknown;
@@ -2667,8 +2537,7 @@ export interface components {
                 "application/json": components["schemas"]["AuthenticationResponse"] | components["schemas"]["ReauthenticationResponse"];
             };
         };
-        /** @description The django-allauth configuration.
-         *      */
+        /** @description The django-allauth configuration. */
         Configuration: {
             headers: {
                 [name: string]: unknown;
@@ -2677,8 +2546,7 @@ export interface components {
                 "application/json": components["schemas"]["ConfigurationResponse"];
             };
         };
-        /** @description List of email addresses.
-         *      */
+        /** @description List of email addresses. */
         EmailAddresses: {
             headers: {
                 [name: string]: unknown;
@@ -2708,8 +2576,7 @@ export interface components {
                 "application/json": components["schemas"]["ErrorResponse"];
             };
         };
-        /** @description A forbidden response.
-         *      */
+        /** @description A forbidden response. */
         Forbidden: {
             headers: {
                 [name: string]: unknown;
@@ -2718,8 +2585,7 @@ export interface components {
                 "application/json": components["schemas"]["ForbiddenResponse"];
             };
         };
-        /** @description Not found.
-         *      */
+        /** @description Not found. */
         NotFound: {
             headers: {
                 [name: string]: unknown;
@@ -2745,8 +2611,7 @@ export interface components {
                 };
             };
         };
-        /** @description List of phone numbers.
-         *      */
+        /** @description List of phone numbers. */
         PhoneNumbers: {
             headers: {
                 [name: string]: unknown;
@@ -2755,8 +2620,7 @@ export interface components {
                 "application/json": components["schemas"]["PhoneNumbersResponse"];
             };
         };
-        /** @description List of third-party provider accounts.
-         *      */
+        /** @description List of third-party provider accounts. */
         ProviderAccounts: {
             headers: {
                 [name: string]: unknown;
@@ -2768,8 +2632,7 @@ export interface components {
                 };
             };
         };
-        /** @description Information relating to the pending provider signup.
-         *      */
+        /** @description Information relating to the pending provider signup. */
         ProviderSignup: {
             headers: {
                 [name: string]: unknown;
@@ -2785,18 +2648,16 @@ export interface components {
                 };
             };
         };
-        /** @description The response indicates reauthentication is required.
-         *      */
+        /** @description The response indicates reauthentication is required. */
         ReauthenticationRequired: {
             headers: {
                 [name: string]: unknown;
             };
             content: {
-                "application/json": unknown;
+                "application/json": components["schemas"]["ReauthenticationResponse"];
             };
         };
-        /** @description Information on the recovery codes.
-         *      */
+        /** @description Information on the recovery codes. */
         RecoveryCodes: {
             headers: {
                 [name: string]: unknown;
@@ -2808,8 +2669,22 @@ export interface components {
                 };
             };
         };
-        /** @description List of sessions.
-         *      */
+        /** @description A new access token (and optionally new refresh token). */
+        RefreshToken: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/json": {
+                    status: components["schemas"]["StatusOK"];
+                    data: {
+                        access_token: components["schemas"]["AccessToken"];
+                        refresh_token?: components["schemas"]["RefreshToken"];
+                    };
+                };
+            };
+        };
+        /** @description List of sessions. */
         Sessions: {
             headers: {
                 [name: string]: unknown;
@@ -2821,8 +2696,7 @@ export interface components {
                 };
             };
         };
-        /** @description The response indicates session is invalid or no longer exists.
-         *      */
+        /** @description The response indicates session is invalid or no longer exists. */
         SessionGone: {
             headers: {
                 [name: string]: unknown;
@@ -2831,8 +2705,7 @@ export interface components {
                 "application/json": components["schemas"]["SessionGoneResponse"];
             };
         };
-        /** @description A success response.
-         *      */
+        /** @description A success response. */
         StatusOK: {
             headers: {
                 [name: string]: unknown;
@@ -2843,8 +2716,7 @@ export interface components {
                 };
             };
         };
-        /** @description Too many requests.
-         *      */
+        /** @description Too many requests. */
         TooManyRequests: {
             headers: {
                 [name: string]: unknown;
@@ -2856,8 +2728,7 @@ export interface components {
                 };
             };
         };
-        /** @description Information on the TOTP authenticator.
-         *      */
+        /** @description Information on the TOTP authenticator. */
         TOTPAuthenticator: {
             headers: {
                 [name: string]: unknown;
@@ -2865,12 +2736,15 @@ export interface components {
             content: {
                 "application/json": {
                     status: components["schemas"]["StatusOK"];
+                    meta?: {
+                        /** @description Whether or not recovery codes where generated automatically. */
+                        recovery_codes_generated?: boolean;
+                    };
                     data: components["schemas"]["TOTPAuthenticator"];
                 };
             };
         };
-        /** @description No TOTP authenticator has been set up.
-         *      */
+        /** @description No TOTP authenticator has been set up. */
         TOTPAuthenticatorNotFound: {
             headers: {
                 [name: string]: unknown;
@@ -2882,13 +2756,11 @@ export interface components {
                     meta: {
                         /**
                          * @description A TOTP secret that can be used to setup a new authenticator.
-                         *
                          * @example J4ZKKXTK7NOVU7EPUVY23LCDV4T2QZYM
                          */
                         secret: string;
                         /**
                          * @description otpauth URI from which a QR code can be generated and scanned by OTP clients.
-                         *
                          * @example otpauth://totp/Example:alice@fsf.org?secret=JBSWY3DPEHPK3PXP&issuer=Example
                          */
                         totp_url: string;
@@ -2896,8 +2768,7 @@ export interface components {
                 };
             };
         };
-        /** @description There is no authenticated session.
-         *      */
+        /** @description There is no authenticated session. */
         Unauthenticated: {
             headers: {
                 [name: string]: unknown;
@@ -2961,8 +2832,7 @@ export interface components {
                     status: components["schemas"]["StatusOK"];
                     data: components["schemas"]["WebAuthnAuthenticator"];
                     meta: {
-                        /** @description Whether or not recovery codes where generated automatically.
-                         *      */
+                        /** @description Whether or not recovery codes where generated automatically. */
                         recovery_codes_generated?: boolean;
                     };
                 };
@@ -2974,9 +2844,13 @@ export interface components {
         EmailVerificationKey: string;
         /** @description The password reset key */
         PasswordResetKey: string;
-        /** @description Session token. Only needed when `client` is equal to `app`.
-         *      */
+        /** @description Session token. Only needed when `client` is equal to `app`. */
         SessionToken: string;
+        /**
+         * @description When present (regardless of its value), enables passwordless sign-in via a WebAuthn credential (Passkey),
+         *     but may enforce additional multi-factor authentication (MFA) requirements. Omit the parameter to disable.
+         */
+        PasswordLess: boolean;
     };
     requestBodies: {
         /** @description Login. */
@@ -3043,8 +2917,7 @@ export interface components {
                 };
             };
         };
-        /** @description Initiate the provider redirect flow.
-         *      */
+        /** @description Initiate the provider redirect flow. */
         ProviderRedirect: {
             content: {
                 "application/x-www-form-urlencoded": components["schemas"]["ProviderRedirect"];
@@ -3065,6 +2938,13 @@ export interface components {
         Reauthenticate: {
             content: {
                 "application/json": components["schemas"]["Reauthenticate"];
+            };
+        };
+        RefreshToken: {
+            content: {
+                "application/json": {
+                    refresh_token: components["schemas"]["RefreshToken"];
+                };
             };
         };
         /** @description Request password. */
@@ -3098,7 +2978,6 @@ export interface components {
                     current_password?: components["schemas"]["Password"];
                     /**
                      * @description The current password.
-                     *
                      * @example Aberto!
                      */
                     new_password: string;
@@ -3108,12 +2987,7 @@ export interface components {
         Email: {
             content: {
                 "application/json": {
-                    /**
-                     * @description An email address.
-                     *
-                     * @example email@domain.org
-                     */
-                    email: string;
+                    email: components["schemas"]["Email"];
                 };
             };
         };
@@ -3122,13 +2996,11 @@ export interface components {
                 "application/json": {
                     /**
                      * @description An email address.
-                     *
                      * @example email@domain.org
                      */
                     email: string;
                     /**
                      * @description Primary flag.
-                     *
                      * @enum {boolean}
                      */
                     primary: true;
@@ -3179,8 +3051,7 @@ export interface components {
         DeleteWebAuthn: {
             content: {
                 "application/json": {
-                    /** @description The IDs of the authenticator that are to be deleted.
-                     *      */
+                    /** @description The IDs of the authenticator that are to be deleted. */
                     authenticators: components["schemas"]["AuthenticatorID"][];
                 };
             };
