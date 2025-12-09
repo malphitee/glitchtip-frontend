@@ -1,9 +1,12 @@
+<gt-top-app-bar>
+  <ng-container slot="left">
+    <gt-back-link backLinkText="View all Releases" />
+  </ng-container>
+</gt-top-app-bar>
+
 <section class="l-body l-body--full-width mat-elevation-z0">
-  <gt-back-link backLinkText="View all Releases" />
   @if (releaseTitle(); as title) {
-  <gt-detail-header
-    [title]="title"
-  />
+    <gt-detail-header [title]="title" />
   }
   <div class="table-container">
     <table mat-table class="mat-elevation-z2" [dataSource]="releaseFiles()">
@@ -46,26 +49,28 @@
       <tr *matNoDataRow>
         <td [attr.colspan]="displayedColumns.length">
           <div class="table-empty-states">
-            @if ( (initialLoadComplete()) === true && (loading()) === false ) {
-            @if ((fileListErrors())?.length) { @if ((fileListErrors())?.length
-            === 1) {
-            <h3 class="body-text-strong">
-              There was an error processing your request
-            </h3>
-            } @else {
-            <h3 class="body-text-strong">
-              There were errors while processing your request
-            </h3>
-            }
-            <ul>
-              @for (error of fileListErrors(); track error) {
-              <li> {{ error }} </li>
+            @if (initialLoadComplete() === true && loading() === false) {
+              @if (fileListErrors()?.length) {
+                @if (fileListErrors()?.length === 1) {
+                  <h3 class="body-text-strong">
+                    There was an error processing your request
+                  </h3>
+                } @else {
+                  <h3 class="body-text-strong">
+                    There were errors while processing your request
+                  </h3>
+                }
+                <ul>
+                  @for (error of fileListErrors(); track error) {
+                    <li> {{ error }} </li>
+                  }
+                </ul>
+              } @else {
+                <div class="body-text-strong" i18n
+                  >There are no files associated with this release.</div
+                >
               }
-            </ul>
-            } @else {
-            <div class="body-text-strong" i18n
-              >There are no files associated with this release.</div
-            >} }
+            }
           </div>
         </td>
       </tr>
