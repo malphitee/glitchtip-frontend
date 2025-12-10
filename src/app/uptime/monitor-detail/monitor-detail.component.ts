@@ -76,7 +76,7 @@ export class MonitorDetailComponent
 
   isMobile = signal(false);
   private smallBreakpointSignal = toSignal(
-    this.breakpointObserver.observe([Breakpoints.Small, Breakpoints.XSmall])
+    this.breakpointObserver.observe([Breakpoints.Small, Breakpoints.XSmall]),
   );
 
   activeMonitorRecentChecksSeries =
