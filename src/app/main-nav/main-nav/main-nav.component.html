@@ -3,6 +3,7 @@
     <mat-sidenav
       #sidenav
       class="mat-elevation-z4"
+      [disableClose]="!mobileNav()"
       [opened]="navOpen()"
       (closed)="closeSideNav()"
       [mode]="mobileNav() === true ? 'over' : 'side'"
