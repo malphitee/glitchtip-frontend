@@ -1,6 +1,10 @@
 <gt-top-app-bar>
   <ng-container slot="left">
-    <gt-back-link backLinkText="View all uptime monitors" />
+    <gt-back-link
+      [backLinkText]="
+        isMobile() ? 'Uptime Monitors' : 'View all uptime monitors'
+      "
+    />
   </ng-container>
 
   <ng-container slot="right">
