@@ -1,7 +1,7 @@
 import { Injectable, computed, inject } from "@angular/core";
 import { APIState } from "../shared/shared.interfaces";
 import { AuthService } from "../auth.service";
-import { AllAuthError, AuthFlow } from "../api/allauth/allauth.interfaces";
+import { AllAuthError } from "../api/allauth/allauth.interfaces";
 import {
   messagesLookup,
   reduceParamErrors,
@@ -9,6 +9,9 @@ import {
 import { handleAllAuthErrorResponse } from "../api/allauth/allauth.utils";
 import { StatefulService } from "../shared/stateful-service/signal-state.service";
 import { ActivatedRoute, Router } from "@angular/router";
+import { components } from "../api/allauth-schema";
+
+type AuthFlow = components["schemas"]["Flow"];
 
 export interface LoginState extends APIState {
   errors: AllAuthError[];
@@ -121,7 +124,7 @@ export class LoginService extends StatefulService<LoginState> {
 
   socialLogin(provider: string, callbackUrl = "/login/finalize") {
     this.setState({ loading: true, errors: [] });
-    
+
     // Include next parameter in callback URL if present
     const nextUrl = this.route.snapshot.queryParamMap.get("next");
     if (nextUrl) {
@@ -129,7 +132,7 @@ export class LoginService extends StatefulService<LoginState> {
       url.searchParams.set("next", nextUrl);
       callbackUrl = url.pathname + url.search;
     }
-    
+
     this.authService.providerRedirect(provider, callbackUrl, "login");
   }
 
@@ -146,7 +149,8 @@ export class LoginService extends StatefulService<LoginState> {
   }
 
   async totpAuthenticate(code: string) {
-    const { data, error, response } = await this.authService.mfaAuthenticate(code);
+    const { data, error, response } =
+      await this.authService.mfaAuthenticate(code);
     if (data?.meta.is_authenticated) {
       this.redirect();
     } else {

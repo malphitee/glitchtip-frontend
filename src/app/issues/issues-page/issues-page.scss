@@ -1,4 +1,5 @@
 @use "variables" as vars;
+@use "@angular/material" as mat;
 
 $iconWidth: 56px;
 $selectColumnWidth: 60px;
@@ -28,8 +29,8 @@ table {
 
 .status-button-group {
   button {
-    font-size: 0.95em;
-    line-height: 30px;
+    font-size: 0.85em;
+    line-height: 25px;
     padding: 0 12px;
 
     &:not(:last-of-type) {
@@ -61,16 +62,6 @@ table {
   }
 }
 
-// Fragile hack to fix fact that mat table only successfully adjusts
-// 'top' rule of sticky table headers on first change of
-// showBulkSelect() but not on subsequent changes
-// TODO: Find a way to avoid this.
-.stickyHack {
-  th {
-    top: 119px !important;
-  }
-}
-
 .mat-column-selectAll {
   width: $selectColumnWidth;
 }
@@ -84,16 +75,12 @@ table {
 .mat-column-title {
   overflow-wrap: anywhere;
   hyphens: auto;
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
 
   @media screen and (min-width: vars.$large) {
-    width: 400px;
+    width: 450px;
   }
-}
-
-.mat-column-trend {
-  flex-grow: 1;
 }
 
 .mat-column-events {
@@ -166,44 +153,13 @@ table {
   }
 }
 
-.stats-cell-content,
-.stats-header-content {
+.stats-cell-content {
   display: flex;
   justify-content: center;
 }
 
-.stats-header-container {
+.stats-header-label {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   width: 270px;
-}
-
-.stats-period-toggle-container {
-  display: flex;
-  gap: 6px;
-
-  .stats-period-btn {
-    padding: 2px 8px;
-    border: none;
-    background: transparent;
-    font-size: 12px;
-    min-width: 28px;
-    text-align: center;
-
-    &:disabled {
-      font-weight: bold;
-      color: var(--mat-sys-on-surface);
-    }
-
-    &:enabled {
-      color: var(--mat-sys-outline);
-      cursor: pointer;
-
-      &:hover {
-        background-color: var(--mat-sys-outline-variant);
-        border-radius: 3px;
-      }
-    }
-  }
 }

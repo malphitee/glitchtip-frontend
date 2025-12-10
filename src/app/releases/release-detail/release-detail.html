@@ -41,8 +41,7 @@
       ></tr>
       <tr
         mat-header-row
-        *matHeaderRowDef="displayedColumns; sticky: true"
-        class="table-header"
+        *matHeaderRowDef="displayedColumns"
         [class.u-hidden]="releaseFiles().length === 0 && !loading()"
       ></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
