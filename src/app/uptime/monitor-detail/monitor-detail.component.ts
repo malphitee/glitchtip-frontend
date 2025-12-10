@@ -6,6 +6,8 @@ import {
   computed,
   input,
   booleanAttribute,
+  signal,
+  effect,
 } from "@angular/core";
 import { MonitorState, MonitorService } from "../monitor.service";
 import { RouterModule } from "@angular/router";
@@ -24,6 +26,8 @@ import { StatefulComponent } from "src/app/shared/stateful-service/signal-state.
 import { DecimalPipe, I18nPluralPipe } from "@angular/common";
 import { TopAppBar } from "src/app/shared/top-app-bar/top-app-bar";
 import { BackLinkComponent } from "src/app/shared/detail/back-link/back-link.component";
+import { BreakpointObserver, Breakpoints } from "@angular/cdk/layout";
+import { toSignal } from "@angular/core/rxjs-interop";
 
 function booleanDefaultTrueAttribute(value: unknown): boolean {
   return value === undefined ? true : booleanAttribute(value);
@@ -58,6 +62,7 @@ export class MonitorDetailComponent
   implements OnInit
 {
   protected service: MonitorService;
+  private breakpointObserver = inject(BreakpointObserver);
 
   orgSlug = input.required<string>({ alias: "org-slug" });
   monitorID = input.required<number>({ alias: "monitor-id" });
@@ -68,6 +73,11 @@ export class MonitorDetailComponent
   uptimeAlertCount = this.service.uptimeAlertCount;
   alertCountLoading = this.service.alertCountLoading;
   associatedProjectSlug = this.service.associatedProjectSlug;
+
+  isMobile = signal(false);
+  private smallBreakpointSignal = toSignal(
+    this.breakpointObserver.observe([Breakpoints.Small, Breakpoints.XSmall])
+  );
 
   activeMonitorRecentChecksSeries =
     this.service.activeMonitorRecentChecksSeries;
@@ -104,6 +114,15 @@ export class MonitorDetailComponent
     const service = inject(MonitorService);
     super(service);
     this.service = service;
+
+    effect(() => {
+      const breakpointResult = this.smallBreakpointSignal();
+      if (breakpointResult?.matches) {
+        this.isMobile.set(true);
+      } else {
+        this.isMobile.set(false);
+      }
+    });
   }
 
   ngOnInit() {

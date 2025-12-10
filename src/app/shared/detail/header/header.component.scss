@@ -2,12 +2,16 @@
 
 .section-header-text-light {
   padding-right: 20px;
+  overflow-wrap: break-word;
+
 }
 
 header {
+  
   .header-group {
     display: flex;
     justify-content: space-between;
+
 
     @media screen and (max-width: (vars.$tablet - 1)) {
       flex-direction: column;
@@ -28,6 +32,8 @@ h1 {
 
 .body-text-strong {
   margin: 0;
+
+
 }
 
 .button-row {
