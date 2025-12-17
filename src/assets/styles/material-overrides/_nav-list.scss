@@ -8,4 +8,5 @@ mat-nav-list {
       list-item-label-text-weight: 500,
     )
   );
+  @include mat.list-density(-1)
 }

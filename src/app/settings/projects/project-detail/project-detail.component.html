@@ -1,6 +1,11 @@
+<gt-top-app-bar>
+  <ng-container slot="left">
+    <gt-back-link backLinkText="Back to Projects" />
+  </ng-container>
+</gt-top-app-bar>
+
 @if (activeProject(); as project) {
   <section class="l-body">
-    <gt-back-link backLinkText="Back to Projects" />
     <gt-detail-header [title]="'Settings for ' + project.name" />
     @if (project.isMember === false) {
       <mat-card
