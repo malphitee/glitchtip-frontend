@@ -165,7 +165,7 @@ mat-list-item {
 }
 
 // This makes the dropdown menus the full size of the sidenav
-.mat-mdc-menu-panel.nav-menu {
+::ng-deep .mat-mdc-menu-panel.nav-menu {
   max-width: none !important;
   width: 220px !important;
 }
