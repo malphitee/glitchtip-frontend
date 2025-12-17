@@ -62,10 +62,14 @@ export const Typography = () => ({
 
 const iconNames = [
   "account_circle",
+  "account_tree",
   "add",
+  "account_circle",
   "arrow_drop_down",
   "arrow_right",
+  "avg_pace",
   "brightness_medium",
+  "breaking_news",
   "check_box",
   "check_circle",
   "close",
@@ -96,8 +100,11 @@ const iconNames = [
   "notifications_off",
   "open_in_new",
   "priority_high",
+  "rocket_launch",
   "settings",
+  "share_eta",
   "tab",
+  "team_dashboard",
   "volume_off",
   "warning",
 ];

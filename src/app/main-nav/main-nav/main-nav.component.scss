@@ -10,41 +10,121 @@ mat-sidenav-container {
   right: 0;
 }
 
-mat-sidenav {
-  width: variables.$side-nav-width;
-}
-
 mat-nav-list {
   padding: 10px;
+
+  > mat-list-item {
+    margin-bottom: 16px;
+
+    &:last-of-type {
+      margin-bottom: 0;
+    }
+  }
+
+  .nav-section-divider {
+    margin-left: -10px;
+    margin-right: -10px;
+    margin-top: 16px;
+    margin-bottom: 16px;
+    border-color: var(--mat-sys-outline-variant);
+  }
 
   // TODO: Find a more reliable way to change icon color
   .mdc-list-item--disabled {
     mat-icon {
-      opacity: .25;
+      opacity: 0.25;
     }
+  }
+}
+
+.active-section {
+  border-left: 4px solid var(--mat-sys-primary);
+}
+
+.active-menu-item {
+  background-color: var(--mat-sys-surface-container-highest);
+}
+
+mat-sidenav {
+  width: variables.$side-nav-width;
+
+  mat-icon[matListItemIcon] {
+    margin-right: 8px;
+    margin-left: 8px;
+  }
+
+  &.collapsed {
+    width: 72px;
+
+    .main-logo,
+    .org-create-button-container,
+    .org-dropdown-container,
+    .support-cta-container,
+    .version {
+      display: none;
+    }
+
+    .nav-text {
+      display: none;
+    }
+
+    mat-nav-list {
+      padding: 16px;
+    }
+
+    mat-list-item {
+      justify-content: center;
+      padding: 0 !important;
+    }
+
+    [matListItemMeta] {
+      display: none;
+    }
+
+    .logo-toolbar {
+      justify-content: center;
+      margin-top: 8px;
+
+      .collapse-toggle {
+        margin-right: 0;
+      }
+    }
+  }
+}
+
+mat-tree-node {
+  margin-bottom: 16px;
+
+  &:last-child {
+    margin-bottom: 0;
   }
 }
 
 .logo-toolbar {
   height: fit-content;
   padding-top: 16px;
-  background-color: transparent;
+  justify-content: space-between;
 
   .main-logo {
     width: 115px;
     cursor: pointer;
+  }
+
+  .collapse-toggle {
+    margin-right: 8px;
   }
 }
 
 .org-create-button-container,
 .org-dropdown-container {
   width: 100%;
-  padding: 25px 15px 0px 15px;
+  padding: 25px 15px 0 15px;
 }
 
 .org-create-button {
   height: 48px;
 }
+
 .support-cta-divider {
   border-color: var(--mat-sys-outline-variant);
 }
@@ -72,4 +152,20 @@ mat-nav-list {
     font-size: small;
     text-decoration: none;
   }
+}
+
+mat-list-item {
+  .arrow-icon {
+    transition: color 200ms ease-in-out;
+  }
+
+  &[aria-expanded="true"] .arrow-icon {
+    color: var(--mat-sys-primary);
+  }
+}
+
+// This makes the dropdown menus the full size of the sidenav
+.mat-mdc-menu-panel.nav-menu {
+  max-width: none !important;
+  width: 220px !important;
 }

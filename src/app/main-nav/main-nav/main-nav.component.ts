@@ -3,8 +3,10 @@ import {
   ChangeDetectionStrategy,
   inject,
   computed,
+  signal,
+  WritableSignal,
 } from "@angular/core";
-import { toObservable } from "@angular/core/rxjs-interop";
+import { toObservable, takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Router } from "@angular/router";
 import { MainNavService } from "../main-nav.service";
 import { SettingsService } from "src/app/api/settings.service";
@@ -19,8 +21,11 @@ import { MatIconModule } from "@angular/material/icon";
 import { RouterLink, RouterLinkActive } from "@angular/router";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatSidenavModule } from "@angular/material/sidenav";
+import { MatMenuModule } from "@angular/material/menu";
+import { MatTooltipModule } from "@angular/material/tooltip";
 import { AuthService } from "src/app/auth.service";
 import { OrganizationsService } from "src/app/api/organizations.service";
+import { NavigationEnd } from "@angular/router";
 import {
   MatSelect,
   MatSelectChange,
@@ -29,6 +34,7 @@ import {
 
 interface NavNode {
   name: string;
+  icon?: string;
   route?: string[];
   requiresBilling?: boolean;
   requiresActiveOrg?: boolean;
@@ -39,74 +45,33 @@ interface NavNode {
 const MENU_DATA: NavNode[] = [
   {
     name: $localize`Issues`,
+    icon: "breaking_news",
     route: ["org_slug", "issues"],
     requiresActiveOrg: true,
   },
   {
     name: $localize`Uptime Monitors`,
+    icon: "share_eta",
     route: ["org_slug", "uptime-monitors"],
     requiresActiveOrg: true,
   },
   {
     name: $localize`Performance`,
+    icon: "avg_pace",
     route: ["org_slug", "performance"],
     requiresActiveOrg: true,
   },
   {
     name: $localize`Projects`,
+    icon: "team_dashboard",
     route: ["org_slug", "projects"],
     requiresActiveOrg: true,
   },
   {
     name: $localize`Releases`,
+    icon: "rocket_launch",
     route: ["org_slug", "releases"],
     requiresActiveOrg: true,
-  },
-  {
-    name: $localize`Settings`,
-    requiresActiveOrg: true,
-    children: [
-      {
-        name: $localize`General settings`,
-        route: ["org_slug", "settings"],
-        requiresActiveOrg: true,
-        useExactRoute: true,
-      },
-      {
-        name: $localize`Projects`,
-        route: ["org_slug", "settings", "projects"],
-        requiresActiveOrg: true,
-      },
-      {
-        name: $localize`Subscription`,
-        route: ["org_slug", "settings", "subscription"],
-        requiresBilling: true,
-        requiresActiveOrg: true,
-      },
-      {
-        name: $localize`Teams`,
-        route: ["org_slug", "settings", "teams"],
-        requiresActiveOrg: true,
-      },
-      {
-        name: $localize`Members`,
-        route: ["org_slug", "settings", "members"],
-        requiresActiveOrg: true,
-      },
-    ],
-  },
-  {
-    name: $localize`Profile`,
-    useExactRoute: true,
-    children: [
-      { name: $localize`Account`, route: ["profile"], useExactRoute: true },
-      { name: $localize`MFA`, route: ["profile", "multi-factor-auth"] },
-      {
-        name: $localize`Notifications`,
-        route: ["profile", "notifications"],
-      },
-      { name: $localize`Auth Tokens`, route: ["profile", "auth-tokens"] },
-    ],
   },
 ];
 
@@ -125,6 +90,8 @@ const MENU_DATA: NavNode[] = [
     MatSelectModule,
     MatDividerModule,
     MatListModule,
+    MatMenuModule,
+    MatTooltipModule,
     RouterLinkActive,
     MatCardModule,
     MobileNavToolbarComponent,
@@ -138,10 +105,26 @@ export class MainNavComponent {
   private settingsService = inject(SettingsService);
   private userService = inject(UserService);
 
-  childrenAccessor = (node: NavNode) => node.children ?? [];
+  currentUrl = signal(this.router.url);
 
-  hasChild = (_: number, node: NavNode) =>
-    !!node.children && node.children.length > 0;
+  constructor() {
+    this.router.events.pipe(takeUntilDestroyed()).subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        const navEnd = event as NavigationEnd;
+        this.currentUrl.set(navEnd.urlAfterRedirects);
+      }
+    });
+  }
+
+  isInOrganizationSection = computed(() =>
+    this.currentUrl().includes("/settings"),
+  );
+
+  isInProfileSection = computed(() => this.currentUrl().includes("/profile"));
+
+  isCollapsed: WritableSignal<boolean> = signal(false);
+
+  childrenAccessor = (node: NavNode) => node.children ?? [];
 
   getRouteWithOrgSlug(route: string[]) {
     return route.map((item) =>
@@ -150,8 +133,6 @@ export class MainNavComponent {
   }
 
   activeOrganizationSlug = this.organizationsService.activeOrganizationSlug;
-  /* TODO: Add primary color to mat-sidenav
-  https://stackoverflow.com/questions/54248944/angular-6-7-how-to-apply-default-theme-color-to-mat-sidenav-background */
   activeOrganization = this.organizationsService.activeOrganization;
   organizations = this.organizationsService.organizations;
   organizationsInitialLoad = this.organizationsService.initialLoad;
@@ -193,12 +174,25 @@ export class MainNavComponent {
     window.location.href = "/login";
   }
 
+  private dispatchResizeEvent() {
+    window.dispatchEvent(new Event("resize"));
+  }
+
   toggleSideNav() {
     this.mainNav.getToggleNav();
   }
 
+  toggleCollapse() {
+    this.isCollapsed.update((val) => !val);
+    this.dispatchResizeEvent();
+  }
+
   closeSideNav() {
     this.mainNav.getClosedNav();
+    if (this.isCollapsed()) {
+      this.isCollapsed.set(false);
+      this.dispatchResizeEvent();
+    }
   }
 
   onOrgSelectChange(
