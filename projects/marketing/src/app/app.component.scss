@@ -1,4 +1,5 @@
-@import "./styles/themes";
+@use "./styles/theme-colors";
+@use "../../../src/assets/styles/variables" as vars;
 
 .mat-toolbar {
   position: absolute;
@@ -46,7 +47,7 @@
 
 footer {
   width: 100%;
-  background: $amaranth;
+  background: var(--mat-sys-primary);
   // This pushes it to the bottom when not enough content is on the page
   margin-top: auto;
   margin-bottom: -5px;
@@ -105,7 +106,7 @@ footer {
 .u-visible-small {
   display: none;
 
-  @media screen and (max-width: $small) {
+  @media screen and (max-width: vars.$small) {
     display: inline-block;
   }
 }
@@ -113,7 +114,7 @@ footer {
 .u-hidden-small {
   display: inline-block;
 
-  @media screen and (max-width: $small) {
+  @media screen and (max-width: vars.$small) {
     display: none;
   }
 }

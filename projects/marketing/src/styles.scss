@@ -1,11 +1,30 @@
 @use "@angular/material" as mat;
+@use "./app/styles/_theme-colors" as custom-theme;
+@use "../../../src/assets/styles/variables" as vars;
+@use "../../../src/assets/styles/font-files";
+@use "../../../src/assets/styles/resets";
 @import "prismjs/themes/prism.css";
-$font-path: "../../../src/assets/fonts";
-@import "../src/app/styles/themes";
-@import "../../../src/assets/styles/variables";
-@import "../../../src/assets/styles/font-files";
-@import "../../../src/assets/styles/resets";
 @import "./app/shared/payment/_payment.component.scss";
+$font-path: "../../../src/assets/fonts";
+
+html {
+  color-scheme: light dark;
+  @include mat.theme(
+    (
+      color: custom-theme.$primary-palette,
+      typography: vars.$font-sans-serif,
+    )
+  );
+}
+
+// Brand color override
+@media (prefers-color-scheme: dark) {
+  :root {
+    --mat-sys-primary: #d94a5f;
+    --mat-sys-on-primary: #ffffff;
+    --mat-sys-error: #f54e6f;
+  }
+}
 
 // Common styles for Angular Material. Included so that we only have to load a
 // single CSS file for Angular Material in our app.
@@ -18,21 +37,76 @@ $font-path: "../../../src/assets/fonts";
 //  If you don't need the default component typographies but still want the hierarchy styles,
 //  you can delete this line and instead use:
 //    `@include mat.legacy-typography-hierarchy($custom-typography);`
-@include mat.elevation-classes();
-@include mat.app-background();
+
+$custom-typography: mat.m2-define-typography-config(
+  $font-family: vars.$font-sans-serif,
+  $headline-1: mat.m2-define-typography-level(
+      56px,
+      65px,
+      700,
+      vars.$font-sans-serif,
+      -0.05em
+    ),
+  $headline-2: mat.m2-define-typography-level(
+      45px,
+      55px,
+      700,
+      vars.$font-sans-serif,
+      -0.035em
+    ),
+  $headline-3: mat.m2-define-typography-level(
+      34px,
+      40px,
+      700,
+      vars.$font-sans-serif,
+      -0.02em
+    ),
+  $headline-4: mat.m2-define-typography-level(
+      24px,
+      30px,
+      700,
+      vars.$font-sans-serif,
+      -0.02em
+    ),
+  $subtitle-1: mat.m2-define-typography-level(
+      15px,
+      24px,
+      500,
+      vars.$font-sans-serif
+    ),
+  $subtitle-2: mat.m2-define-typography-level(
+      16px,
+      28px,
+      500,
+      vars.$font-sans-serif
+    ),
+  $body-1: mat.m2-define-typography-level(
+      16px,
+      24px,
+      400,
+      vars.$font-sans-serif
+    ),
+  $body-2: mat.m2-define-typography-level(
+      16px,
+      24px,
+      400,
+      vars.$font-sans-serif
+    ),
+  $button: mat.m2-define-typography-level(
+      14px,
+      14px,
+      500,
+      vars.$font-sans-serif
+    ),
+  $caption: mat.m2-define-typography-level(
+      12px,
+      13.5px,
+      400,
+      vars.$font-sans-serif
+    ),
+);
+
 @include mat.all-component-typographies($custom-typography);
-@include mat.card-typography($custom-card-typography);
-
-// Include theme styles for core and each component used in your app.
-// Alternatively, you can import and @include the theme mixins for each component
-// that you are using.
-@include mat.m2-theme($candy-app-theme);
-
-// Responsive type maybe?
-@media screen and (max-width: 767px) {
-  @include mat.all-component-typographies($mobile-typography);
-  @include mat.card-typography($custom-card-typography);
-}
 
 app-root,
 app-root-scully {
@@ -42,7 +116,7 @@ app-root-scully {
 }
 
 mat-card-content {
-  font-family: $font-sans-serif;
+  font-family: vars.$font-sans-serif;
 }
 
 body.loaded app-root {
@@ -50,13 +124,13 @@ body.loaded app-root {
 }
 
 a {
-  color: $amaranth;
+  color: var(--mat-sys-primary);
   font-weight: 500;
 }
 
 .fancy {
   color: white;
-  background: $amaranth;
+  background: var(--mat-sys-primary);
   background: -webkit-linear-gradient(to left, #8a2387, #e94057, #f27121);
   background: linear-gradient(to left, #8a2387, #e94057, #f27121);
   background-clip: border-box;
@@ -130,14 +204,7 @@ a {
     }
   }
 
-  h1 {
-    @extend .mat-headline-2;
-  }
-
   h2 {
-    @extend .mat-headline-3;
-    margin: 0.75em 0 0.5em;
-
     a {
       color: inherit;
       font-weight: inherit;
@@ -146,7 +213,6 @@ a {
   }
 
   h3 {
-    @extend .mat-headline-4;
     margin: 0.75em 0 0.5em;
 
     a {
