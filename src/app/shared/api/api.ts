@@ -57,16 +57,19 @@ export function handleError(
   return { detail: [{ msg: UNHANDLED_ERROR }] };
 }
 
-const customMiddleware: Middleware = {
+const csrfMiddleware: Middleware = {
   async onRequest({ request }) {
     if (["DELETE", "POST", "PUT", "PATCH"].includes(request.method)) {
       request.headers.set("X-CSRFToken", getCSRFToken()!);
     }
     return request;
   },
+};
+
+const authErrorResponseMiddleware: Middleware = {
   async onResponse({ response, schemaPath }) {
     if (schemaPath === "/_allauth/browser/v1/auth/session") {
-      return undefined;
+      return;
     }
     if (
       (response.status === 401 && response.statusText === "Unauthorized") ||
@@ -89,4 +92,5 @@ if (baseElement) {
 }
 export type apiPaths = paths & allauthPaths;
 export const client = createClient<apiPaths>(options);
-client.use(customMiddleware);
+client.use(csrfMiddleware);
+client.use(authErrorResponseMiddleware);
