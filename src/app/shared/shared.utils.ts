@@ -69,7 +69,7 @@ export const iconDictionary: { [key: string]: string } = {
   debian: osPath("DEB"),
 
   /** Frameworks */
-  php: localPath("php", "jpg"),
+  php: localPath("php", "png"),
   mono: localPath("mono"),
   netcore: localPath("dotnetcore"),
   netframework: localPath("dotnetframework"),
