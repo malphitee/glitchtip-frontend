@@ -15,6 +15,7 @@ import { provideClientHydration } from "@angular/platform-browser";
 import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
 import { provideMarkdown } from "ngx-markdown";
 import { provideHttpClient, withFetch } from "@angular/common/http";
+import { SANITIZE } from "ngx-markdown";
 
 const scrollConfig: InMemoryScrollingOptions = {
   scrollPositionRestoration: "top",
@@ -32,7 +33,10 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withFetch()),
     provideMarkdown({
       // Necessary so attributes don't get scrubbed from html elements
-      sanitize: SecurityContext.STYLE,
+      sanitize: {
+        provide: SANITIZE,
+        useValue: SecurityContext.STYLE,
+      },
     }),
     provideClientHydration(),
   ],

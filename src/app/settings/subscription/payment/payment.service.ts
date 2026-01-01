@@ -6,7 +6,6 @@ import { SettingsService } from "src/app/api/settings.service";
 import { client } from "src/app/shared/api/api";
 
 import { components } from "src/app/api/api-schema";
-import { loadStripe } from "@stripe/stripe-js";
 import { apiResource } from "src/app/shared/api/api-resource-factory";
 
 type Organization = components["schemas"]["OrganizationDetailSchema"];
@@ -126,9 +125,7 @@ export class PaymentService extends StatefulService<PaymentState> {
       throw error;
     }
     if (stripePublicKey) {
-      return loadStripe(stripePublicKey).then((stripe) =>
-        stripe?.redirectToCheckout({ sessionId: data.id }),
-      );
+      window.location.href = (data as any).url;
     }
     return data;
   }
