@@ -28,6 +28,7 @@
     "openapi-typescript-allauth": "openapi-typescript http://localhost:8000/_allauth/openapi.json -o src/app/api/allauth-schema.d.ts"
   },
   "dependencies": {
+    "@angular/animations": "~21.0.6",
     "@angular/cdk": "~21.0.5",
     "@angular/common": "~21.0.6",
     "@angular/compiler": "~21.0.6",
@@ -116,15 +117,16 @@
     "xliff": "^6.2.2"
   },
   "overrides": {
-    "@swimlane/ngx-charts": {
-      "@angular/common": "$@angular/common",
-      "@angular/core": "$@angular/core",
-      "@angular/cdk": "$@angular/cdk",
-      "@angular/forms": "$@angular/forms",
-      "@angular/localize": "$@angular/localize",
-      "@angular/animations": "$@angular/animations",
-      "@angular/platform-browser": "$@angular/platform-browser",
-      "@angular/platform-browser-dynamic": "$@angular/platform-browser-dynamic"
-    }
+    "@angular/animations": "$@angular/animations",
+    "@angular/common": "$@angular/common",
+    "@angular/compiler": "$@angular/compiler",
+    "@angular/core": "$@angular/core",
+    "@angular/forms": "$@angular/forms",
+    "@angular/platform-browser": "$@angular/platform-browser",
+    "@angular/platform-browser-dynamic": "$@angular/platform-browser-dynamic",
+    "@angular/router": "$@angular/router",
+    "@angular/cdk": "$@angular/cdk",
+    "@angular/material": "$@angular/material",
+    "rxjs": "$rxjs"
   }
 }
