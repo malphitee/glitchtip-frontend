@@ -4,7 +4,6 @@ import {
   inject,
   computed,
 } from "@angular/core";
-import { toObservable } from "@angular/core/rxjs-interop";
 import { Router } from "@angular/router";
 import { MainNavService } from "../main-nav.service";
 import { SettingsService } from "src/app/api/settings.service";
@@ -185,8 +184,6 @@ export class MainNavComponent {
       return node;
     });
   });
-
-  menuData$ = toObservable(this.menuData);
 
   async logout() {
     await this.auth.logout();
