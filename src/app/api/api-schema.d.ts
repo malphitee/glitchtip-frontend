@@ -3896,8 +3896,8 @@ export interface components {
         SubscriptionStatus: "incomplete" | "incomplete_expired" | "trialing" | "active" | "past_due" | "canceled" | "unpaid" | "paused";
         /** StripeCheckoutSessionSchema */
         StripeCheckoutSessionSchema: {
-            /** Id */
-            id: string;
+            /** Url */
+            url: string;
         };
         /** PriceIDSchema */
         PriceIDSchema: {

@@ -2,7 +2,6 @@ import { computed, Injectable, inject } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
-import { SettingsService } from "src/app/api/settings.service";
 import { client } from "src/app/shared/api/api";
 
 import { components } from "src/app/api/api-schema";
@@ -26,11 +25,9 @@ const initialState: PaymentState = {
   providedIn: "root",
 })
 export class PaymentService extends StatefulService<PaymentState> {
-  private settingsService = inject(SettingsService);
   private snackBar = inject(MatSnackBar);
   private router = inject(Router);
 
-  stripePublicKey = this.settingsService.stripePublicKey;
   readonly subscriptionCreationLoadingId = computed(
     () => this.state().subscriptionCreationLoadingId,
   );
@@ -104,7 +101,6 @@ export class PaymentService extends StatefulService<PaymentState> {
     orgSlug: string,
     priceId: string,
   ) {
-    const stripePublicKey = this.stripePublicKey();
     const { data, error, response } = await client.POST(
       "/api/0/stripe/organizations/{organization_slug}/create-stripe-subscription-checkout/",
       {
@@ -124,9 +120,7 @@ export class PaymentService extends StatefulService<PaymentState> {
       );
       throw error;
     }
-    if (stripePublicKey) {
-      window.location.href = (data as any).url;
-    }
+    window.location.href = data.url;
     return data;
   }
 
