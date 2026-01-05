@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from "@angular/core";
+import { Component, OnInit, inject, effect } from "@angular/core";
 import {
   Validators,
   ReactiveFormsModule,
@@ -10,7 +10,6 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatCardModule } from "@angular/material/card";
-import { toObservable } from "@angular/core/rxjs-interop";
 import { MarkdownComponent, provideMarkdown } from "ngx-markdown";
 import { FormErrorComponent } from "../shared/forms/form-error/form-error.component";
 import { LoginWebAuthnComponent } from "./login-webauthn/login-webauthn.component";
@@ -76,9 +75,10 @@ export class LoginComponent
   constructor() {
     const service = inject(LoginService);
 
-    toObservable(service.fieldErrors).subscribe((fieldErrors) =>
-      mapFormErrors(fieldErrors, this.form),
-    );
+    effect(() => {
+      mapFormErrors(service.fieldErrors(), this.form);
+    });
+
     super(service);
 
     this.service = service;
