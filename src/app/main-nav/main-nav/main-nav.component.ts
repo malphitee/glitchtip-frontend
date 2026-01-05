@@ -4,10 +4,10 @@ import {
   inject,
   computed,
   signal,
-  WritableSignal,
 } from "@angular/core";
-import { toObservable, takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { Router } from "@angular/router";
+import { toSignal } from "@angular/core/rxjs-interop";
+import { Router, NavigationEnd } from "@angular/router";
+import { filter, startWith } from "rxjs/operators";
 import { MainNavService } from "../main-nav.service";
 import { SettingsService } from "src/app/api/settings.service";
 import { UserService } from "src/app/api/user/user.service";
@@ -16,7 +16,6 @@ import { MatCardModule } from "@angular/material/card";
 import { MatListModule } from "@angular/material/list";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatButtonModule } from "@angular/material/button";
-import { MatTreeModule } from "@angular/material/tree";
 import { MatIconModule } from "@angular/material/icon";
 import { RouterLink, RouterLinkActive } from "@angular/router";
 import { MatToolbarModule } from "@angular/material/toolbar";
@@ -25,55 +24,19 @@ import { MatMenuModule } from "@angular/material/menu";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { AuthService } from "src/app/auth.service";
 import { OrganizationsService } from "src/app/api/organizations.service";
-import { NavigationEnd } from "@angular/router";
 import {
   MatSelect,
   MatSelectChange,
   MatSelectModule,
 } from "@angular/material/select";
 
-interface NavNode {
+interface NavItem {
   name: string;
-  icon?: string;
-  route?: string[];
+  icon: string;
+  route: string[];
   requiresBilling?: boolean;
-  requiresActiveOrg?: boolean;
-  children?: NavNode[];
-  useExactRoute?: boolean;
+  exactRoute?: boolean;
 }
-
-const MENU_DATA: NavNode[] = [
-  {
-    name: $localize`Issues`,
-    icon: "breaking_news",
-    route: ["org_slug", "issues"],
-    requiresActiveOrg: true,
-  },
-  {
-    name: $localize`Uptime Monitors`,
-    icon: "share_eta",
-    route: ["org_slug", "uptime-monitors"],
-    requiresActiveOrg: true,
-  },
-  {
-    name: $localize`Performance`,
-    icon: "avg_pace",
-    route: ["org_slug", "performance"],
-    requiresActiveOrg: true,
-  },
-  {
-    name: $localize`Projects`,
-    icon: "team_dashboard",
-    route: ["org_slug", "projects"],
-    requiresActiveOrg: true,
-  },
-  {
-    name: $localize`Releases`,
-    icon: "rocket_launch",
-    route: ["org_slug", "releases"],
-    requiresActiveOrg: true,
-  },
-];
 
 @Component({
   selector: "gt-main-nav",
@@ -83,7 +46,6 @@ const MENU_DATA: NavNode[] = [
   imports: [
     MatSidenavModule,
     MatToolbarModule,
-    MatTreeModule,
     MatIconModule,
     RouterLink,
     MatButtonModule,
@@ -105,26 +67,125 @@ export class MainNavComponent {
   private settingsService = inject(SettingsService);
   private userService = inject(UserService);
 
-  currentUrl = signal(this.router.url);
-
-  constructor() {
-    this.router.events.pipe(takeUntilDestroyed()).subscribe((event) => {
-      if (event instanceof NavigationEnd) {
-        const navEnd = event as NavigationEnd;
-        this.currentUrl.set(navEnd.urlAfterRedirects);
-      }
-    });
-  }
-
-  isInOrganizationSection = computed(() =>
-    this.currentUrl().includes("/settings"),
+  private navigationSignal = toSignal(
+    this.router.events.pipe(
+      filter((event) => event instanceof NavigationEnd),
+      startWith(this.router.url),
+    ),
   );
 
-  isInProfileSection = computed(() => this.currentUrl().includes("/profile"));
+  navItems: NavItem[] = [
+    {
+      name: $localize`Issues`,
+      icon: "breaking_news",
+      route: ["org_slug", "issues"],
+    },
+    {
+      name: $localize`Uptime Monitors`,
+      icon: "share_eta",
+      route: ["org_slug", "uptime-monitors"],
+    },
+    {
+      name: $localize`Performance`,
+      icon: "avg_pace",
+      route: ["org_slug", "performance"],
+    },
+    {
+      name: $localize`Projects`,
+      icon: "team_dashboard",
+      route: ["org_slug", "projects"],
+    },
+    {
+      name: $localize`Releases`,
+      icon: "rocket_launch",
+      route: ["org_slug", "releases"],
+    },
+  ];
 
-  isCollapsed: WritableSignal<boolean> = signal(false);
+  orgMenuItems: NavItem[] = [
+    {
+      name: $localize`General settings`,
+      icon: "settings",
+      route: ["org_slug", "settings"],
+      exactRoute: true,
+    },
+    {
+      name: $localize`Projects`,
+      icon: "folder",
+      route: ["org_slug", "settings", "projects"],
+    },
+    {
+      name: $localize`Subscription`,
+      icon: "payment",
+      route: ["org_slug", "settings", "subscription"],
+      requiresBilling: true,
+    },
+    {
+      name: $localize`Teams`,
+      icon: "groups",
+      route: ["org_slug", "settings", "teams"],
+    },
+    {
+      name: $localize`Members`,
+      icon: "people",
+      route: ["org_slug", "settings", "members"],
+    },
+  ];
 
-  childrenAccessor = (node: NavNode) => node.children ?? [];
+  profileMenuItems: NavItem[] = [
+    {
+      name: $localize`Account`,
+      icon: "person",
+      route: ["/profile"],
+      exactRoute: true,
+    },
+    {
+      name: $localize`MFA`,
+      icon: "security",
+      route: ["/profile", "multi-factor-auth"],
+    },
+    {
+      name: $localize`Notifications`,
+      icon: "notifications",
+      route: ["/profile", "notifications"],
+    },
+    {
+      name: $localize`Auth Tokens`,
+      icon: "vpn_key",
+      route: ["/profile", "auth-tokens"],
+    },
+  ];
+
+  visibleOrgMenuItems = computed(() => {
+    return this.orgMenuItems.filter(
+      (item) => !item.requiresBilling || this.billingEnabled(),
+    );
+  });
+
+  isInOrganizationSection = computed(() => {
+    this.navigationSignal();
+    const orgSlug = this.activeOrganizationSlug();
+    return orgSlug
+      ? this.router.isActive(`/${orgSlug}/settings`, {
+          paths: "subset",
+          queryParams: "ignored",
+          fragment: "ignored",
+          matrixParams: "ignored",
+        })
+      : false;
+  });
+
+  isInProfileSection = computed(() => {
+    this.navigationSignal();
+    return this.router.isActive("/profile", {
+      paths: "subset",
+      queryParams: "ignored",
+      fragment: "ignored",
+      matrixParams: "ignored",
+    });
+  });
+
+  isCollapsed = signal(false);
 
   getRouteWithOrgSlug(route: string[]) {
     return route.map((item) =>
@@ -156,18 +217,6 @@ export class MainNavComponent {
       this.userService.user() ||
       this.organizationsService.organizationsCount(),
   );
-
-  menuData = computed(() => {
-    const billingEnabled = this.billingEnabled();
-    return MENU_DATA.map((node) => {
-      if (node.children && !billingEnabled) {
-        node.children = node.children.filter((child) => !child.requiresBilling);
-      }
-      return node;
-    });
-  });
-
-  menuData$ = toObservable(this.menuData);
 
   async logout() {
     await this.auth.logout();

@@ -38,7 +38,17 @@ mat-nav-list {
 }
 
 .active-section {
-  border-left: 4px solid var(--mat-sys-primary);
+  background-color: var(--mat-sys-primary);
+
+  .mdc-list-item__primary-text,
+  span[matListItemTitle],
+  mat-icon {
+    color: var(--mat-sys-on-primary);
+  }
+
+  .arrow-icon {
+    color: var(--mat-sys-on-primary);
+  }
 }
 
 .active-menu-item {
@@ -74,7 +84,7 @@ mat-sidenav {
 
     mat-list-item {
       justify-content: center;
-      padding: 0 !important;
+      padding: 0;
     }
 
     [matListItemMeta] {
@@ -92,14 +102,6 @@ mat-sidenav {
   }
 }
 
-mat-tree-node {
-  margin-bottom: 16px;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-}
-
 .logo-toolbar {
   height: fit-content;
   padding-top: 16px;
@@ -112,6 +114,9 @@ mat-tree-node {
 
   .collapse-toggle {
     margin-right: 8px;
+    @media screen and (max-width: variables.$small) {
+      display: none;
+    }
   }
 }
 
@@ -156,16 +161,12 @@ mat-tree-node {
 
 mat-list-item {
   .arrow-icon {
-    transition: color 200ms ease-in-out;
+    transition:
+      transform 200ms ease-in-out,
+      color 200ms ease-in-out;
   }
 
   &[aria-expanded="true"] .arrow-icon {
-    color: var(--mat-sys-primary);
+    transform: rotate(180deg);
   }
-}
-
-// This makes the dropdown menus the full size of the sidenav
-::ng-deep .mat-mdc-menu-panel.nav-menu {
-  max-width: none !important;
-  width: 220px !important;
 }

@@ -80,47 +80,32 @@
         </mat-form-field>
       }
       <mat-nav-list>
-        <mat-tree
-          #tree
-          [dataSource]="menuData$"
-          [childrenAccessor]="childrenAccessor"
-        >
-          <!-- Default template for navigable items -->
-          <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
-            @if (activeOrganization() || !node.requiresActiveOrg) {
-              <a
-                mat-list-item
-                [routerLink]="getRouteWithOrgSlug(node.route)"
-                routerLinkActive
-                [routerLinkActiveOptions]="{
-                  exact: node.useExactRoute ?? false,
-                }"
-                #issuesLink="routerLinkActive"
-                [activated]="issuesLink.isActive"
-                [matTooltip]="node.name"
-                [matTooltipDisabled]="!isCollapsed()"
-                matTooltipPosition="right"
-              >
-                @if (node.icon) {
-                  <mat-icon matListItemIcon>{{ node.icon }}</mat-icon>
-                }
-                <span class="nav-text">{{ node.name }}</span>
-              </a>
-            } @else {
-              <mat-list-item
-                disabled
-                [matTooltip]="node.name"
-                [matTooltipDisabled]="!isCollapsed()"
-                matTooltipPosition="right"
-              >
-                @if (node.icon) {
-                  <mat-icon matListItemIcon>{{ node.icon }}</mat-icon>
-                }
-                <span class="nav-text">{{ node.name }}</span>
-              </mat-list-item>
-            }
-          </mat-tree-node>
-        </mat-tree>
+        <!-- Main nav items -->
+        @for (item of navItems; track item.route) {
+          @if (activeOrganization()) {
+            <a
+              mat-list-item
+              [routerLink]="getRouteWithOrgSlug(item.route)"
+              routerLinkActive="mdc-list-item--activated"
+              [matTooltip]="item.name"
+              [matTooltipDisabled]="!isCollapsed()"
+              matTooltipPosition="right"
+            >
+              <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+              <span class="nav-text">{{ item.name }}</span>
+            </a>
+          } @else {
+            <mat-list-item
+              disabled
+              [matTooltip]="item.name"
+              [matTooltipDisabled]="!isCollapsed()"
+              matTooltipPosition="right"
+            >
+              <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+              <span class="nav-text">{{ item.name }}</span>
+            </mat-list-item>
+          }
+        }
 
         <mat-divider class="nav-section-divider"></mat-divider>
 
@@ -129,13 +114,13 @@
           [matMenuTriggerFor]="orgMenu"
           [disabled]="!activeOrganization()"
           [class.active-section]="isInOrganizationSection()"
-          [matTooltip]="'Organization'"
+          matTooltip="Organization"
           [matTooltipDisabled]="!isCollapsed()"
           matTooltipPosition="right"
           i18n-matTooltip
         >
           <mat-icon matListItemIcon>account_tree</mat-icon>
-          <span matListItemTitle class="nav-text">Organization</span>
+          <span matListItemTitle class="nav-text" i18n>Organization</span>
           <div matListItemMeta>
             <mat-icon class="arrow-icon">arrow_drop_down</mat-icon>
           </div>
@@ -145,108 +130,47 @@
         <mat-list-item
           [matMenuTriggerFor]="profileMenu"
           [class.active-section]="isInProfileSection()"
-          [matTooltip]="'Profile'"
+          matTooltip="Profile"
           [matTooltipDisabled]="!isCollapsed()"
           matTooltipPosition="right"
           i18n-matTooltip
         >
           <mat-icon matListItemIcon>account_circle</mat-icon>
-          <span matListItemTitle class="nav-text">Profile</span>
+          <span matListItemTitle class="nav-text" i18n>Profile</span>
           <div matListItemMeta>
             <mat-icon class="arrow-icon">arrow_drop_down</mat-icon>
           </div>
         </mat-list-item>
       </mat-nav-list>
+
       <mat-menu #orgMenu="matMenu" class="nav-menu" xPosition="after">
         @if (activeOrganization()) {
-          <button
-            mat-menu-item
-            [routerLink]="getRouteWithOrgSlug(['org_slug', 'settings'])"
-            routerLinkActive="active-menu-item"
-            [routerLinkActiveOptions]="{ exact: true }"
-          >
-            <mat-icon>settings</mat-icon>
-            <span i18n>General settings</span>
-          </button>
-          <button
-            mat-menu-item
-            [routerLink]="
-              getRouteWithOrgSlug(['org_slug', 'settings', 'projects'])
-            "
-            routerLinkActive="active-menu-item"
-          >
-            <mat-icon>folder</mat-icon>
-            <span i18n>Projects</span>
-          </button>
-          @if (billingEnabled()) {
+          @for (item of visibleOrgMenuItems(); track item.route) {
             <button
               mat-menu-item
-              [routerLink]="
-                getRouteWithOrgSlug(['org_slug', 'settings', 'subscription'])
-              "
+              [routerLink]="getRouteWithOrgSlug(item.route)"
               routerLinkActive="active-menu-item"
+              [routerLinkActiveOptions]="{ exact: item.exactRoute ?? false }"
             >
-              <mat-icon>payment</mat-icon>
-              <span i18n>Subscription</span>
+              <mat-icon>{{ item.icon }}</mat-icon>
+              <span>{{ item.name }}</span>
             </button>
           }
-          <button
-            mat-menu-item
-            [routerLink]="
-              getRouteWithOrgSlug(['org_slug', 'settings', 'teams'])
-            "
-            routerLinkActive="active-menu-item"
-          >
-            <mat-icon>groups</mat-icon>
-            <span i18n>Teams</span>
-          </button>
-          <button
-            mat-menu-item
-            [routerLink]="
-              getRouteWithOrgSlug(['org_slug', 'settings', 'members'])
-            "
-            routerLinkActive="active-menu-item"
-          >
-            <mat-icon>people</mat-icon>
-            <span i18n>Members</span>
-          </button>
         }
       </mat-menu>
 
       <mat-menu #profileMenu="matMenu" class="nav-menu" xPosition="after">
-        <button
-          mat-menu-item
-          [routerLink]="['/profile']"
-          routerLinkActive="active-menu-item"
-          [routerLinkActiveOptions]="{ exact: true }"
-        >
-          <mat-icon>person</mat-icon>
-          <span i18n>Account</span>
-        </button>
-        <button
-          mat-menu-item
-          [routerLink]="['/profile', 'multi-factor-auth']"
-          routerLinkActive="active-menu-item"
-        >
-          <mat-icon>security</mat-icon>
-          <span i18n>MFA</span>
-        </button>
-        <button
-          mat-menu-item
-          [routerLink]="['/profile', 'notifications']"
-          routerLinkActive="active-menu-item"
-        >
-          <mat-icon>notifications</mat-icon>
-          <span i18n>Notifications</span>
-        </button>
-        <button
-          mat-menu-item
-          [routerLink]="['/profile', 'auth-tokens']"
-          routerLinkActive="active-menu-item"
-        >
-          <mat-icon>vpn_key</mat-icon>
-          <span i18n>Auth Tokens</span>
-        </button>
+        @for (item of profileMenuItems; track item.route) {
+          <button
+            mat-menu-item
+            [routerLink]="item.route"
+            routerLinkActive="active-menu-item"
+            [routerLinkActiveOptions]="{ exact: item.exactRoute ?? false }"
+          >
+            <mat-icon>{{ item.icon }}</mat-icon>
+            <span>{{ item.name }}</span>
+          </button>
+        }
         <mat-divider></mat-divider>
         <button mat-menu-item (click)="logout()">
           <mat-icon>logout</mat-icon>
