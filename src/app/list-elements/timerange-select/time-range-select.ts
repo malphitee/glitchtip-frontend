@@ -1,4 +1,4 @@
-import { CommonModule, formatDate } from "@angular/common";
+import { formatDate } from "@angular/common";
 import {
   Component,
   ChangeDetectionStrategy,
@@ -26,12 +26,11 @@ const NO_FILTER_TEXT = $localize`All times`;
   standalone: true,
   selector: "gt-time-range-select",
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule,
-  ],
+    MatSelectModule
+],
   templateUrl: "./time-range-select.html",
   styleUrl: "./time-range-select.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
