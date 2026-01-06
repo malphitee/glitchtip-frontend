@@ -37,7 +37,7 @@ test-e2e:
     CELERY_TASK_ALWAYS_EAGER: "true"
   services:
     - postgres
-    - name: registry.gitlab.com/glitchtip/glitchtip-backend:master
+    - name: registry.gitlab.com/glitchtip/glitchtip-backend:test-seed-endpoint
       alias: backend
       command: ["./bin/run-all-in-one.sh"]
   image:
