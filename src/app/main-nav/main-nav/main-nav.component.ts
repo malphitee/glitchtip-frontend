@@ -5,9 +5,7 @@ import {
   computed,
   signal,
 } from "@angular/core";
-import { toSignal } from "@angular/core/rxjs-interop";
-import { Router, NavigationEnd } from "@angular/router";
-import { filter, startWith } from "rxjs/operators";
+import { Router } from "@angular/router";
 import { MainNavService } from "../main-nav.service";
 import { SettingsService } from "src/app/api/settings.service";
 import { UserService } from "src/app/api/user/user.service";
@@ -66,13 +64,6 @@ export class MainNavComponent {
   private auth = inject(AuthService);
   private settingsService = inject(SettingsService);
   private userService = inject(UserService);
-
-  private navigationSignal = toSignal(
-    this.router.events.pipe(
-      filter((event) => event instanceof NavigationEnd),
-      startWith(this.router.url),
-    ),
-  );
 
   navItems: NavItem[] = [
     {
@@ -160,29 +151,6 @@ export class MainNavComponent {
     return this.orgMenuItems.filter(
       (item) => !item.requiresBilling || this.billingEnabled(),
     );
-  });
-
-  isInOrganizationSection = computed(() => {
-    this.navigationSignal();
-    const orgSlug = this.activeOrganizationSlug();
-    return orgSlug
-      ? this.router.isActive(`/${orgSlug}/settings`, {
-          paths: "subset",
-          queryParams: "ignored",
-          fragment: "ignored",
-          matrixParams: "ignored",
-        })
-      : false;
-  });
-
-  isInProfileSection = computed(() => {
-    this.navigationSignal();
-    return this.router.isActive("/profile", {
-      paths: "subset",
-      queryParams: "ignored",
-      fragment: "ignored",
-      matrixParams: "ignored",
-    });
   });
 
   isCollapsed = signal(false);

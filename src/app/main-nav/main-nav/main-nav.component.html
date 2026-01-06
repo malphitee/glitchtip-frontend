@@ -110,37 +110,68 @@
         <mat-divider class="nav-section-divider"></mat-divider>
 
         <!-- Organization menu item -->
-        <mat-list-item
-          [matMenuTriggerFor]="orgMenu"
-          [disabled]="!activeOrganization()"
-          [class.active-section]="isInOrganizationSection()"
-          matTooltip="Organization"
-          [matTooltipDisabled]="!isCollapsed()"
-          matTooltipPosition="right"
-          i18n-matTooltip
+        <div
+          routerLinkActive
+          [routerLinkActiveOptions]="{
+            paths: 'subset',
+            queryParams: 'ignored',
+            fragment: 'ignored',
+            matrixParams: 'ignored',
+          }"
+          #orgWrapper="routerLinkActive"
         >
-          <mat-icon matListItemIcon>account_tree</mat-icon>
-          <span matListItemTitle class="nav-text" i18n>Organization</span>
-          <div matListItemMeta>
-            <mat-icon class="arrow-icon">arrow_drop_down</mat-icon>
-          </div>
-        </mat-list-item>
+          <mat-list-item
+            [matMenuTriggerFor]="orgMenu"
+            [disabled]="!activeOrganization()"
+            [class.active-section]="orgWrapper.isActive"
+            matTooltip="Organization"
+            [matTooltipDisabled]="!isCollapsed()"
+            matTooltipPosition="right"
+            i18n-matTooltip
+          >
+            <mat-icon matListItemIcon>account_tree</mat-icon>
+            <span matListItemTitle class="nav-text" i18n>Organization</span>
+            <div matListItemMeta>
+              <mat-icon class="arrow-icon">arrow_drop_down</mat-icon>
+            </div>
+          </mat-list-item>
+          @for (item of visibleOrgMenuItems(); track item.route) {
+            <a
+              [routerLink]="getRouteWithOrgSlug(item.route)"
+              style="display: none"
+            ></a>
+          }
+        </div>
 
         <!-- Profile menu item -->
-        <mat-list-item
-          [matMenuTriggerFor]="profileMenu"
-          [class.active-section]="isInProfileSection()"
-          matTooltip="Profile"
-          [matTooltipDisabled]="!isCollapsed()"
-          matTooltipPosition="right"
-          i18n-matTooltip
+        <div
+          routerLinkActive
+          [routerLinkActiveOptions]="{
+            paths: 'subset',
+            queryParams: 'ignored',
+            fragment: 'ignored',
+            matrixParams: 'ignored',
+          }"
+          #profileWrapper="routerLinkActive"
         >
-          <mat-icon matListItemIcon>account_circle</mat-icon>
-          <span matListItemTitle class="nav-text" i18n>Profile</span>
-          <div matListItemMeta>
-            <mat-icon class="arrow-icon">arrow_drop_down</mat-icon>
-          </div>
-        </mat-list-item>
+          <mat-list-item
+            [matMenuTriggerFor]="profileMenu"
+            [class.active-section]="profileWrapper.isActive"
+            matTooltip="Profile"
+            [matTooltipDisabled]="!isCollapsed()"
+            matTooltipPosition="right"
+            i18n-matTooltip
+          >
+            <mat-icon matListItemIcon>account_circle</mat-icon>
+            <span matListItemTitle class="nav-text" i18n>Profile</span>
+            <div matListItemMeta>
+              <mat-icon class="arrow-icon">arrow_drop_down</mat-icon>
+            </div>
+          </mat-list-item>
+          @for (item of profileMenuItems; track item.route) {
+            <a [routerLink]="item.route" style="display: none"></a>
+          }
+        </div>
       </mat-nav-list>
 
       <mat-menu #orgMenu="matMenu" class="nav-menu" xPosition="after">
