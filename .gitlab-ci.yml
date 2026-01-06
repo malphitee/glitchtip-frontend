@@ -39,7 +39,7 @@ test-e2e:
     - postgres
     - name: registry.gitlab.com/glitchtip/glitchtip-backend:master
       alias: backend
-      command: ["./bin/run-migrate-and-runserver.sh"]
+      command: ["./bin/run-all-in-one.sh"]
   image:
     name: cypress/included:14.0.0
     entrypoint: [""]
