@@ -89,7 +89,7 @@
     "@types/qrcode": "^1.5.5",
     "@typescript-eslint/eslint-plugin": "^8.26.1",
     "@typescript-eslint/parser": "^8.26.1",
-    "@vitest/mocker": "4.0.16",
+    "@vitest/mocker": "^4.0.16",
     "babel-loader": "^10.0.0",
     "concurrently": "^6.0.0",
     "cypress": "^15.8.1",
