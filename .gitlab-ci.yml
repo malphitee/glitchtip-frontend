@@ -35,6 +35,7 @@ test-e2e:
   variables:
     ENABLE_ORGANIZATION_CREATION: "true"
     CELERY_TASK_ALWAYS_EAGER: "true"
+    CI_DEBUG_SERVICES: "true"
   services:
     - postgres
     - name: registry.gitlab.com/glitchtip/glitchtip-backend:test-seed-endpoint
