@@ -1,14 +1,15 @@
 @use "@angular/material" as mat;
 @use "./app/styles/_theme-colors" as custom-theme;
 @use "../../../src/assets/styles/variables" as vars;
-@use "../../../src/assets/styles/font-files";
+@use "../../../src/assets/styles/font-files" as main-font-files;
 @use "../../../src/assets/styles/resets";
+@use "app/styles/font-files" as marketing-font-files;
 @import "prismjs/themes/prism.css";
 @import "./app/shared/payment/_payment.component.scss";
 $font-path: "../../../src/assets/fonts";
 
 html {
-  color-scheme: light dark;
+  color-scheme: light;
   @include mat.theme(
     (
       color: custom-theme.$primary-palette,
@@ -18,12 +19,8 @@ html {
 }
 
 // Brand color override
-@media (prefers-color-scheme: dark) {
-  :root {
-    --mat-sys-primary: #d94a5f;
-    --mat-sys-on-primary: #ffffff;
-    --mat-sys-error: #f54e6f;
-  }
+:root {
+  --mat-sys-primary: #d94a5f;
 }
 
 // Common styles for Angular Material. Included so that we only have to load a
@@ -37,76 +34,6 @@ html {
 //  If you don't need the default component typographies but still want the hierarchy styles,
 //  you can delete this line and instead use:
 //    `@include mat.legacy-typography-hierarchy($custom-typography);`
-
-$custom-typography: mat.m2-define-typography-config(
-  $font-family: vars.$font-sans-serif,
-  $headline-1: mat.m2-define-typography-level(
-      56px,
-      65px,
-      700,
-      vars.$font-sans-serif,
-      -0.05em
-    ),
-  $headline-2: mat.m2-define-typography-level(
-      45px,
-      55px,
-      700,
-      vars.$font-sans-serif,
-      -0.035em
-    ),
-  $headline-3: mat.m2-define-typography-level(
-      34px,
-      40px,
-      700,
-      vars.$font-sans-serif,
-      -0.02em
-    ),
-  $headline-4: mat.m2-define-typography-level(
-      24px,
-      30px,
-      700,
-      vars.$font-sans-serif,
-      -0.02em
-    ),
-  $subtitle-1: mat.m2-define-typography-level(
-      15px,
-      24px,
-      500,
-      vars.$font-sans-serif
-    ),
-  $subtitle-2: mat.m2-define-typography-level(
-      16px,
-      28px,
-      500,
-      vars.$font-sans-serif
-    ),
-  $body-1: mat.m2-define-typography-level(
-      16px,
-      24px,
-      400,
-      vars.$font-sans-serif
-    ),
-  $body-2: mat.m2-define-typography-level(
-      16px,
-      24px,
-      400,
-      vars.$font-sans-serif
-    ),
-  $button: mat.m2-define-typography-level(
-      14px,
-      14px,
-      500,
-      vars.$font-sans-serif
-    ),
-  $caption: mat.m2-define-typography-level(
-      12px,
-      13.5px,
-      400,
-      vars.$font-sans-serif
-    ),
-);
-
-@include mat.all-component-typographies($custom-typography);
 
 app-root,
 app-root-scully {
@@ -190,6 +117,7 @@ a {
 
 .markdown-container {
   h1 {
+    @extend .mat-headline-2;
     display: inline-block;
     margin: 0.75em 0 0.5em;
 
@@ -205,6 +133,9 @@ a {
   }
 
   h2 {
+    @extend .mat-headline-3;
+    margin: 0.75em 0 0.5em;
+
     a {
       color: inherit;
       font-weight: inherit;
@@ -213,6 +144,7 @@ a {
   }
 
   h3 {
+    @extend .mat-headline-4;
     margin: 0.75em 0 0.5em;
 
     a {
