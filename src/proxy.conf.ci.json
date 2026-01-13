@@ -1,9 +1,7 @@
 {
   "/api": {
     "target": "http://backend:8000",
-    "secure": false,
-    "proxyTimeout": 240000,
-    "timeout": 240000
+    "secure": false
   },
   "/accounts": {
     "target": "http://backend:8000",

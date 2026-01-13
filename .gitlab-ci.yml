@@ -34,8 +34,6 @@ test-e2e:
   stage: test
   variables:
     ENABLE_ORGANIZATION_CREATION: "true"
-    CELERY_TASK_ALWAYS_EAGER: "true"
-    CI_DEBUG_SERVICES: "true"
     VALKEY_URL: ""
   services:
     - postgres
