@@ -37,7 +37,7 @@ test-e2e:
     VALKEY_URL: ""
   services:
     - postgres
-    - name: registry.gitlab.com/glitchtip/glitchtip-backend:test-seed-endpoint
+    - name: registry.gitlab.com/glitchtip/glitchtip-backend:master
       alias: backend
       command: ["./bin/run-all-in-one.sh"]
   image:
