@@ -176,6 +176,14 @@ export class MainNavComponent {
   );
 
   menuData = computed(() => {
+    // The nav tree data source doesn't update properly if the only change
+    // is to a node's children, so we hide the entire node until
+    // settings is loaded
+    if (!this.settingsService.initialLoad()) {
+      return MENU_DATA.filter(
+        (node) => !node.children?.find((child) => child.requiresBilling),
+      );
+    }
     const billingEnabled = this.billingEnabled();
     return MENU_DATA.map((node) => {
       if (node.children && !billingEnabled) {
