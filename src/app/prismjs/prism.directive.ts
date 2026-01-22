@@ -21,6 +21,7 @@ import "prismjs/components/prism-markup-templating";
 import "prismjs/components/prism-php";
 import "prismjs/components/prism-go";
 import "prismjs/components/prism-rust";
+import "prismjs/components/prism-swift";
 
 @Directive({
   selector: "[gtPrism]",

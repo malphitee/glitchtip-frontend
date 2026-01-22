@@ -36,12 +36,19 @@
         >
       }
       @if (frame.function) {
-        in
+        @if (!isMangledSwiftName(frame.function, frame.platform)) {
+          in
+        }
       }
     }
     <!-- TODO: Add rawFunction conditions-->
     @if (frame.function) {
-      {{ frame.function }}
+      @if (!isMangledSwiftName(frame.function, frame.platform)) {
+        {{ frame.function }}
+      } @else if (!frame.filename && !frame.module) {
+        <!-- Show mangled name if there's nothing else to display -->
+        {{ frame.function }}
+      }
     }
     @if (frame.lineNo && frame.lineNo > 0) {
       at line {{ frame.lineNo }}
@@ -49,8 +56,8 @@
         :{{ frame.colNo }}
       }
     }
-    @if (frame.package) {
-      within {{ frame.package }}
+    @if (frame.package && !isIosPlatform(frame.platform)) {
+      within {{ cleanPackagePath(frame.package, frame.platform) }}
     }
     <!--origAbsPath not in frame docs
     code: https://gitlab.com/glitchtip/sentry-open-source/sentry/-/blob/master/src/sentry/static/sentry/app/components/events/interfaces/frame.jsx#L245
