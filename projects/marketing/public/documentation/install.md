@@ -6,10 +6,10 @@ Not sure which? Elestio, Pikapods, and Nodion all support GlitchTip via a revenu
 
 ### System Requirements
 
-GlitchTip requires PostgreSQL (14+), a web service, and a worker service. Valkey (or redis) is optional.
+GlitchTip requires PostgreSQL (14+), a web service, and a worker service. Valkey (or redis) 7+ is optional.
 
-- Recommended system requirements: 1GB RAM, x86 or arm64 CPU
-- Minimum system requirements: 256MB RAM + swap when using all-in-one setup.
+- Recommended system requirements: 512 MB RAM, x86 or arm64 CPU
+- Minimum system requirements: 256 MB RAM when using all-in-one setup. Careful configuration will allow 128 MB + swap.
 
 Disk usage varies on usage and event size. As a rough guide, a 1 million event per month instance may require 30GB of disk.
 
@@ -186,7 +186,7 @@ By default, the docker image tag is "latest". Click Deploy to upgrade to the lat
 
 ## Installing Without Docker
 
-This method is not recommended and assumes the reader knows how to deploy Django, Celery, SSL, and a web server. It requires manual upgrades.
+This method is not recommended and assumes the reader knows how to deploy Django, background task workers, SSL, and a web server. It requires manual upgrades.
 
 1. `git clone` or download the latest Django backend [release tag](https://gitlab.com/glitchtip/glitchtip-backend/-/tags). Take note of the version number.
 2. Download the latest frontend code at `wget https://gitlab.com/api/v4/projects/15449363/jobs/artifacts/<VERSION HERE>/download?job=build-assets -O assets.zip`. Replace the VERSION HERE with the same version from step 1. It must be exact, including the "v".
@@ -196,7 +196,7 @@ This method is not recommended and assumes the reader knows how to deploy Django
 6. Migrate the database with `./manage.py migrate`
 7. Collect static files `./manage.py collectstatic`
 8. Configure the Django application with your favorite web server such as nginx or apache. Ensure SSL is configured. See `./bin/*` for run scripts to use or as examples.
-9. Start celery with preferred init system. For example systemd or supervisor.
+9. Start the background worker with your preferred init system. For example systemd or supervisor. See `./bin/run-worker` for the worker command.
 
 To upgrade, follow the same steps with the latest version tag. Include migrating the database and collectstatic.
 
@@ -217,10 +217,9 @@ Optional environment variables:
 - `I_PAID_FOR_GLITCHTIP` [Donate](https://liberapay.com/GlitchTip/donate), set this to "true", and some neat things will happen. This won't enable extra features but it will enable our team to continue building GlitchTip. We pay programmers, designers, illustrators, and free tier hosting on app.glitchtip.com without venture capital. We ask that all self-host users pitch in with a suggested donation of $5 per month per user. Prefer an invoice and support instead? Business users can also consider a paid support plan. Reach out to us at sales@glitchtip.com. Contributors on [Gitlab](https://gitlab.com/glitchtip) should also enable this.
 - `GLITCHTIP_MAX_EVENT_LIFE_DAYS` (Default 90) Events and associated data older than this will be deleted.
 - `GLITCHTIP_MAX_TRANSACTION_EVENT_LIFE_DAYS` (Default to max event life days) Transaction events older than this will be deleted.
-- `GLITCHTIP_MAX_FILE_LIFE_DAYS` (Defaults to 2 \* max event life days) Files older than this will be deleted. Files with any reference to a recent event are excluded. For example, a year old file that is used for an active release with event data, will not be deleted.
-- `VALKEY_URL` Set valkey host explicitly. Example: `redis://:password@host:port/database`. You may also set them separately with `VALKEY_HOST`, `VALKEY_PORT`, `VALKEY_DATABASE`, and `VALKEY_PASSWORD`. For compability reasons, REDIS_* will also work. Set to empty string to disable VALKEY and utilize Postgres for celery broker, cache, and session storage.
+- `GLITCHTIP_MAX_FILE_LIFE_DAYS` (Defaults to max event life days) Files older than this will be deleted. Files with any reference to a recent event are excluded. For example, a year old file that is used for an active release with event data, will not be deleted.
+- `VALKEY_URL` Set valkey host explicitly. Example: `redis://:password@host:port/database`. You may also set them separately with `VALKEY_HOST`, `VALKEY_PORT`, `VALKEY_DATABASE`, and `VALKEY_PASSWORD`. For compability reasons, REDIS_* will also work. Set to empty string to disable VALKEY and utilize Postgres for task queue, cache, and session storage.
 - `DATABASE_URL` Set PostgreSQL connect string. PostgreSQL 14 and above are supported.
-- `CELERY_BROKER_URL` set celery broker url explicitly. Defaults to `VALKEY_URL`
 - `CACHE_URL` use alternative cache backend for django, defaults to `VALKEY_URL`
 - Content Security Policy (CSP) headers are enabled by default. In most cases there is no need to change these. However, you may add environment variables as documented in [django-csp](https://django-csp.readthedocs.io/en/latest/configuration.html#policy-settings) to modify them. For example, set `CSP_DEFAULT_SRC='self',scripts.example.com` to modify the default CSP header. Note the usage of comma separated values and single quotes on certain values such as 'self'.
 - `ENABLE_USER_REGISTRATION` (Default True) When True, any user will be able to register through the self-signup. When False, user self-signup is disabled after the first user is registered. Subsequent users must use social apps if enabled or be created by a superuser on the backend and organization invitations may only be sent to existing users.
@@ -229,36 +228,25 @@ Optional environment variables:
 
 ### Server configuration
 
-Scaling GlitchTip? Review these uWSGI (web server) and Celery (worker) environment variables.
+Scaling GlitchTip? Review these granian (web server) and django-vtasks (worker) environment variables.
 
-- `UWSGI_WORKERS` - Number of web workers. Or Maximum number of workers when scaling.
-- `UWSGI_CHEAPER` - Minimum number of web workers when scaling.
-- `UWSGI_CHEAPER_INITIAL` - Initial number of web workers when scaling.
+- `VTASKS_CONCURRENCY` (Default 20) Number of concurrent asyncio background tasks to run.
+- `DATABASE_POOL_MAX_SIZE` (Default 20) psycopg connection pool size, consider setting it the same as vtasks concurrency. Be aware of your postgres connection limit.
+- `GRANIAN_WORKERS` (Default 1) Number of granian web workers to run. GlitchTip uses ASGI (async Python). Setting this higher is only recommended when not scaling horizontally. See more granian settings [here](https://github.com/emmett-framework/granian)
 
-See [more information](https://uwsgi-docs.readthedocs.io/en/latest/Configuration.html/) on uWSGI configuration.
+### Advanced settings for cache and tasks
 
-- `CELERY_WORKER_CONCURRENCY` - Number of concurrent celery workers. Defaults to number of CPU cores. Highly recommended to change. Our sample docker compose file defaults this to 2, to avoid unwanted and unnecessary scaling.
-- `CELERY_WORKER_AUTOSCALE` - Set to min,max concurrency scaling. Overrides CELERY_WORKER_CONCURRENCY. Example: 2,8 would instruct Celery to run between 2 and 8 concurrent workers. Memory is released when scaling down. Defaults to disabled.
-
-See [more information](https://docs.celeryq.dev/en/stable/django/first-steps-with-django.html) on Celery configuration.
-
-### Advanced settings for cache and celery
-
-By default, Valkey is used for the celery broker, cache, and sessions. Valkey data is important to be available but is not necessarily worth backing up. When Valkey is disabled, Postgres will be used instead. Redis is also likely to work, but less tested.
+By default, Valkey is used for the task queue, cache, and sessions. Valkey data is important to be available but is not necessarily worth backing up. When Valkey is disabled, Postgres will be used instead. Redis is also likely to work, but less tested.
 
 - `SESSION_ENGINE` Controls where Django stores session data [See Django documentation](https://docs.djangoproject.com/en/4.0/ref/settings/#std-setting-SESSION_ENGINE).
 - `SESSION_COOKIE_AGE` The age of session cookies, in seconds. Defaults to [Django default](https://docs.djangoproject.com/en/4.0/ref/settings/#std-setting-SESSION_COOKIE_AGE)
 
-If using Sentinel, additional settings are required. `VALKEY_URL` will not work with Sentinel. Set the following:
+If using Sentinel, set `VALKEY_URL` with the sentinel protocol. Example: `sentinel://localhost:26379/mymaster/1`. The task queue (django-vtasks) reuses the cache connection, so no separate broker configuration is needed.
 
-- `CELERY_BROKER_URL` Example: `"sentinel://:<password>@valkey:26379/0"`. Note the sentinel protocol. See [Celery documentation](https://docs.celeryq.dev/en/stable/getting-started/backends-and-brokers/redis.html).
-- `CELERY_BROKER_MASTER_NAME` Set to the master name. Defaults to the upstream default `mymaster`.
-- `CELERY_BROKER_SENTINEL_KWARGS_PASSWORD` Set when using a password with Sentinel
-- `CACHE_URL` Example `"redis://mymaster/1?client_class=django_valkey.client.SentinelClient&connection_pool_class=valkey.sentinel.SentinelConnectionPool&password=<password>` Password may be omitted if not using one. See [django-valkey documentation](https://django-valkey.readthedocs.io/). Take note how settings such as "PARSER_CLASS" map via the query parameter "parserClass".
-- `CACHE_SENTINEL_URL` Set to host:port of the sentinel instance. Do not include the protocol nor password. For example `valkey:26379`.
+- `CACHE_SENTINEL_URL` Set to host:port of the sentinel instance(s). Comma-separated for multiple. Do not include the protocol nor password. For example `valkey:26379` or `sentinel1:26379,sentinel2:26379`.
 - `CACHE_SENTINEL_PASSWORD` Set when using a password with Sentinel
 
-Other Celery broker and cache types may work but are not tested. Consider submitting a merge request to add support for your preferred solution.
+Other cache backends may work but are not tested. Consider submitting a merge request to add support for your preferred solution.
 
 ### Advanced database permissions
 
