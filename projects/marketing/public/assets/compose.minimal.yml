@@ -24,7 +24,7 @@ services:
   #  image: valkey/valkey:9
   #  restart: unless-stopped
   web:
-    image: glitchtip/glitchtip
+    image: glitchtip/glitchtip:6 # Check https://glitchtip.com/blog/ for new major versions
     depends_on: *default-depends_on
     ports:
       - "8000:8000"
