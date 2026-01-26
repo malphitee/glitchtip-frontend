@@ -49,6 +49,7 @@ test-e2e:
     - npm run e2e
   except:
     - tags
+    - marketing
   artifacts:
     when: always
     paths:
