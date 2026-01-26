@@ -40,7 +40,6 @@ We have standardized on Granian, a Rust-based HTTP server, as our default web se
 
 ## Breaking Changes
 
-[!IMPORTANT]
 We support all upgrades from GlitchTip 5.x to 6.x. If you are running 4.x or earlier, you should upgrade to 5 first. If you customize GlitchTip start commands or need to ensure migration of more than 10,000 events, read the migration section below.
 
 This release includes infrastructure changes that may require updates to customized deployment configuration:
@@ -55,9 +54,9 @@ This release includes infrastructure changes that may require updates to customi
 
 - **Port Consistency:** The container now uses port 8000 consistently. Check your load balancer or reverse proxy configs if you were relying on port 8080.
 
-- **Granian Configuration:** If using Granian (default), you may want to set the TRUSTED_PROXIES environment variable (defaults to *).
+- **Granian Configuration:** If using Granian (default), you may want to set the `TRUSTED_PROXIES` environment variable (defaults to *).
 
-- **Metrics Endpoint:** The optional metrics endpoint is now strictly available at /metrics and has been removed from the OpenAPI schema.
+- **Metrics Endpoint:** The optional metrics endpoint is now strictly available at `/metrics` and has been removed from the OpenAPI schema.
 
 - **Removed Servers:** Uvicorn and Gunicorn have been removed from our Docker image.
 
@@ -69,26 +68,29 @@ To migrate more data, set the environment variable `GLITCHTIP_RETAIN_LEGACY_DATA
 
 After migration, run: `./manage.py import_legacy_events --limit [number] --delete-source`.
 
-## Enterprise License
+## Support the Project
+
+### Enterprise License
 
 GlitchTip is independent, open source, and 100% user-funded. If you are a for-profit company using GlitchTip to monitor production systems, we expect you to purchase an Enterprise License.
 
 An Enterprise License provides:
 
-- Priority Support: Direct access to maintainers for architectural issues.
+- **Priority Support:** Direct access to maintainers for architectural issues.
 
-- Compliance: Formal invoices for your procurement team.
+- **Compliance:** Formal invoices for your procurement team.
 
-- Sustainability: Ensures the continued stability of the platform.
+- **Sustainability:** Ensures the continued stability of the platform.
 
-## Support the Project
+### Support the project
+
 - 🛡️ Get Enterprise Support (For Business)
 
 - 💖 Individual License (For Supporters)
 
 - 💸 Donate via [Liberapay](https://en.liberapay.com/GlitchTip). We currently receive $30.52 per week from 21 patrons.
 
-Community & Social
+### Community & Social
 
 - ⭐ on [GitLab](https://gitlab.com/glitchtip/glitchtip-backend/). Help us reach 400 stars!
 
