@@ -8,8 +8,8 @@ Not sure which? Elestio, Pikapods, and Nodion all support GlitchTip via a revenu
 
 GlitchTip requires PostgreSQL (14+), a web service, and a worker service. Valkey (or redis) is optional.
 
-- Recommended system requirements: 1GB RAM, x86 or arm64 CPU
-- Minimum system requirements: 256MB RAM + swap when using all-in-one setup.
+- Recommended system requirements: 512MB RAM, x86 or arm64 CPU
+- Minimum system requirements: 256MB RAM when using all-in-one setup. 128MB + swap is supported for low usage instances.
 
 Disk usage varies on usage and event size. As a rough guide, a 1 million event per month instance may require 30GB of disk.
 
