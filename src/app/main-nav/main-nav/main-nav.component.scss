@@ -13,12 +13,11 @@ mat-sidenav-container {
 mat-nav-list {
   padding: 10px;
 
-  > mat-list-item {
-    margin-bottom: 16px;
 
-    &:last-of-type {
-      margin-bottom: 0;
-    }
+
+  button[mat-list-item] {
+    border: none;
+    text-align: inherit;
   }
 
   .nav-section-divider {
@@ -159,7 +158,8 @@ mat-sidenav {
   }
 }
 
-mat-list-item {
+mat-list-item,
+button[mat-list-item] {
   .arrow-icon {
     transition:
       transform 200ms ease-in-out,

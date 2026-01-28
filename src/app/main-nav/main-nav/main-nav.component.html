@@ -120,7 +120,8 @@
           }"
           #orgWrapper="routerLinkActive"
         >
-          <mat-list-item
+          <button
+            mat-list-item
             [matMenuTriggerFor]="orgMenu"
             [disabled]="!activeOrganization()"
             [class.active-section]="orgWrapper.isActive"
@@ -134,7 +135,7 @@
             <div matListItemMeta>
               <mat-icon class="arrow-icon">arrow_drop_down</mat-icon>
             </div>
-          </mat-list-item>
+          </button>
           @for (item of visibleOrgMenuItems(); track item.route) {
             <a
               [routerLink]="getRouteWithOrgSlug(item.route)"
@@ -154,7 +155,8 @@
           }"
           #profileWrapper="routerLinkActive"
         >
-          <mat-list-item
+          <button
+            mat-list-item
             [matMenuTriggerFor]="profileMenu"
             [class.active-section]="profileWrapper.isActive"
             matTooltip="Profile"
@@ -167,7 +169,7 @@
             <div matListItemMeta>
               <mat-icon class="arrow-icon">arrow_drop_down</mat-icon>
             </div>
-          </mat-list-item>
+          </button>
           @for (item of profileMenuItems; track item.route) {
             <a [routerLink]="item.route" style="display: none"></a>
           }
