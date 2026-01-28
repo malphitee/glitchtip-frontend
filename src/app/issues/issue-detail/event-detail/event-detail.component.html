@@ -14,7 +14,7 @@
       <div>
         <h2>Event</h2>
         <p>
-          <a>{{ event?.eventID }}</a>
+          <a>{{ event?.id }}</a>
         </p>
         <p>
           @if (event?.dateCreated) {
@@ -28,7 +28,7 @@
               '/issues/' +
               event.groupID +
               '/events/' +
-              event?.eventID +
+              event?.id +
               '/json/'
             "
             >JSON</a
