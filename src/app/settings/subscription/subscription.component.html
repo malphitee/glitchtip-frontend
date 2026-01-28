@@ -108,6 +108,11 @@
                       </div>
                       <div>
                         <ul>
+                          <li i18n
+                            >Usage period:
+                            {{ subscription.subscriptionCycleStart | date }} to
+                            {{ subscription.subscriptionCycleEnd | date }}</li
+                          >
                           <li>
                             <b class="error" i18n>Issue events:</b>
                             {{ count.eventCount }}
@@ -129,7 +134,7 @@
                             <a [routerLink]="[]" (click)="openEventInfoDialog()"
                               >events</a
                             >
-                            used in billing period: {{ count.total }}
+                            used: {{ count.total }}
                           </li>
                         </ul>
                       </div>
@@ -137,10 +142,6 @@
                   </div>
                 }
                 <ul>
-                  <li class="body-text" i18n
-                    >Start date for this plan:
-                    {{ subscription.startDate | date }}</li
-                  >
                   <li class="body-text" i18n
                     >Plan cost: {{ subscription.effectivePrice | currency }}</li
                   >
