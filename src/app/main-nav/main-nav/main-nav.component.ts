@@ -52,6 +52,11 @@ const MENU_DATA: NavNode[] = [
     requiresActiveOrg: true,
   },
   {
+    name: $localize`Logs`,
+    route: ["org_slug", "logs"],
+    requiresActiveOrg: true,
+  },
+  {
     name: $localize`Projects`,
     route: ["org_slug", "projects"],
     requiresActiveOrg: true,

@@ -586,6 +586,54 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/0/organizations/{organization_slug}/logs/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Logs
+         * @description List log events for an organization with optional filtering.
+         *
+         *     Supports filtering by:
+         *     - project: List of project IDs
+         *     - level: List of log levels (trace, debug, info, warn, error, fatal)
+         *     - service: Service name
+         *     - traceId: Trace ID for correlation
+         *     - query: Full-text search in log body
+         *     - start/end: Time range filtering
+         */
+        get: operations["apps_logs_api_list_logs"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/0/organizations/{organization_slug}/logs/{log_id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Log
+         * @description Get a single log event by ID.
+         */
+        get: operations["apps_logs_api_get_log"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/0/organizations/": {
         parameters: {
             query?: never;
@@ -3125,6 +3173,127 @@ export interface components {
             /** Id */
             id: string[];
         };
+        /**
+         * LogFilterSchema
+         * @description Schema for log filtering parameters.
+         */
+        LogFilterSchema: {
+            /**
+             * Project
+             * @description Filter by project IDs
+             */
+            project?: number[] | null;
+            /**
+             * Level
+             * @description Filter by log levels
+             */
+            level?: string[] | null;
+            /**
+             * Service
+             * @description Filter by service name
+             */
+            service?: string | null;
+            /**
+             * Traceid
+             * @description Filter by trace ID
+             */
+            traceId?: string | null;
+            /**
+             * Query
+             * @description Search in log body
+             */
+            query?: string | null;
+            /**
+             * Start
+             * @description Start of time range
+             */
+            start?: string | null;
+            /**
+             * End
+             * @description End of time range
+             */
+            end?: string | null;
+        };
+        /**
+         * LogEventSchema
+         * @description Schema for log event API responses.
+         */
+        LogEventSchema: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Timestamp
+             * Format: date-time
+             */
+            timestamp: string;
+            /**
+             * Received
+             * Format: date-time
+             */
+            received: string;
+            /** Level */
+            level: string;
+            /** Body */
+            body: string;
+            /** Service */
+            service: string;
+            /** Traceid */
+            traceID?: string | null;
+            /** Spanid */
+            spanID?: string | null;
+            /** Severitynumber */
+            severityNumber?: number | null;
+            /** Data */
+            data?: {
+                [key: string]: unknown;
+            };
+            /** Projectid */
+            projectId: number;
+        };
+        /**
+         * LogEventDetailSchema
+         * @description Extended schema for single log event detail.
+         */
+        LogEventDetailSchema: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Timestamp
+             * Format: date-time
+             */
+            timestamp: string;
+            /**
+             * Received
+             * Format: date-time
+             */
+            received: string;
+            /** Level */
+            level: string;
+            /** Body */
+            body: string;
+            /** Service */
+            service: string;
+            /** Traceid */
+            traceID?: string | null;
+            /** Spanid */
+            spanID?: string | null;
+            /** Severitynumber */
+            severityNumber?: number | null;
+            /** Data */
+            data?: {
+                [key: string]: unknown;
+            };
+            /** Projectid */
+            projectId: number;
+            /** Organizationid */
+            organizationId: number;
+        };
         /** OrganizationSchema */
         OrganizationSchema: {
             /**
@@ -5506,6 +5675,70 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    apps_logs_api_list_logs: {
+        parameters: {
+            query?: {
+                /** @description Filter by project IDs */
+                project?: number[] | null;
+                /** @description Filter by log levels */
+                level?: string[] | null;
+                /** @description Filter by service name */
+                service?: string | null;
+                /** @description Filter by trace ID */
+                traceId?: string | null;
+                /** @description Search in log body */
+                query?: string | null;
+                /** @description Start of time range */
+                start?: string | null;
+                /** @description End of time range */
+                end?: string | null;
+                /** @description Number of results to return per page. */
+                limit?: number | null;
+                /** @description The pagination cursor value. */
+                cursor?: string | null;
+            };
+            header?: never;
+            path: {
+                organization_slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LogEventSchema"][];
+                };
+            };
+        };
+    };
+    apps_logs_api_get_log: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                organization_slug: string;
+                log_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LogEventDetailSchema"];
+                };
             };
         };
     };

@@ -1,0 +1,58 @@
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.level-chip {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.level--error,
+.level--fatal {
+  background-color: var(--sys-error-container);
+  color: var(--sys-on-error-container);
+}
+
+.level--warn,
+.level--warning {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.level--info {
+  background-color: var(--sys-primary-container);
+  color: var(--sys-on-primary-container);
+}
+
+.level--debug,
+.level--trace {
+  background-color: var(--sys-surface-variant);
+  color: var(--sys-on-surface-variant);
+}
+
+.timestamp-cell {
+  white-space: nowrap;
+}
+
+.service-cell {
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.body-cell {
+  max-width: 400px;
+}
+
+.body-text {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

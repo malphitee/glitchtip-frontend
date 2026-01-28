@@ -1,0 +1,110 @@
+<gt-top-app-bar>
+  <ng-container slot="left">
+    <gt-list-title
+      i18n-title
+      title="Logs"
+      [searchHits]="paginator()?.count"
+    ></gt-list-title>
+  </ng-container>
+</gt-top-app-bar>
+<section class="l-body l-body--full-width l-body--flex mat-elevation-z0">
+  <div class="table-container">
+    @if (logs(); as logs) {
+    <table mat-table class="mat-elevation-z2" [dataSource]="logs">
+      <ng-container matColumnDef="header-spacing">
+        <th mat-header-cell *matHeaderCellDef></th>
+      </ng-container>
+      <ng-container matColumnDef="pagination">
+        <th mat-header-cell *matHeaderCellDef class="table-header__actions">
+          <div>
+            <gt-pagination-buttons
+              [paginator]="paginator()"
+              [loading]="isLoading()"
+            />
+          </div>
+        </th>
+      </ng-container>
+
+      <ng-container matColumnDef="level">
+        <th mat-header-cell *matHeaderCellDef i18n>Level</th>
+        <td mat-cell *matCellDef="let log">
+          <span [class]="'level-chip level--' + log.level?.toLowerCase()">
+            {{ log.level }}
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="timestamp">
+        <th mat-header-cell *matHeaderCellDef i18n>Timestamp</th>
+        <td mat-cell *matCellDef="let log" class="timestamp-cell">
+          {{ log.timestamp | date: "short" }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="service">
+        <th mat-header-cell *matHeaderCellDef i18n>Service</th>
+        <td mat-cell *matCellDef="let log" class="service-cell">
+          {{ log.service || '-' }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="body">
+        <th mat-header-cell *matHeaderCellDef i18n>Message</th>
+        <td mat-cell *matCellDef="let log" class="body-cell">
+          <span
+            [matTooltip]="log.body"
+            matTooltipPosition="above"
+            class="body-text"
+          >
+            {{ log.body }}
+          </span>
+        </td>
+      </ng-container>
+
+      <tr
+        mat-header-row
+        *matHeaderRowDef="['header-spacing', 'pagination']; sticky: true"
+        class="table-header"
+        [attr.colspan]="4"
+      ></tr>
+      <tr
+        mat-header-row
+        *matHeaderRowDef="displayedColumns"
+        [class.u-hidden]="logs.length === 0 && !isLoading()"
+      ></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      <tr *matNoDataRow>
+        <td>
+          <div class="table-empty-states">
+            @if (initialLoadComplete() === true && isLoading() === false) {
+              @if (errors()?.length) {
+                @if (errors()?.length === 1) {
+                  <h3 class="body-text-strong">
+                    There was an error processing your request
+                  </h3>
+                } @else {
+                  <h3 class="body-text-strong">
+                    There were errors while processing your request
+                  </h3>
+                }
+                <ul>
+                  @for (error of errors(); track error) {
+                    <li>{{ error }}</li>
+                  }
+                </ul>
+              } @else {
+                <div i18n class="body-text-strong">
+                  There are no logs for this organization.
+                </div>
+                <p i18n class="body-text">
+                  Configure your SDK with the experimental logs feature to start capturing logs.
+                </p>
+              }
+            }
+          </div>
+        </td>
+      </tr>
+    </table>
+    }
+  </div>
+</section>
