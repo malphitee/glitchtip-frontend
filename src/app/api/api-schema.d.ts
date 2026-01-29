@@ -597,13 +597,16 @@ export interface paths {
          * List Logs
          * @description List log events for an organization with optional filtering.
          *
+         *     Queries hot storage (PostgreSQL) for recent data and cold storage
+         *     (S3 Parquet via DuckDB) for older data seamlessly.
+         *
          *     Supports filtering by:
          *     - project: List of project IDs
          *     - level: List of log levels (trace, debug, info, warn, error, fatal)
-         *     - service: Service name
+         *     - service: Service name (partial match)
          *     - traceId: Trace ID for correlation
          *     - query: Full-text search in log body
-         *     - start/end: Time range filtering
+         *     - start/end: Time range filtering (defaults to last 7 days)
          */
         get: operations["apps_logs_api_list_logs"];
         put?: never;
@@ -623,9 +626,56 @@ export interface paths {
         };
         /**
          * Get Log
-         * @description Get a single log event by ID.
+         * @description Get a single log event by ID (searches both hot and cold storage).
          */
         get: operations["apps_logs_api_get_log"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/0/organizations/{organization_slug}/logs/stats/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Log Stats
+         * @description Get log statistics for an organization.
+         *
+         *     Returns hourly counts grouped by level for charting.
+         *     Supports filtering by project and level.
+         *     Time range defaults to last 7 days, max 90 days.
+         */
+        get: operations["apps_logs_api_get_log_stats"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/0/organizations/{organization_slug}/logs/services/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Log Services
+         * @description List unique service names for an organization.
+         *
+         *     Returns services ordered by last_seen (most recent first).
+         *     Used to populate filter dropdowns in the UI.
+         */
+        get: operations["apps_logs_api_list_log_services"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3229,11 +3279,6 @@ export interface components {
              * Format: date-time
              */
             timestamp: string;
-            /**
-             * Received
-             * Format: date-time
-             */
-            received: string;
             /** Level */
             level: string;
             /** Body */
@@ -3268,11 +3313,6 @@ export interface components {
              * Format: date-time
              */
             timestamp: string;
-            /**
-             * Received
-             * Format: date-time
-             */
-            received: string;
             /** Level */
             level: string;
             /** Body */
@@ -3293,6 +3333,70 @@ export interface components {
             projectId: number;
             /** Organizationid */
             organizationId: number;
+        };
+        /**
+         * LogStatsFilterSchema
+         * @description Schema for log stats filtering parameters.
+         */
+        LogStatsFilterSchema: {
+            /**
+             * Project
+             * @description Filter by project IDs
+             */
+            project?: number[] | null;
+            /**
+             * Level
+             * @description Filter by log levels
+             */
+            level?: string[] | null;
+            /**
+             * Service
+             * @description Filter by service names
+             */
+            service?: string[] | null;
+            /**
+             * Start
+             * @description Start of time range
+             */
+            start?: string | null;
+            /**
+             * End
+             * @description End of time range
+             */
+            end?: string | null;
+        };
+        /**
+         * LogStatsSchema
+         * @description Schema for log stats response.
+         */
+        LogStatsSchema: {
+            /** Intervals */
+            intervals: string[];
+            /** Series */
+            series: components["schemas"]["LogStatsSeriesSchema"][];
+        };
+        /**
+         * LogStatsSeriesSchema
+         * @description A single series in the stats response.
+         */
+        LogStatsSeriesSchema: {
+            /** Name */
+            name: string;
+            /** Data */
+            data: number[];
+        };
+        /**
+         * LogServiceSchema
+         * @description Schema for service name in list.
+         */
+        LogServiceSchema: {
+            /** Name */
+            name: string;
+            /**
+             * Lastseen
+             * Format: date-time
+             */
+            lastSeen: string;
         };
         /** OrganizationSchema */
         OrganizationSchema: {
@@ -3351,7 +3455,7 @@ export interface components {
             isAcceptingEvents: boolean;
             /**
              * Event Throttle Rate
-             * @description Probability (in percent) on how many events are throttled. Used for throttling at project level
+             * @description Probability (in percent) on how many events are throttled.
              * @default 0
              */
             eventThrottleRate: number;
@@ -3413,7 +3517,7 @@ export interface components {
             isAcceptingEvents: boolean;
             /**
              * Event Throttle Rate
-             * @description Probability (in percent) on how many events are throttled. Used for throttling at project level
+             * @description Probability (in percent) on how many events are throttled.
              * @default 0
              */
             eventThrottleRate: number;
@@ -3496,7 +3600,7 @@ export interface components {
             firstEvent?: string | null;
             /**
              * Event Throttle Rate
-             * @description Probability (in percent) on how many events are throttled. Used for throttling at project level
+             * @description Probability (in percent) on how many events are throttled.
              * @default 0
              */
             eventThrottleRate: number;
@@ -3787,7 +3891,7 @@ export interface components {
             firstEvent?: string | null;
             /**
              * Event Throttle Rate
-             * @description Probability (in percent) on how many events are throttled. Used for throttling at project level
+             * @description Probability (in percent) on how many events are throttled.
              * @default 0
              */
             eventThrottleRate: number;
@@ -3872,7 +3976,7 @@ export interface components {
             firstEvent?: string | null;
             /**
              * Event Throttle Rate
-             * @description Probability (in percent) on how many events are throttled. Used for throttling at project level
+             * @description Probability (in percent) on how many events are throttled.
              * @default 0
              */
             eventThrottleRate: number;
@@ -4070,6 +4174,8 @@ export interface components {
             transactionEventCount: number;
             /** Uptimecheckeventcount */
             uptimeCheckEventCount: number;
+            /** Logeventcount */
+            logEventCount: number;
             /** Filesizemb */
             fileSizeMb: number;
         };
@@ -5695,10 +5801,6 @@ export interface operations {
                 start?: string | null;
                 /** @description End of time range */
                 end?: string | null;
-                /** @description Number of results to return per page. */
-                limit?: number | null;
-                /** @description The pagination cursor value. */
-                cursor?: string | null;
             };
             header?: never;
             path: {
@@ -5738,6 +5840,61 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["LogEventDetailSchema"];
+                };
+            };
+        };
+    };
+    apps_logs_api_get_log_stats: {
+        parameters: {
+            query?: {
+                /** @description Filter by project IDs */
+                project?: number[] | null;
+                /** @description Filter by log levels */
+                level?: string[] | null;
+                /** @description Filter by service names */
+                service?: string[] | null;
+                /** @description Start of time range */
+                start?: string | null;
+                /** @description End of time range */
+                end?: string | null;
+            };
+            header?: never;
+            path: {
+                organization_slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LogStatsSchema"];
+                };
+            };
+        };
+    };
+    apps_logs_api_list_log_services: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                organization_slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LogServiceSchema"][];
                 };
             };
         };
