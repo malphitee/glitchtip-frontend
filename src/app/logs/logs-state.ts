@@ -1,4 +1,4 @@
-import { computed, Injectable, signal } from "@angular/core";
+import { computed, effect, Injectable, signal } from "@angular/core";
 import { apiResource } from "../shared/api/api-resource-factory";
 
 export interface LogsParams {
@@ -16,7 +16,11 @@ export interface LogsParams {
 export class LogsService {
   params = signal<LogsParams | undefined>(undefined);
 
-  #logsResource = apiResource(this.params, (params) => ({
+  // Track accumulated logs for "load more"
+  #accumulatedLogs = signal<any[]>([]);
+  #isLoadingMore = signal(false);
+
+  #logsResource = apiResource.paginated(this.params, (params) => ({
     url: "/api/0/organizations/{organization_slug}/logs/",
     options: {
       params: {
@@ -53,13 +57,58 @@ export class LogsService {
     },
   }));
 
-  logs = computed(() => this.#logsResource.value() || []);
+  constructor() {
+    // When resource loads, handle accumulation
+    effect(() => {
+      const result = this.#logsResource.value();
+      const data = result?.data;
+      if (!data) return;
+
+      const params = this.params();
+      if (params?.cursor) {
+        // Loading more - append to existing
+        this.#accumulatedLogs.update((prev) => [...prev, ...data]);
+      } else {
+        // Fresh load - replace
+        this.#accumulatedLogs.set(data);
+      }
+      this.#isLoadingMore.set(false);
+    });
+  }
+
+  // Expose accumulated logs
+  logs = computed(() => this.#accumulatedLogs());
   errors = computed(() => this.#logsResource.serverError()?.detail);
-  isLoading = computed(() => this.#logsResource.isLoading());
+  isLoading = computed(() => this.#logsResource.isLoading() && !this.#isLoadingMore());
+  isLoadingMore = computed(() => this.#isLoadingMore());
   initialLoadComplete = computed(
     () => this.#logsResource.hasValue() || !this.isLoading(),
   );
 
+  // Pagination
+  paginator = computed(() => this.#logsResource.paginator());
+  hasNextPage = computed(() => this.paginator()?.hasNextPage ?? false);
+
   services = computed(() => this.#servicesResource.value() || []);
   servicesLoading = computed(() => this.#servicesResource.isLoading());
+
+  loadMore() {
+    const nextParams = this.paginator()?.nextPageParams;
+    const cursor = nextParams?.cursor?.[0];
+    if (!cursor) return;
+
+    const currentParams = this.params();
+    if (!currentParams) return;
+
+    this.#isLoadingMore.set(true);
+    this.params.set({
+      ...currentParams,
+      cursor,
+    });
+  }
+
+  // Reset accumulated logs when filters change (called by component)
+  resetAccumulation() {
+    this.#accumulatedLogs.set([]);
+  }
 }

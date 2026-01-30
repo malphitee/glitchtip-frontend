@@ -93,11 +93,31 @@
         }
       }
 
-      @if (isLoading() && !logs()?.length) {
+      @if (isLoading() && !logs().length) {
         <div class="log-loading">
           <span>Loading logs...</span>
         </div>
       }
     </div>
+
+    @if (hasNextPage() || isLoadingMore()) {
+      <div class="log-footer">
+        <button
+          mat-stroked-button
+          (click)="loadMore()"
+          [disabled]="isLoadingMore()"
+          class="load-more-btn"
+        >
+          @if (isLoadingMore()) {
+            <span>Loading...</span>
+          } @else {
+            <ng-container>
+              <mat-icon>expand_more</mat-icon>
+              <span i18n>Load more</span>
+            </ng-container>
+          }
+        </button>
+      </div>
+    }
   </div>
 </section>

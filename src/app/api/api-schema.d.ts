@@ -607,6 +607,8 @@ export interface paths {
          *     - traceId: Trace ID for correlation
          *     - query: Full-text search in log body
          *     - start/end: Time range filtering (defaults to last 7 days)
+         *     - cursor: Pagination cursor for "load more"
+         *     - limit: Results per page (1-200, default 100)
          */
         get: operations["apps_logs_api_list_logs"];
         put?: never;
@@ -2969,7 +2971,7 @@ export interface components {
             /** Transaction */
             transaction: string;
             /** Tags */
-            tags: Record<string, unknown>;
+            tags: Record<string, never>;
             /** Hashes */
             hashes: unknown[];
         };
@@ -3037,7 +3039,7 @@ export interface components {
             /** Title */
             title: string;
             /** Metadata */
-            metadata: Record<string, unknown>;
+            metadata: Record<string, never>;
             /** Culprit */
             culprit?: string | null;
             /** Userreportcount */
@@ -3144,7 +3146,7 @@ export interface components {
             /** Title */
             title: string;
             /** Metadata */
-            metadata: Record<string, unknown>;
+            metadata: Record<string, never>;
             /** Culprit */
             culprit?: string | null;
         };
@@ -3263,6 +3265,17 @@ export interface components {
              * @description End of time range
              */
             end?: string | null;
+            /**
+             * Cursor
+             * @description Pagination cursor
+             */
+            cursor?: string | null;
+            /**
+             * Limit
+             * @description Results per page
+             * @default 100
+             */
+            limit: number;
         };
         /**
          * LogEventSchema
@@ -4544,7 +4557,7 @@ export interface components {
             /** Url */
             url?: string | null;
             /** Data */
-            data?: Record<string, unknown>;
+            data?: Record<string, never>;
             /**
              * Deploy Count
              * @default 0
@@ -5801,6 +5814,10 @@ export interface operations {
                 start?: string | null;
                 /** @description End of time range */
                 end?: string | null;
+                /** @description Pagination cursor */
+                cursor?: string | null;
+                /** @description Results per page */
+                limit?: number;
             };
             header?: never;
             path: {

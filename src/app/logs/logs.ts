@@ -62,8 +62,10 @@ export class Logs {
   logs = this.service.logs;
   errors = this.service.errors;
   isLoading = this.service.isLoading;
+  isLoadingMore = this.service.isLoadingMore;
   initialLoadComplete = this.service.initialLoadComplete;
   services = this.service.services;
+  hasNextPage = this.service.hasNextPage;
 
   searchForm = new FormGroup({
     query: new FormControl(""),
@@ -89,6 +91,19 @@ export class Logs {
   );
 
   constructor() {
+    // Reset accumulation when filters change (not cursor)
+    effect(() => {
+      // Read all filter signals to track them
+      this.query();
+      this.start();
+      this.end();
+      this.level();
+      this.service_();
+      this.projects();
+      // Reset when any filter changes
+      this.service.resetAccumulation();
+    });
+
     // Sync URL params to service
     effect(() =>
       this.service.params.set({
@@ -116,6 +131,10 @@ export class Logs {
       const service = this.service_();
       this.serviceForm.setValue({ service: service ?? "" });
     });
+  }
+
+  loadMore() {
+    this.service.loadMore();
   }
 
   searchSubmit() {
