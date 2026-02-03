@@ -8,7 +8,6 @@ Burke Software functions as a data processor. We do not sell or share user data 
 
 - Hosting (US): DigitalOcean NYC1 (New York, USA) - https://app.glitchtip.com
 - Hosting (EU): DigitalOcean FRA1 (Frankfurt, Germany) - https://eu.glitchtip.com
-- CDN: Cloudflare
 - Transactional Email: Mailgun (Data residency matches the server region: US or EU)
 - Analytics: Plausible (Privacy-focused, GDPR compliant, no cookies) runs solely on this marketing website https://glitchtip.com and not on our GlitchTip hosted servers (ex: https://app.glitchtip.com)
 - Payments: Stripe (PCI-DSS Service Provider Level 1)
@@ -19,11 +18,11 @@ Burke Software functions as a data processor. We do not sell or share user data 
 
 ### Data Isolation and Encryption
 
-- Storage: User data is stored in managed DigitalOcean PostgreSQL clusters.
+- Storage: User data is stored in managed Kubernetes (DOKS) PostgreSQL cluster, using CloudNativePG.
 - Network Isolation: The database cluster is isolated within a Private VPC (Virtual Private Cloud) and is accessible strictly via the Kubernetes cluster’s "Trusted Source" allowlist. It is not accessible via the public internet.
 - Encryption:
   - In Transit: All data transmission requires TLS 1.2+ (HTTPS).
-  - At Rest: DigitalOcean Managed Storage provides encryption at rest.
+  - At Rest: DigitalOcean Volumes Block Storage provides encryption at rest.
 - Secrets Management: Application credentials and keys are managed via Kubernetes Secrets and are never committed to version control.
 
 ### Access Controls

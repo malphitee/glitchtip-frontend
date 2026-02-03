@@ -21,7 +21,7 @@
         </form>
       }
     </ng-template>
-    <div class="leftBlock">
+    <div class="left-block">
       @if (environmentForm) {
         <form [formGroup]="environmentForm" class="environment-form">
           <mat-form-field appearance="outline" subscriptSizing="dynamic">
@@ -47,23 +47,41 @@
         <ng-container *ngTemplateOutlet="searchFormTemplate"></ng-container>
       }
     </div>
-    <form [formGroup]="sortForm" class="sort-form">
-      <mat-form-field appearance="outline" subscriptSizing="dynamic">
-        <mat-label>Sort by</mat-label>
-        <mat-select
-          (selectionChange)="sortByChanged.emit($event)"
-          formControlName="sort"
-        >
-          @for (sort of sorts(); track sort.param) {
-            <mat-option [value]="sort.param">
-              {{ sort.display }}
-            </mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-    </form>
-    @if (!isLargeScreen()) {
-      <ng-container *ngTemplateOutlet="searchFormTemplate"></ng-container>
-    }
+    <div class="right-block">
+      @if (isLargeScreen()) {
+        @if (currentStatsPeriod(); as statsPeriod) {
+          <mat-button-toggle-group
+            matTooltipPosition="above"
+            matTooltip="Set trend charts period"
+            [matTooltipShowDelay]="500"
+            i18n-matTooltip
+            [value]="statsPeriod"
+            [disabled]="statsPeriodToggleDisabled()"
+            (change)="emitOnStatsPeriodToggle($event)"
+          >
+            <mat-button-toggle value="24h">24h</mat-button-toggle>
+            <mat-button-toggle value="14d">14d</mat-button-toggle>
+          </mat-button-toggle-group>
+        }
+      }
+      <form [formGroup]="sortForm" class="sort-form">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>Sort by</mat-label>
+          <mat-select
+            (selectionChange)="sortByChanged.emit($event)"
+            formControlName="sort"
+          >
+            @for (sort of sorts(); track sort.param) {
+              <mat-option [value]="sort.param">
+                {{ sort.display }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </form>
+      @if (!isLargeScreen()) {
+        <ng-container *ngTemplateOutlet="searchFormTemplate"></ng-container>
+      }
+    </div>
   </div>
 }

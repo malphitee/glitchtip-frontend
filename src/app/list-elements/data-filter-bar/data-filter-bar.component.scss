@@ -45,7 +45,18 @@
   }
 }
 
-.leftBlock {
+.right-block {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.stats-period-select {
+  width: 110px;
+}
+
+.left-block {
   @media (min-width: vars.$medium) {
     display: flex;
     justify-content: space-between;

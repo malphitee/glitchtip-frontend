@@ -1,4 +1,4 @@
-image: node:22
+image: node:24
 
 variables:
   CHROME_BIN: chromium-browser
@@ -24,7 +24,7 @@ stages:
 
 test:
   stage: test
-  image: node:22-alpine
+  image: node:24-alpine
   script:
     - npm ci --force
     # Disabled because storybook :(
@@ -34,14 +34,14 @@ test-e2e:
   stage: test
   variables:
     ENABLE_ORGANIZATION_CREATION: "true"
-    CELERY_TASK_ALWAYS_EAGER: "true"
+    VALKEY_URL: ""
   services:
     - postgres
     - name: registry.gitlab.com/glitchtip/glitchtip-backend:master
       alias: backend
-      command: ["./bin/run-migrate-and-runserver.sh"]
+      command: ["./bin/run-all-in-one.sh"]
   image:
-    name: cypress/included:14.0.0
+    name: cypress/included:15.8.1
     entrypoint: [""]
   script:
     - npm ci --force

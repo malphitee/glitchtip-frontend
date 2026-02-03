@@ -41,6 +41,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { OrganizationsService } from "src/app/api/organizations.service";
 import { BackLinkComponent } from "src/app/shared/detail/back-link/back-link.component";
 import { MatIconModule } from "@angular/material/icon";
+import { TopAppBar } from "src/app/shared/top-app-bar/top-app-bar";
 
 function autocompleteStringValidator(
   validOptions: Array<FlatPlatform>,
@@ -84,6 +85,7 @@ class CustomErrorStateMatcher implements ErrorStateMatcher {
     RouterLink,
     DetailHeaderComponent,
     BackLinkComponent,
+    TopAppBar,
   ],
   providers: [
     ProjectDetailService,

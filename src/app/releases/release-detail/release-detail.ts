@@ -14,6 +14,7 @@ import { DetailHeaderComponent } from "src/app/shared/detail/header/header.compo
 import { BackLinkComponent } from "src/app/shared/detail/back-link/back-link.component";
 import { PaginationButtons } from "src/app/list-elements/pagination-buttons/pagination-buttons";
 import { stringAttribute } from "src/app/shared/shared.utils";
+import { TopAppBar } from "src/app/shared/top-app-bar/top-app-bar";
 
 @Component({
   templateUrl: "./release-detail.html",
@@ -24,6 +25,7 @@ import { stringAttribute } from "src/app/shared/shared.utils";
     DetailHeaderComponent,
     BackLinkComponent,
     PaginationButtons,
+    TopAppBar,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [ReleaseDetailService],

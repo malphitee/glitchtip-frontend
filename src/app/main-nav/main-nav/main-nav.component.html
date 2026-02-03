@@ -3,6 +3,7 @@
     <mat-sidenav
       #sidenav
       class="mat-elevation-z4"
+      [disableClose]="!mobileNav()"
       [opened]="navOpen()"
       (closed)="closeSideNav()"
       [mode]="mobileNav() === true ? 'over' : 'side'"
@@ -74,7 +75,7 @@
       <mat-nav-list>
         <mat-tree
           #tree
-          [dataSource]="menuData$"
+          [dataSource]="menuData()"
           [childrenAccessor]="childrenAccessor"
         >
           <!-- Default template for navigable items -->
@@ -171,8 +172,6 @@
         (buttonClicked)="toggleSideNav()"
       ></gt-mobile-nav-toolbar>
     }
-    <div class="wrapper">
-      <ng-content></ng-content>
-    </div>
+    <ng-content></ng-content>
   </mat-sidenav-content>
 </mat-sidenav-container>

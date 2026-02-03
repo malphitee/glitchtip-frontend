@@ -59,14 +59,10 @@ export interface AllAuthProvidersResponse extends AllAuthLoginResponse {
   data: ProviderAccount[];
 }
 
-export interface AuthFlow extends Flow {
-  types?: string[];
-}
-
 export interface AllAuthLoginNotAuthResponse extends AllAuthResponse {
   status: 401;
   data: {
-    flows: AuthFlow[];
+    flows: Flow[];
   };
   meta: AuthenticationMeta;
 }
