@@ -46,7 +46,7 @@ This release includes infrastructure changes that may require updates to customi
 
 - **Valkey 7+ or Redis 7+:** We now set minimum supported versions for our cache/task backends.
 
-- **Init scripts:** We recommend all users run our ./bin/start.sh command.
+- **Init scripts:** We recommend all users run our `./bin/start.sh` command.
 
 - Set `SERVER_ROLE` to worker to run the worker instead of web (default).
 
@@ -68,9 +68,7 @@ To migrate more data, set the environment variable `GLITCHTIP_RETAIN_LEGACY_DATA
 
 After migration, run: `./manage.py import_legacy_events --limit [number] --delete-source`.
 
-## Support the Project
-
-### Enterprise License
+## Enterprise Licenses
 
 GlitchTip is independent, open source, and 100% user-funded. If you are a for-profit company using GlitchTip to monitor production systems, we expect you to purchase an Enterprise License.
 
@@ -84,9 +82,9 @@ An Enterprise License provides:
 
 ### Support the project
 
-- 🛡️ Get Enterprise Support (For Business)
+- 🛡️ [Get Enterprise Support](mailto:sales@glitchtip.com?subject=Purchasing%20enterprise%20support) (For Business) for $15 per user per month
 
-- 💖 Individual License (For Supporters)
+- 💖 [Individual License](mailto:sales@glitchtip.com?subject=Purchasing%20an%20individual%20license) (For Supporters) for $5 per month
 
 - 💸 Donate via [Liberapay](https://en.liberapay.com/GlitchTip). We currently receive $30.52 per week from 21 patrons.
 
