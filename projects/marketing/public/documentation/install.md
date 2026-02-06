@@ -238,7 +238,7 @@ Scaling GlitchTip? Review these granian (web server) and django-vtasks (worker) 
 
 For small instances or trial setups, GlitchTip can run the web server, worker, and migrations in a single process. This significantly reduces memory usage, allowing GlitchTip to run on as little as 256MB of RAM.
 
-To enable this, use the `./bin/run-all-in-one.sh` script, set the environment variable `SERVER_ROLE=all-in-one`, or set `GLITCHTIP_EMBED_WORKER=true`.
+To enable this, use the `./bin/run-all-in-one.sh` script, set the environment variable `SERVER_ROLE=all_in_one`, or set `GLITCHTIP_EMBED_WORKER=true`.
 
 When using All-in-One mode:
 - Background tasks are run within the web server process.

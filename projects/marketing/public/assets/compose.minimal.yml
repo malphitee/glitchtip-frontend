@@ -28,8 +28,9 @@ services:
     depends_on: *default-depends_on
     ports:
       - "8000:8000"
-    environment: *default-environment
-    command: ./bin/run-all-in-one.sh # Runs web/worker/migrate all in one process
+    environment:
+      <<: *default-environment
+      SERVER_ROLE: all_in_one
     restart: unless-stopped
     volumes:
       - uploads:/code/uploads
