@@ -18,7 +18,7 @@ services:
       POSTGRES_HOST_AUTH_METHOD: "trust" # Consider removing this and setting a password
     restart: unless-stopped
     volumes:
-      - pg-data:/var/lib/postgresql/data
+      - pg-data:/var/lib/postgresql
   valkey: # Recommended. Postgres can be used as a fallback by removing this and setting VALKEY_URL to blank.
     image: valkey/valkey:9
     restart: unless-stopped
