@@ -20,7 +20,7 @@ For best performance, use a proxy or load balancer that supports request bufferi
 Docker Compose is a simple way to run GlitchTip on a single server.
 
 1. Install Docker and Docker Compose. On Debian/Ubuntu this is `sudo apt install docker-compose docker.io`
-2. Copy [compose.sample.yml](/assets/compose.sample.yml) or [compose.minimal.yml](/assets/compose.minimal.yml) to your server as `compose.yml`. Use "sample" for a more scalable and robust installation. Use "minimal" for trial or small instances when you want the lightest system requirements possible. Minimal omits Valkey and uses an all-on-one Python process. It's safe to pick one and switch later.
+2. Copy [compose.sample.yml](/assets/compose.sample.yml) or [compose.minimal.yml](/assets/compose.minimal.yml) to your server as `compose.yml`. Use "sample" for a more scalable and robust installation. Use "minimal" for trial or small instances when you want the lightest system requirements possible. Minimal omits Valkey and uses an all-in-one Python process. It's safe to pick one and switch later.
 3. Edit the environment section of compose.yml. See the Configuration section below.
 
 It's highly recommended configuring SSL next. Use nginx or preferred solution.
@@ -221,7 +221,7 @@ Optional environment variables:
 - `VALKEY_URL` Set valkey host explicitly. Example: `redis://:password@host:port/database`. You may also set them separately with `VALKEY_HOST`, `VALKEY_PORT`, `VALKEY_DATABASE`, and `VALKEY_PASSWORD`. For compability reasons, REDIS_* will also work. Set to empty string to disable VALKEY and utilize Postgres for task queue, cache, and session storage.
 - `DATABASE_URL` Set PostgreSQL connect string. PostgreSQL 14 and above are supported.
 - `CACHE_URL` use alternative cache backend for django, defaults to `VALKEY_URL`
-- Content Security Policy (CSP) headers are enabled by default. In most cases there is no need to change these. However, you may add environment variables as documented in [django-csp](https://django-csp.readthedocs.io/en/latest/configuration.html#policy-settings) to modify them. For example, set `CSP_DEFAULT_SRC='self',scripts.example.com` to modify the default CSP header. Note the usage of comma separated values and single quotes on certain values such as 'self'.
+- Content Security Policy (CSP) headers are enabled by default. In most cases there is no need to change these. However, you may add environment variables as documented in the [Django security documentation](https://docs.djangoproject.com/en/stable/ref/settings/#secure-csp) to modify them. GlitchTip supports setting these via environment variables using the `CSP_` prefix. For example, set `CSP_DEFAULT_SRC='self',scripts.example.com` to modify the default CSP header. Note the usage of comma separated values and single quotes on certain values such as 'self'.
 - `ENABLE_USER_REGISTRATION` (Default True) When True, any user will be able to register through the self-signup. When False, user self-signup is disabled after the first user is registered. Subsequent users must use social apps if enabled or be created by a superuser on the backend and organization invitations may only be sent to existing users.
 - `ENABLE_SOCIAL_APPS_USER_REGISTRATION` (Default `ENABLE_USER_REGISTRATION`) When True, any user will be able to register through social apps. When False, unregistered user login is disabled after the first user is registered. Subsequent users must use the self-signup or be created by a superuser on the backend.
 - `ENABLE_ORGANIZATION_CREATION` (Default False) When False, only superusers will be able to create new organizations after the first. When True, any user can create a new organization.
@@ -233,6 +233,17 @@ Scaling GlitchTip? Review these granian (web server) and django-vtasks (worker) 
 - `VTASKS_CONCURRENCY` (Default 20) Number of concurrent asyncio background tasks to run.
 - `DATABASE_POOL_MAX_SIZE` (Default 20) psycopg connection pool size, consider setting it the same as vtasks concurrency. Be aware of your postgres connection limit.
 - `GRANIAN_WORKERS` (Default 1) Number of granian web workers to run. GlitchTip uses ASGI (async Python). Setting this higher is only recommended when not scaling horizontally. See more granian settings [here](https://github.com/emmett-framework/granian)
+
+### All-in-One Mode
+
+For small instances or trial setups, GlitchTip can run the web server, worker, and migrations in a single process. This significantly reduces memory usage, allowing GlitchTip to run on as little as 256MB of RAM.
+
+To enable this, use the `./bin/run-all-in-one.sh` script, set the environment variable `SERVER_ROLE=all-in-one`, or set `GLITCHTIP_EMBED_WORKER=true`.
+
+When using All-in-One mode:
+- Background tasks are run within the web server process.
+- Database migrations and partition maintenance are performed automatically on startup.
+- It is recommended for instances with low traffic. For higher throughput, use separate web and worker services.
 
 ### Advanced settings for cache and tasks
 
