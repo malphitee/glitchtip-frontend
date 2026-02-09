@@ -1,6 +1,6 @@
 # GlitchTip Installation Guide
 
-GlitchTip can be run with Docker. We recommend [Docker Compose](documentation/install#docker-compose), [PikaPods](documentation/install#pikapods), [Elestio](documentation/install#elestio), or [Nodion](documentation/install#nodion). A [Helm](documentation/install#helm) chart is available for Kubernetes.
+GlitchTip can be run with Docker. We recommend [Docker Compose](documentation/install#docker-compose), [PikaPods](documentation/install#pikapods), [Elestio](documentation/install#elestio), [Nodion](documentation/install#nodion), [Railway](documentation/install#railway), or [RepoCloud](documentation/install#repocloud). A [Helm](documentation/install#helm) chart is available for Kubernetes.
 
 Not sure which? Elestio, Pikapods, and Nodion all support GlitchTip via a revenue share program.
 
@@ -105,6 +105,26 @@ Nodion is a managed hosting provider that offers easy deployment and management 
 Sign up and run GlitchTip on Nodion [here](https://www.nodion.com/en/deploy/glitchtip/).
 
 Nodion allows adjusting many environment variables for configuration. See configuration [docs](https://glitchtip.com/documentation/install#configuration).
+
+## Railway
+
+<a href="https://railway.com/deploy/glitchtip">
+<img src="https://railway.com/button.svg" alt="Deploy on Railway" style="width:200px;"/>
+</a>
+
+Railway is a modern app hosting platform that makes it easy to deploy GlitchTip with minimal configuration.
+
+Sign up and run GlitchTip on Railway [here](https://railway.com/deploy/glitchtip).
+
+## RepoCloud
+
+<a href="https://repocloud.io/?ref=ek83qs8">
+<img src="https://repocloud.io/static/bluelogo.png" alt="Deploy on RepoCloud" style="width:200px;"/>
+</a>
+
+RepoCloud provides a one-click deployment for open source applications, including GlitchTip.
+
+Sign up and run GlitchTip on RepoCloud [here](https://repocloud.io/?ref=ek83qs8).
 
 ## Helm
 
