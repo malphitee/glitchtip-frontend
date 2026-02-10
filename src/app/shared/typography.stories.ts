@@ -93,6 +93,8 @@ const iconNames = [
   "keyboard_arrow_left",
   "keyboard_arrow_right",
   "keyboard_arrow_up",
+  "left_panel_close",
+  "left_panel_open",
   "light_mode",
   "logout",
   "menu",

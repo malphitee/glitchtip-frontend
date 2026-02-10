@@ -22,7 +22,11 @@
           class="collapse-toggle"
           (click)="toggleCollapse()"
         >
-          <mat-icon>menu</mat-icon>
+          @if (isCollapsed()) {
+            <mat-icon>left_panel_open</mat-icon>
+          } @else {
+            <mat-icon>left_panel_close</mat-icon>
+          }
         </button>
       </mat-toolbar>
       @if (contextLoaded() && organizations().length === 0 && canCreateOrg()) {
