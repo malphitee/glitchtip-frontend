@@ -75,7 +75,7 @@
       <mat-nav-list>
         <mat-tree
           #tree
-          [dataSource]="menuData$"
+          [dataSource]="menuData()"
           [childrenAccessor]="childrenAccessor"
         >
           <!-- Default template for navigable items -->

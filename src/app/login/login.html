@@ -21,14 +21,14 @@
             <input matInput autofocus type="email" formControlName="email" />
             @if (email?.errors) {
               <mat-error>
-                @if (email?.errors?.required) {
+                @if (email?.errors?.['required']) {
                   <span i18n>Your email is required to log in</span>
                 }
-                @if (email?.errors?.email) {
+                @if (email?.errors?.['email']) {
                   <span i18n>Enter a valid email address</span>
                 }
-                @if (email?.errors?.serverError) {
-                  <span>{{ email?.errors?.serverError }}</span>
+                @if (email?.errors?.['serverError']) {
+                  <span>{{ email?.errors?.['serverError'] }}</span>
                 }
               </mat-error>
             }
@@ -38,16 +38,16 @@
             <input matInput type="password" formControlName="password" />
             @if (password?.errors) {
               <mat-error>
-                @if (password?.errors?.minlength) {
+                @if (password?.errors?.['minlength']) {
                   <span i18n
                     >Your password should be at least 8 characters long</span
                   >
                 }
-                @if (password?.errors?.required) {
+                @if (password?.errors?.['required']) {
                   <span i18n>Your password is required to log in</span>
                 }
-                @if (password?.errors?.serverError) {
-                  <span>{{ password?.errors?.serverError }}</span>
+                @if (password?.errors?.['serverError']) {
+                  <span>{{ password?.errors?.['serverError'] }}</span>
                 }
               </mat-error>
             }

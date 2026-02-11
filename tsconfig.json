@@ -19,8 +19,9 @@
     "resolveJsonModule": true,
     "strictNullChecks": true,
     "target": "ES2022",
-    "typeRoots": ["node_modules/@types"],
-    "lib": ["es2022", "dom"],
+    "typeRoots": [
+      "node_modules/@types"
+    ],
     "useDefineForClassFields": false
   },
   "angularCompilerOptions": {

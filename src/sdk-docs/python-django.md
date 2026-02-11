@@ -58,12 +58,15 @@ sentry_sdk.init(
 - send_default_pii - Set to True to send additional PII event data. Defaults to False.
 - debug - Set to True to view more information about the SDK when something goes wrong. Defaults to False.
 
-## Content Security Policy Reporting with Django-CSP
+## Content Security Policy Reporting
 
 Using Content Security Policy (CSP)? Send reports to GlitchTip. Set your website's CSP `report-uri` directive to the GlitchTip Security Endpoint.
 
-If using Django-CSP, in settings.py set:
+Django 6.0+ includes built-in CSP support. In `settings.py` set:
 
 ```python
-CSP_REPORT_URI = ["your Security Endpoint here"]
+SECURE_CSP = {
+    # ...
+    "report-uri": ["your Security Endpoint here"],
+}
 ```

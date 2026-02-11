@@ -97,31 +97,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/{project_id}/envelope/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Event Envelope
-         * @description Envelopes can contain various types of data.
-         *     GlitchTip supports issue events and transaction events.
-         *     Ignore other data types.
-         *     Do support multiple valid events
-         *     Make as few io calls as possible. Some language SDKs (PHP) cannot run async code
-         *     and will block while waiting for GlitchTip to respond.
-         */
-        post: operations["apps_event_ingest_api_event_envelope"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/{project_id}/security/": {
         parameters: {
             query?: never;
@@ -180,7 +155,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/0/projects/{organization_slug}/{project_slug}/files/difs/assemble/": {
+    "/api/0/projects/{organization_slug}/{project_slug}/files/difs/assemble": {
         parameters: {
             query?: never;
             header?: never;
@@ -606,23 +581,6 @@ export interface paths {
         post?: never;
         /** Delete Hash */
         delete: operations["apps_issue_events_api_hashes_delete_hash"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/0/observability/django/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Django Prometheus Metrics */
-        get: operations["apps_observability_api_django_prometheus_metrics"];
-        put?: never;
-        post?: never;
-        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -2049,6 +2007,7 @@ export interface components {
             /** Fingerprint */
             fingerprint?: (string | null)[] | null;
             exception?: components["schemas"]["IngestValueEventException"] | null;
+            threads?: components["schemas"]["ValueEventThread"] | null;
             /** Message */
             message?: string | components["schemas"]["EventMessage"] | null;
             template?: components["schemas"]["EventTemplate"] | null;
@@ -2072,8 +2031,8 @@ export interface components {
             /** Message */
             message?: string | null;
             /** Params */
-            params?: string[] | {
-                [key: string]: string;
+            params?: (string | null)[] | {
+                [key: string]: string | null;
             } | null;
         };
         /** EventTemplate */
@@ -2343,6 +2302,19 @@ export interface components {
                 [key: string]: unknown;
             };
         };
+        /** Thread */
+        Thread: {
+            /** Id */
+            id?: number | string | null;
+            /** Current */
+            current?: boolean | null;
+            /** Crashed */
+            crashed?: boolean | null;
+            /** Name */
+            name?: string | null;
+            stacktrace?: components["schemas"]["StackTrace"] | null;
+            raw_stacktrace?: components["schemas"]["StackTrace"] | null;
+        };
         TraceContext: {
             /**
              * @description discriminator enum property added by openapi-typescript
@@ -2357,15 +2329,11 @@ export interface components {
             /** Values */
             values: components["schemas"]["EventBreadcrumb"][];
         };
-        /** EnvelopeIngestOut */
-        EnvelopeIngestOut: {
-            /** Id */
-            id?: string | null;
+        /** ValueEventThread */
+        ValueEventThread: {
+            /** Values */
+            values: components["schemas"]["Thread"][];
         };
-        /** EnvelopeSchema */
-        EnvelopeSchema: {
-            [key: string]: unknown;
-        }[];
         /**
          * CSPReportSchema
          * @description https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy-Report-Only#violation_report_syntax
@@ -3536,11 +3504,8 @@ export interface components {
         };
         /** TransactionEventSchema */
         TransactionEventSchema: {
-            /**
-             * Event Id
-             * Format: uuid
-             */
-            event_id?: string;
+            /** Event Id */
+            event_id?: string | null;
             /**
              * Timestamp
              * @description Datetime reported by client as the time the measurement finished
@@ -3888,6 +3853,10 @@ export interface components {
              * Format: date-time
              */
             startDate: string;
+            /** Subscription Cycle Start */
+            subscriptionCycleStart?: string | null;
+            /** Subscription Cycle End */
+            subscriptionCycleEnd?: string | null;
         };
         /**
          * SubscriptionStatus
@@ -3896,8 +3865,8 @@ export interface components {
         SubscriptionStatus: "incomplete" | "incomplete_expired" | "trialing" | "active" | "past_due" | "canceled" | "unpaid" | "paused";
         /** StripeCheckoutSessionSchema */
         StripeCheckoutSessionSchema: {
-            /** Id */
-            id: string;
+            /** Url */
+            url: string;
         };
         /** PriceIDSchema */
         PriceIDSchema: {
@@ -4574,32 +4543,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["EventIngestOut"];
-                };
-            };
-        };
-    };
-    apps_event_ingest_api_event_envelope: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                project_id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["EnvelopeSchema"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EnvelopeIngestOut"];
                 };
             };
         };
@@ -5559,24 +5502,6 @@ export interface operations {
         responses: {
             /** @description Accepted */
             202: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    apps_observability_api_django_prometheus_metrics: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
                 headers: {
                     [name: string]: unknown;
                 };

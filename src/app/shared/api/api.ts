@@ -71,13 +71,19 @@ const authErrorResponseMiddleware: Middleware = {
     if (schemaPath === "/_allauth/browser/v1/auth/session") {
       return;
     }
-    if (
-      (response.status === 401 && response.statusText === "Unauthorized") ||
-      (response.status === 403 &&
-        response.statusText === "Authentication credentials were not provided.")
-    ) {
-      localStorage.setItem("isAuthenticated", "false");
-      window.location.href = "/";
+    if (response.status === 401 || response.status === 403) {
+      const body = await response
+        .clone()
+        .json()
+        .catch(() => ({}));
+      if (
+        body?.detail === "Unauthorized" ||
+        body?.detail === "Authentication credentials were not provided."
+      ) {
+        localStorage.setItem("isAuthenticated", "false");
+        window.location.href = "/";
+        return new Promise(() => {});
+      }
     }
   },
 };

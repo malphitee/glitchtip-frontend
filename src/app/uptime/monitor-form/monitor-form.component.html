@@ -104,7 +104,7 @@
                 } @else {
                   <ng-container
                     *ngTemplateOutlet="
-                      formMonitorType?.value === 'TCP Port'
+                      formMonitorType.value === 'TCP Port'
                         ? portUrl
                         : standardUrl
                     "
@@ -116,7 +116,7 @@
             <ng-template #urlHint>
               <ng-container
                 *ngTemplateOutlet="
-                  formMonitorType?.value === 'TCP Port' ? portUrl : standardUrl
+                  formMonitorType.value === 'TCP Port' ? portUrl : standardUrl
                 "
               >
               </ng-container>

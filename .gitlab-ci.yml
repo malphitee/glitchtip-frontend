@@ -1,4 +1,4 @@
-image: node:22
+image: node:24
 
 variables:
   CHROME_BIN: chromium-browser
@@ -24,7 +24,7 @@ stages:
 
 test:
   stage: test
-  image: node:22-alpine
+  image: node:24-alpine
   script:
     - npm ci --force
     # Disabled because storybook :(
@@ -34,14 +34,14 @@ test-e2e:
   stage: test
   variables:
     ENABLE_ORGANIZATION_CREATION: "true"
-    CELERY_TASK_ALWAYS_EAGER: "true"
+    VALKEY_URL: ""
   services:
     - postgres
     - name: registry.gitlab.com/glitchtip/glitchtip-backend:master
       alias: backend
-      command: ["./bin/run-migrate-and-runserver.sh"]
+      command: ["./bin/run-all-in-one.sh"]
   image:
-    name: cypress/included:14.0.0
+    name: cypress/included:15.8.1
     entrypoint: [""]
   script:
     - npm ci --force
@@ -49,6 +49,7 @@ test-e2e:
     - npm run e2e
   except:
     - tags
+    - marketing
   artifacts:
     when: always
     paths:
@@ -85,10 +86,10 @@ build-docker:
     - trap '' PIPE
     - VERSION=${CI_COMMIT_REF_NAME#*v}
     - echo "Build version $VERSION ci registry image $CI_REGISTRY_IMAGE commit ref $CI_COMMIT_REF_NAME"
-    - docker build -f Dockerfile.prod -t ${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME} -t ${CONTAINER_IMAGE} --build-arg FRONTEND_GLITCHTIP_VERSION=$VERSION .
+    - docker build -f Dockerfile.prod -t ${CI_REGISTRY_IMAGE}:${VERSION} -t ${CONTAINER_IMAGE} --build-arg FRONTEND_GLITCHTIP_VERSION=$VERSION .
     - if [ $CI_COMMIT_REF_NAME = "master" ]; then docker tag ${CONTAINER_IMAGE} ${CI_REGISTRY_IMAGE}:latest; fi
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
-    - docker push ${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME}
+    - docker push ${CI_REGISTRY_IMAGE}:${VERSION}
     - docker push ${CONTAINER_IMAGE}
     - if [ $CI_COMMIT_REF_NAME = "master" ]; then docker push ${CI_REGISTRY_IMAGE}:latest; fi
 
@@ -99,7 +100,7 @@ upload-sourcemaps:
     - build-assets
   script:
     - VERSION=glitchtip@${CI_COMMIT_REF_NAME#*v}
-    - sentry-cli releases files ${VERSION} upload-sourcemaps dist/glitchtip-frontend/browser
+    - sentry-cli sourcemaps upload --release ${VERSION} dist/glitchtip-frontend/browser
   allow_failure: true
   only:
     refs:

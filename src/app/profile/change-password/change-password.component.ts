@@ -4,6 +4,7 @@ import {
   OnInit,
   ViewChild,
   inject,
+  effect,
 } from "@angular/core";
 import {
   Validators,
@@ -17,7 +18,6 @@ import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatCardModule } from "@angular/material/card";
-import { toObservable } from "@angular/core/rxjs-interop";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { PasswordService, PasswordState } from "./password.service";
 import { UserService } from "src/app/api/user/user.service";
@@ -86,9 +86,9 @@ export class ChangePasswordComponent
   constructor() {
     const service = inject(PasswordService);
 
-    toObservable(service.fieldErrors).subscribe((fieldErrors) =>
-      mapFormErrors(fieldErrors, this.form),
-    );
+    effect(() => {
+      mapFormErrors(service.fieldErrors(), this.form);
+    });
     super(service);
 
     this.service = service;

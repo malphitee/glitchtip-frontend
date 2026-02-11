@@ -4,7 +4,6 @@ import {
   inject,
   computed,
 } from "@angular/core";
-import { toObservable } from "@angular/core/rxjs-interop";
 import { Router } from "@angular/router";
 import { MainNavService } from "../main-nav.service";
 import { SettingsService } from "src/app/api/settings.service";
@@ -177,6 +176,14 @@ export class MainNavComponent {
   );
 
   menuData = computed(() => {
+    // The nav tree data source doesn't update properly if the only change
+    // is to a node's children, so we hide the entire node until
+    // settings is loaded
+    if (!this.settingsService.initialLoad()) {
+      return MENU_DATA.filter(
+        (node) => !node.children?.find((child) => child.requiresBilling),
+      );
+    }
     const billingEnabled = this.billingEnabled();
     return MENU_DATA.map((node) => {
       if (node.children && !billingEnabled) {
@@ -185,8 +192,6 @@ export class MainNavComponent {
       return node;
     });
   });
-
-  menuData$ = toObservable(this.menuData);
 
   async logout() {
     await this.auth.logout();
