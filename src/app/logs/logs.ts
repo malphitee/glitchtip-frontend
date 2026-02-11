@@ -66,6 +66,7 @@ export class Logs {
   initialLoadComplete = this.service.initialLoadComplete;
   services = this.service.services;
   hasNextPage = this.service.hasNextPage;
+  hitCount = this.service.hitCount;
 
   searchForm = new FormGroup({
     query: new FormControl(""),

@@ -19,6 +19,7 @@ export class LogsService {
   // Track accumulated logs for "load more"
   #accumulatedLogs = signal<any[]>([]);
   #isLoadingMore = signal(false);
+  #initialHitCount = signal<string | undefined>(undefined);
 
   #logsResource = apiResource.paginated(this.params, (params) => ({
     url: "/api/0/organizations/{organization_slug}/logs/",
@@ -35,6 +36,7 @@ export class LogsService {
           project: params.project?.map(Number),
           start: params.start,
           end: params.end,
+          limit: 200,
         },
       },
     },
@@ -69,8 +71,12 @@ export class LogsService {
         // Loading more - append to existing
         this.#accumulatedLogs.update((prev) => [...prev, ...data]);
       } else {
-        // Fresh load - replace
+        // Fresh load - replace and capture hit count
         this.#accumulatedLogs.set(data);
+        const count = this.paginator()?.count;
+        if (count) {
+          this.#initialHitCount.set(count);
+        }
       }
       this.#isLoadingMore.set(false);
     });
@@ -89,6 +95,7 @@ export class LogsService {
   // Pagination
   paginator = computed(() => this.#logsResource.paginator());
   hasNextPage = computed(() => this.paginator()?.hasNextPage ?? false);
+  hitCount = computed(() => this.#initialHitCount() ?? this.paginator()?.count);
 
   services = computed(() => this.#servicesResource.value() || []);
   servicesLoading = computed(() => this.#servicesResource.isLoading());
@@ -111,5 +118,6 @@ export class LogsService {
   // Reset accumulated logs when filters change (called by component)
   resetAccumulation() {
     this.#accumulatedLogs.set([]);
+    this.#initialHitCount.set(undefined);
   }
 }
