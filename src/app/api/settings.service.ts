@@ -33,6 +33,7 @@ export class SettingsService {
   initialLoad = computed(() => this.settingsResource.hasValue());
   version = computed(() => this.settings()?.version);
   instanceName = computed(() => this.settings()?.glitchtipInstanceName);
+  enabledFeatures = computed(() => this.settings()?.enabledFeatures ?? []);
 
   constructor() {
     setTimeout(() => this.refreshSettings(), 5000);

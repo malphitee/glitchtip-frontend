@@ -1806,6 +1806,8 @@ export interface components {
             serverTimeZone: string;
             /** Glitchtipinstancename */
             glitchtipInstanceName: string | null;
+            /** Enabledfeatures */
+            enabledFeatures: string[];
         };
         /** SocialAppSchema */
         SocialAppSchema: {

@@ -79,10 +79,11 @@ export class LogsService {
   // Expose accumulated logs
   logs = computed(() => this.#accumulatedLogs());
   errors = computed(() => this.#logsResource.serverError()?.detail);
+  hasError = computed(() => !!this.#logsResource.serverError());
   isLoading = computed(() => this.#logsResource.isLoading() && !this.#isLoadingMore());
   isLoadingMore = computed(() => this.#isLoadingMore());
   initialLoadComplete = computed(
-    () => this.#logsResource.hasValue() || !this.isLoading(),
+    () => this.#logsResource.hasValue() || this.hasError(),
   );
 
   // Pagination

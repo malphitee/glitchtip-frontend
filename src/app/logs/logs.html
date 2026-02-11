@@ -52,7 +52,15 @@
   <!-- Log output (terminal style) -->
   <div class="log-container">
     <div class="log-output">
-      @if (logs(); as logs) {
+      @if (errors()?.length) {
+        <div class="log-empty">
+          <div class="log-error">
+            @for (error of errors(); track $index) {
+              <span>{{ error.msg || error }}</span>
+            }
+          </div>
+        </div>
+      } @else if (logs(); as logs) {
         @if (logs.length > 0) {
           @for (log of logs; track log.id) {
             <div class="log-line" [class]="'log-line--' + log.level?.toLowerCase()">
@@ -66,29 +74,14 @@
           }
         } @else if (initialLoadComplete() && !isLoading()) {
           <div class="log-empty">
-            @if (errors()?.length) {
-              <div class="log-error">
-                @if (errors()?.length === 1) {
-                  <span>Error: {{ errors()?.[0] }}</span>
-                } @else {
-                  <span>Errors:</span>
-                  <ul>
-                    @for (error of errors(); track error) {
-                      <li>{{ error }}</li>
-                    }
-                  </ul>
-                }
-              </div>
-            } @else {
-              <div class="log-no-data">
-                <span i18n>No logs found.</span>
-                @if (query() || level().length || service_()) {
-                  <span i18n> Try adjusting your filters.</span>
-                } @else {
-                  <span i18n> Configure your SDK to start capturing logs.</span>
-                }
-              </div>
-            }
+            <div class="log-no-data">
+              <span i18n>No logs found.</span>
+              @if (query() || level().length || service_()) {
+                <span i18n> Try adjusting your filters.</span>
+              } @else {
+                <span i18n> Configure your SDK to start capturing logs.</span>
+              }
+            </div>
           </div>
         }
       }
