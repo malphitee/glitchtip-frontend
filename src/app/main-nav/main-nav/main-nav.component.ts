@@ -46,6 +46,7 @@ const MENU_DATA: NavNode[] = [
     name: $localize`Uptime Monitors`,
     route: ["org_slug", "uptime-monitors"],
     requiresActiveOrg: true,
+    requiresFeature: "uptime",
   },
   {
     name: $localize`Performance`,
