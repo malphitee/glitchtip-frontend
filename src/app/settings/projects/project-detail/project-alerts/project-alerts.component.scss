@@ -78,6 +78,11 @@ mat-card-header {
   padding-top: 16px;
 }
 
+.alert-actions {
+  display: flex;
+  gap: 8px;
+}
+
 // Move to global styles if we decide to implement in other places in app
 .tooltip {
   text-decoration: underline;

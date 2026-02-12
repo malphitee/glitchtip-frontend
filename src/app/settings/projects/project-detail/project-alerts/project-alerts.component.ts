@@ -51,6 +51,7 @@ export class ProjectAlertsComponent implements OnInit {
   updatePropertiesError = this.#service.updatePropertiesError;
   deleteRecipientLoading = this.#service.deleteRecipientLoading;
   deleteRecipientError = this.#service.deleteRecipientError;
+  testAlertLoading = this.#service.testAlertLoading;
   newAlertOpen = this.#service.newAlertOpen;
   recipientDialogOpen = this.#service.recipientDialogOpen;
   newAlertLoading = this.#service.newAlertLoading;
@@ -120,6 +121,25 @@ export class ProjectAlertsComponent implements OnInit {
         alert.alertRecipients,
       );
     }
+  }
+
+  testRecipient(alertId: number, recipientId: number) {
+    this.#service.testRecipient(alertId, recipientId);
+  }
+
+  openEditRecipientDialog(recipient: AlertRecipient, alert: ProjectAlert) {
+    this.#service.openUpdateRecipientDialog(alert);
+    const dialogRef = this.dialog.open(NewRecipientComponent, {
+      data: {
+        emailSelected: this.#service.emailSelected(),
+        editRecipient: recipient,
+      },
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.#service.editAlertRecipient(result, recipient, alert);
+      }
+    });
   }
 
   removeAlertRecipient(recipient: AlertRecipient, alert: ProjectAlert) {

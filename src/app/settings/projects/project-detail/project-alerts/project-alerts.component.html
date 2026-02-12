@@ -64,19 +64,15 @@
                   @if (
                     recipient.recipientType === "webhook" ||
                     recipient.recipientType === "discord" ||
-                    recipient.recipientType === "googlechat"
+                    recipient.recipientType === "googlechat" ||
+                    recipient.recipientType === "ntfy" ||
+                    recipient.recipientType === "teams"
                   ) {
                     <div class="svg-box">
                       <svg class="svg">
-                        @if (recipient.recipientType === "discord") {
-                          <use xlink:href="#discord"></use>
-                        }
-                        @if (recipient.recipientType === "googlechat") {
-                          <use xlink:href="#googlechat"></use>
-                        }
-                        @if (recipient.recipientType === "webhook") {
-                          <use xlink:href="#webhook"></use>
-                        }
+                        <use
+                          [attr.xlink:href]="'#' + recipient.recipientType"
+                        ></use>
                       </svg>
                     </div>
                     <div class="recipient-info">
@@ -85,6 +81,17 @@
                         matTooltip="{{ recipient.url }}"
                         matTooltipClass="tt-wrapping"
                         >{{ recipient.url }}
+                      </span>
+                    </div>
+                  }
+                  @if (recipient.recipientType === "zulip") {
+                    <mat-icon class="alert-type">chat</mat-icon>
+                    <div class="recipient-info">
+                      <span
+                        class="tooltip"
+                        matTooltip="Zulip: {{ recipient.url }}"
+                        matTooltipClass="tt-wrapping"
+                        >Zulip: {{ recipient.channel || recipient.url }}
                       </span>
                     </div>
                   }
@@ -205,19 +212,15 @@
                     @if (
                       recipient.recipientType === "webhook" ||
                       recipient.recipientType === "discord" ||
-                      recipient.recipientType === "googlechat"
+                      recipient.recipientType === "googlechat" ||
+                      recipient.recipientType === "ntfy" ||
+                      recipient.recipientType === "teams"
                     ) {
                       <div class="svg-box">
                         <svg class="svg">
-                          @if (recipient.recipientType === "discord") {
-                            <use xlink:href="#discord"></use>
-                          }
-                          @if (recipient.recipientType === "googlechat") {
-                            <use xlink:href="#googlechat"></use>
-                          }
-                          @if (recipient.recipientType === "webhook") {
-                            <use xlink:href="#webhook"></use>
-                          }
+                          <use
+                            [attr.xlink:href]="'#' + recipient.recipientType"
+                          ></use>
                         </svg>
                       </div>
                       <div class="recipient-info">
@@ -229,6 +232,17 @@
                         </span>
                       </div>
                     }
+                    @if (recipient.recipientType === "zulip") {
+                      <mat-icon class="alert-type">chat</mat-icon>
+                      <div class="recipient-info">
+                        <span
+                          class="tooltip"
+                          matTooltip="Zulip: {{ recipient.url }}"
+                          matTooltipClass="tt-wrapping"
+                          >Zulip: {{ recipient.config?.["channel"] || recipient.url }}
+                        </span>
+                      </div>
+                    }
                     @if (deleteRecipientLoading() === recipient.id) {
                       <mat-progress-spinner
                         [diameter]="20"
@@ -236,6 +250,33 @@
                         mode="indeterminate"
                       ></mat-progress-spinner>
                     } @else {
+                      @if (testAlertLoading() === recipient.id) {
+                        <mat-progress-spinner
+                          [diameter]="20"
+                          color="primary"
+                          mode="indeterminate"
+                        ></mat-progress-spinner>
+                      } @else {
+                        <button
+                          class="trash medium-icon-button"
+                          mat-icon-button
+                          color="primary"
+                          attr.aria-label="Test recipient"
+                          matTooltip="Send test notification"
+                          (click)="testRecipient(alert.id!, recipient.id!)"
+                        >
+                          <mat-icon>send</mat-icon>
+                        </button>
+                      }
+                      <button
+                        class="trash medium-icon-button"
+                        mat-icon-button
+                        color="primary"
+                        attr.aria-label="Edit recipient"
+                        (click)="openEditRecipientDialog(recipient, alert)"
+                      >
+                        <mat-icon>edit</mat-icon>
+                      </button>
                       <button
                         class="trash medium-icon-button"
                         id="delete-recipient"

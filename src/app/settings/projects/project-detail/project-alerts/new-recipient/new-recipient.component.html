@@ -1,5 +1,5 @@
 <div class="dialog-wrapper">
-  <h1 mat-dialog-title>Add Alert Recipient</h1>
+  <h1 mat-dialog-title>{{ data.editRecipient ? "Edit Alert Recipient" : "Add Alert Recipient" }}</h1>
   <form
     [formGroup]="recipientForm"
     (ngSubmit)="onSubmit()"
@@ -25,7 +25,9 @@
       </mat-form-field>
       <div class="recipientDetails">
         @if (
-          ["discord", "googlechat", "webhook"].includes(recipientType.value)
+          ["discord", "googlechat", "webhook", "ntfy", "teams"].includes(
+            recipientType.value
+          )
         ) {
           <mat-form-field class="webhook" appearance="outline">
             <mat-label>Webhook URL</mat-label>
@@ -40,9 +42,14 @@
             />
             @if (recipientType.value === "webhook") {
               <mat-hint i18n
-                >Supports Slack, Microsoft Teams, Rocket.Chat, and
-                more</mat-hint
+                >Supports Slack, Mattermost, Rocket.Chat, and more</mat-hint
               >
+            }
+            @if (recipientType.value === "ntfy") {
+              <mat-hint i18n>ntfy.sh topic URL or self-hosted endpoint</mat-hint>
+            }
+            @if (recipientType.value === "teams") {
+              <mat-hint i18n>Microsoft Teams Workflows webhook URL</mat-hint>
             }
             @if (url.errors) {
               <mat-error>
@@ -54,6 +61,75 @@
                 }
               </mat-error>
             }
+          </mat-form-field>
+        } @else if (recipientType.value === "zulip") {
+          <p class="zulip-help" i18n>
+            Create a <strong>Generic bot</strong> in your Zulip organization
+            settings under "Bots". Copy the bot's email and API key below.
+          </p>
+          <mat-form-field class="full-width" appearance="outline">
+            <mat-label>Zulip Server URL</mat-label>
+            <input
+              matInput
+              type="url"
+              formControlName="url"
+              placeholder="https://yourorg.zulipchat.com"
+            />
+            <mat-hint i18n>Your Zulip organization URL</mat-hint>
+            @if (url.errors) {
+              <mat-error>
+                @if (url.errors.required || url.errors.pattern) {
+                  <span>Enter a valid Zulip server URL</span>
+                }
+              </mat-error>
+            }
+          </mat-form-field>
+          <mat-form-field class="full-width" appearance="outline">
+            <mat-label>Bot Email</mat-label>
+            <input
+              matInput
+              type="email"
+              formControlName="botEmail"
+              placeholder="alert-bot@yourorg.zulipchat.com"
+            />
+            <mat-hint i18n>Found in the bot's settings under "Bots"</mat-hint>
+            @if (botEmail.errors?.required) {
+              <mat-error>Bot email is required</mat-error>
+            }
+          </mat-form-field>
+          <mat-form-field class="full-width" appearance="outline">
+            <mat-label>API Key</mat-label>
+            <input
+              matInput
+              type="password"
+              formControlName="apiKey"
+              placeholder="Bot API key"
+            />
+            <mat-hint i18n>The bot's API key, shown when the bot is created</mat-hint>
+            @if (apiKey.errors?.required) {
+              <mat-error>API key is required</mat-error>
+            }
+          </mat-form-field>
+          <mat-form-field class="full-width" appearance="outline">
+            <mat-label>Channel</mat-label>
+            <input
+              matInput
+              formControlName="channel"
+              placeholder="general"
+            />
+            <mat-hint i18n>The channel to post alerts to</mat-hint>
+            @if (channel.errors?.required) {
+              <mat-error>Channel is required</mat-error>
+            }
+          </mat-form-field>
+          <mat-form-field class="full-width" appearance="outline">
+            <mat-label>Topic</mat-label>
+            <input
+              matInput
+              formControlName="topic"
+              placeholder="GlitchTip Alerts"
+            />
+            <mat-hint i18n>Messages in a channel are grouped by topic</mat-hint>
           </mat-form-field>
         } @else if (recipientType.value === "email") {
           <p class="email">

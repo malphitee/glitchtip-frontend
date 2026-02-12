@@ -37,6 +37,7 @@ interface ProjectAlertState {
   updatePropertiesError: { error: string; id: number } | null;
   deleteRecipientLoading: number | null;
   deleteRecipientError: string | null;
+  testAlertLoading: number | null;
 }
 
 const initialNewAlertState = {
@@ -63,6 +64,7 @@ const initialState: ProjectAlertState = {
   updatePropertiesError: null,
   deleteRecipientLoading: null,
   deleteRecipientError: null,
+  testAlertLoading: null,
 };
 
 @Injectable()
@@ -154,6 +156,7 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
   readonly deleteRecipientError = computed(
     () => this.state().deleteRecipientError,
   );
+  readonly testAlertLoading = computed(() => this.state().testAlertLoading);
 
   constructor() {
     super(initialState);
@@ -258,6 +261,42 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
     }
   }
 
+  async testRecipient(alertId: number, recipientId: number) {
+    this.setState({ testAlertLoading: recipientId });
+    const params = this.#params();
+    const { data, error } = await client.POST(
+      "/api/0/projects/{organization_slug}/{project_slug}/alerts/{alert_id}/test/",
+      {
+        params: {
+          path: {
+            organization_slug: params.orgSlug,
+            project_slug: params.projectSlug,
+            alert_id: alertId,
+          },
+          query: {
+            recipient_id: recipientId,
+          },
+        },
+      },
+    );
+    this.setState({ testAlertLoading: null });
+    if (data) {
+      const results = data as { recipientType: string; status: string; message?: string | null }[];
+      const result = results[0];
+      if (!result) {
+        this.snackBar.open(`No test was sent`);
+      } else if (result.status === "error") {
+        this.snackBar.open(`Test failed: ${result.message}`);
+      } else if (result.status === "sent") {
+        this.snackBar.open(`Test notification sent successfully`);
+      } else if (result.status === "skipped") {
+        this.snackBar.open(`Email recipients are tested via the alert itself`);
+      }
+    } else if (error) {
+      this.snackBar.open(`Failed to send test notification`);
+    }
+  }
+
   async updateAlertProperties(
     newTimespan: number,
     newQuantity: number,
@@ -303,11 +342,18 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
       activeErrorId = activeAlert.id;
       const recipientsWithoutId: NewAlertRecipient[] =
         activeAlert.alertRecipients
-          .map((recipient) => {
-            return {
+          .map((recipient: any) => {
+            const base: any = {
               recipientType: recipient.recipientType,
               url: recipient.url,
             };
+            if (recipient.recipientType === "zulip" && recipient.config) {
+              base.botEmail = recipient.config.bot_email;
+              base.apiKey = recipient.config.api_key;
+              base.channel = recipient.config.channel;
+              base.topic = recipient.config.topic || "GlitchTip Alerts";
+            }
+            return base;
           })
           .concat([newRecipient]);
       const body = {
@@ -338,6 +384,64 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
       if (error) {
         this.setUpdateAlertRecipientsError(error, activeErrorId);
       }
+    }
+  }
+
+  async editAlertRecipient(
+    updatedRecipient: NewAlertRecipient,
+    originalRecipient: AlertRecipient,
+    alert: ProjectAlert,
+  ) {
+    if (!alert.id) return;
+    // Force https:// if no protocol exists
+    if (updatedRecipient.url && !updatedRecipient.url.startsWith("http")) {
+      updatedRecipient.url = "https://" + updatedRecipient.url;
+    }
+    const recipientsWithoutId: NewAlertRecipient[] =
+      alert.alertRecipients.map((recipient: any) => {
+        const isTarget = recipient.id === originalRecipient.id;
+        if (isTarget) {
+          return updatedRecipient;
+        }
+        const base: any = {
+          recipientType: recipient.recipientType,
+          url: recipient.url,
+        };
+        if (recipient.recipientType === "zulip" && recipient.config) {
+          base.botEmail = recipient.config.bot_email;
+          base.apiKey = recipient.config.api_key;
+          base.channel = recipient.config.channel;
+          base.topic = recipient.config.topic || "GlitchTip Alerts";
+        }
+        return base;
+      });
+    const body = {
+      timespanMinutes: alert.timespanMinutes,
+      quantity: alert.quantity,
+      uptime: alert.uptime,
+      alertRecipients: recipientsWithoutId,
+    };
+    const params = this.#params();
+    const { data, error } = await client.PUT(
+      "/api/0/projects/{organization_slug}/{project_slug}/alerts/{alert_id}/",
+      {
+        params: {
+          path: {
+            organization_slug: params.orgSlug,
+            project_slug: params.projectSlug,
+            alert_id: alert.id,
+          },
+        },
+        body,
+      },
+    );
+    if (data?.id) {
+      this.setUpdateAlertRecipients(data.alertRecipients, data.id);
+      this.snackBar.open(`Success: Your recipient has been updated`);
+      this.#projectAlertsResource.reload();
+    }
+    if (error) {
+      this.setUpdateAlertRecipientsError(error, alert.id);
     }
   }
 
@@ -466,10 +570,11 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
 
   private setCreateAlertError(error: any) {
     const newAlertState = this.state().newAlertState;
+    const message = error?.detail || error?.message || "An unknown error occurred";
     this.setState({
       newAlertState: {
         ...newAlertState,
-        newAlertError: `${error.statusText} : ${error.status}`,
+        newAlertError: message,
         newAlertLoading: false,
       },
     });

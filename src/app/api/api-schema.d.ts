@@ -155,6 +155,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/0/projects/{organization_slug}/{project_slug}/alerts/{alert_id}/test/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Test Project Alert */
+        post: operations["apps_alerts_api_test_project_alert"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/0/projects/{organization_slug}/{project_slug}/files/difs/assemble": {
         parameters: {
             query?: never;
@@ -2373,6 +2390,19 @@ export interface components {
             recipientType: string;
             /** Url */
             url?: string | null;
+            /** Config */
+            config?: Record<string, unknown> | null;
+            /** Tagstoadd */
+            tagsToAdd?: string[] | null;
+        };
+        /** TestAlertResultSchema */
+        TestAlertResultSchema: {
+            /** Recipient Type */
+            recipientType: string;
+            /** Status */
+            status: string;
+            /** Message */
+            message?: string | null;
         };
         /** ProjectAlertSchema */
         ProjectAlertSchema: {
@@ -2413,7 +2443,7 @@ export interface components {
             /** Name */
             name?: string | null;
             /** Alertrecipients */
-            alertRecipients?: (components["schemas"]["EmailAlertRecipientIn"] | components["schemas"]["WebhookAlertRecipientIn"])[] | null;
+            alertRecipients?: (components["schemas"]["EmailAlertRecipientIn"] | components["schemas"]["WebhookAlertRecipientIn"] | components["schemas"]["ZulipAlertRecipientIn"])[] | null;
             /** Timespan Minutes */
             timespanMinutes?: number | null;
             /** Quantity */
@@ -2431,12 +2461,38 @@ export interface components {
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
              */
-            recipientType: "discord" | "googlechat" | "webhook";
+            recipientType: "discord" | "googlechat" | "webhook" | "ntfy" | "teams";
             /**
              * Url
              * Format: uri
              */
             url: string;
+            /** Tagstoadd */
+            tagsToAdd?: string[] | null;
+        };
+        /** ZulipAlertRecipientIn */
+        ZulipAlertRecipientIn: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            recipientType: "zulip";
+            /**
+             * Url
+             * Format: uri
+             */
+            url: string;
+            /** Bot Email */
+            botEmail: string;
+            /** Api Key */
+            apiKey: string;
+            /** Channel */
+            channel: string;
+            /**
+             * Topic
+             * @default GlitchTip Alerts
+             */
+            topic: string;
             /** Tagstoadd */
             tagsToAdd?: string[] | null;
         };
@@ -4673,6 +4729,32 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    apps_alerts_api_test_project_alert: {
+        parameters: {
+            query?: {
+                recipient_id?: number | null;
+            };
+            header?: never;
+            path: {
+                organization_slug: string;
+                project_slug: string;
+                alert_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TestAlertResultSchema"][];
+                };
             };
         };
     };
