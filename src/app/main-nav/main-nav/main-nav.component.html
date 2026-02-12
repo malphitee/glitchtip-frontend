@@ -10,13 +10,23 @@
       [class.collapsed]="isCollapsed()"
     >
       <mat-toolbar class="logo-toolbar">
-        <img
-          class="main-logo"
-          routerLink="."
-          (click)="reload()"
-          src="static/assets/images/glitchtip-logo-v1.svg"
-          alt="GlitchTip"
-        />
+        @if (!isCollapsed()) {
+          <img
+            class="main-logo"
+            routerLink="."
+            (click)="reload()"
+            src="static/assets/images/glitchtip-logo-v1.svg"
+            alt="GlitchTip"
+          />
+        } @else {
+          <img
+            class="collapsed-logo"
+            routerLink="."
+            (click)="reload()"
+            src="static/assets/images/glitchtip-logo-collasped.svg"
+            alt="GlitchTip"
+          />
+        }
         <button
           mat-icon-button
           class="collapse-toggle"
@@ -84,6 +94,7 @@
         </mat-form-field>
       }
       <mat-nav-list>
+        <mat-divider class="nav-section-divider"></mat-divider>
         <!-- Main nav items -->
         @for (item of navItems; track item.route) {
           @if (activeOrganization()) {
