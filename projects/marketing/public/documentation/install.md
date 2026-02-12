@@ -108,7 +108,9 @@ Nodion allows adjusting many environment variables for configuration. See config
 
 ## Railway
 
-[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/template/glitchtip?utm_medium=integration&utm_source=button&utm_campaign=glitchtip)
+<a href="https://railway.com/new/template/glitchtip?utm_medium=integration&utm_source=button&utm_campaign=glitchtip">
+<img src="https://railway.com/button.svg" alt="Deploy on Railway" style="width:200px;"/>
+</a>
 
 Railway is a modern app hosting platform that makes it easy to deploy GlitchTip. The template deploys GlitchTip in all-in-one mode with PostgreSQL and Redis, and is ready to use immediately — no manual environment variable setup required.
 
@@ -174,6 +176,7 @@ Required environment variables:
 - `EMAIL_URL`: SMTP string. It will look something like `"smtp://email:password@smtp_url:port"`. See format examples [here](https://django-environ.readthedocs.io/en/latest/tips.html#email-settings). Pay extra attention if the URL contains unsafe characters (eg. @ or /) and see how to handle them [in django-environ's documentation](https://django-environ.readthedocs.io/en/latest/tips.html#using-unsafe-characters-in-urls)
 - Alternatively, use the Mailgun API by setting `MAILGUN_API_KEY`. Set `EMAIL_BACKEND` to `anymail.backends.mailgun.EmailBackend`. For more look [here](https://anymail.dev/en/stable/esps/mailgun/).
 - Alternatively, use the SendGrid API by setting `SENDGRID_API_KEY`. Set `EMAIL_BACKEND` to `anymail.backends.sendgrid.EmailBackend`.
+- GlitchTip supports additional email providers via [Anymail](https://anymail.dev): Postmark, Mailjet, Mandrill, SparkPost, Brevo, and Postal. Set the appropriate API key and `EMAIL_BACKEND`. See [Anymail documentation](https://anymail.dev/en/stable/) for details.
 - `DEFAULT_FROM_EMAIL` Default from email address. Example `info@example.com`
 - `GLITCHTIP_DOMAIN` Set to your domain. Include scheme (http or https). Example: `https://glitchtip.example.com`.
 
@@ -190,6 +193,16 @@ Optional environment variables:
 - `ENABLE_USER_REGISTRATION` (Default True) When True, any user will be able to register through the self-signup. When False, user self-signup is disabled after the first user is registered. Subsequent users must use social apps if enabled or be created by a superuser on the backend and organization invitations may only be sent to existing users.
 - `ENABLE_SOCIAL_APPS_USER_REGISTRATION` (Default `ENABLE_USER_REGISTRATION`) When True, any user will be able to register through social apps. When False, unregistered user login is disabled after the first user is registered. Subsequent users must use the self-signup or be created by a superuser on the backend.
 - `ENABLE_ORGANIZATION_CREATION` (Default False) When False, only superusers will be able to create new organizations after the first. When True, any user can create a new organization.
+- `GLITCHTIP_MAX_UPTIME_CHECK_LIFE_DAYS` (Default to max event life days) Uptime check data older than this will be deleted.
+- `GLITCHTIP_ENABLE_UPTIME` (Default True) Set to False to disable uptime monitoring.
+- `GLITCHTIP_ENABLE_MCP` (Default False) Enable the MCP (Model Context Protocol) server.
+- `GLITCHTIP_INSTANCE_NAME` Custom instance name displayed in the UI. Supports markdown. Example: `"[My Company's](https://example.com) GlitchTip"`
+- `ALLOWED_HOSTS` (Default `*`) Comma-separated list of allowed hostnames. Restrict this in production for added security.
+- `CSRF_TRUSTED_ORIGINS` Comma-separated list of trusted origins for CSRF. Required when using a reverse proxy with a different domain.
+- `BASE_PATH` Set when running GlitchTip under a subpath (e.g. `/glitchtip`).
+- `PROXY_ENV` (Default False) Set to True to trust HTTP_PROXY, HTTPS_PROXY, and NO_PROXY environment variables.
+- `LOG_LEVEL` (Default WARNING) Python log level. Set to `INFO` or `DEBUG` for troubleshooting.
+- `ENABLE_OBSERVABILITY_API` (Default False) Enable Prometheus metrics endpoint.
 
 ### Server configuration
 
@@ -198,6 +211,12 @@ Scaling GlitchTip? Review these granian (web server) and django-vtasks (worker) 
 - `VTASKS_CONCURRENCY` (Default 20) Number of concurrent asyncio background tasks to run.
 - `DATABASE_POOL_MAX_SIZE` (Default 20) psycopg connection pool size, consider setting it the same as vtasks concurrency. Be aware of your postgres connection limit.
 - `GRANIAN_WORKERS` (Default 1) Number of granian web workers to run. GlitchTip uses ASGI (async Python). Setting this higher is only recommended when not scaling horizontally. See more granian settings [here](https://github.com/emmett-framework/granian)
+
+### Security headers
+
+- `SECURE_HSTS_SECONDS` (Default 0) Set to a non-zero value (e.g. 31536000) to enable HTTP Strict Transport Security.
+- `SECURE_HSTS_PRELOAD` (Default False)
+- `SECURE_HSTS_INCLUDE_SUBDOMAINS` (Default False)
 
 ### All-in-One Mode
 
@@ -336,6 +355,7 @@ You may add Social Accounts in Django Admin at `/admin/socialaccount/socialapp/`
 - [Google](https://docs.allauth.org/en/latest/socialaccount/providers/google.html)
 - [Microsoft](https://docs.allauth.org/en/latest/socialaccount/providers/microsoft.html)
 - [NextCloud](https://docs.allauth.org/en/latest/socialaccount/providers/nextcloud.html)
+- [Okta](https://docs.allauth.org/en/latest/socialaccount/providers/okta.html)
 - [OpenID Connect](https://docs.allauth.org/en/latest/socialaccount/providers/openid_connect.html)
 
 The callback endpoint URL has to be set on `/accounts/<provider name>/login/callback/` where `<provider name>` is a name of the login provider. For example `https://example.com/accounts/github/login/callback/`.
