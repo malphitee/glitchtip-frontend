@@ -41,7 +41,7 @@ test-e2e:
       alias: backend
       command: ["./bin/run-all-in-one.sh"]
   image:
-    name: cypress/included:15.8.1
+    name: cypress/included:15.10.0
     entrypoint: [""]
   script:
     - npm ci --force

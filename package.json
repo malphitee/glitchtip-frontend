@@ -92,7 +92,7 @@
     "@vitest/mocker": "^4.0.16",
     "babel-loader": "^10.0.0",
     "concurrently": "^6.0.0",
-    "cypress": "^15.8.1",
+    "cypress": "^15.10.0",
     "cypress-localstorage-commands": "^2.2.8",
     "eslint": "^9.0.0",
     "eslint-plugin-storybook": "^10.1.11",
