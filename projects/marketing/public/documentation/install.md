@@ -127,7 +127,7 @@ To update, click the update button in Railway for each service (GlitchTip, Postg
 ## RepoCloud
 
 <a href="https://repocloud.io/?ref=ek83qs8">
-<img src="https://repocloud.io/static/bluelogo.png" alt="Deploy on RepoCloud" style="width:200px;"/>
+<img src="/assets/repocloud.png" alt="Deploy on RepoCloud" style="width:200px;"/>
 </a>
 
 RepoCloud provides a one-click deployment for open source applications, including GlitchTip.
@@ -137,8 +137,6 @@ Sign up and run GlitchTip on RepoCloud [here](https://repocloud.io/?ref=ek83qs8)
 ## Helm
 
 Installing GlitchTip with Helm for Kubernetes is a good option for high throughput sites and users who are very comfortable using Kubernetes.
-
-app.glitchtip.com uses this method with a managed DigitalOcean database.
 
 1. Add our Helm chart repo `helm repo add glitchtip https://gitlab.com/api/v4/projects/16325141/packages/helm/stable`
 2. Review our [values.yaml](https://gitlab.com/glitchtip/glitchtip-helm-chart/-/blob/master/values.yaml) and [values.sample.yaml](https://gitlab.com/glitchtip/glitchtip-helm-chart/-/blob/master/values.sample.yaml). At a minimum, decide if using helm postgresql and set env.secret.SECRET_KEY
