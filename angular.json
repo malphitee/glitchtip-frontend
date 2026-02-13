@@ -229,7 +229,7 @@
             "stylePreprocessorOptions": {
               "includePaths": ["./src/assets/styles", ""]
             },
-            "scripts": [],
+            "scripts": ["projects/marketing/src/analytics.js"],
             "server": "projects/marketing/src/main.server.ts",
             "prerender": {
               "discoverRoutes": true,
