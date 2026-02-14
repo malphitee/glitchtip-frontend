@@ -155,7 +155,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/0/projects/{organization_slug}/{project_slug}/files/difs/assemble": {
+    "/api/0/projects/{organization_slug}/{project_slug}/files/difs/assemble/": {
         parameters: {
             query?: never;
             header?: never;
@@ -663,7 +663,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/0/organizations/{organization_slug}/logs/services/": {
+    "/api/0/organizations/{organization_slug}/logs/resources/": {
         parameters: {
             query?: never;
             header?: never;
@@ -671,13 +671,13 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * List Log Services
-         * @description List unique service names for an organization.
+         * List Log Resources
+         * @description List unique resource names (service, environment, host) for an organization.
          *
-         *     Returns services ordered by last_seen (most recent first).
+         *     Returns resources ordered by last_seen (most recent first).
          *     Used to populate filter dropdowns in the UI.
          */
-        get: operations["apps_logs_api_list_log_services"];
+        get: operations["apps_logs_api_list_log_resources"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2973,7 +2973,7 @@ export interface components {
             /** Transaction */
             transaction: string;
             /** Tags */
-            tags: Record<string, never>;
+            tags: Record<string, unknown>;
             /** Hashes */
             hashes: unknown[];
         };
@@ -3041,7 +3041,7 @@ export interface components {
             /** Title */
             title: string;
             /** Metadata */
-            metadata: Record<string, never>;
+            metadata: Record<string, unknown>;
             /** Culprit */
             culprit?: string | null;
             /** Userreportcount */
@@ -3148,7 +3148,7 @@ export interface components {
             /** Title */
             title: string;
             /** Metadata */
-            metadata: Record<string, never>;
+            metadata: Record<string, unknown>;
             /** Culprit */
             culprit?: string | null;
         };
@@ -3248,6 +3248,16 @@ export interface components {
              */
             service?: string | null;
             /**
+             * Environment
+             * @description Filter by environment
+             */
+            environment?: string | null;
+            /**
+             * Host
+             * @description Filter by host name
+             */
+            host?: string | null;
+            /**
              * Traceid
              * @description Filter by trace ID
              */
@@ -3300,6 +3310,10 @@ export interface components {
             body: string;
             /** Service */
             service: string;
+            /** Environment */
+            environment: string;
+            /** Host */
+            host: string;
             /** Traceid */
             traceID?: string | null;
             /** Spanid */
@@ -3312,42 +3326,6 @@ export interface components {
             };
             /** Projectid */
             projectId: number;
-        };
-        /**
-         * LogEventDetailSchema
-         * @description Extended schema for single log event detail.
-         */
-        LogEventDetailSchema: {
-            /**
-             * Id
-             * Format: uuid
-             */
-            id: string;
-            /**
-             * Timestamp
-             * Format: date-time
-             */
-            timestamp: string;
-            /** Level */
-            level: string;
-            /** Body */
-            body: string;
-            /** Service */
-            service: string;
-            /** Traceid */
-            traceID?: string | null;
-            /** Spanid */
-            spanID?: string | null;
-            /** Severitynumber */
-            severityNumber?: number | null;
-            /** Data */
-            data?: {
-                [key: string]: unknown;
-            };
-            /** Projectid */
-            projectId: number;
-            /** Organizationid */
-            organizationId: number;
         };
         /**
          * LogStatsFilterSchema
@@ -3369,6 +3347,11 @@ export interface components {
              * @description Filter by service names
              */
             service?: string[] | null;
+            /**
+             * Environment
+             * @description Filter by environment names
+             */
+            environment?: string[] | null;
             /**
              * Start
              * @description Start of time range
@@ -3401,12 +3384,14 @@ export interface components {
             data: number[];
         };
         /**
-         * LogServiceSchema
-         * @description Schema for service name in list.
+         * LogResourceSchema
+         * @description Schema for resource name in list.
          */
-        LogServiceSchema: {
+        LogResourceSchema: {
             /** Name */
             name: string;
+            /** Type */
+            type: string;
             /**
              * Lastseen
              * Format: date-time
@@ -3470,7 +3455,7 @@ export interface components {
             isAcceptingEvents: boolean;
             /**
              * Event Throttle Rate
-             * @description Probability (in percent) on how many events are throttled.
+             * @description Probability (in percent) on how many events are throttled. Used for throttling at project level
              * @default 0
              */
             eventThrottleRate: number;
@@ -3532,7 +3517,7 @@ export interface components {
             isAcceptingEvents: boolean;
             /**
              * Event Throttle Rate
-             * @description Probability (in percent) on how many events are throttled.
+             * @description Probability (in percent) on how many events are throttled. Used for throttling at project level
              * @default 0
              */
             eventThrottleRate: number;
@@ -3615,7 +3600,7 @@ export interface components {
             firstEvent?: string | null;
             /**
              * Event Throttle Rate
-             * @description Probability (in percent) on how many events are throttled.
+             * @description Probability (in percent) on how many events are throttled. Used for throttling at project level
              * @default 0
              */
             eventThrottleRate: number;
@@ -3906,7 +3891,7 @@ export interface components {
             firstEvent?: string | null;
             /**
              * Event Throttle Rate
-             * @description Probability (in percent) on how many events are throttled.
+             * @description Probability (in percent) on how many events are throttled. Used for throttling at project level
              * @default 0
              */
             eventThrottleRate: number;
@@ -3991,7 +3976,7 @@ export interface components {
             firstEvent?: string | null;
             /**
              * Event Throttle Rate
-             * @description Probability (in percent) on how many events are throttled.
+             * @description Probability (in percent) on how many events are throttled. Used for throttling at project level
              * @default 0
              */
             eventThrottleRate: number;
@@ -4559,7 +4544,7 @@ export interface components {
             /** Url */
             url?: string | null;
             /** Data */
-            data?: Record<string, never>;
+            data?: Record<string, unknown>;
             /**
              * Deploy Count
              * @default 0
@@ -5808,6 +5793,10 @@ export interface operations {
                 level?: string[] | null;
                 /** @description Filter by service name */
                 service?: string | null;
+                /** @description Filter by environment */
+                environment?: string | null;
+                /** @description Filter by host name */
+                host?: string | null;
                 /** @description Filter by trace ID */
                 traceId?: string | null;
                 /** @description Search in log body */
@@ -5858,7 +5847,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LogEventDetailSchema"];
+                    "application/json": components["schemas"]["LogEventSchema"];
                 };
             };
         };
@@ -5872,6 +5861,8 @@ export interface operations {
                 level?: string[] | null;
                 /** @description Filter by service names */
                 service?: string[] | null;
+                /** @description Filter by environment names */
+                environment?: string[] | null;
                 /** @description Start of time range */
                 start?: string | null;
                 /** @description End of time range */
@@ -5896,9 +5887,11 @@ export interface operations {
             };
         };
     };
-    apps_logs_api_list_log_services: {
+    apps_logs_api_list_log_resources: {
         parameters: {
-            query?: never;
+            query?: {
+                resource_type?: string | null;
+            };
             header?: never;
             path: {
                 organization_slug: string;
@@ -5913,7 +5906,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LogServiceSchema"][];
+                    "application/json": components["schemas"]["LogResourceSchema"][];
                 };
             };
         };

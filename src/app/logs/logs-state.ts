@@ -49,11 +49,14 @@ export class LogsService {
   });
 
   #servicesResource = apiResource(this.#servicesParams, (params) => ({
-    url: "/api/0/organizations/{organization_slug}/logs/services/",
+    url: "/api/0/organizations/{organization_slug}/logs/resources/",
     options: {
       params: {
         path: {
           organization_slug: params.orgSlug,
+        },
+        query: {
+          resource_type: "service",
         },
       },
     },
