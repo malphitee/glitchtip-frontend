@@ -95,12 +95,13 @@ build-docker:
 
 upload-sourcemaps:
   stage: deploy
-  image: getsentry/sentry-cli
+  image: alpine:latest
   dependencies:
     - build-assets
   script:
+    - apk add --no-cache curl zip
     - VERSION=glitchtip@${CI_COMMIT_REF_NAME#*v}
-    - sentry-cli sourcemaps upload --release ${VERSION} dist/glitchtip-frontend/browser
+    - sh scripts/upload-sourcemaps.sh dist/glitchtip-frontend/browser
   allow_failure: true
   only:
     refs:
