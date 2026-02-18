@@ -29,6 +29,11 @@ html {
 // Custom typography classes are defined in app/styles/font-files.scss
 // These use Material Design tokens (e.g. var(--mat-sys-headline-large))
 
+html,
+body {
+  background-color: var(--mat-sys-surface-container-highest);
+}
+
 app-root,
 app-root-scully {
   display: flex;
@@ -78,6 +83,7 @@ a {
   width: 1180px;
   min-height: 700px;
   margin: -70px auto 50px;
+  background-color: var(--mat-sys-surface-container);
 
   @media screen and (max-width: 1199px) {
     width: auto;
@@ -110,6 +116,8 @@ a {
 }
 
 .markdown-container {
+  @extend .marketing-body;
+
   h1 {
     @extend .marketing-heading;
     display: inline-block;
@@ -160,13 +168,13 @@ a {
 
   code {
     padding: 0 5px;
-    background-color: #eee;
+    background-color: var(--mat-sys-surface-variant);
     font-size: 0.9em;
   }
 
   pre {
     padding: 10px 15px;
-    background-color: #efefef;
+    background-color: var(--mat-sys-surface-variant);
     overflow-x: scroll;
     font-size: 0.9em;
     line-height: 1.5em;
