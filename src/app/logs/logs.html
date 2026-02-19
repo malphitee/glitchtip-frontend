@@ -51,7 +51,6 @@
       <mat-label i18n>Service</mat-label>
       <mat-select
         [formControl]="serviceForm.controls.service"
-        [disabled]="services().length < 1"
         (selectionChange)="onServiceChange($event)"
       >
         <mat-option value="">All services</mat-option>

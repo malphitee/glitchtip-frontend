@@ -18,10 +18,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { LogsService } from "./logs-state";
 import { ListAppBar } from "../list-elements/list-app-bar/list-app-bar";
-import {
-  stringArrAttribute,
-  stringAttribute,
-} from "../shared/shared.utils";
+import { stringArrAttribute, stringAttribute } from "../shared/shared.utils";
 
 @Component({
   templateUrl: "./logs.html",
@@ -88,7 +85,10 @@ export class Logs {
   ];
 
   serviceOptions = computed(() =>
-    this.services().map((s: { name: string }) => ({ value: s.name, label: s.name })),
+    this.services().map((s: { name: string }) => ({
+      value: s.name,
+      label: s.name,
+    })),
   );
 
   constructor() {
@@ -132,6 +132,11 @@ export class Logs {
       const service = this.service_();
       this.serviceForm.setValue({ service: service ?? null });
     });
+    effect(() =>
+      this.services().length === 0
+        ? this.serviceForm.disable()
+        : this.serviceForm.enable(),
+    );
   }
 
   loadMore() {
