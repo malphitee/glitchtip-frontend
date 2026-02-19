@@ -1,6 +1,6 @@
 # GlitchTip Installation Guide
 
-GlitchTip can be run with Docker. We recommend [Docker Compose](documentation/install#docker-compose), [PikaPods](documentation/install#pikapods), [Elestio](documentation/install#elestio), or [Nodion](documentation/install#nodion). A [Helm](documentation/install#helm) chart is available for Kubernetes.
+GlitchTip can be run with Docker. We recommend [Docker Compose](documentation/install#docker-compose), [PikaPods](documentation/install#pikapods), [Elestio](documentation/install#elestio), [Nodion](documentation/install#nodion), [Railway](documentation/install#railway), or [RepoCloud](documentation/install#repocloud). A [Helm](documentation/install#helm) chart is available for Kubernetes.
 
 Not sure which? Elestio, Pikapods, and Nodion all support GlitchTip via a revenue share program.
 
@@ -106,11 +106,37 @@ Sign up and run GlitchTip on Nodion [here](https://www.nodion.com/en/deploy/glit
 
 Nodion allows adjusting many environment variables for configuration. See configuration [docs](https://glitchtip.com/documentation/install#configuration).
 
+## Railway
+
+<a href="https://railway.com/new/template/glitchtip?utm_medium=integration&utm_source=button&utm_campaign=glitchtip">
+<img src="https://railway.com/button.svg" alt="Deploy on Railway" style="width:200px;"/>
+</a>
+
+Railway is a modern app hosting platform that makes it easy to deploy GlitchTip. The template deploys GlitchTip in all-in-one mode with PostgreSQL and Redis, and is ready to use immediately — no manual environment variable setup required.
+
+Sign up and deploy GlitchTip on Railway [here](https://railway.com/new/template/glitchtip?utm_medium=integration&utm_source=button&utm_campaign=glitchtip). After deployment, configure email and other optional settings via environment variables. See [Configuration](https://glitchtip.com/documentation/install#configuration).
+
+Railway supports S3-compatible object storage ("buckets") for file uploads such as sourcemaps. Services can be scaled both vertically and horizontally.
+
+### Upgrading on Railway
+
+The template uses a major version Docker image tag, which receives all minor updates automatically. Minor updates are safe and non-breaking. Major version upgrades happen roughly once a year and may include breaking changes such as dropping support for older PostgreSQL versions — check the [GlitchTip blog](https://glitchtip.com/blog) for release notes before upgrading the major version tag.
+
+To update, click the update button in Railway for each service (GlitchTip, PostgreSQL, Redis). Railway also supports auto-updates, which can be enabled per service. Database migrations run automatically on startup.
+
+## RepoCloud
+
+<a href="https://repocloud.io/?ref=ek83qs8">
+<img src="/assets/repocloud.png" alt="Deploy on RepoCloud" style="width:200px;"/>
+</a>
+
+RepoCloud provides a one-click deployment for open source applications, including GlitchTip.
+
+Sign up and run GlitchTip on RepoCloud [here](https://repocloud.io/?ref=ek83qs8).
+
 ## Helm
 
 Installing GlitchTip with Helm for Kubernetes is a good option for high throughput sites and users who are very comfortable using Kubernetes.
-
-app.glitchtip.com uses this method with a managed DigitalOcean database.
 
 1. Add our Helm chart repo `helm repo add glitchtip https://gitlab.com/api/v4/projects/16325141/packages/helm/stable`
 2. Review our [values.yaml](https://gitlab.com/glitchtip/glitchtip-helm-chart/-/blob/master/values.yaml) and [values.sample.yaml](https://gitlab.com/glitchtip/glitchtip-helm-chart/-/blob/master/values.sample.yaml). At a minimum, decide if using helm postgresql and set env.secret.SECRET_KEY
@@ -122,67 +148,6 @@ For postgresql, we recommend an externally managed database and providing only t
 - postgresql helm chart does not support major upgrades (such as 14.0 to 15.0). It will fail to start. You could export to a sql file and import if downtime is acceptable. Minor updates are supported.
 
 For high availability, production servers we recommend using multiple Kubernetes Nodes, an ingress and/or load balancer, a pod disruption budget, anti-affinity, and a managed PostgreSQL high availability database.
-
-## DigitalOcean App Platform
-
-Get started by clicking here. Note this is a referral link and is a great way to help fund GlitchTip.
-
-<a href="https://cloud.digitalocean.com/apps/new?repo=https://gitlab.com/glitchtip/glitchtip/tree/master&refcode=7e90b8fb37f8">
-<img src="https://www.deploytodo.com/do-btn-blue.svg" alt="Deploy to DigitalOcean" style="width:250px;"/>
-</a>
-
-- Edit environment variables and set SECRET_KEY to a random string. Edit EMAIL_URL (or delete if just testing).
-- Set worker containers to just 1.
-- One 512 MB RAM | 1 vCPU is fine to start with.
-- Click Create app.
-
-Next you must create a "Caching" managed database, which is valkey. You can either do so via the web interface or through yaml.
-Call it "glitchtip-valkey" and ensure it's in the same region as your app.
-
-If you want to use yaml, you can copy [app-platform.yaml](https://gitlab.com/glitchtip/glitchtip/-/blob/master/app-platform.yaml) to your local computer. Edit the following
-
-### Name and region
-
-This can be anything. We default to "glitchtip" and "nyc".
-
-### Environment Variables
-
-At a minimum, set the `SECRET_KEY` to a random string of letters.
-
-See [Configuration](https://glitchtip.com/documentation/install#configuration) for more information.
-
-### Valkey
-
-GlitchTip requires Valkey for sending notification, managing events, and more. Go to https://cloud.digitalocean.com/databases/ and create a new valkey database. For almost all size instances, the 1 GB RAM | 1 vCPU instance is sufficient. Enter your valkey database's name in the glitchtip-valkey section. Let's assume it's named "glitchtip-valkey". Both "name" and "cluster_name" must be the same value.
-
-```
-- name: glitchtip-valkey
-  engine: REDIS
-  production: true
-  cluster_name: glitchtip-valkey
-```
-
-Ensure the environment variable "VALKEY_URL" uses the same name. If you didn't name your Valkey instance "glitchtip-valkey" then make sure to update it.
-
-### Deploying
-
-You'll need to install [doctl](https://www.digitalocean.com/docs/apis-clis/doctl/how-to/install/) and log in.
-
-Run `doctl apps list` to get your app's id.
-
-Now apply your app-platform.yaml spec with `doctl apps update 11111111-1111-1111-1111-111111111 --spec app-platform.yaml` (enter your actual id)
-
-After deployment, you should be able to visit the app URL and start using GlitchTip!
-
-### Production considerations
-
-If you intend to use GlitchTip in production, consider upgrading your Postgres database to a production instance. In the web interface, go to Manage Components, glitchtip-db, Upgrade to a managed database.
-
-If you haven't already, you'll need to set up email via environment variables.
-
-### Upgrading GlitchTip
-
-By default, the docker image tag is "latest". Click Deploy to upgrade to the latest GlitchTip docker image.
 
 ## Installing Without Docker
 
@@ -209,6 +174,7 @@ Required environment variables:
 - `EMAIL_URL`: SMTP string. It will look something like `"smtp://email:password@smtp_url:port"`. See format examples [here](https://django-environ.readthedocs.io/en/latest/tips.html#email-settings). Pay extra attention if the URL contains unsafe characters (eg. @ or /) and see how to handle them [in django-environ's documentation](https://django-environ.readthedocs.io/en/latest/tips.html#using-unsafe-characters-in-urls)
 - Alternatively, use the Mailgun API by setting `MAILGUN_API_KEY`. Set `EMAIL_BACKEND` to `anymail.backends.mailgun.EmailBackend`. For more look [here](https://anymail.dev/en/stable/esps/mailgun/).
 - Alternatively, use the SendGrid API by setting `SENDGRID_API_KEY`. Set `EMAIL_BACKEND` to `anymail.backends.sendgrid.EmailBackend`.
+- GlitchTip supports additional email providers via [Anymail](https://anymail.dev): Postmark, Mailjet, Mandrill, SparkPost, Brevo, and Postal. Set the appropriate API key and `EMAIL_BACKEND`. See [Anymail documentation](https://anymail.dev/en/stable/) for details.
 - `DEFAULT_FROM_EMAIL` Default from email address. Example `info@example.com`
 - `GLITCHTIP_DOMAIN` Set to your domain. Include scheme (http or https). Example: `https://glitchtip.example.com`.
 
@@ -225,6 +191,16 @@ Optional environment variables:
 - `ENABLE_USER_REGISTRATION` (Default True) When True, any user will be able to register through the self-signup. When False, user self-signup is disabled after the first user is registered. Subsequent users must use social apps if enabled or be created by a superuser on the backend and organization invitations may only be sent to existing users.
 - `ENABLE_SOCIAL_APPS_USER_REGISTRATION` (Default `ENABLE_USER_REGISTRATION`) When True, any user will be able to register through social apps. When False, unregistered user login is disabled after the first user is registered. Subsequent users must use the self-signup or be created by a superuser on the backend.
 - `ENABLE_ORGANIZATION_CREATION` (Default False) When False, only superusers will be able to create new organizations after the first. When True, any user can create a new organization.
+- `GLITCHTIP_MAX_UPTIME_CHECK_LIFE_DAYS` (Default to max event life days) Uptime check data older than this will be deleted.
+- `GLITCHTIP_ENABLE_UPTIME` (Default True) Set to False to disable uptime monitoring.
+- `GLITCHTIP_ENABLE_MCP` (Default False) Enable the MCP (Model Context Protocol) server.
+- `GLITCHTIP_INSTANCE_NAME` Custom instance name displayed in the UI. Supports markdown. Example: `"[My Company's](https://example.com) GlitchTip"`
+- `ALLOWED_HOSTS` (Default `*`) Comma-separated list of allowed hostnames. Restrict this in production for added security.
+- `CSRF_TRUSTED_ORIGINS` Comma-separated list of trusted origins for CSRF. Required when using a reverse proxy with a different domain.
+- `BASE_PATH` Set when running GlitchTip under a subpath (e.g. `/glitchtip`).
+- `PROXY_ENV` (Default False) Set to True to trust HTTP_PROXY, HTTPS_PROXY, and NO_PROXY environment variables.
+- `LOG_LEVEL` (Default WARNING) Python log level. Set to `INFO` or `DEBUG` for troubleshooting.
+- `ENABLE_OBSERVABILITY_API` (Default False) Enable Prometheus metrics endpoint.
 
 ### Server configuration
 
@@ -233,6 +209,12 @@ Scaling GlitchTip? Review these granian (web server) and django-vtasks (worker) 
 - `VTASKS_CONCURRENCY` (Default 20) Number of concurrent asyncio background tasks to run.
 - `DATABASE_POOL_MAX_SIZE` (Default 20) psycopg connection pool size, consider setting it the same as vtasks concurrency. Be aware of your postgres connection limit.
 - `GRANIAN_WORKERS` (Default 1) Number of granian web workers to run. GlitchTip uses ASGI (async Python). Setting this higher is only recommended when not scaling horizontally. See more granian settings [here](https://github.com/emmett-framework/granian)
+
+### Security headers
+
+- `SECURE_HSTS_SECONDS` (Default 0) Set to a non-zero value (e.g. 31536000) to enable HTTP Strict Transport Security.
+- `SECURE_HSTS_PRELOAD` (Default False)
+- `SECURE_HSTS_INCLUDE_SUBDOMAINS` (Default False)
 
 ### All-in-One Mode
 
@@ -371,6 +353,7 @@ You may add Social Accounts in Django Admin at `/admin/socialaccount/socialapp/`
 - [Google](https://docs.allauth.org/en/latest/socialaccount/providers/google.html)
 - [Microsoft](https://docs.allauth.org/en/latest/socialaccount/providers/microsoft.html)
 - [NextCloud](https://docs.allauth.org/en/latest/socialaccount/providers/nextcloud.html)
+- [Okta](https://docs.allauth.org/en/latest/socialaccount/providers/okta.html)
 - [OpenID Connect](https://docs.allauth.org/en/latest/socialaccount/providers/openid_connect.html)
 
 The callback endpoint URL has to be set on `/accounts/<provider name>/login/callback/` where `<provider name>` is a name of the login provider. For example `https://example.com/accounts/github/login/callback/`.
