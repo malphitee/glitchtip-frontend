@@ -130,7 +130,7 @@ export class Logs {
     });
     effect(() => {
       const service = this.service_();
-      this.serviceForm.setValue({ service: service ?? "" });
+      this.serviceForm.setValue({ service: service ?? null });
     });
   }
 
