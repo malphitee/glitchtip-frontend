@@ -43,17 +43,13 @@ export class LogsService {
   }));
 
   // Services list for filter dropdown
-  #servicesParams = computed(() => {
-    const params = this.params();
-    return params?.orgSlug ? { orgSlug: params.orgSlug } : undefined;
-  });
-
-  #servicesResource = apiResource(this.#servicesParams, (params) => ({
+  #orgSlug = computed(() => this.params()?.orgSlug);
+  #servicesResource = apiResource(this.#orgSlug, (orgSlug) => ({
     url: "/api/0/organizations/{organization_slug}/logs/resources/",
     options: {
       params: {
         path: {
-          organization_slug: params.orgSlug,
+          organization_slug: orgSlug,
         },
         query: {
           resource_type: "service",
@@ -89,7 +85,9 @@ export class LogsService {
   logs = computed(() => this.#accumulatedLogs());
   errors = computed(() => this.#logsResource.serverError()?.detail);
   hasError = computed(() => !!this.#logsResource.serverError());
-  isLoading = computed(() => this.#logsResource.isLoading() && !this.#isLoadingMore());
+  isLoading = computed(
+    () => this.#logsResource.isLoading() && !this.#isLoadingMore(),
+  );
   isLoadingMore = computed(() => this.#isLoadingMore());
   initialLoadComplete = computed(
     () => this.#logsResource.hasValue() || this.hasError(),
