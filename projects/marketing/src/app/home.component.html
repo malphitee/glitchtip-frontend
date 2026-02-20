@@ -1,62 +1,81 @@
 <div class="hero-and-nav-container">
-  <div class="hero">
-    <h2 class="fancy marketing-heading">
-      Simple, open source error&nbsp;tracking
-    </h2>
-    <div class="content">
-      <p class="marketing-body">
-        Collect every error from your project in real time, organize them to
-        make them useful, and receive alerts when and where you want...without
-        breaking the budget.
-      </p>
-
-      <p class="marketing-body">
-        <a mat-flat-button color="primary" [href]="registerLink">
-          Try GlitchTip for free
-        </a>
-      </p>
-    </div>
-  </div>
-  <picture class="bot-hero-image">
-    <source
-      media="(max-width: 479px)"
-      type="image/webp"
-      srcset="
-        /assets/home/bots-assembled-mobile@1x.webp,
-        /assets/home/bots-assembled-mobile@2x.webp 2x,
-        /assets/home/bots-assembled-mobile@3x.webp 3x
-      "
-    />
-    <source
-      media="(max-width: 479px)"
-      srcset="
-        /assets/home/bots-assembled-mobile@1x.png,
-        /assets/home/bots-assembled-mobile@2x.png 2x,
-        /assets/home/bots-assembled-mobile@3x.png 3x
-      "
-    />
-    <source
-      type="image/webp"
-      srcset="
-        /assets/home/bots-assembled@1x.webp,
-        /assets/home/bots-assembled@2x.webp 2x,
-        /assets/home/bots-assembled@3x.webp 3x
-      "
-    />
-    <img
-      src="/assets/home/bots-assembled@1x.png"
-      srcset="
-        /assets/home/bots-assembled@1x.png,
-        /assets/home/bots-assembled@2x.png 2x,
-        /assets/home/bots-assembled@3x.png 3x
-      "
-      alt=""
-      loading="eager"
-    />
-  </picture>
+  <mat-card appearance="outlined" class="hero-card">
+    <mat-card-content>
+      <div class="hero-images-container">
+        <div class="hero-content-left">
+          <div class="hero">
+            <h2 class="fancy marketing-heading">
+              Simple, open source error&nbsp;tracking
+            </h2>
+            <div class="content">
+              <p class="marketing-body">
+                  Collect every error from your project in real time, organize them to
+                  make them useful, and receive alerts when and where you want...without
+                  breaking the budget.
+              </p>
+              <p class="marketing-body">
+                <a mat-flat-button color="primary" [href]="registerLink">
+                  Try GlitchTip for free
+                </a>
+              </p>
+            </div>
+          </div>
+          <picture class="bot-hero-image">
+            <source
+              media="(max-width: 479px)"
+              type="image/webp"
+              srcset="
+                /assets/home/bots-assembled-mobile@1x.webp,
+                /assets/home/bots-assembled-mobile@2x.webp 2x,
+                /assets/home/bots-assembled-mobile@3x.webp 3x
+              "
+            />
+            <source
+              media="(max-width: 479px)"
+              srcset="
+                /assets/home/bots-assembled-mobile@1x.png,
+                /assets/home/bots-assembled-mobile@2x.png 2x,
+                /assets/home/bots-assembled-mobile@3x.png 3x
+              "
+            />
+            <source
+              type="image/webp"
+              srcset="
+                /assets/home/bots-assembled@1x.webp,
+                /assets/home/bots-assembled@2x.webp 2x,
+                /assets/home/bots-assembled@3x.webp 3x
+              "
+            />
+            <img
+              src="/assets/home/bots-assembled@1x.png"
+              srcset="
+                /assets/home/bots-assembled@1x.png,
+                /assets/home/bots-assembled@2x.png 2x,
+                /assets/home/bots-assembled@3x.png 3x
+              "
+              alt=""
+              loading="eager"
+            />
+          </picture>
+        </div>
+        <div class="hero-screenshot">
+          <picture>
+            <source
+              type="image/webp"
+              srcset="/assets/home/example-dashboard-hero.webp"
+            />
+            <img
+              src="/assets/home/example-dashboard-hero.png"
+              alt="GlitchTip Dashboard"
+            />
+          </picture>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
 </div>
 
-<mat-card class="big-card-wrapper">
+<mat-card appearance="outlined" class="big-card-wrapper">
   <mat-card-content>
     <div class="centered-block">
       <h2 class="fancy marketing-heading">Have some bugs in your code?</h2>
