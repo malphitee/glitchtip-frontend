@@ -53,7 +53,7 @@
             class="checkbox-cell level level--{{ row.level }}"
           >
             <mat-checkbox
-              (change)="toggleCheck(row.id)"
+              (click)="toggleCheck($event, row.id)"
               [checked]="row.isSelected"
             >
             </mat-checkbox>
