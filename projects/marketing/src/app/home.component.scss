@@ -1,68 +1,86 @@
-@import "../../../../../glitchtip-frontend/src/assets/styles/variables";
+@use "../../../../src/assets/styles/variables" as vars;
 
-.bot-hero-image {
-  display: block;
-  // position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 70px;
-  left: 0;
-  max-width: 1180px;
-  padding: 0 16px;
-  margin: -180px auto 0;
+.hero-card {
+  --mat-card-container-color: var(--mat-sys-surface-container);
+
+  width: 95%;
+  max-width: 1400px;
+  margin: 5.5rem auto 40px;
+  padding: 24px 40px 40px;
+  border-radius: var(--mat-sys-corner-extra-large, 28px);
+  overflow: hidden;
+  position: relative;
+  background-image:
+    url("/assets/home/background-art-light.webp"),
+    conic-gradient(from 90deg at 1px 1px, #0000 90deg, color-mix(in srgb, var(--mat-sys-outline-variant) 35%, transparent) 0);
+  background-size: cover, 36px 36px;
+  background-position: center center, 0 0;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.7) 0%,
+      rgba(255, 255, 255, 0.3) 15%,
+      transparent 100%
+    );
+    z-index: 0;
+    pointer-events: none;
+  }
 
   @media screen and (max-width: 1199px) {
-    margin-top: -10vw;
+    margin-top: 6rem;
+    margin-bottom: 40px;
+    padding: 24px;
   }
 
-  @media screen and (max-width: 767px) {
-    margin-top: -5vw;
+  @media screen and (max-width: vars.$small) {
+    margin-top: 84px;
+    margin-bottom: 40px;
   }
 
-  @media screen and (max-width: 499px) {
-    margin-top: 10px;
-    margin-bottom: 10px;
+  mat-card-content {
+    position: relative;
+    z-index: 1;
   }
+}
 
-  ::ng-deep img {
-    display: block;
-    max-width: 900px;
+.hero-images-container {
+  display: flex;
+  gap: 3rem;
+  align-items: center;
+  overflow: visible;
+
+  @media screen and (max-width: 1199px) {
+    flex-direction: column;
+    position: relative;
+  }
+}
+
+.hero-content-left {
+  width: 45%;
+  flex-shrink: 0;
+  position: relative;
+
+  @media screen and (max-width: 1199px) {
     width: 100%;
-    margin: 0 -60px 0 auto;
-
-    @media screen and (max-width: 1199px) {
-      max-width: 800px;
-      margin-right: 0;
-    }
-
-    @media screen and (max-width: 767px) {
-      right: auto;
-    }
   }
 }
 
 .hero {
-  max-width: 1180px;
-  margin: 0 auto;
-  padding: 100px 16px 0;
-
-  @media screen and (max-width: 1199px) {
-    margin: 0 10vw;
-  }
-
-  @media screen and (max-width: 767px) {
-    padding-left: 5vw;
-    padding-right: 5vw;
-  }
+  margin: 0;
+  padding: 0;
+  z-index: 1;
+  position: relative;
 
   @media screen and (max-width: 479px) {
     padding: 65px 0 0;
     font-size: 0.85em;
-
-    .fancy {
-      font-size: 28px;
-      line-height: 32px;
-    }
   }
 
   .content {
@@ -80,11 +98,47 @@
   }
 }
 
-.newsletter {
-  margin-top: 30px;
+.bot-hero-image {
+  position: relative;
+  display: block;
+  margin-top: 2rem;
+  padding: 0;
+  z-index: 1;
 
-  p {
+  @media screen and (max-width: 1199px) {
+    z-index: 2;
+    margin-top: 0;
     margin-bottom: 0;
+  }
+
+  @media screen and (min-width: 1200px) {
+    margin-right: -20%;
+  }
+
+  ::ng-deep img {
+    position: relative;
+    display: block;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+}
+
+.hero-screenshot {
+  width: 75%;
+  flex-shrink: 0;
+  margin-right: -25%;
+
+  @media screen and (max-width: 1199px) {
+    display: none;
+  }
+
+  img {
+    box-shadow: var(--mat-sys-shadow-3);
+    width: 100%;
+    height: auto;
+    border-radius: var(--mat-sys-corner-large, 16px);
+    border: 6px solid var(--mat-sys-outline-variant);
   }
 }
 
@@ -120,6 +174,8 @@
 .fancy-graphic ::ng-deep img {
   width: 100%;
   margin: 20px 0;
+  border-radius: 12px;
+  border: 6px solid var(--mat-sys-outline-variant);
 }
 
 .feature-description {
@@ -165,10 +221,9 @@
       width: 100%;
       height: auto;
       margin: 20px 0;
-      box-shadow:
-        0px 2px 1px -1px rgba(0, 0, 0, 0.2),
-        0px 1px 1px 0px rgba(0, 0, 0, 0.14),
-        0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+      border-radius: var(--mat-sys-corner-large, 16px);
+      border: 6px solid var(--mat-sys-outline-variant);
+      box-shadow: var(--mat-sys-shadow-1);
     }
   }
 
