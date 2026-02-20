@@ -31,6 +31,7 @@ interface NavNode {
   route?: string[];
   requiresBilling?: boolean;
   requiresActiveOrg?: boolean;
+  requiresFeature?: string;
   children?: NavNode[];
   useExactRoute?: boolean;
 }
@@ -50,6 +51,12 @@ const MENU_DATA: NavNode[] = [
     name: $localize`Performance`,
     route: ["org_slug", "performance"],
     requiresActiveOrg: true,
+  },
+  {
+    name: $localize`Logs`,
+    route: ["org_slug", "logs"],
+    requiresActiveOrg: true,
+    requiresFeature: "logs",
   },
   {
     name: $localize`Projects`,
@@ -185,7 +192,11 @@ export class MainNavComponent {
       );
     }
     const billingEnabled = this.billingEnabled();
-    return MENU_DATA.map((node) => {
+    const enabledFeatures = this.settingsService.enabledFeatures();
+    return MENU_DATA.filter(
+      (node) =>
+        !node.requiresFeature || enabledFeatures.includes(node.requiresFeature),
+    ).map((node) => {
       if (node.children && !billingEnabled) {
         node.children = node.children.filter((child) => !child.requiresBilling);
       }
