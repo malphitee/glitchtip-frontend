@@ -193,6 +193,7 @@ Optional environment variables:
 - `ENABLE_ORGANIZATION_CREATION` (Default False) When False, only superusers will be able to create new organizations after the first. When True, any user can create a new organization.
 - `GLITCHTIP_MAX_UPTIME_CHECK_LIFE_DAYS` (Default to max event life days) Uptime check data older than this will be deleted.
 - `GLITCHTIP_ENABLE_UPTIME` (Default True) Set to False to disable uptime monitoring.
+- `GLITCHTIP_ENABLE_LOGS` (Default False) When True, enables log ingestion and the logs UI. Log events sent via the Sentry SDK will be stored and searchable.
 - `GLITCHTIP_ENABLE_MCP` (Default False) Enable the MCP (Model Context Protocol) server.
 - `GLITCHTIP_INSTANCE_NAME` Custom instance name displayed in the UI. Supports markdown. Example: `"[My Company's](https://example.com) GlitchTip"`
 - `ALLOWED_HOSTS` (Default `*`) Comma-separated list of allowed hostnames. Restrict this in production for added security.
