@@ -100,7 +100,7 @@ upload-sourcemaps:
     - build-assets
   script:
     - apk add --no-cache curl zip
-    - VERSION=glitchtip@${CI_COMMIT_REF_NAME#*v}
+    - export VERSION=glitchtip@${CI_COMMIT_REF_NAME#*v}
     - sh scripts/upload-sourcemaps.sh dist/glitchtip-frontend/browser
   allow_failure: true
   only:
