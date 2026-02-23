@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   inject,
   computed,
+  signal,
 } from "@angular/core";
 import { Router } from "@angular/router";
 import { MainNavService } from "../main-nav.service";
@@ -13,11 +14,12 @@ import { MatCardModule } from "@angular/material/card";
 import { MatListModule } from "@angular/material/list";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatButtonModule } from "@angular/material/button";
-import { MatTreeModule } from "@angular/material/tree";
 import { MatIconModule } from "@angular/material/icon";
 import { RouterLink, RouterLinkActive } from "@angular/router";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatSidenavModule } from "@angular/material/sidenav";
+import { MatMenuModule } from "@angular/material/menu";
+import { MatTooltipModule } from "@angular/material/tooltip";
 import { AuthService } from "src/app/auth.service";
 import { OrganizationsService } from "src/app/api/organizations.service";
 import {
@@ -26,96 +28,14 @@ import {
   MatSelectModule,
 } from "@angular/material/select";
 
-interface NavNode {
+interface NavItem {
   name: string;
-  route?: string[];
+  icon: string;
+  route: string[];
   requiresBilling?: boolean;
-  requiresActiveOrg?: boolean;
   requiresFeature?: string;
-  children?: NavNode[];
-  useExactRoute?: boolean;
+  exactRoute?: boolean;
 }
-
-const MENU_DATA: NavNode[] = [
-  {
-    name: $localize`Issues`,
-    route: ["org_slug", "issues"],
-    requiresActiveOrg: true,
-  },
-  {
-    name: $localize`Uptime Monitors`,
-    route: ["org_slug", "uptime-monitors"],
-    requiresActiveOrg: true,
-    requiresFeature: "uptime",
-  },
-  {
-    name: $localize`Performance`,
-    route: ["org_slug", "performance"],
-    requiresActiveOrg: true,
-  },
-  {
-    name: $localize`Logs`,
-    route: ["org_slug", "logs"],
-    requiresActiveOrg: true,
-    requiresFeature: "logs",
-  },
-  {
-    name: $localize`Projects`,
-    route: ["org_slug", "projects"],
-    requiresActiveOrg: true,
-  },
-  {
-    name: $localize`Releases`,
-    route: ["org_slug", "releases"],
-    requiresActiveOrg: true,
-  },
-  {
-    name: $localize`Settings`,
-    requiresActiveOrg: true,
-    children: [
-      {
-        name: $localize`General settings`,
-        route: ["org_slug", "settings"],
-        requiresActiveOrg: true,
-        useExactRoute: true,
-      },
-      {
-        name: $localize`Projects`,
-        route: ["org_slug", "settings", "projects"],
-        requiresActiveOrg: true,
-      },
-      {
-        name: $localize`Subscription`,
-        route: ["org_slug", "settings", "subscription"],
-        requiresBilling: true,
-        requiresActiveOrg: true,
-      },
-      {
-        name: $localize`Teams`,
-        route: ["org_slug", "settings", "teams"],
-        requiresActiveOrg: true,
-      },
-      {
-        name: $localize`Members`,
-        route: ["org_slug", "settings", "members"],
-        requiresActiveOrg: true,
-      },
-    ],
-  },
-  {
-    name: $localize`Profile`,
-    useExactRoute: true,
-    children: [
-      { name: $localize`Account`, route: ["profile"], useExactRoute: true },
-      { name: $localize`MFA`, route: ["profile", "multi-factor-auth"] },
-      {
-        name: $localize`Notifications`,
-        route: ["profile", "notifications"],
-      },
-      { name: $localize`Auth Tokens`, route: ["profile", "auth-tokens"] },
-    ],
-  },
-];
 
 @Component({
   selector: "gt-main-nav",
@@ -125,13 +45,14 @@ const MENU_DATA: NavNode[] = [
   imports: [
     MatSidenavModule,
     MatToolbarModule,
-    MatTreeModule,
     MatIconModule,
     RouterLink,
     MatButtonModule,
     MatSelectModule,
     MatDividerModule,
     MatListModule,
+    MatMenuModule,
+    MatTooltipModule,
     RouterLinkActive,
     MatCardModule,
     MobileNavToolbarComponent,
@@ -145,10 +66,110 @@ export class MainNavComponent {
   private settingsService = inject(SettingsService);
   private userService = inject(UserService);
 
-  childrenAccessor = (node: NavNode) => node.children ?? [];
+  navItems: NavItem[] = [
+    {
+      name: $localize`Issues`,
+      icon: "breaking_news",
+      route: ["org_slug", "issues"],
+    },
+    {
+      name: $localize`Uptime Monitors`,
+      icon: "share_eta",
+      route: ["org_slug", "uptime-monitors"],
+      requiresFeature: "uptime",
+    },
+    {
+      name: $localize`Performance`,
+      icon: "avg_pace",
+      route: ["org_slug", "performance"],
+    },
+    {
+      name: $localize`Logs`,
+      icon: "text_snippet",
+      route: ["org_slug", "logs"],
+      requiresFeature: "logs",
+    },
+    {
+      name: $localize`Projects`,
+      icon: "team_dashboard",
+      route: ["org_slug", "projects"],
+    },
+    {
+      name: $localize`Releases`,
+      icon: "rocket_launch",
+      route: ["org_slug", "releases"],
+    },
+  ];
 
-  hasChild = (_: number, node: NavNode) =>
-    !!node.children && node.children.length > 0;
+  orgMenuItems: NavItem[] = [
+    {
+      name: $localize`General settings`,
+      icon: "settings",
+      route: ["org_slug", "settings"],
+      exactRoute: true,
+    },
+    {
+      name: $localize`Projects`,
+      icon: "folder",
+      route: ["org_slug", "settings", "projects"],
+    },
+    {
+      name: $localize`Subscription`,
+      icon: "payment",
+      route: ["org_slug", "settings", "subscription"],
+      requiresBilling: true,
+    },
+    {
+      name: $localize`Teams`,
+      icon: "groups",
+      route: ["org_slug", "settings", "teams"],
+    },
+    {
+      name: $localize`Members`,
+      icon: "people",
+      route: ["org_slug", "settings", "members"],
+    },
+  ];
+
+  profileMenuItems: NavItem[] = [
+    {
+      name: $localize`Account`,
+      icon: "person",
+      route: ["/profile"],
+      exactRoute: true,
+    },
+    {
+      name: $localize`MFA`,
+      icon: "security",
+      route: ["/profile", "multi-factor-auth"],
+    },
+    {
+      name: $localize`Notifications`,
+      icon: "notifications",
+      route: ["/profile", "notifications"],
+    },
+    {
+      name: $localize`Auth Tokens`,
+      icon: "vpn_key",
+      route: ["/profile", "auth-tokens"],
+    },
+  ];
+
+  visibleNavItems = computed(() => {
+    const enabledFeatures = this.settingsService.enabledFeatures();
+    return this.navItems.filter(
+      (node) =>
+        !node.requiresFeature || enabledFeatures.includes(node.requiresFeature),
+    );
+  });
+
+  visibleOrgMenuItems = computed(() => {
+    return this.orgMenuItems.filter(
+      (item) => !item.requiresBilling || this.billingEnabled(),
+    );
+  });
+
+  isCollapsed = signal(false);
 
   getRouteWithOrgSlug(route: string[]) {
     return route.map((item) =>
@@ -157,8 +178,6 @@ export class MainNavComponent {
   }
 
   activeOrganizationSlug = this.organizationsService.activeOrganizationSlug;
-  /* TODO: Add primary color to mat-sidenav
-  https://stackoverflow.com/questions/54248944/angular-6-7-how-to-apply-default-theme-color-to-mat-sidenav-background */
   activeOrganization = this.organizationsService.activeOrganization;
   organizations = this.organizationsService.organizations;
   organizationsInitialLoad = this.organizationsService.initialLoad;
@@ -183,39 +202,30 @@ export class MainNavComponent {
       this.organizationsService.organizationsCount(),
   );
 
-  menuData = computed(() => {
-    // The nav tree data source doesn't update properly if the only change
-    // is to a node's children, so we hide the entire node until
-    // settings is loaded
-    if (!this.settingsService.initialLoad()) {
-      return MENU_DATA.filter(
-        (node) => !node.children?.find((child) => child.requiresBilling),
-      );
-    }
-    const billingEnabled = this.billingEnabled();
-    const enabledFeatures = this.settingsService.enabledFeatures();
-    return MENU_DATA.filter(
-      (node) =>
-        !node.requiresFeature || enabledFeatures.includes(node.requiresFeature),
-    ).map((node) => {
-      if (node.children && !billingEnabled) {
-        node.children = node.children.filter((child) => !child.requiresBilling);
-      }
-      return node;
-    });
-  });
-
   async logout() {
     await this.auth.logout();
     window.location.href = "/login";
+  }
+
+  private dispatchResizeEvent() {
+    window.dispatchEvent(new Event("resize"));
   }
 
   toggleSideNav() {
     this.mainNav.getToggleNav();
   }
 
+  toggleCollapse() {
+    this.isCollapsed.update((val) => !val);
+    this.dispatchResizeEvent();
+  }
+
   closeSideNav() {
     this.mainNav.getClosedNav();
+    if (this.isCollapsed()) {
+      this.isCollapsed.set(false);
+      this.dispatchResizeEvent();
+    }
   }
 
   onOrgSelectChange(
