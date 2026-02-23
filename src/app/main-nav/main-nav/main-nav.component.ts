@@ -33,6 +33,7 @@ interface NavItem {
   icon: string;
   route: string[];
   requiresBilling?: boolean;
+  requiresFeature?: string;
   exactRoute?: boolean;
 }
 
@@ -75,11 +76,18 @@ export class MainNavComponent {
       name: $localize`Uptime Monitors`,
       icon: "share_eta",
       route: ["org_slug", "uptime-monitors"],
+      requiresFeature: "uptime",
     },
     {
       name: $localize`Performance`,
       icon: "avg_pace",
       route: ["org_slug", "performance"],
+    },
+    {
+      name: $localize`Logs`,
+      icon: "text_snippet",
+      route: ["org_slug", "logs"],
+      requiresFeature: "logs",
     },
     {
       name: $localize`Projects`,
@@ -146,6 +154,14 @@ export class MainNavComponent {
       route: ["/profile", "auth-tokens"],
     },
   ];
+
+  visibleNavItems = computed(() => {
+    const enabledFeatures = this.settingsService.enabledFeatures();
+    return this.navItems.filter(
+      (node) =>
+        !node.requiresFeature || enabledFeatures.includes(node.requiresFeature),
+    );
+  });
 
   visibleOrgMenuItems = computed(() => {
     return this.orgMenuItems.filter(

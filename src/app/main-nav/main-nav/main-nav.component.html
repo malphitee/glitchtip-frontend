@@ -96,7 +96,7 @@
       <mat-nav-list>
         <mat-divider class="nav-section-divider"></mat-divider>
         <!-- Main nav items -->
-        @for (item of navItems; track item.route) {
+        @for (item of visibleNavItems(); track item.route) {
           @if (activeOrganization()) {
             <a
               mat-list-item

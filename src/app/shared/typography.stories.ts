@@ -117,6 +117,7 @@ const iconNames = [
   "share_eta",
   "tab",
   "team_dashboard",
+  "text_snippet",
   "volume_off",
   "vpn_key",
   "warning",
