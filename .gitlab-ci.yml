@@ -41,7 +41,7 @@ test-e2e:
       alias: backend
       command: ["./bin/run-all-in-one.sh"]
   image:
-    name: cypress/included:15.8.1
+    name: cypress/included:15.10.0
     entrypoint: [""]
   script:
     - npm ci --force
@@ -86,21 +86,22 @@ build-docker:
     - trap '' PIPE
     - VERSION=${CI_COMMIT_REF_NAME#*v}
     - echo "Build version $VERSION ci registry image $CI_REGISTRY_IMAGE commit ref $CI_COMMIT_REF_NAME"
-    - docker build -f Dockerfile.prod -t ${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME} -t ${CONTAINER_IMAGE} --build-arg FRONTEND_GLITCHTIP_VERSION=$VERSION .
+    - docker build -f Dockerfile.prod -t ${CI_REGISTRY_IMAGE}:${VERSION} -t ${CONTAINER_IMAGE} --build-arg FRONTEND_GLITCHTIP_VERSION=$VERSION .
     - if [ $CI_COMMIT_REF_NAME = "master" ]; then docker tag ${CONTAINER_IMAGE} ${CI_REGISTRY_IMAGE}:latest; fi
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
-    - docker push ${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME}
+    - docker push ${CI_REGISTRY_IMAGE}:${VERSION}
     - docker push ${CONTAINER_IMAGE}
     - if [ $CI_COMMIT_REF_NAME = "master" ]; then docker push ${CI_REGISTRY_IMAGE}:latest; fi
 
 upload-sourcemaps:
   stage: deploy
-  image: getsentry/sentry-cli
+  image: alpine:latest
   dependencies:
     - build-assets
   script:
-    - VERSION=glitchtip@${CI_COMMIT_REF_NAME#*v}
-    - sentry-cli releases files ${VERSION} upload-sourcemaps dist/glitchtip-frontend/browser
+    - apk add --no-cache curl zip
+    - export VERSION=glitchtip@${CI_COMMIT_REF_NAME#*v}
+    - sh scripts/upload-sourcemaps.sh dist/glitchtip-frontend/browser
   allow_failure: true
   only:
     refs:

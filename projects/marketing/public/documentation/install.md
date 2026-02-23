@@ -1,15 +1,15 @@
 # GlitchTip Installation Guide
 
-GlitchTip can be run with Docker. We recommend [Docker Compose](documentation/install#docker-compose), [PikaPods](documentation/install#pikapods), [Elestio](documentation/install#elestio), or [Nodion](documentation/install#nodion). A [Helm](documentation/install#helm) chart is available for Kubernetes.
+GlitchTip can be run with Docker. We recommend [Docker Compose](documentation/install#docker-compose), [PikaPods](documentation/install#pikapods), [Elestio](documentation/install#elestio), [Nodion](documentation/install#nodion), [Railway](documentation/install#railway), or [RepoCloud](documentation/install#repocloud). A [Helm](documentation/install#helm) chart is available for Kubernetes.
 
 Not sure which? Elestio, Pikapods, and Nodion all support GlitchTip via a revenue share program.
 
 ### System Requirements
 
-GlitchTip requires PostgreSQL (14+), a web service, and a worker service. Valkey (or redis) is optional.
+GlitchTip requires PostgreSQL (14+), a web service, and a worker service. Valkey (or redis) 7+ is optional.
 
-- Recommended system requirements: 1GB RAM, x86 or arm64 CPU
-- Minimum system requirements: 256MB RAM + swap when using all-in-one setup.
+- Recommended system requirements: 512 MB RAM, x86 or arm64 CPU
+- Minimum system requirements: 256 MB RAM when using all-in-one setup. Careful configuration will allow 128 MB + swap.
 
 Disk usage varies on usage and event size. As a rough guide, a 1 million event per month instance may require 30GB of disk.
 
@@ -20,7 +20,7 @@ For best performance, use a proxy or load balancer that supports request bufferi
 Docker Compose is a simple way to run GlitchTip on a single server.
 
 1. Install Docker and Docker Compose. On Debian/Ubuntu this is `sudo apt install docker-compose docker.io`
-2. Copy [compose.sample.yml](/assets/compose.sample.yml) or [compose.minimal.yml](/assets/compose.minimal.yml) to your server as `compose.yml`. Use "sample" for a more scalable and robust installation. Use "minimal" for trial or small instances when you want the lightest system requirements possible. Minimal omits Valkey and uses an all-on-one Python process. It's safe to pick one and switch later.
+2. Copy [compose.sample.yml](/assets/compose.sample.yml) or [compose.minimal.yml](/assets/compose.minimal.yml) to your server as `compose.yml`. Use "sample" for a more scalable and robust installation. Use "minimal" for trial or small instances when you want the lightest system requirements possible. Minimal omits Valkey and uses an all-in-one Python process. It's safe to pick one and switch later.
 3. Edit the environment section of compose.yml. See the Configuration section below.
 
 It's highly recommended configuring SSL next. Use nginx or preferred solution.
@@ -106,11 +106,37 @@ Sign up and run GlitchTip on Nodion [here](https://www.nodion.com/en/deploy/glit
 
 Nodion allows adjusting many environment variables for configuration. See configuration [docs](https://glitchtip.com/documentation/install#configuration).
 
+## Railway
+
+<a href="https://railway.com/new/template/glitchtip?utm_medium=integration&utm_source=button&utm_campaign=glitchtip">
+<img src="https://railway.com/button.svg" alt="Deploy on Railway" style="width:200px;"/>
+</a>
+
+Railway is a modern app hosting platform that makes it easy to deploy GlitchTip. The template deploys GlitchTip in all-in-one mode with PostgreSQL and Redis, and is ready to use immediately — no manual environment variable setup required.
+
+Sign up and deploy GlitchTip on Railway [here](https://railway.com/new/template/glitchtip?utm_medium=integration&utm_source=button&utm_campaign=glitchtip). After deployment, configure email and other optional settings via environment variables. See [Configuration](https://glitchtip.com/documentation/install#configuration).
+
+Railway supports S3-compatible object storage ("buckets") for file uploads such as sourcemaps. Services can be scaled both vertically and horizontally.
+
+### Upgrading on Railway
+
+The template uses a major version Docker image tag, which receives all minor updates automatically. Minor updates are safe and non-breaking. Major version upgrades happen roughly once a year and may include breaking changes such as dropping support for older PostgreSQL versions — check the [GlitchTip blog](https://glitchtip.com/blog) for release notes before upgrading the major version tag.
+
+To update, click the update button in Railway for each service (GlitchTip, PostgreSQL, Redis). Railway also supports auto-updates, which can be enabled per service. Database migrations run automatically on startup.
+
+## RepoCloud
+
+<a href="https://repocloud.io/?ref=ek83qs8">
+<img src="/assets/repocloud.png" alt="Deploy on RepoCloud" style="width:200px;"/>
+</a>
+
+RepoCloud provides a one-click deployment for open source applications, including GlitchTip.
+
+Sign up and run GlitchTip on RepoCloud [here](https://repocloud.io/?ref=ek83qs8).
+
 ## Helm
 
 Installing GlitchTip with Helm for Kubernetes is a good option for high throughput sites and users who are very comfortable using Kubernetes.
-
-app.glitchtip.com uses this method with a managed DigitalOcean database.
 
 1. Add our Helm chart repo `helm repo add glitchtip https://gitlab.com/api/v4/projects/16325141/packages/helm/stable`
 2. Review our [values.yaml](https://gitlab.com/glitchtip/glitchtip-helm-chart/-/blob/master/values.yaml) and [values.sample.yaml](https://gitlab.com/glitchtip/glitchtip-helm-chart/-/blob/master/values.sample.yaml). At a minimum, decide if using helm postgresql and set env.secret.SECRET_KEY
@@ -123,70 +149,9 @@ For postgresql, we recommend an externally managed database and providing only t
 
 For high availability, production servers we recommend using multiple Kubernetes Nodes, an ingress and/or load balancer, a pod disruption budget, anti-affinity, and a managed PostgreSQL high availability database.
 
-## DigitalOcean App Platform
-
-Get started by clicking here. Note this is a referral link and is a great way to help fund GlitchTip.
-
-<a href="https://cloud.digitalocean.com/apps/new?repo=https://gitlab.com/glitchtip/glitchtip/tree/master&refcode=7e90b8fb37f8">
-<img src="https://www.deploytodo.com/do-btn-blue.svg" alt="Deploy to DigitalOcean" style="width:250px;"/>
-</a>
-
-- Edit environment variables and set SECRET_KEY to a random string. Edit EMAIL_URL (or delete if just testing).
-- Set worker containers to just 1.
-- One 512 MB RAM | 1 vCPU is fine to start with.
-- Click Create app.
-
-Next you must create a "Caching" managed database, which is valkey. You can either do so via the web interface or through yaml.
-Call it "glitchtip-valkey" and ensure it's in the same region as your app.
-
-If you want to use yaml, you can copy [app-platform.yaml](https://gitlab.com/glitchtip/glitchtip/-/blob/master/app-platform.yaml) to your local computer. Edit the following
-
-### Name and region
-
-This can be anything. We default to "glitchtip" and "nyc".
-
-### Environment Variables
-
-At a minimum, set the `SECRET_KEY` to a random string of letters.
-
-See [Configuration](https://glitchtip.com/documentation/install#configuration) for more information.
-
-### Valkey
-
-GlitchTip requires Valkey for sending notification, managing events, and more. Go to https://cloud.digitalocean.com/databases/ and create a new valkey database. For almost all size instances, the 1 GB RAM | 1 vCPU instance is sufficient. Enter your valkey database's name in the glitchtip-valkey section. Let's assume it's named "glitchtip-valkey". Both "name" and "cluster_name" must be the same value.
-
-```
-- name: glitchtip-valkey
-  engine: REDIS
-  production: true
-  cluster_name: glitchtip-valkey
-```
-
-Ensure the environment variable "VALKEY_URL" uses the same name. If you didn't name your Valkey instance "glitchtip-valkey" then make sure to update it.
-
-### Deploying
-
-You'll need to install [doctl](https://www.digitalocean.com/docs/apis-clis/doctl/how-to/install/) and log in.
-
-Run `doctl apps list` to get your app's id.
-
-Now apply your app-platform.yaml spec with `doctl apps update 11111111-1111-1111-1111-111111111 --spec app-platform.yaml` (enter your actual id)
-
-After deployment, you should be able to visit the app URL and start using GlitchTip!
-
-### Production considerations
-
-If you intend to use GlitchTip in production, consider upgrading your Postgres database to a production instance. In the web interface, go to Manage Components, glitchtip-db, Upgrade to a managed database.
-
-If you haven't already, you'll need to set up email via environment variables.
-
-### Upgrading GlitchTip
-
-By default, the docker image tag is "latest". Click Deploy to upgrade to the latest GlitchTip docker image.
-
 ## Installing Without Docker
 
-This method is not recommended and assumes the reader knows how to deploy Django, Celery, SSL, and a web server. It requires manual upgrades.
+This method is not recommended and assumes the reader knows how to deploy Django, background task workers, SSL, and a web server. It requires manual upgrades.
 
 1. `git clone` or download the latest Django backend [release tag](https://gitlab.com/glitchtip/glitchtip-backend/-/tags). Take note of the version number.
 2. Download the latest frontend code at `wget https://gitlab.com/api/v4/projects/15449363/jobs/artifacts/<VERSION HERE>/download?job=build-assets -O assets.zip`. Replace the VERSION HERE with the same version from step 1. It must be exact, including the "v".
@@ -196,7 +161,7 @@ This method is not recommended and assumes the reader knows how to deploy Django
 6. Migrate the database with `./manage.py migrate`
 7. Collect static files `./manage.py collectstatic`
 8. Configure the Django application with your favorite web server such as nginx or apache. Ensure SSL is configured. See `./bin/*` for run scripts to use or as examples.
-9. Start celery with preferred init system. For example systemd or supervisor.
+9. Start the background worker with your preferred init system. For example systemd or supervisor. See `./bin/run-worker` for the worker command.
 
 To upgrade, follow the same steps with the latest version tag. Include migrating the database and collectstatic.
 
@@ -209,6 +174,7 @@ Required environment variables:
 - `EMAIL_URL`: SMTP string. It will look something like `"smtp://email:password@smtp_url:port"`. See format examples [here](https://django-environ.readthedocs.io/en/latest/tips.html#email-settings). Pay extra attention if the URL contains unsafe characters (eg. @ or /) and see how to handle them [in django-environ's documentation](https://django-environ.readthedocs.io/en/latest/tips.html#using-unsafe-characters-in-urls)
 - Alternatively, use the Mailgun API by setting `MAILGUN_API_KEY`. Set `EMAIL_BACKEND` to `anymail.backends.mailgun.EmailBackend`. For more look [here](https://anymail.dev/en/stable/esps/mailgun/).
 - Alternatively, use the SendGrid API by setting `SENDGRID_API_KEY`. Set `EMAIL_BACKEND` to `anymail.backends.sendgrid.EmailBackend`.
+- GlitchTip supports additional email providers via [Anymail](https://anymail.dev): Postmark, Mailjet, Mandrill, SparkPost, Brevo, and Postal. Set the appropriate API key and `EMAIL_BACKEND`. See [Anymail documentation](https://anymail.dev/en/stable/) for details.
 - `DEFAULT_FROM_EMAIL` Default from email address. Example `info@example.com`
 - `GLITCHTIP_DOMAIN` Set to your domain. Include scheme (http or https). Example: `https://glitchtip.example.com`.
 
@@ -217,48 +183,64 @@ Optional environment variables:
 - `I_PAID_FOR_GLITCHTIP` [Donate](https://liberapay.com/GlitchTip/donate), set this to "true", and some neat things will happen. This won't enable extra features but it will enable our team to continue building GlitchTip. We pay programmers, designers, illustrators, and free tier hosting on app.glitchtip.com without venture capital. We ask that all self-host users pitch in with a suggested donation of $5 per month per user. Prefer an invoice and support instead? Business users can also consider a paid support plan. Reach out to us at sales@glitchtip.com. Contributors on [Gitlab](https://gitlab.com/glitchtip) should also enable this.
 - `GLITCHTIP_MAX_EVENT_LIFE_DAYS` (Default 90) Events and associated data older than this will be deleted.
 - `GLITCHTIP_MAX_TRANSACTION_EVENT_LIFE_DAYS` (Default to max event life days) Transaction events older than this will be deleted.
-- `GLITCHTIP_MAX_FILE_LIFE_DAYS` (Defaults to 2 \* max event life days) Files older than this will be deleted. Files with any reference to a recent event are excluded. For example, a year old file that is used for an active release with event data, will not be deleted.
-- `VALKEY_URL` Set valkey host explicitly. Example: `redis://:password@host:port/database`. You may also set them separately with `VALKEY_HOST`, `VALKEY_PORT`, `VALKEY_DATABASE`, and `VALKEY_PASSWORD`. For compability reasons, REDIS_* will also work. Set to empty string to disable VALKEY and utilize Postgres for celery broker, cache, and session storage.
+- `GLITCHTIP_MAX_FILE_LIFE_DAYS` (Defaults to max event life days) Files older than this will be deleted. Files with any reference to a recent event are excluded. For example, a year old file that is used for an active release with event data, will not be deleted.
+- `VALKEY_URL` Set valkey host explicitly. Example: `redis://:password@host:port/database`. You may also set them separately with `VALKEY_HOST`, `VALKEY_PORT`, `VALKEY_DATABASE`, and `VALKEY_PASSWORD`. For compability reasons, REDIS_* will also work. Set to empty string to disable VALKEY and utilize Postgres for task queue, cache, and session storage.
 - `DATABASE_URL` Set PostgreSQL connect string. PostgreSQL 14 and above are supported.
-- `CELERY_BROKER_URL` set celery broker url explicitly. Defaults to `VALKEY_URL`
 - `CACHE_URL` use alternative cache backend for django, defaults to `VALKEY_URL`
-- Content Security Policy (CSP) headers are enabled by default. In most cases there is no need to change these. However, you may add environment variables as documented in [django-csp](https://django-csp.readthedocs.io/en/latest/configuration.html#policy-settings) to modify them. For example, set `CSP_DEFAULT_SRC='self',scripts.example.com` to modify the default CSP header. Note the usage of comma separated values and single quotes on certain values such as 'self'.
+- Content Security Policy (CSP) headers are enabled by default. In most cases there is no need to change these. However, you may add environment variables as documented in the [Django security documentation](https://docs.djangoproject.com/en/stable/ref/settings/#secure-csp) to modify them. GlitchTip supports setting these via environment variables using the `CSP_` prefix. For example, set `CSP_DEFAULT_SRC='self',scripts.example.com` to modify the default CSP header. Note the usage of comma separated values and single quotes on certain values such as 'self'.
 - `ENABLE_USER_REGISTRATION` (Default True) When True, any user will be able to register through the self-signup. When False, user self-signup is disabled after the first user is registered. Subsequent users must use social apps if enabled or be created by a superuser on the backend and organization invitations may only be sent to existing users.
 - `ENABLE_SOCIAL_APPS_USER_REGISTRATION` (Default `ENABLE_USER_REGISTRATION`) When True, any user will be able to register through social apps. When False, unregistered user login is disabled after the first user is registered. Subsequent users must use the self-signup or be created by a superuser on the backend.
 - `ENABLE_ORGANIZATION_CREATION` (Default False) When False, only superusers will be able to create new organizations after the first. When True, any user can create a new organization.
+- `GLITCHTIP_MAX_UPTIME_CHECK_LIFE_DAYS` (Default to max event life days) Uptime check data older than this will be deleted.
+- `GLITCHTIP_ENABLE_UPTIME` (Default True) Set to False to disable uptime monitoring.
+- `GLITCHTIP_ENABLE_LOGS` (Default False) When True, enables log ingestion and the logs UI. Log events sent via the Sentry SDK will be stored and searchable.
+- `GLITCHTIP_ENABLE_MCP` (Default False) Enable the MCP (Model Context Protocol) server.
+- `GLITCHTIP_INSTANCE_NAME` Custom instance name displayed in the UI. Supports markdown. Example: `"[My Company's](https://example.com) GlitchTip"`
+- `ALLOWED_HOSTS` (Default `*`) Comma-separated list of allowed hostnames. Restrict this in production for added security.
+- `CSRF_TRUSTED_ORIGINS` Comma-separated list of trusted origins for CSRF. Required when using a reverse proxy with a different domain.
+- `BASE_PATH` Set when running GlitchTip under a subpath (e.g. `/glitchtip`).
+- `PROXY_ENV` (Default False) Set to True to trust HTTP_PROXY, HTTPS_PROXY, and NO_PROXY environment variables.
+- `LOG_LEVEL` (Default WARNING) Python log level. Set to `INFO` or `DEBUG` for troubleshooting.
+- `ENABLE_OBSERVABILITY_API` (Default False) Enable Prometheus metrics endpoint.
 
 ### Server configuration
 
-Scaling GlitchTip? Review these uWSGI (web server) and Celery (worker) environment variables.
+Scaling GlitchTip? Review these granian (web server) and django-vtasks (worker) environment variables.
 
-- `UWSGI_WORKERS` - Number of web workers. Or Maximum number of workers when scaling.
-- `UWSGI_CHEAPER` - Minimum number of web workers when scaling.
-- `UWSGI_CHEAPER_INITIAL` - Initial number of web workers when scaling.
+- `VTASKS_CONCURRENCY` (Default 20) Number of concurrent asyncio background tasks to run.
+- `DATABASE_POOL_MAX_SIZE` (Default 20) psycopg connection pool size, consider setting it the same as vtasks concurrency. Be aware of your postgres connection limit.
+- `GRANIAN_WORKERS` (Default 1) Number of granian web workers to run. GlitchTip uses ASGI (async Python). Setting this higher is only recommended when not scaling horizontally. See more granian settings [here](https://github.com/emmett-framework/granian)
 
-See [more information](https://uwsgi-docs.readthedocs.io/en/latest/Configuration.html/) on uWSGI configuration.
+### Security headers
 
-- `CELERY_WORKER_CONCURRENCY` - Number of concurrent celery workers. Defaults to number of CPU cores. Highly recommended to change. Our sample docker compose file defaults this to 2, to avoid unwanted and unnecessary scaling.
-- `CELERY_WORKER_AUTOSCALE` - Set to min,max concurrency scaling. Overrides CELERY_WORKER_CONCURRENCY. Example: 2,8 would instruct Celery to run between 2 and 8 concurrent workers. Memory is released when scaling down. Defaults to disabled.
+- `SECURE_HSTS_SECONDS` (Default 0) Set to a non-zero value (e.g. 31536000) to enable HTTP Strict Transport Security.
+- `SECURE_HSTS_PRELOAD` (Default False)
+- `SECURE_HSTS_INCLUDE_SUBDOMAINS` (Default False)
 
-See [more information](https://docs.celeryq.dev/en/stable/django/first-steps-with-django.html) on Celery configuration.
+### All-in-One Mode
 
-### Advanced settings for cache and celery
+For small instances or trial setups, GlitchTip can run the web server, worker, and migrations in a single process. This significantly reduces memory usage, allowing GlitchTip to run on as little as 256MB of RAM.
 
-By default, Valkey is used for the celery broker, cache, and sessions. Valkey data is important to be available but is not necessarily worth backing up. When Valkey is disabled, Postgres will be used instead. Redis is also likely to work, but less tested.
+To enable this, use the `./bin/run-all-in-one.sh` script, set the environment variable `SERVER_ROLE=all_in_one`, or set `GLITCHTIP_EMBED_WORKER=true`.
+
+When using All-in-One mode:
+- Background tasks are run within the web server process.
+- Database migrations and partition maintenance are performed automatically on startup.
+- It is recommended for instances with low traffic. For higher throughput, use separate web and worker services.
+
+### Advanced settings for cache and tasks
+
+By default, Valkey is used for the task queue, cache, and sessions. Valkey data is important to be available but is not necessarily worth backing up. When Valkey is disabled, Postgres will be used instead. Redis is also likely to work, but less tested.
 
 - `SESSION_ENGINE` Controls where Django stores session data [See Django documentation](https://docs.djangoproject.com/en/4.0/ref/settings/#std-setting-SESSION_ENGINE).
 - `SESSION_COOKIE_AGE` The age of session cookies, in seconds. Defaults to [Django default](https://docs.djangoproject.com/en/4.0/ref/settings/#std-setting-SESSION_COOKIE_AGE)
 
-If using Sentinel, additional settings are required. `VALKEY_URL` will not work with Sentinel. Set the following:
+If using Sentinel, set `VALKEY_URL` with the sentinel protocol. Example: `sentinel://localhost:26379/mymaster/1`. The task queue (django-vtasks) reuses the cache connection, so no separate broker configuration is needed.
 
-- `CELERY_BROKER_URL` Example: `"sentinel://:<password>@valkey:26379/0"`. Note the sentinel protocol. See [Celery documentation](https://docs.celeryq.dev/en/stable/getting-started/backends-and-brokers/redis.html).
-- `CELERY_BROKER_MASTER_NAME` Set to the master name. Defaults to the upstream default `mymaster`.
-- `CELERY_BROKER_SENTINEL_KWARGS_PASSWORD` Set when using a password with Sentinel
-- `CACHE_URL` Example `"redis://mymaster/1?client_class=django_valkey.client.SentinelClient&connection_pool_class=valkey.sentinel.SentinelConnectionPool&password=<password>` Password may be omitted if not using one. See [django-valkey documentation](https://django-valkey.readthedocs.io/). Take note how settings such as "PARSER_CLASS" map via the query parameter "parserClass".
-- `CACHE_SENTINEL_URL` Set to host:port of the sentinel instance. Do not include the protocol nor password. For example `valkey:26379`.
+- `CACHE_SENTINEL_URL` Set to host:port of the sentinel instance(s). Comma-separated for multiple. Do not include the protocol nor password. For example `valkey:26379` or `sentinel1:26379,sentinel2:26379`.
 - `CACHE_SENTINEL_PASSWORD` Set when using a password with Sentinel
 
-Other Celery broker and cache types may work but are not tested. Consider submitting a merge request to add support for your preferred solution.
+Other cache backends may work but are not tested. Consider submitting a merge request to add support for your preferred solution.
 
 ### Advanced database permissions
 
@@ -372,6 +354,7 @@ You may add Social Accounts in Django Admin at `/admin/socialaccount/socialapp/`
 - [Google](https://docs.allauth.org/en/latest/socialaccount/providers/google.html)
 - [Microsoft](https://docs.allauth.org/en/latest/socialaccount/providers/microsoft.html)
 - [NextCloud](https://docs.allauth.org/en/latest/socialaccount/providers/nextcloud.html)
+- [Okta](https://docs.allauth.org/en/latest/socialaccount/providers/okta.html)
 - [OpenID Connect](https://docs.allauth.org/en/latest/socialaccount/providers/openid_connect.html)
 
 The callback endpoint URL has to be set on `/accounts/<provider name>/login/callback/` where `<provider name>` is a name of the login provider. For example `https://example.com/accounts/github/login/callback/`.

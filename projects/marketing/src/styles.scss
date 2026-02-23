@@ -1,37 +1,37 @@
 @use "@angular/material" as mat;
+@use "./app/styles/_theme-colors" as custom-theme;
+@use "../../../src/assets/styles/variables" as vars;
+@use "../../../src/assets/styles/font-files" as main-font-files;
+@use "../../../src/assets/styles/resets";
+@use "app/styles/font-files" as marketing-font-files;
 @import "prismjs/themes/prism.css";
-$font-path: "../../../src/assets/fonts";
-@import "../src/app/styles/themes";
-@import "../../../src/assets/styles/variables";
-@import "../../../src/assets/styles/font-files";
-@import "../../../src/assets/styles/resets";
 @import "./app/shared/payment/_payment.component.scss";
+$font-path: "../../../src/assets/fonts";
+
+html {
+  color-scheme: light;
+  @include mat.theme(
+    (
+      color: custom-theme.$primary-palette,
+      typography: vars.$font-sans-serif,
+    )
+  );
+}
+
+// Brand color override
+:root {
+  --mat-sys-primary: #d94a5f;
+}
 
 // Common styles for Angular Material. Included so that we only have to load a
 // single CSS file for Angular Material in our app.
 // Don't include this anywhere else!
-// TODO(v15): As of v15 mat.legacy-core no longer includes default typography styles.
-//  The following line adds:
-//    1. Default typography styles for all components
-//    2. Styles for typography hierarchy classes (e.g. .mat-headline-4)
-//  If you specify typography styles for the components you use elsewhere, you should delete this line.
-//  If you don't need the default component typographies but still want the hierarchy styles,
-//  you can delete this line and instead use:
-//    `@include mat.legacy-typography-hierarchy($custom-typography);`
-@include mat.elevation-classes();
-@include mat.app-background();
-@include mat.all-component-typographies($custom-typography);
-@include mat.card-typography($custom-card-typography);
+// Custom typography classes are defined in app/styles/font-files.scss
+// These use Material Design tokens (e.g. var(--mat-sys-headline-large))
 
-// Include theme styles for core and each component used in your app.
-// Alternatively, you can import and @include the theme mixins for each component
-// that you are using.
-@include mat.m2-theme($candy-app-theme);
-
-// Responsive type maybe?
-@media screen and (max-width: 767px) {
-  @include mat.all-component-typographies($mobile-typography);
-  @include mat.card-typography($custom-card-typography);
+html,
+body {
+  background-color: var(--mat-sys-surface-container-highest);
 }
 
 app-root,
@@ -42,7 +42,7 @@ app-root-scully {
 }
 
 mat-card-content {
-  font-family: $font-sans-serif;
+  font-family: vars.$font-sans-serif;
 }
 
 body.loaded app-root {
@@ -50,13 +50,13 @@ body.loaded app-root {
 }
 
 a {
-  color: $amaranth;
+  color: var(--mat-sys-primary);
   font-weight: 500;
 }
 
 .fancy {
   color: white;
-  background: $amaranth;
+  background: var(--mat-sys-primary);
   background: -webkit-linear-gradient(to left, #8a2387, #e94057, #f27121);
   background: linear-gradient(to left, #8a2387, #e94057, #f27121);
   background-clip: border-box;
@@ -83,6 +83,7 @@ a {
   width: 1180px;
   min-height: 700px;
   margin: -70px auto 50px;
+  background-color: var(--mat-sys-surface-container);
 
   @media screen and (max-width: 1199px) {
     width: auto;
@@ -115,7 +116,10 @@ a {
 }
 
 .markdown-container {
+  @extend .marketing-body;
+
   h1 {
+    @extend .marketing-heading;
     display: inline-block;
     margin: 0.75em 0 0.5em;
 
@@ -130,12 +134,8 @@ a {
     }
   }
 
-  h1 {
-    @extend .mat-headline-2;
-  }
-
   h2 {
-    @extend .mat-headline-3;
+    @extend .marketing-subheading;
     margin: 0.75em 0 0.5em;
 
     a {
@@ -146,7 +146,7 @@ a {
   }
 
   h3 {
-    @extend .mat-headline-4;
+    @extend .marketing-small-heading;
     margin: 0.75em 0 0.5em;
 
     a {
@@ -168,13 +168,13 @@ a {
 
   code {
     padding: 0 5px;
-    background-color: #eee;
+    background-color: var(--mat-sys-surface-variant);
     font-size: 0.9em;
   }
 
   pre {
     padding: 10px 15px;
-    background-color: #efefef;
+    background-color: var(--mat-sys-surface-variant);
     overflow-x: scroll;
     font-size: 0.9em;
     line-height: 1.5em;

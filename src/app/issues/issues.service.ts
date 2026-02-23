@@ -258,6 +258,22 @@ export class IssuesService extends StatefulService<IssuesState> {
     this.setUpdateSelectedIssues(updatedSelection);
   }
 
+  selectRange(issueIds: string[]) {
+    const selectedIssues = this.selectedIssues();
+    const updatedSelection = [
+      ...new Set([...selectedIssues, ...issueIds]),
+    ];
+    this.setUpdateSelectedIssues(updatedSelection);
+  }
+
+  deselectRange(issueIds: string[]) {
+    const idsToRemove = new Set(issueIds);
+    const updatedSelection = this.selectedIssues().filter(
+      (id) => !idsToRemove.has(id),
+    );
+    this.setUpdateSelectedIssues(updatedSelection);
+  }
+
   toggleSelectAllOnPage() {
     if (this.issues()?.length === this.selectedIssues().length) {
       this.setCancelAllOnPageSelection();
@@ -383,8 +399,10 @@ export class IssuesService extends StatefulService<IssuesState> {
   }
 
   private setAllResultsSelected() {
+    const issues = this.issues();
     this.setState({
       allResultsSelected: true,
+      selectedIssues: issues ? issues.map((issue) => issue.id) : [],
     });
   }
 

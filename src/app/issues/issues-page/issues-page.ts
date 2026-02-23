@@ -122,6 +122,7 @@ export class IssuesPage implements OnInit, OnDestroy {
   mediumScreenColumns = ["select", "title", "events"];
   isLargeScreen = signal(true);
   displayedColumns = signal(this.allColumns);
+  private lastClickedIssueId = signal<string | null>(null);
   breakPointSignal = toSignal(
     this.breakPointObserver.observe([
       Breakpoints.Medium,
@@ -335,8 +336,38 @@ export class IssuesPage implements OnInit, OnDestroy {
     });
   }
 
-  toggleCheck(issueId: number) {
-    this.service.toggleSelectOne(issueId.toString());
+  toggleCheck(event: MouseEvent, issueId: number) {
+    event.preventDefault();
+    const issueIdStr = issueId.toString();
+
+    if (event.shiftKey && this.lastClickedIssueId() !== null) {
+      const issues = this.issues();
+      const lastIndex = issues.findIndex(
+        (i) => i.id.toString() === this.lastClickedIssueId(),
+      );
+      const currentIndex = issues.findIndex(
+        (i) => i.id.toString() === issueIdStr,
+      );
+
+      if (lastIndex !== -1 && currentIndex !== -1) {
+        const start = Math.min(lastIndex, currentIndex);
+        const end = Math.max(lastIndex, currentIndex);
+        const idsInRange = issues
+          .slice(start, end + 1)
+          .map((i) => i.id.toString());
+        if (issues[currentIndex].isSelected) {
+          this.service.deselectRange(idsInRange);
+        } else {
+          this.service.selectRange(idsInRange);
+        }
+      } else {
+        this.service.toggleSelectOne(issueIdStr);
+      }
+    } else {
+      this.service.toggleSelectOne(issueIdStr);
+    }
+
+    this.lastClickedIssueId.set(issueIdStr);
   }
 
   toggleSelectAllOnPage() {
