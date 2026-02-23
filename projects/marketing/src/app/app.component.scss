@@ -1,4 +1,5 @@
-@import "./styles/themes";
+@use "./styles/theme-colors";
+@use "../../../src/assets/styles/variables" as vars;
 
 .mat-toolbar {
   position: absolute;
@@ -46,26 +47,35 @@
 
 footer {
   width: 100%;
-  background: $amaranth;
+  background: var(--mat-sys-surface-container);
   // This pushes it to the bottom when not enough content is on the page
   margin-top: auto;
   margin-bottom: -5px;
   padding: 30px 0;
-  color: white;
+  font: var(--mat-sys-body-large);
 
-  .big-card-wrapper {
+
+  .footer-content {
     display: flex;
     align-items: center;
-    margin-top: 0;
-    margin-bottom: 0;
-    min-height: 0;
+    width: 1180px;
+    margin: 0 auto;
+
+    @media screen and (max-width: 1199px) {
+      width: 80vw;
+      margin-left: 10vw;
+      margin-right: 10vw;
+    }
+
+    @media screen and (max-width: 767px) {
+      width: 90vw;
+      margin-left: 5vw;
+      margin-right: 5vw;
+    }
+
     > div:not(:last-child) {
       margin-right: 25px;
     }
-  }
-
-  a {
-    color: white;
   }
 
   img {
@@ -105,7 +115,7 @@ footer {
 .u-visible-small {
   display: none;
 
-  @media screen and (max-width: $small) {
+  @media screen and (max-width: vars.$small) {
     display: inline-block;
   }
 }
@@ -113,7 +123,7 @@ footer {
 .u-hidden-small {
   display: inline-block;
 
-  @media screen and (max-width: $small) {
+  @media screen and (max-width: vars.$small) {
     display: none;
   }
 }

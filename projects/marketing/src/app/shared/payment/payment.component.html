@@ -2,8 +2,8 @@
   <mat-tab>
     <ng-template mat-tab-label>
       <div class="tab-label">
-        <div class="tab-label-header mat-body-1">Hosted version</div>
-        <div class="tab-label-description mat-caption">
+        <div class="tab-label-header marketing-body">Hosted version</div>
+        <div class="tab-label-description marketing-caption">
           Sign up at app.glitchtip.com
         </div>
       </div>
@@ -32,7 +32,7 @@
             </ul>
             <div class="price-cta">
               <p>
-                <span class="mat-headline-4">
+                <span class="marketing-small-heading">
                   ${{ product.plans[0].amount | number }}
                 </span>
                 / month
@@ -55,8 +55,8 @@
   <mat-tab>
     <ng-template mat-tab-label>
       <div class="tabl-label">
-        <div class="tab-label-header mat-body-1">Self-hosted version</div>
-        <div class="tab-label-description mat-caption">
+        <div class="tab-label-header marketing-body">Self-hosted version</div>
+        <div class="tab-label-description marketing-caption">
           Run on your own server
         </div>
       </div>
@@ -83,7 +83,7 @@
           </ul>
           <div class="price-cta">
             <p>
-              <span class="mat-headline-4"> FREE </span>
+              <span class="marketing-small-heading"> FREE </span>
             </p>
             <a
               mat-flat-button
@@ -120,7 +120,7 @@
             </li>
           </ul>
           <div class="price-cta">
-            <p><span class="mat-headline-4">$15</span>/user/month</p>
+            <p><span class="marketing-small-heading">$15</span>/user/month</p>
             <a
               mat-flat-button
               color="primary"
@@ -164,7 +164,7 @@
             </li>
           </ul>
           <div class="price-cta">
-            <p><span class="mat-headline-4">CUSTOM</span></p>
+            <p><span class="marketing-small-heading">CUSTOM</span></p>
             <a
               mat-flat-button
               color="primary"
@@ -180,12 +180,12 @@
   </mat-tab>
 </mat-tab-group>
 @if (selectedTab === 0) {
-  <p class="mat-body-1">
+  <p class="marketing-body">
     An <strong>event</strong> is when your project sends us data one time. For
     example, if ten users trigger the same bug, GlitchTip will
     receive&nbsp;ten&nbsp;events.
   </p>
-  <p class="mat-body-1">
+  <p class="marketing-body">
     This pricing is for our hosted version of GlitchTip. If you want to run your
     own version, you are always free to do so!
     <a [routerLink]="['/documentation', 'install']"
@@ -193,18 +193,18 @@
     >
     if you want to give it a try.
   </p>
-  <p class="mat-body-1">
+  <p class="marketing-body">
     We offer discounted plans for non-profits and open source projects starting
     at $5 per month.
   </p>
-  <p class="mat-body-1">
+  <p class="marketing-body">
     Questions about subscriptions? Need assistance, or a bigger plan? Contact us
     at
     <a href="mailto:{{ billingEmail }}">{{ billingEmail }}</a
     >.
   </p>
 } @else if (selectedTab === 1 && pricingPage()) {
-  <h2 class="mat-headline-4">Self-hosted support FAQs</h2>
+  <h2 class="marketing-small-heading">Self-hosted support FAQs</h2>
   <dl>
     <mkt-question-and-answer
       question="Can you install GlitchTip for me?"
