@@ -145,28 +145,35 @@
 
 .subscribe-wrapper {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  gap: 0 20px;
 
   @media screen and (min-width: 501px) {
     margin: 0 50px;
   }
 
+  @media screen and (max-width: 500px) {
+    flex-direction: column;
+
+    button {
+      width: 100%;
+    }
+  }
+
   .mc-field-group {
-    flex: 1 1 250px;
+    flex: 1;
 
     mat-form-field {
       width: 100%;
     }
   }
 
-  .clear {
-    flex: 1 1 250px;
+  .clear:last-child {
     align-self: flex-start;
     margin-top: 9px;
 
-    button {
-      width: 100%;
+    @media screen and (max-width: 500px) {
+      align-self: stretch;
+      margin-top: 0;
     }
   }
 }
