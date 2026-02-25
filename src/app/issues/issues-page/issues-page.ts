@@ -336,6 +336,42 @@ export class IssuesPage implements OnInit, OnDestroy {
     });
   }
 
+  deleteSelectedIssues() {
+    const allResultsSelected = this.allResultsSelected();
+    const count = allResultsSelected
+      ? (this.paginator()?.hits ?? this.numberOfSelectedIssues())
+      : this.numberOfSelectedIssues();
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      restoreFocus: false,
+      height: "200px",
+      width: "350px",
+      data: {
+        title: $localize`Delete issues`,
+        message: $localize`Are you sure you want to delete ${count} issue(s)? You will permanently lose these issues and all associated events.`,
+        confirmText: $localize`Delete`,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      const orgSlug = this.orgSlug();
+      if (confirmed && orgSlug) {
+        if (allResultsSelected) {
+          this.service.bulkDeleteIssues(
+            orgSlug,
+            this.projects(),
+            this.query(),
+            this.start(),
+            this.end(),
+            this.environment(),
+          );
+        } else {
+          this.service.deleteIssuesByIds(orgSlug);
+        }
+      }
+    });
+  }
+
   toggleCheck(event: MouseEvent, issueId: number) {
     event.preventDefault();
     const issueIdStr = issueId.toString();
