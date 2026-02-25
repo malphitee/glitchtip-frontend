@@ -62,10 +62,10 @@
           <picture>
             <source
               type="image/webp"
-              srcset="/assets/home/example-dashboard-hero.webp"
+              srcset="/assets/home/dashboard-hero@1x.webp"
             />
             <img
-              src="/assets/home/example-dashboard-hero.png"
+              src="/assets/home/dashboard-hero@1x.png"
               alt="GlitchTip Dashboard"
             />
           </picture>
@@ -77,49 +77,50 @@
 
 <mat-card appearance="outlined" class="big-card-wrapper">
   <mat-card-content>
-    <div class="centered-block">
-      <h2 class="fancy marketing-heading">Have some bugs in your code?</h2>
+    <div class="feature-description main-promo-section">
+      <div class="screenshots right-left-row">
+        <mkt-responsive-image
+          src1x="assets/home/main-promo@1x.png"
+          alt="Illustration that shows errors from various sites/apps reporting to GlitchTip"
+          class="screenshot main-promo"
+        ></mkt-responsive-image>
+        <div class="description-card pad-right">
+          <h2 class="fancy marketing-heading">Have some <span class="squiggle">bugs</span> in your code?</h2>
+          <p class="marketing-body">
+            GlitchTip makes monitoring software easy. Track errors, monitor
+            performance, and check site uptime all in one place. Our app is
+            compatible with Sentry client SDKs, but easier to run.
+          </p>
 
-      <mkt-responsive-image
-        src1x="assets/home/glitchtip-report-graphic-generic@1x.jpg"
-        alt="Illustration that shows errors from various sites/apps reporting to GlitchTip"
-        class="fancy-graphic"
-      ></mkt-responsive-image>
+          <p class="marketing-body">
+            It's also open source, so you can view, modify, and use the code as
+            you see fit.
+            <a [routerLink]="['documentation', 'install']"
+              >Run it on your server</a
+            >, or let us host it for&nbsp;you. All you need to do is
+            <a [href]="registerLink">register</a> with your email and password.
+            Then, select the subscription that works best for you.
+          </p>
 
-      <div class="content">
-        <p class="marketing-body">
-          GlitchTip makes monitoring software easy. Track errors, monitor
-          performance, and check site uptime all in one place. Our app is
-          compatible with Sentry client SDKs, but easier to run.
-        </p>
-
-        <p class="marketing-body">
-          It's also open source, so you can view, modify, and use the code as
-          you see fit.
-          <a [routerLink]="['documentation', 'install']"
-            >Run it on your server</a
-          >, or let us host it for&nbsp;you. All you need to do is
-          <a [href]="registerLink">register</a> with your email and password.
-          Then, select the subscription that works best for you.
-        </p>
-
-        <p class="marketing-body">
-          GlitchTip is the right choice if you value simplicity, affordability,
-          and the freedom provided by open source.
-        </p>
+          <p class="marketing-body">
+            GlitchTip is the right choice if you value simplicity, affordability,
+            and the freedom provided by open source.
+          </p>
+        </div>
       </div>
     </div>
     <div class="divider feature-description">
-      <div class="screenshot-header">
-        <h2 class="fancy marketing-heading">Error Tracking</h2>
-      </div>
       <div class="screenshots left-right-row">
         <mkt-responsive-image
-          src1x="assets/home/issues-page@1x.png"
+          src1x="assets/home/issues-list@1x.png"
           alt="Screenshot of GlitchTip Issues Page"
           class="screenshot"
         ></mkt-responsive-image>
-        <div class="description pad-left">
+        <div class="description-card pad-left">
+          <div class="feature-header">
+            <mat-icon class="feature-icon">breaking_news</mat-icon>
+            <h2 class="fancy marketing-subheading">Error Tracking</h2>
+          </div>
           <p class="marketing-body">
             Report your website or application's exceptions, log messages,
             Content Security Policy violations, and more to one place to triage
@@ -133,16 +134,17 @@
       </div>
     </div>
     <div class="divider feature-description">
-      <div class="screenshot-header">
-        <h2 class="fancy marketing-heading">Application Performance Monitoring</h2>
-      </div>
       <div class="screenshots right-left-row">
         <mkt-responsive-image
-          src1x="assets/blog-images/glitchtip-1-12/transaction-groups-list@1x.png"
+          src1x="assets/home/performance@1x.png"
           alt="Screenshot of GlitchTip Performance Page"
           class="screenshot"
         ></mkt-responsive-image>
-        <div class="description pad-right">
+        <div class="description-card pad-right">
+          <div class="feature-header">
+            <mat-icon class="feature-icon">avg_pace</mat-icon>
+            <h2 class="fancy marketing-subheading">Performance Monitoring</h2>
+          </div>
           <p class="marketing-body">
             Find out where your app is slow. GlitchTip takes a simple, works out
             of the box approach. No dashboard building and metrics hunting. Just
@@ -153,21 +155,41 @@
       </div>
     </div>
     <div class="divider feature-description">
-      <div class="screenshot-header">
-        <h2 class="fancy marketing-heading">Uptime Monitoring</h2>
-      </div>
       <div class="screenshots left-right-row">
         <mkt-responsive-image
-          src1x="assets/blog-images/glitchtip-1-11/GT-uptime-list-charts@1x.png"
-          alt="Screenshot of GlitchTip uptime monitors list"
+          src1x="assets/home/uptime-monitors@1x.png"
+          alt="Screenshot of GlitchTip Uptime Monitors"
           class="screenshot"
         ></mkt-responsive-image>
-        <div class="description pad-left">
+        <div class="description-card pad-left">
+          <div class="feature-header">
+            <mat-icon class="feature-icon">share_eta</mat-icon>
+            <h2 class="fancy marketing-subheading">Uptime Monitoring</h2>
+          </div>
           <p class="marketing-body">
             GlitchTip can ping your site and warn you when it's not responding.
             Or reverse it and send GlitchTip a request on schedule. If GlitchTip
             doesn't receive your ping, it will send you an alert via email or
             webhook.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="divider feature-description">
+      <div class="screenshots right-left-row">
+        <mkt-responsive-image
+          src1x="assets/home/logs@1x.png"
+          alt="Screenshot of GlitchTip Logs"
+          class="screenshot"
+        ></mkt-responsive-image>
+        <div class="description-card pad-right">
+          <div class="feature-header">
+            <mat-icon class="feature-icon">text_snippet</mat-icon>
+            <h2 class="fancy marketing-subheading">Logs</h2>
+          </div>
+          <p class="marketing-body">
+            Search and filter your application logs alongside your errors and
+            performance data. Keep everything in one place for faster debugging.
           </p>
         </div>
       </div>
@@ -247,7 +269,7 @@
       </div>
 
       <!--End mc_embed_signup-->
-      <h2 class="fancy marketing-heading">Who's making this?</h2>
+      <h2 class="fancy marketing-heading">Who’s making this?</h2>
 
       <div class="content">
         <p class="marketing-body">

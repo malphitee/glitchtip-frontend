@@ -4,9 +4,9 @@
   --mat-card-container-color: var(--mat-sys-surface-container);
 
   width: 95%;
-  max-width: 1400px;
-  margin: 5.5rem auto 40px;
-  padding: 24px 40px 40px;
+  max-width: 1800px;
+  margin: 1.5rem auto 40px;
+  padding: 24px clamp(40px, 4vw, 80px) 40px;
   border-radius: var(--mat-sys-corner-extra-large, 28px);
   overflow: hidden;
   position: relative;
@@ -34,14 +34,7 @@
   }
 
   @media screen and (max-width: 1199px) {
-    margin-top: 6rem;
-    margin-bottom: 40px;
     padding: 24px;
-  }
-
-  @media screen and (max-width: vars.$small) {
-    margin-top: 84px;
-    margin-bottom: 40px;
   }
 
   mat-card-content {
@@ -147,7 +140,7 @@
 }
 
 .divider {
-  border-top: 1px solid lightgray;
+  border-top: 1px solid var(--mat-sys-outline-variant);
 }
 
 .subscribe-wrapper {
@@ -171,20 +164,22 @@
   }
 }
 
-.fancy-graphic ::ng-deep img {
-  width: 100%;
-  margin: 20px 0;
-  border-radius: 12px;
-  border: 6px solid var(--mat-sys-outline-variant);
+.squiggle {
+  text-decoration: underline wavy var(--mat-sys-error, #b3261e);
+  text-decoration-skip-ink: none;
+  text-underline-offset: 4px;
+  font-size: inherit;
+  text-decoration-thickness: 2px;
+}
+
+.main-promo-section {
+  padding-top: 40px;
+  padding-bottom: 40px;
 }
 
 .feature-description {
   padding-top: 20px;
   padding-bottom: 40px;
-
-  .screenshot-header {
-    text-align: center;
-  }
 
   .screenshots {
     display: flex;
@@ -194,26 +189,70 @@
 
     @media screen and (max-width: 1199px) {
       flex-direction: column;
+      margin: 0;
     }
 
-    .description {
+    .screenshot {
+      @media screen and (min-width: 1200px) {
+        flex-shrink: 0;
+        width: 55%;
+      }
+    }
+
+    .description-card {
       width: 45%;
-      text-align: center;
+      text-align: left;
 
       @media screen and (max-width: 1199px) {
         width: 100%;
+        padding: 0 16px;
+      }
+
+      .feature-header {
+        display: flex;
+        align-items: first baseline;
+        gap: 12px;
+      }
+
+      .feature-icon {
+        color: white;
+        font-size: 24px;
+        width: 44px;
+        height: 44px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: visible;
+        border-radius: 10px;
+        background: linear-gradient(
+          180deg,
+          color-mix(in srgb, var(--mat-sys-primary) 85%, white) 0%,
+          var(--mat-sys-primary) 100%
+        );
+        box-shadow:
+          0 2px 4px color-mix(in srgb, var(--mat-sys-primary) 30%, transparent),
+          inset 0 1px 0 color-mix(in srgb, white 20%, transparent);
+      }
+
+      .fancy {
+        margin-top: 0;
+      }
+
+      .marketing-body {
+        line-height: 1.6em;
       }
     }
 
     .pad-left {
       @media screen and (min-width: 1200px) {
-        padding-left: 40px;
+        margin-left: 40px;
       }
     }
 
     .pad-right {
       @media screen and (min-width: 1200px) {
-        padding-right: 40px;
+        margin-right: 40px;
       }
     }
 
@@ -221,6 +260,9 @@
       width: 100%;
       height: auto;
       margin: 20px 0;
+    }
+
+    .screenshot:not(.main-promo) ::ng-deep img {
       border-radius: var(--mat-sys-corner-large, 16px);
       border: 6px solid var(--mat-sys-outline-variant);
       box-shadow: var(--mat-sys-shadow-1);
@@ -230,12 +272,22 @@
   .left-right-row {
     @media screen and (min-width: 1200px) {
       flex-direction: row;
+      margin-left: 0;
+
+      .screenshot {
+        margin-left: -2.5%;
+      }
     }
   }
 
   .right-left-row {
     @media screen and (min-width: 1200px) {
       flex-direction: row-reverse;
+      margin-right: 0;
+
+      .screenshot {
+        margin-right: -2.5%;
+      }
     }
   }
 }
