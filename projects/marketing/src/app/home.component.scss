@@ -145,22 +145,29 @@
 
 .subscribe-wrapper {
   display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 
   @media screen and (min-width: 501px) {
     margin: 0 50px;
   }
 
   .mc-field-group {
-    flex: 1;
+    flex: 1 1 250px;
 
     mat-form-field {
       width: 100%;
-      padding-right: 20px;
     }
   }
 
-  button {
-    top: 9px;
+  .clear {
+    flex: 1 1 250px;
+    align-self: flex-start;
+    margin-top: 9px;
+
+    button {
+      width: 100%;
+    }
   }
 }
 
@@ -275,7 +282,7 @@
       margin-left: 0;
 
       .screenshot {
-        margin-left: -2.5%;
+        margin-left: -4%;
       }
     }
   }
@@ -286,7 +293,7 @@
       margin-right: 0;
 
       .screenshot {
-        margin-right: -2.5%;
+        margin-right: -4.5%;
       }
     }
   }
