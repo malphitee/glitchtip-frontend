@@ -104,11 +104,12 @@ a {
 
 .big-card-wrapper {
   width: 95%;
-  max-width: 1400px;
+  max-width: 1800px;
   min-height: 700px;
   margin: -70px auto 50px;
   background-color: var(--mat-sys-surface-container);
   position: relative;
+  overflow: hidden;
 
   &::before {
     content: "";
@@ -288,13 +289,5 @@ a {
 }
 
 .just-the-image {
-  padding: 5.5rem 0 75px;
-
-  @media screen and (max-width: 1199px) {
-    padding-top: 6rem;
-  }
-
-  @media screen and (max-width: vars.$small) {
-    padding-top: 84px;
-  }
+  padding: 1.5rem 0 75px;
 }
