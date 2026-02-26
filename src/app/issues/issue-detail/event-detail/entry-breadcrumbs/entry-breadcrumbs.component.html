@@ -3,7 +3,7 @@
     <mat-divider></mat-divider>
     <div class="breadcrumbs-header">
       <h3>Breadcrumbs</h3>
-      @if (availableCategories().length > 0) {
+      @if (availableCategories().length > 1) {
         <mat-form-field appearance="outline" subscriptSizing="dynamic">
           <mat-label>Filter by category</mat-label>
           <mat-select
@@ -36,7 +36,11 @@
         </button>
       }
       <ul>
-        @for (value of filteredBreadcrumbs()?.values; track value; let i = $index) {
+        @for (
+          value of filteredBreadcrumbs()?.values;
+          track value;
+          let i = $index
+        ) {
           <li>
             <ng-container>
               @if (i !== 0) {
