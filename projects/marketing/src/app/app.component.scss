@@ -1,6 +1,6 @@
 @use "../../../src/assets/styles/variables" as vars;
 
-$narrow-desktop: 1024px;
+$narrow-desktop: vars.$medium;
 
 .mat-toolbar {
   position: sticky;
@@ -32,7 +32,7 @@ $narrow-desktop: 1024px;
   .logo {
     width: 140px;
 
-    @media screen and (max-width: 767px) {
+    @media screen and (max-width: vars.$tablet) {
       width: 100px;
     }
   }

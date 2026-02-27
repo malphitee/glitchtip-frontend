@@ -4,6 +4,7 @@
 @use "../../../src/assets/styles/font-files" as main-font-files;
 @use "../../../src/assets/styles/resets";
 @use "app/styles/font-files" as marketing-font-files;
+@use "app/styles/material-overrides";
 @import "prismjs/themes/prism.css";
 @import "./app/shared/payment/_payment.component.scss";
 $font-path: "../../../src/assets/fonts";
@@ -207,11 +208,11 @@ a {
 }
 
 .centered-block {
-  padding: 20px 10vw 40px;
+  padding: 20px 10vw 80px;
   overflow: hidden;
 
-  @media screen and (max-width: 767px) {
-    padding: 5px 16px 20px;
+  @media screen and (max-width: vars.$tablet) {
+    padding: 5px 16px 60px;
   }
 
   .content {
@@ -285,6 +286,21 @@ a {
     overflow-x: scroll;
     font-size: 0.9em;
     line-height: 1.5em;
+  }
+}
+
+.faq-section {
+  margin-top: 32px;
+
+  h2 {
+    margin: 0 0 24px;
+  }
+
+  mat-expansion-panel {
+    --mat-expansion-container-elevation-shadow: none;
+    --mat-expansion-header-collapsed-state-height: 56px;
+
+    border-bottom: 1px solid var(--mat-sys-outline-variant);
   }
 }
 
