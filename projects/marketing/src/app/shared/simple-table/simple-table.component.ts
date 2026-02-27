@@ -1,0 +1,52 @@
+import { Component, input } from "@angular/core";
+
+@Component({
+  selector: "mkt-simple-table",
+  template: `
+    <table>
+      <thead>
+        <tr>
+          @for (col of columns(); track col) {
+            <th>{{ col }}</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of rows(); track $index) {
+          <tr>
+            @for (cell of row; track $index) {
+              <td>{{ cell }}</td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  `,
+  styles: [
+    `
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 16px 0;
+        font: var(--mat-sys-body-large);
+        letter-spacing: normal;
+      }
+
+      th,
+      td {
+        padding: 14px 20px;
+        text-align: left;
+        border: 1px solid var(--mat-sys-outline-variant);
+      }
+
+      th {
+        font-weight: 500;
+        color: var(--mat-sys-on-surface-variant);
+      }
+    `,
+  ],
+})
+export class SimpleTableComponent {
+  readonly columns = input.required<string[]>();
+  readonly rows = input.required<string[][]>();
+}
