@@ -33,7 +33,7 @@
     pointer-events: none;
   }
 
-  @media screen and (max-width: 1199px) {
+  @media screen and (max-width: vars.$large) {
     padding: 24px;
   }
 
@@ -49,7 +49,7 @@
   align-items: center;
   overflow: visible;
 
-  @media screen and (max-width: 1199px) {
+  @media screen and (max-width: vars.$large) {
     flex-direction: column;
     position: relative;
   }
@@ -60,7 +60,7 @@
   flex-shrink: 0;
   position: relative;
 
-  @media screen and (max-width: 1199px) {
+  @media screen and (max-width: vars.$large) {
     width: 100%;
   }
 }
@@ -71,7 +71,7 @@
   z-index: 1;
   position: relative;
 
-  @media screen and (max-width: 479px) {
+  @media screen and (max-width: vars.$small) {
     padding: 65px 0 0;
     font-size: 0.85em;
   }
@@ -98,13 +98,13 @@
   padding: 0;
   z-index: 1;
 
-  @media screen and (max-width: 1199px) {
+  @media screen and (max-width: vars.$large) {
     z-index: 2;
     margin-top: 0;
     margin-bottom: 0;
   }
 
-  @media screen and (min-width: 1200px) {
+  @media screen and (min-width: vars.$large) {
     margin-right: -20%;
   }
 
@@ -123,7 +123,7 @@
   margin-right: -35%;
   perspective: 1000px;
 
-  @media screen and (max-width: 1199px) {
+  @media screen and (max-width: vars.$large) {
     display: none;
   }
 
@@ -157,11 +157,11 @@
   display: flex;
   gap: 0 20px;
 
-  @media screen and (min-width: 501px) {
+  @media screen and (min-width: vars.$small) {
     margin: 0 50px;
   }
 
-  @media screen and (max-width: 500px) {
+  @media screen and (max-width: vars.$small) {
     flex-direction: column;
 
     button {
@@ -181,7 +181,7 @@
     align-self: flex-start;
     margin-top: 9px;
 
-    @media screen and (max-width: 500px) {
+    @media screen and (max-width: vars.$small) {
       align-self: stretch;
       margin-top: 0;
     }
@@ -199,119 +199,4 @@
 .main-promo-section {
   padding-top: 40px;
   padding-bottom: 40px;
-}
-
-.feature-description {
-  padding-top: 20px;
-  padding-bottom: 40px;
-
-  .screenshots {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 0 10%;
-
-    @media screen and (max-width: 1199px) {
-      flex-direction: column;
-      margin: 0;
-    }
-
-    .screenshot {
-      @media screen and (min-width: 1200px) {
-        flex-shrink: 0;
-        width: 55%;
-      }
-    }
-
-    .description-card {
-      width: 45%;
-      text-align: left;
-
-      @media screen and (max-width: 1199px) {
-        width: 100%;
-        padding: 0 16px;
-      }
-
-      .feature-header {
-        display: flex;
-        align-items: first baseline;
-        gap: 12px;
-      }
-
-      .feature-icon {
-        color: white;
-        font-size: 24px;
-        width: 44px;
-        height: 44px;
-        flex-shrink: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: visible;
-        border-radius: 10px;
-        background: linear-gradient(
-          180deg,
-          color-mix(in srgb, var(--mat-sys-primary) 85%, white) 0%,
-          var(--mat-sys-primary) 100%
-        );
-        box-shadow:
-          0 2px 4px color-mix(in srgb, var(--mat-sys-primary) 30%, transparent),
-          inset 0 1px 0 color-mix(in srgb, white 20%, transparent);
-      }
-
-      .fancy {
-        margin-top: 0;
-      }
-
-      .marketing-body {
-        line-height: 1.6em;
-      }
-    }
-
-    .pad-left {
-      @media screen and (min-width: 1200px) {
-        margin-left: 40px;
-      }
-    }
-
-    .pad-right {
-      @media screen and (min-width: 1200px) {
-        margin-right: 40px;
-      }
-    }
-
-    ::ng-deep img {
-      width: 100%;
-      height: auto;
-      margin: 20px 0;
-    }
-
-    .screenshot:not(.main-promo) ::ng-deep img {
-      border-radius: var(--mat-sys-corner-large, 16px);
-      border: 6px solid var(--mat-sys-outline-variant);
-      box-shadow: var(--mat-sys-shadow-1);
-    }
-  }
-
-  .left-right-row {
-    @media screen and (min-width: 1200px) {
-      flex-direction: row;
-      margin-left: 0;
-
-      .screenshot {
-        margin-left: -4%;
-      }
-    }
-  }
-
-  .right-left-row {
-    @media screen and (min-width: 1200px) {
-      flex-direction: row-reverse;
-      margin-right: 0;
-
-      .screenshot {
-        margin-right: -4.5%;
-      }
-    }
-  }
 }

@@ -1,13 +1,12 @@
 import { Component, inject } from "@angular/core";
 import { LinksService } from "./links.service";
 import { MatCard, MatCardContent } from "@angular/material/card";
-import { ResponsiveImageComponent } from "./shared/responsive-image/responsive-image.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { RouterLink } from "@angular/router";
 import { PaymentComponent } from "./shared/payment/payment.component";
 import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
-import { MatIconModule } from "@angular/material/icon";
+import { FeatureSectionComponent } from "./shared/feature-section/feature-section.component";
 
 @Component({
   selector: "marketing-home",
@@ -15,12 +14,11 @@ import { MatIconModule } from "@angular/material/icon";
     MatButtonModule,
     MatCard,
     MatCardContent,
-    MatIconModule,
     MatInputModule,
     MatFormFieldModule,
     RouterLink,
     PaymentComponent,
-    ResponsiveImageComponent,
+    FeatureSectionComponent,
   ],
   templateUrl: "./home.component.html",
   styleUrls: ["./home.component.scss"],
