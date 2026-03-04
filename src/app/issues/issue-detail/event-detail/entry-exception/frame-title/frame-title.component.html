@@ -46,7 +46,6 @@
       @if (!isMangledSwiftName(frame.function, frame.platform)) {
         {{ frame.function }}
       } @else if (!frame.filename && !frame.module) {
-        <!-- Show mangled name if there's nothing else to display -->
         {{ frame.function }}
       }
     }
@@ -56,7 +55,7 @@
         :{{ frame.colNo }}
       }
     }
-    @if (frame.package && !isIosPlatform(frame.platform)) {
+    @if (frame.package) {
       within {{ cleanPackagePath(frame.package, frame.platform) }}
     }
     <!--origAbsPath not in frame docs

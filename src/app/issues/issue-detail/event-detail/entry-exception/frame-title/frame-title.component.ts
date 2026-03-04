@@ -52,47 +52,22 @@ export class FrameTitleComponent {
         displayValue = filename ? filename : module ? module : undefined;
     }
 
-    // Clean iOS/Cocoa paths to show only meaningful parts
-    if (
-      displayValue &&
-      (effectivePlatform === "cocoa" || effectivePlatform === "objc")
-    ) {
+    if (displayValue && this.isIosPlatform(platform)) {
       displayValue = this.cleanIosPath(displayValue);
     }
 
     return displayValue;
   }
 
-  /**
-   * Strips unnecessary path prefixes from iOS/Cocoa paths to show only meaningful parts.
-   * Examples:
-   *   /Users/.../CoreSimulator/.../ErrorFactory.app/ErrorFactory.debug.dylib -> ErrorFactory.app/ErrorFactory.debug.dylib
-   *   /System/Library/Frameworks/UIKit.framework/UIKit -> UIKit.framework/UIKit
-   */
   private cleanIosPath(path: string): string {
-    // Extract from .app bundle onwards
     const appMatch = path.match(/([^\/]+\.app\/.+)$/);
     if (appMatch) {
       return appMatch[1];
     }
 
-    // Extract framework name and file
     const frameworkMatch = path.match(/([^\/]+\.framework\/.+)$/);
     if (frameworkMatch) {
       return frameworkMatch[1];
-    }
-
-    // Extract dylib name
-    const dylibMatch = path.match(/([^\/]+\.dylib)$/);
-    if (dylibMatch) {
-      return dylibMatch[1];
-    }
-
-    // For system libraries, show just the last meaningful part
-    const parts = path.split("/");
-    if (parts.length > 2) {
-      // Keep last 2-3 parts if no special extension found
-      return parts.slice(-2).join("/");
     }
 
     return path;
@@ -113,31 +88,19 @@ export class FrameTitleComponent {
     return url;
   }
 
-  /**
-   * Cleans package paths for display, applying platform-specific logic
-   */
   cleanPackagePath(packagePath: string, framePlatform: string | null): string {
-    const effectivePlatform = this.eventPlatform() || framePlatform;
-
-    if (effectivePlatform === "cocoa" || effectivePlatform === "objc") {
+    if (this.isIosPlatform(framePlatform)) {
       return this.cleanIosPath(packagePath);
     }
 
     return packagePath;
   }
 
-  /**
-   * Checks if the frame is from an iOS/Cocoa platform
-   */
   isIosPlatform(framePlatform: string | null): boolean {
     const effectivePlatform = this.eventPlatform() || framePlatform;
     return effectivePlatform === "cocoa" || effectivePlatform === "objc";
   }
 
-  /**
-   * Checks if a function name is a mangled Swift name that should be hidden.
-   * Swift mangled names start with $s or _$s and are not human-readable.
-   */
   isMangledSwiftName(
     functionName: string | null,
     framePlatform: string | null,
@@ -146,15 +109,10 @@ export class FrameTitleComponent {
       return false;
     }
 
-    const effectivePlatform = this.eventPlatform() || framePlatform;
-    const isIos = effectivePlatform === "cocoa" || effectivePlatform === "objc";
-
-    // Only hide mangled names for iOS platforms
-    if (!isIos) {
+    if (!this.isIosPlatform(framePlatform)) {
       return false;
     }
 
-    // Swift mangled names start with $s or _$s
     return functionName.startsWith("$s") || functionName.startsWith("_$s");
   }
 }
