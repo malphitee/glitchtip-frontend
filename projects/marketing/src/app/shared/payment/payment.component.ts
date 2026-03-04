@@ -85,7 +85,7 @@ export class PaymentComponent implements AfterViewChecked {
     {
       question: "What happens when I exceed my event limit?",
       answer:
-        "Events beyond your plan limit will be dropped for the remainder of the billing period. You can upgrade your plan at any time to increase your limit.",
+        "After your quota is full, we throttle by 10%. We increase this gradually until at 2x the quota we block fully. You can upgrade your plan at any time to increase your limit.",
     },
     {
       question: "Can I change plans at any time?",
@@ -96,11 +96,6 @@ export class PaymentComponent implements AfterViewChecked {
       question: "Do you offer annual billing?",
       answer:
         "Yes, we offer annual billing with a discount. Contact us at sales@glitchtip.com for details.",
-    },
-    {
-      question: "What is HIPAA compliance and do I need it?",
-      answer:
-        "HIPAA compliance is required for organizations that handle protected health information (PHI). If your application processes healthcare data, you may need our HIPAA-compliant hosting add-on.",
     },
     {
       question: "Can I choose where my data is hosted?",
@@ -115,12 +110,12 @@ export class PaymentComponent implements AfterViewChecked {
     {
       question: "What payment methods do you accept?",
       answer:
-        "We accept all major credit cards through our payment processor. For annual plans or invoicing, contact us at sales@glitchtip.com.",
+        "We accept all major credit cards through our payment processor. For annual plans, invoicing, or contract-based arrangements (self-hosted plans require a 10-user minimum), contact us at sales@glitchtip.com.",
     },
     {
-      question: "What's the difference between Priority and Dedicated support?",
+      question: "What's the difference between Priority support and the Scale plan?",
       answer:
-        "Priority support includes email and livechat support during business hours. Dedicated support (Scale plan) includes development support and compliance certificates.",
+        "Priority support includes email & live chat support. The Scale plan adds development support & prioritization and a Business Associate Agreement (BAA) available upon request.",
     },
   ];
 
@@ -128,22 +123,22 @@ export class PaymentComponent implements AfterViewChecked {
     {
       question: "Is GlitchTip really free to self-host?",
       answer:
-        "Yes. The Community Edition is MIT-licensed and free to use with unlimited events, projects, and team members. No license key is required.",
+        "Yes. GlitchTip is free to self-host with unlimited events, projects, and team members. No paid plan is required. If your business uses GlitchTip in production, we expect you to purchase a license to support continued development.",
     },
     {
       question: "Do I need a Commercial License to use GlitchTip at work?",
       answer:
-        "The Community Edition can be used at work under the MIT license. A Commercial License is recommended for businesses that want priority support, update assistance, and a license key for premium features.",
+        "If your business uses GlitchTip at work, purchasing a Commercial License is expected. There are no premium features — what you're paying for is support.",
     },
     {
       question: "What's included in the Commercial License?",
       answer:
-        "The Commercial License includes a license key for premium features, installation assistance (optional $500 one-time), update assistance, and priority email and livechat support.",
+        "The Commercial License includes support access for your team and priority email & live chat support.",
     },
     {
       question: "How do I install GlitchTip?",
       answer:
-        "GlitchTip can be installed on your own infrastructure using Docker. See our installation documentation for step-by-step guides. For a one-time $500 fee, we can also set it up for you on platforms such as DigitalOcean, AWS, or Heroku.",
+        "GlitchTip can be installed on your own infrastructure using Docker. See our installation documentation for step-by-step guides.",
     },
     {
       question: "What are the system requirements?",
@@ -158,18 +153,18 @@ export class PaymentComponent implements AfterViewChecked {
     {
       question: "How is self-hosted pricing different from hosted?",
       answer:
-        "Self-hosted pricing is per-user rather than per-event. The Community Edition is free. Commercial and Scaled Support plans are billed per user per month, with annual billing discounts available.",
+        "Self-hosted pricing is per-user rather than per-event. The Starter Edition is free. Commercial and Scaled Support plans are billed per user per month, with annual billing discounts available.",
     },
     {
       question: "Will GlitchTip's license ever change?",
       answer:
-        "The Community Edition is MIT-licensed and will remain open source. We are committed to keeping GlitchTip's core freely available.",
+        "GlitchTip will remain open source. We are committed to keeping it that way.",
     },
     {
       question:
-        "What's the difference between Community and Commercial License?",
+        "What's the difference between Starter Edition and Commercial License?",
       answer:
-        "The Community Edition is MIT-licensed and free. The Commercial License adds a license key for premium features, priority support, update assistance, and installation help.",
+        "The Starter Edition is free and includes everything GlitchTip offers. If you're running it in production, we expect you to hold a Commercial License — that's what gets you priority support from us.",
     },
     {
       question: "Can I migrate from hosted to self-hosted (or vice versa)?",
@@ -184,7 +179,7 @@ export class PaymentComponent implements AfterViewChecked {
     {
       question: "Do you offer training or onboarding?",
       answer:
-        "With Scaled Support, we can join your company's chat service such as Slack or Rocket.Chat to help your team get started. We'll help you integrate your apps and prioritize development requests.",
+        "With Scaled Support, we can join your company's chat service such as Slack or Rocket. Chat to help your team get started. We'll help you integrate your apps and prioritize development requests.",
     },
   ];
 
@@ -197,7 +192,6 @@ export class PaymentComponent implements AfterViewChecked {
         { text: "Error tracking" },
         { text: "Unlimited projects" },
         { text: "Unlimited team members" },
-        { text: "MIT licensed" },
       ],
       monthlyPrice: "Free",
     },
@@ -207,11 +201,7 @@ export class PaymentComponent implements AfterViewChecked {
       includesFrom: "Hobby",
       features: [
         { text: "up to 100k events/mo" },
-        {
-          text: "License Key",
-          tooltip:
-            "A license key unlocks premium features when self-hosting GlitchTip",
-        },
+        { text: "Support access" },
       ],
       monthlyPrice: 15,
       annualPrice: 150,
@@ -222,7 +212,7 @@ export class PaymentComponent implements AfterViewChecked {
       includesFrom: "Starter",
       features: [
         { text: "up to 500k events/mo" },
-        { text: "Priority email and livechat support" },
+        { text: "Priority email & live chat support" },
       ],
       monthlyPrice: 50,
       annualPrice: 500,
@@ -233,12 +223,8 @@ export class PaymentComponent implements AfterViewChecked {
       includesFrom: "Growth",
       features: [
         { text: "up to 3 million events/mo" },
-        { text: "Development support" },
-        {
-          text: "Compliance Certificates",
-          tooltip:
-            "SOC 2 Type II and HIPAA compliance certificates available upon request",
-        },
+        { text: "Development support & prioritization" },
+        { text: "Business Associate Agreement (BAA) available upon request" },
       ],
       monthlyPrice: 250,
       annualPrice: 2500,
@@ -247,14 +233,12 @@ export class PaymentComponent implements AfterViewChecked {
 
   selfHostedPlanOptions: PlanOption[] = [
     {
-      name: "Community Edition",
+      name: "Starter Edition",
       subtitle: "For personal use and open source projects",
       features: [
         { text: "Unlimited usage" },
         { text: "Host on your infrastructure" },
         { text: "Unlimited projects" },
-        { text: "Community support" },
-        { text: "MIT licensed" },
       ],
       monthlyPrice: "Free",
       ctaText: "Get started",
@@ -263,8 +247,8 @@ export class PaymentComponent implements AfterViewChecked {
     {
       name: "Individual License",
       subtitle: "Developer use for 1 user",
-      includesFrom: "Community",
-      features: [{ text: "Individual license Key" }],
+      includesFrom: "Starter",
+      features: [{ text: "Support access for 1 user" }],
       monthlyPrice: 5,
       annualPrice: 50,
       ctaText: "Get started",
@@ -275,10 +259,8 @@ export class PaymentComponent implements AfterViewChecked {
       subtitle: "For business use",
       includesFrom: "Individual",
       features: [
-        { text: "Installation assistance (optional $500 one-time)" },
-        { text: "Update assistance" },
-        { text: "Commercial License Key" },
-        { text: "Priority email and livechat support" },
+        { text: "Support access for your team" },
+        { text: "Priority email & live chat support" },
       ],
       monthlyPrice: 15,
       annualPrice: 150,
@@ -293,8 +275,7 @@ export class PaymentComponent implements AfterViewChecked {
       features: [
         { text: "Custom Branding" },
         { text: "Single Sign On integrations" },
-        { text: "Development support" },
-        { text: "Compliance Certificates" },
+        { text: "Development support & prioritization" },
       ],
       monthlyPrice: "Custom",
       annualPrice: "Custom",

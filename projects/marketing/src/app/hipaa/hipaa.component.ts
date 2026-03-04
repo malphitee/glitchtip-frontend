@@ -50,10 +50,5 @@ export class HipaaComponent {
       answer:
         "Burke Software will notify affected customers without undue delay and no later than 72 hours after discovery of a confirmed breach, in alignment with GDPR and HIPAA requirements.",
     },
-    {
-      question: "Do you have SOC 2 or ISO 27001 certification?",
-      answer:
-        "SOC 2 Type II compliance certificates are available upon request for Scale plan customers. Contact sales@glitchtip.com for details.",
-    },
   ];
 }
