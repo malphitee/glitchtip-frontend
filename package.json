@@ -9,7 +9,7 @@
     "build": "ng build",
     "build-prod": "ng build -c prod-no-static,production --deploy-url static/ --progress false",
     "build-static": "npx tsc buildStaticSite.ts --skipLibCheck && node buildStaticSite.js",
-    "build-marketing": "ng build -c production --project marketing",
+    "build-marketing": "ng build -c production --project marketing && node scripts/inject-cli-version.js",
     "test": "ng test",
     "postinstall": "patch-package",
     "lint": "ng lint",
