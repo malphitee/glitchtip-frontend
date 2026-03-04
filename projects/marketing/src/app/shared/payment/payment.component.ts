@@ -110,12 +110,12 @@ export class PaymentComponent implements AfterViewChecked {
     {
       question: "What payment methods do you accept?",
       answer:
-        "We accept all major credit cards through our payment processor. For annual plans, invoicing, or contract-based arrangements (self-hosted plans require a 10-user minimum), contact us at sales@glitchtip.com.",
+        "We accept all major credit cards through our payment processor. For annual plans, invoicing, or contract-based arrangements, contact us at sales@glitchtip.com.",
     },
     {
-      question: "What's the difference between Priority support and the Scale plan?",
+      question: "What's the difference between the Growth and Scale plans?",
       answer:
-        "Priority support includes email & live chat support. The Scale plan adds development support & prioritization and a Business Associate Agreement (BAA) available upon request.",
+        "The Growth plan includes priority email & live chat support. The Scale plan adds development support & prioritization and a Business Associate Agreement (BAA) available upon request.",
     },
   ];
 
@@ -133,7 +133,7 @@ export class PaymentComponent implements AfterViewChecked {
     {
       question: "What's included in the Commercial License?",
       answer:
-        "The Commercial License includes support access for your team and priority email & live chat support.",
+        "The Commercial License includes team support access — priority email & live chat support and update assistance.",
     },
     {
       question: "How do I install GlitchTip?",
@@ -153,7 +153,7 @@ export class PaymentComponent implements AfterViewChecked {
     {
       question: "How is self-hosted pricing different from hosted?",
       answer:
-        "Self-hosted pricing is per-user rather than per-event. The Starter Edition is free. Commercial and Scaled Support plans are billed per user per month, with annual billing discounts available.",
+        "Self-hosted pricing is per-user rather than per-event. The Starter Edition is free. Commercial and Scaled Support plans are billed per user per month, with annual billing discounts available. Scaled Support requires a 10-user minimum for contract-based arrangements.",
     },
     {
       question: "Will GlitchTip's license ever change?",
@@ -164,7 +164,7 @@ export class PaymentComponent implements AfterViewChecked {
       question:
         "What's the difference between Starter Edition and Commercial License?",
       answer:
-        "The Starter Edition is free and includes everything GlitchTip offers. If you're running it in production, we expect you to hold a Commercial License — that's what gets you priority support from us.",
+        "The Starter Edition is free and includes everything GlitchTip offers. If you're running it in production, we expect you to hold a Commercial License — that's what gets you update assistance and priority support from us.",
     },
     {
       question: "Can I migrate from hosted to self-hosted (or vice versa)?",
@@ -259,8 +259,7 @@ export class PaymentComponent implements AfterViewChecked {
       subtitle: "For business use",
       includesFrom: "Individual",
       features: [
-        { text: "Support access for your team" },
-        { text: "Priority email & live chat support" },
+        { text: "Team support access: priority email & live chat + update assistance" },
       ],
       monthlyPrice: 15,
       annualPrice: 150,
