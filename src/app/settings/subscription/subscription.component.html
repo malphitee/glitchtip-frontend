@@ -1,10 +1,22 @@
-<section class="l-body">
-  <header class="page-header">
-    <h2 class="section-header-text" i18n>Subscription</h2>
-    @if (fromStripe()) {
-      <span class="body-text-strong">Redirected from Stripe</span>
+<gt-top-app-bar>
+  <ng-container slot="left">
+    <h1 class="section-header-text" i18n>Subscription</h1>
+  </ng-container>
+  <ng-container slot="right">
+    @if (subscription() && subscription()!.status !== "canceled") {
+      <gt-loading-button
+        color="primary"
+        (click)="manageSubscription()"
+        [loading]="billingPortalLoading()"
+        buttonText="Manage Subscription"
+      />
     }
-  </header>
+  </ng-container>
+</gt-top-app-bar>
+<section class="l-body">
+  @if (fromStripe()) {
+    <span class="body-text-strong">Redirected from Stripe</span>
+  }
   @if (subscriptionLoading() || subscriptionRefreshTimeout()) {
     <mat-card>
       <mat-card-header></mat-card-header>
@@ -100,9 +112,7 @@
                         class="event-count"
                         [class.event-count--left]="eventsPercent.total < 25"
                         [class.event-count--right]="eventsPercent.total > 75"
-                        style="left: {{
-                          eventsPercent.total < 100 ? eventsPercent.total : 100
-                        }}%"
+                        [style.left.%]="eventsPercent.total < 100 ? eventsPercent.total : 100"
                       >
                         {{ count.total }}
                       </div>
@@ -169,12 +179,6 @@
                 >.
               </p>
               <mat-error>{{ billingPortalLoadingError() }}</mat-error>
-              <gt-loading-button
-                color="primary"
-                (click)="manageSubscription()"
-                [loading]="billingPortalLoading()"
-                buttonText="Manage Subscription"
-              />
             } @else {
               <p class="body-text" i18n
                 >This organization does not have an active subscription to
