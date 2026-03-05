@@ -4,6 +4,7 @@ import { Component, Input, input } from "@angular/core";
   standalone: true,
   selector: "mkt-responsive-image",
   templateUrl: "./responsive-image.component.html",
+  styleUrl: "./responsive-image.component.scss",
 })
 export class ResponsiveImageComponent {
   @Input() alt: string | undefined;
