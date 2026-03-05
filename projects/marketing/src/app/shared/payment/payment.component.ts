@@ -158,7 +158,7 @@ export class PaymentComponent implements AfterViewChecked {
     {
       question: "Will GlitchTip's license ever change?",
       answer:
-        "GlitchTip will remain open source. We are committed to keeping it that way.",
+        "GlitchTip will remain open source under the MIT license. We are committed to keeping it that way.",
     },
     {
       question:
@@ -174,7 +174,7 @@ export class PaymentComponent implements AfterViewChecked {
     {
       question: "How do updates work for self-hosted?",
       answer:
-        "You can update GlitchTip yourself at any time by pulling the latest Docker image. With a Commercial License, you can also request that we update for you monthly — you'll need to give us sufficient access to your environment.",
+        "You can update GlitchTip yourself at any time by pulling the latest Docker image. Scale Support customers have access to developer update support.",
     },
     {
       question: "Do you offer training or onboarding?",
