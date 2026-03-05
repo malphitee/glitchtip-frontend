@@ -174,7 +174,7 @@ export class PaymentComponent implements AfterViewChecked {
     {
       question: "How do updates work for self-hosted?",
       answer:
-        "You can update GlitchTip yourself at any time by pulling the latest Docker image. Scale Support customers have access to developer update support.",
+        "You can update GlitchTip yourself at any time by pulling the latest Docker image.",
     },
     {
       question: "Do you offer training or onboarding?",
