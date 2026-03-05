@@ -224,6 +224,12 @@ a {
 .markdown-container {
   @extend .marketing-body;
 
+  .anchor {
+    display: block;
+    margin-top: -80px;
+    padding-top: 80px;
+  }
+
   h1 {
     @extend .marketing-heading;
     display: inline-block;
