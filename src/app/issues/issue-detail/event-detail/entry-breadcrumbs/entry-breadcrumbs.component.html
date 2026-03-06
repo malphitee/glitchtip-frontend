@@ -1,7 +1,23 @@
 @if (breadcrumbs(); as breadcrumbs) {
   <section class="mat-typography">
     <mat-divider></mat-divider>
-    <h3>Breadcrumbs</h3>
+    <div class="breadcrumbs-header">
+      <h3>Breadcrumbs</h3>
+      @if (availableCategories().length > 1) {
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>Filter by category</mat-label>
+          <mat-select
+            multiple
+            [ngModel]="selectedCategories()"
+            (ngModelChange)="selectedCategories.set($event)"
+          >
+            @for (category of availableCategories(); track category) {
+              <mat-option [value]="category">{{ category }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      }
+    </div>
     <div
       #breadBox
       class="wrapper"
@@ -20,7 +36,11 @@
         </button>
       }
       <ul>
-        @for (value of breadcrumbs?.values; track value; let i = $index) {
+        @for (
+          value of filteredBreadcrumbs()?.values;
+          track value;
+          let i = $index
+        ) {
           <li>
             <ng-container>
               @if (i !== 0) {
