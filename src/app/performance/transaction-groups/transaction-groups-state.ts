@@ -29,7 +29,7 @@ export class PerformanceService {
           start: params.start,
           end: params.end,
           sort: params.sort as any,
-          project: params.project,
+          project: params.project?.map(Number),
           environment: params.environment ? [params.environment] : undefined,
         },
       },

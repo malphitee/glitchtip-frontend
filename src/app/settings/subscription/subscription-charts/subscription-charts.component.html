@@ -1,0 +1,64 @@
+@if (loading()) {
+  <div class="spinner-container">
+    <mat-spinner diameter="36"></mat-spinner>
+  </div>
+} @else {
+  <div class="summary-cards">
+    <gt-summary-card
+      [title]="'This Month'"
+      [value]="'' + (eventsCountWithTotal()?.total ?? 0)"
+      [subtitle]="thisMonthPercent() + '% of limit (' + totalEventsAllowed() + ')'"
+      [percent]="thisMonthPercent()"
+      [isOverLimit]="thisMonthPercent() >= 80"
+      i18n-title
+    />
+    <gt-summary-card
+      [title]="'Last Month'"
+      [value]="'' + (previousPeriod()?.total ?? 0)"
+      [subtitle]="lastMonthPercent() + '% of limit (' + totalEventsAllowed() + ')'"
+      [percent]="lastMonthPercent()"
+      [isOverLimit]="lastMonthPercent() >= 80"
+      i18n-title
+    />
+    <gt-summary-card
+      [title]="'Predicted End of Month'"
+      [value]="predictedTotal() !== null ? '~' + predictedTotal() : '--'"
+      [subtitle]="predictedTotal() === null ? 'Not enough data' : predictedPercent() >= 100 ? 'Over limit' : 'Within limit'"
+      [percent]="predictedPercent()"
+      [isOverLimit]="predictedPercent() >= 100"
+      i18n-title
+    />
+  </div>
+  @if (eventsPercent(); as eventsPercent) {
+    <div class="visualization">
+      <div class="bar-header">
+        <span class="body-text-strong" i18n>Number of Events</span>
+        <span class="caption-text">{{ totalEventsAllowed() }}</span>
+      </div>
+      <div class="display-bar">
+        <div class="file-size-percent" [style.width.%]="eventsPercent.fileSize"></div>
+        <div class="error-event" [style.width.%]="eventsPercent.errorEvents"></div>
+        <div class="uptime-event" [style.width.%]="eventsPercent.uptimeEvents"></div>
+        <div class="transaction-event" [style.width.%]="eventsPercent.transactionEvents"></div>
+      </div>
+      @if (eventsCountWithTotal(); as count) {
+        <div
+          class="event-count"
+          [class.event-count--left]="eventsPercent.total < 25"
+          [class.event-count--right]="eventsPercent.total > 75"
+          style="left: {{ eventsPercent.total < 100 ? eventsPercent.total : 100 }}%"
+        >{{ count.total }}</div>
+        <div class="breakdown-section">
+          <span class="body-text-strong" i18n>Event Breakdown</span>
+          <ul class="usage-details">
+            <li><b class="error" i18n>Issue events:</b> {{ count.eventCount }}</li>
+            <li><b class="uptime" i18n>Uptime events:</b> {{ count.uptimeCheckEventCount }}</li>
+            <li><b class="performance" i18n>Performance events:</b> {{ count.transactionEventCount }}</li>
+            <li><b class="file-size" i18n>File storage:</b> {{ count.fileSizeMb }} MB</li>
+            <li i18n>Total events used: {{ count.total }}</li>
+          </ul>
+        </div>
+      }
+    </div>
+  }
+}

@@ -80,99 +80,25 @@
                   payment is past due.</p
                 >
               }
-              <ng-container>
-                <mat-card-subtitle i18n>Details</mat-card-subtitle>
-                <h3>{{ subscription.product.name }}</h3>
-                {{ subscription.product.description }}
-                @if (eventsPercent(); as eventsPercent) {
-                  <div class="visualization">
-                    <div class="total-events">
-                      {{ totalEventsAllowed() }}
-                    </div>
-                    <div class="display-bar">
-                      <div
-                        class="file-size-percent"
-                        [style.width.%]="eventsPercent.fileSize"
-                      ></div>
-                      <div
-                        class="error-event"
-                        [style.width.%]="eventsPercent.errorEvents"
-                      ></div>
-                      <div
-                        class="uptime-event"
-                        [style.width.%]="eventsPercent.uptimeEvents"
-                      ></div>
-                      <div
-                        class="transaction-event"
-                        [style.width.%]="eventsPercent.transactionEvents"
-                      ></div>
-                    </div>
-                    @if (eventsCountWithTotal(); as count) {
-                      <div
-                        class="event-count"
-                        [class.event-count--left]="eventsPercent.total < 25"
-                        [class.event-count--right]="eventsPercent.total > 75"
-                        [style.left.%]="eventsPercent.total < 100 ? eventsPercent.total : 100"
-                      >
-                        {{ count.total }}
-                      </div>
-                      <div>
-                        <ul>
-                          <li i18n
-                            >Usage period:
-                            {{ subscription.subscriptionCycleStart | date }} to
-                            {{ subscription.subscriptionCycleEnd | date }}</li
-                          >
-                          <li>
-                            <b class="error" i18n>Issue events:</b>
-                            {{ count.eventCount }}
-                          </li>
-                          <li>
-                            <b class="uptime" i18n>Uptime events:</b>
-                            {{ count.uptimeCheckEventCount }}
-                          </li>
-                          <li>
-                            <b class="performance" i18n>Performance events:</b>
-                            {{ count.transactionEventCount }}
-                          </li>
-                          <li>
-                            <b class="file-size" i18n>File storage:</b>
-                            {{ count.fileSizeMb }} MB
-                          </li>
-                          <li i18n
-                            >Total
-                            <a [routerLink]="[]" (click)="openEventInfoDialog()"
-                              >events</a
-                            >
-                            used: {{ count.total }}
-                          </li>
-                        </ul>
-                      </div>
-                    }
-                  </div>
-                }
-                <ul>
-                  <li class="body-text" i18n
-                    >Plan cost: {{ subscription.effectivePrice | currency }}</li
-                  >
-                  <li class="body-text">
-                    <ng-container i18n>Billing</ng-container>:
-                    @if (
-                      subscription.collectionMethod === "charge_automatically"
-                    ) {
-                      <ng-container i18n>Automatic</ng-container>
-                    }
-                    @if (subscription.collectionMethod === "send_invoice") {
-                      <ng-container i18n>Send invoice</ng-container>
-                    }
-                  </li>
-                  <li class="body-text" i18n
-                    >Billing period:
-                    {{ subscription.currentPeriodStart | date }} to
-                    {{ subscription.currentPeriodEnd | date }}</li
-                  >
-                </ul>
-              </ng-container>
+              <div class="plan-header">
+                <span class="body-text-strong"
+                  >{{ subscription.product.name }}</span
+                >
+                <mat-divider vertical />
+                <span class="body-text" i18n
+                  >Billing Cycle:
+                  {{ subscription.currentPeriodStart | date }} to
+                  {{ subscription.currentPeriodEnd | date }}
+                  @if (daysRemaining() !== null) {
+                    ({{ daysRemaining() }}
+                    {{ daysRemaining() === 1 ? "day" : "days" }} remaining)
+                  }</span
+                >
+              </div>
+              <mat-divider />
+              <gt-subscription-charts
+                [totalEventsAllowed]="totalEventsAllowed()"
+              />
               <p class="body-text" i18n
                 >If you have questions about your subscription, please contact
                 us at <a href="mailto:{{ billingEmail }}">{{ billingEmail }}</a
