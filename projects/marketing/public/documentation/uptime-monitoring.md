@@ -13,7 +13,7 @@ An uptime monitor will send requests to or await requests from your app at regul
             "
         />
         <img
-            src="/assets/screenshots/new-monitor@1xpng"
+            src="/assets/screenshots/new-monitor@1x.png"
             srcset="
                 /assets/screenshots/new-monitor@1x.png,
                 /assets/screenshots/new-monitor@2x.png 2x,

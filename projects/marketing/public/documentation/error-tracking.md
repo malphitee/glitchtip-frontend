@@ -17,9 +17,9 @@ Once you have created your GlitchTip project, the next step is to set up your we
            "
        />
        <img
-           src="/assets/screenshots/start-project@1xpng"
+           src="/assets/screenshots/start-project@1x.png"
            srcset="
-               /assets/screenshots/start-project@1xpng,
+               /assets/screenshots/start-project@1x.png,
                /assets/screenshots/start-project@2xpng 2x,
                /assets/screenshots/start-project@3xpng 3x,
            "
@@ -44,9 +44,9 @@ Next, add some code to your project that will generate an error, such as dividin
            "
        />
        <img
-           src="/assets/screenshots/one-issue@1xpng"
+           src="/assets/screenshots/one-issue@1x.png"
            srcset="
-               /assets/screenshots/one-issue@1xpng,
+               /assets/screenshots/one-issue@1x.png,
                /assets/screenshots/one-issue@2xpng 2x,
                /assets/screenshots/one-issue@3xpng 3x,
            "
@@ -71,9 +71,9 @@ Now that GlitchTip is receiving your project’s errors, you will probably want 
            "
        />
        <img
-           src="/assets/screenshots/new-project-alert@1xpng"
+           src="/assets/screenshots/new-project-alert@1x.png"
            srcset="
-               /assets/screenshots/new-project-alert@1xpng,
+               /assets/screenshots/new-project-alert@1x.png,
                /assets/screenshots/new-project-alert@2xpng 2x,
                /assets/screenshots/new-project-alert@3xpng 3x,
            "
