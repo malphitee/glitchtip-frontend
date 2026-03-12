@@ -225,9 +225,7 @@ a {
   @extend .marketing-body;
 
   .anchor {
-    display: block;
-    margin-top: -80px;
-    padding-top: 80px;
+    scroll-margin-top: 80px;
   }
 
   h1 {
