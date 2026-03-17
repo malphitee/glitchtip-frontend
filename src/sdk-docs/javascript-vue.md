@@ -1,39 +1,42 @@
-To use GlitchTip with your Vue application, you will need to use the `@sentry/vue` SDK.
+Install the sentry Vue SDK:
 
 ```bash
-# Using yarn
-$ yarn add @sentry/vue
-
-# Using npm
-$ npm install @sentry/vue --save
+npm install @sentry/vue
 ```
 
-On its own, `@sentry/vue` will report any uncaught exceptions triggered by your application.
-
-Additionally, the Vue _integration_ will capture the name and props state of the active component where the error was thrown. This is reported via Vue’s `config.errorHandler` hook.
-
-Then add this to your `app.js`:
+Initialize the SDK in your `main.ts` (or `main.js`), passing the Vue app instance:
 
 ```javascript
-import Vue from "vue";
+import { createApp } from "vue";
 import * as Sentry from "@sentry/vue";
+import App from "./App.vue";
+
+const app = createApp(App);
 
 Sentry.init({
-  dsn: "YOUR-GLITCHTIP-DSN-HERE",
-  integrations: [
-    Sentry.browserTracingIntegration({ router }),
-    tracesSampleRate: 0.01,
-  ],
-  environment: "dev or prod",
-  release = 'release tag'
+  app,
+  dsn: "YOUR_DSN",
+  tracesSampleRate: 0.01, // 1% of transactions — adjust to your needs
+  autoSessionTracking: false, // GlitchTip does not support sessions
 });
+
+app.mount("#app");
 ```
 
+The SDK captures component errors via Vue's `config.errorHandler` hook, including the component name and props.
+
+Verify your setup by throwing an error in any component method.
+
+## Source Maps
+
+Upload source maps for readable stack traces. Use the [GlitchTip CLI](/documentation/cli):
+
+```bash
+glitchtip-cli sourcemaps inject ./dist
+glitchtip-cli sourcemaps upload ./dist --org my-org --project my-project
 ```
 
-Vue-Specific configuration
-The SDK accepts a few Vue-specific Sentry.init configuration options:
+## Tips
 
-attachProps (defaults to true) - Includes all Vue components' props with the events.
-logErrors (defaults to true) - Decides whether SDK should call Vue's original logError function as well.
-Check out how to Track Vue Components for performance.
+- The SDK automatically captures component name and props with each error event.
+- Set `tracesSampleRate` to a low value in production to save disk space.

@@ -1,42 +1,37 @@
-GlitchTip is an open-source alternative to Sentry that works seamlessly with the Sentry browser SDK.
-
-## Step 1: Include the SDK via CDN or NPM
-
-To get started, you have two options for including the Sentry SDK:
-
-### Option 1: CDN
-
-Add the following script tag to your HTML file.
-
-```html
-<script src="https://browser.sentry-cdn.com/7.60.0/bundle.min.js" crossorigin="anonymous"></script>
-```
-
-Consider checking the [Sentry GitHub repository](https://github.com/getsentry/sentry-javascript) for the latest available version number.
-
-### Option 2: NPM
-
-If you prefer using NPM for managing dependencies, you can install the Sentry SDK like this:
+Install the sentry browser SDK:
 
 ```bash
 npm install @sentry/browser
 ```
 
-## Step 2: Initialize the SDK
-
-Next, initialize the Sentry SDK as early as possible during your page load. Retrieve your DSN from your Glitchtip project settings and use it to configure the SDK. Additionally, you can set the `tracesSampleRate` option to specify the rate at which performance monitoring data should be sent (e.g., `0.01` for 1% of transactions).
+Initialize the SDK as early as possible during page load:
 
 ```javascript
+import * as Sentry from "@sentry/browser";
+
 Sentry.init({
-  dsn: "YOUR-GLITCHTIP-DSN-HERE",
-  tracesSampleRate: 0.01,
+  dsn: "YOUR_DSN",
+  tracesSampleRate: 0.01, // 1% of transactions — adjust to your needs
+  autoSessionTracking: false, // GlitchTip does not support sessions
 });
 ```
 
-## Step 3: Verify Error Reporting
-
-To ensure that error reporting works correctly, you can create a simple test by calling an undefined function:
+Verify your setup by triggering a test error:
 
 ```javascript
 myUndefinedFunction();
 ```
+
+## Source Maps
+
+Upload source maps for readable stack traces in production. Use the [GlitchTip CLI](/documentation/cli):
+
+```bash
+glitchtip-cli sourcemaps inject ./dist
+glitchtip-cli sourcemaps upload ./dist --org my-org --project my-project
+```
+
+## Tips
+
+- Set `tracesSampleRate` to a low value in production to save disk space. Most teams find 1–10% sufficient for useful [performance data](/documentation/performance).
+- Use `release` and `environment` options to track which deployments introduce errors.
