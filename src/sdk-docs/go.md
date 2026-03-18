@@ -17,7 +17,7 @@ import (
 
 func main() {
     err := sentry.Init(sentry.ClientOptions{
-        Dsn:              "YOUR_DSN",
+        Dsn: "YOUR_DSN",
         TracesSampleRate: 0.01, // 1% of transactions
     })
     if err != nil {
