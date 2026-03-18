@@ -47,28 +47,6 @@
               subscription.status === "trialing" ||
               subscription.status === "past_due"
             ) {
-              @if (subscription.status === "active") {
-                <p class="body-text">
-                  @if (subscription.effectivePrice === 0) {
-                    <ng-container i18n
-                      >You have selected the free plan. Please consider making a
-                      monthly
-                      <a
-                        href="https://liberapay.com/GlitchTip/donate"
-                        target="_blank"
-                        >donation</a
-                      >
-                      to help keep open source development sustainable. Thank
-                      you for choosing GlitchTip!</ng-container
-                    >
-                  } @else {
-                    <ng-container i18n
-                      >This organization has an active subscription to
-                      GlitchTip. Thank you!</ng-container
-                    >
-                  }
-                </p>
-              }
               @if (subscription.status === "trialing") {
                 <p class="body-text no-bottom-margin" i18n
                   >This organization has a trial subscription to GlitchTip.</p
@@ -79,6 +57,12 @@
                   >This organization has a subscription to GlitchTip, but the
                   payment is past due.</p
                 >
+              }
+              @if (subscription.effectivePrice === 0) {
+                <gt-upgrade-banner
+                  [usagePercent]="thisMonthPercent() >= 80 ? thisMonthPercent() : null"
+                  (upgradeClick)="manageSubscription()"
+                />
               }
               <div class="plan-header">
                 <span class="body-text-strong"
@@ -135,6 +119,9 @@
       }
     }
     @if (!subscription() || subscription()!.status === "canceled") {
+      <gt-upgrade-banner
+        (upgradeClick)="manageSubscription()"
+      />
       <gt-payment></gt-payment>
     }
   }

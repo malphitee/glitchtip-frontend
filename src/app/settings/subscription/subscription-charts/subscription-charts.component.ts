@@ -5,14 +5,15 @@ import {
   inject,
   input,
 } from "@angular/core";
-import { DatePipe } from "@angular/common";
+import { MatCardModule } from "@angular/material/card";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { SubscriptionService } from "src/app/api/subscriptions/subscription.service";
+import { DailyEventsChartComponent } from "./daily-events-chart/daily-events-chart.component";
 import { SummaryCardComponent } from "./summary-card/summary-card.component";
 
 @Component({
   selector: "gt-subscription-charts",
-  imports: [MatProgressSpinnerModule, SummaryCardComponent, DatePipe],
+  imports: [MatCardModule, MatProgressSpinnerModule, DailyEventsChartComponent, SummaryCardComponent],
   templateUrl: "./subscription-charts.component.html",
   styleUrls: ["./subscription-charts.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -26,19 +27,21 @@ export class SubscriptionChartsComponent {
   previousPeriod = this.subscriptionService.previousPeriodEvents;
   predictedTotal = this.subscriptionService.predictedEndOfMonth;
   subscription = this.subscriptionService.subscription;
+  dailyEvents = this.subscriptionService.dailyEvents;
+
+  periodEnd = computed(() => {
+    const sub = this.subscription();
+    return sub?.subscriptionCycleEnd ?? sub?.currentPeriodEnd ?? null;
+  });
 
   loading = computed(
     () =>
       this.subscriptionService.previousPeriodResource.isLoading() ||
-      this.subscriptionService.eventCountResource.isLoading(),
+      this.subscriptionService.eventCountResource.isLoading() ||
+      this.subscriptionService.dailyEventsResource.isLoading(),
   );
 
-  thisMonthPercent = computed(() => {
-    const total = this.eventsCountWithTotal()?.total;
-    const allowed = this.totalEventsAllowed();
-    if (total == null || !allowed) return 0;
-    return Math.round((total / allowed) * 100);
-  });
+  thisMonthPercent = this.subscriptionService.thisMonthPercent;
 
   lastMonthPercent = computed(() => {
     const total = this.previousPeriod()?.total;
@@ -54,16 +57,24 @@ export class SubscriptionChartsComponent {
     return Math.round((predicted / allowed) * 100);
   });
 
-  eventsPercent = computed(() => {
-    const eventsAllowed = this.totalEventsAllowed();
+  eventBreakdown = computed(() => {
     const events = this.eventsCountWithTotal();
-    if (!eventsAllowed || !events) return null;
+    if (!events) return null;
+    const total = events.total || 1;
     return {
-      total: (events.total / eventsAllowed) * 100,
-      errorEvents: (events.eventCount! / eventsAllowed) * 100,
-      transactionEvents: (events.transactionEventCount! / eventsAllowed) * 100,
-      uptimeEvents: (events.uptimeCheckEventCount! / eventsAllowed) * 100,
-      fileSize: (events.fileSizeMb! / eventsAllowed) * 100,
+      performance: {
+        count: events.transactionEventCount ?? 0,
+        percent: Math.round(((events.transactionEventCount ?? 0) / total) * 100),
+      },
+      issues: {
+        count: events.eventCount ?? 0,
+        percent: Math.round(((events.eventCount ?? 0) / total) * 100),
+      },
+      uptime: {
+        count: events.uptimeCheckEventCount ?? 0,
+        percent: Math.round(((events.uptimeCheckEventCount ?? 0) / total) * 100),
+      },
+      fileSizeMb: events.fileSizeMb ?? 0,
     };
   });
 }

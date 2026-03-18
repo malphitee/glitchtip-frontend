@@ -80,6 +80,19 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
     return { ...eventsCount, total };
   });
 
+  dailyEventsResource = apiResource(this.organizationSlug, (orgSlug) => ({
+    url: "/api/0/stripe/subscriptions/{organization_slug}/events_count/daily/",
+    options: {
+      params: {
+        path: { organization_slug: orgSlug },
+      },
+    },
+  }));
+  dailyEvents = computed(() => {
+    if (this.dailyEventsResource.serverError()) return [];
+    return this.dailyEventsResource.value()?.data ?? [];
+  });
+
   previousPeriodResource = apiResource(this.organizationSlug, (orgSlug) => ({
     url: "/api/0/stripe/subscriptions/{organization_slug}/events_count/previous_period/",
     options: {
@@ -122,6 +135,13 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
   totalEventsAllowed = computed(() => {
     const subscription = this.subscription();
     return subscription?.product.events || null;
+  });
+
+  thisMonthPercent = computed(() => {
+    const total = this.eventsCountWithTotal()?.total;
+    const allowed = this.totalEventsAllowed();
+    if (total == null || !allowed) return 0;
+    return Math.round((total / allowed) * 100);
   });
   refreshTimerRef: NodeJS.Timeout | undefined = undefined;
 
@@ -241,6 +261,7 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
     this.organizationSlug.set("");
     this.subscriptionResource.set(undefined);
     this.eventCountResource.set(undefined);
+    this.dailyEventsResource.set(undefined);
     this.previousPeriodResource.set(undefined);
     clearInterval(this.refreshTimerRef);
   }

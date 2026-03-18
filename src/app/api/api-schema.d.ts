@@ -1271,6 +1271,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/0/stripe/subscriptions/{organization_slug}/events_count/daily/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Subscription Events Count Daily */
+        get: operations["apps_stripe_api_subscription_events_count_daily"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/0/stripe/subscriptions/{organization_slug}/events_count/previous_period/": {
         parameters: {
             query?: never;
@@ -4593,6 +4610,21 @@ export interface components {
             /** Filesizemb */
             fileSizeMb: number;
         };
+        /** DailyEventCountEntry */
+        DailyEventCountEntry: {
+            /** Date */
+            date: string;
+            /** Eventcount */
+            eventCount: number;
+            /** Transactioneventcount */
+            transactionEventCount: number;
+            /** Uptimecheckeventcount */
+            uptimeCheckEventCount: number;
+        };
+        /** DailyEventsCountSchema */
+        DailyEventsCountSchema: {
+            data: components["schemas"]["DailyEventCountEntry"][];
+        };
         /** PreviousPeriodEventsCountSchema */
         PreviousPeriodEventsCountSchema: {
             /** Eventcount */
@@ -7523,6 +7555,28 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["EventsCountSchema"];
+                };
+            };
+        };
+    };
+    apps_stripe_api_subscription_events_count_daily: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                organization_slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DailyEventsCountSchema"];
                 };
             };
         };

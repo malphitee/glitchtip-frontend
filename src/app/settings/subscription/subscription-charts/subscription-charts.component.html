@@ -29,36 +29,38 @@
       i18n-title
     />
   </div>
-  @if (eventsPercent(); as eventsPercent) {
-    <div class="visualization">
-      <div class="bar-header">
-        <span class="body-text-strong" i18n>Number of Events</span>
-        <span class="caption-text">{{ totalEventsAllowed() }}</span>
-      </div>
-      <div class="display-bar">
-        <div class="file-size-percent" [style.width.%]="eventsPercent.fileSize"></div>
-        <div class="error-event" [style.width.%]="eventsPercent.errorEvents"></div>
-        <div class="uptime-event" [style.width.%]="eventsPercent.uptimeEvents"></div>
-        <div class="transaction-event" [style.width.%]="eventsPercent.transactionEvents"></div>
-      </div>
-      @if (eventsCountWithTotal(); as count) {
-        <div
-          class="event-count"
-          [class.event-count--left]="eventsPercent.total < 25"
-          [class.event-count--right]="eventsPercent.total > 75"
-          style="left: {{ eventsPercent.total < 100 ? eventsPercent.total : 100 }}%"
-        >{{ count.total }}</div>
-        <div class="breakdown-section">
-          <span class="body-text-strong" i18n>Event Breakdown</span>
-          <ul class="usage-details">
-            <li><b class="error" i18n>Issue events:</b> {{ count.eventCount }}</li>
-            <li><b class="uptime" i18n>Uptime events:</b> {{ count.uptimeCheckEventCount }}</li>
-            <li><b class="performance" i18n>Performance events:</b> {{ count.transactionEventCount }}</li>
-            <li><b class="file-size" i18n>File storage:</b> {{ count.fileSizeMb }} MB</li>
-            <li i18n>Total events used: {{ count.total }}</li>
-          </ul>
+  <gt-daily-events-chart
+    [dailyEvents]="dailyEvents()"
+    [periodEnd]="periodEnd()"
+    [predictedTotal]="predictedTotal()"
+  />
+  @if (eventBreakdown(); as breakdown) {
+    <mat-card appearance="outlined" class="breakdown-card">
+      <mat-card-content>
+        <div class="breakdown-title body-text-strong" i18n>Event Breakdown</div>
+        <div class="breakdown-row">
+          <span class="breakdown-label" i18n>Performance</span>
+          <div class="breakdown-bar-track">
+            <div class="breakdown-bar breakdown-bar--performance" [style.width.%]="breakdown.performance.percent"></div>
+          </div>
+          <span class="breakdown-value">{{ breakdown.performance.count }} ({{ breakdown.performance.percent }}%)</span>
         </div>
-      }
-    </div>
+        <div class="breakdown-row">
+          <span class="breakdown-label" i18n>Issues</span>
+          <div class="breakdown-bar-track">
+            <div class="breakdown-bar breakdown-bar--issues" [style.width.%]="breakdown.issues.percent"></div>
+          </div>
+          <span class="breakdown-value">{{ breakdown.issues.count }} ({{ breakdown.issues.percent }}%)</span>
+        </div>
+        <div class="breakdown-row">
+          <span class="breakdown-label" i18n>Uptime</span>
+          <div class="breakdown-bar-track">
+            <div class="breakdown-bar breakdown-bar--uptime" [style.width.%]="breakdown.uptime.percent"></div>
+          </div>
+          <span class="breakdown-value">{{ breakdown.uptime.count }} ({{ breakdown.uptime.percent }}%)</span>
+        </div>
+        <div class="breakdown-file-storage" i18n>File storage: {{ breakdown.fileSizeMb }} MB</div>
+      </mat-card-content>
+    </mat-card>
   }
 }
