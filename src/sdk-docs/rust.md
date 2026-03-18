@@ -1,40 +1,33 @@
-GlitchTip is an open-source alternative to Sentry that works seamlessly with the Sentry Rust SDK.
+Add the sentry Rust SDK to your project:
 
-# Step 1: Include the SDK via Cargo
-
-`cargo add sentry`
-
-# Step 2: Initialize the SDK
-
-Add the following code to your main.rs (or where relevant to run as soon as possible)
-
-```rust
-let _guard = sentry::init("YOUR-GLITCHTIP-DSN-HERE");
+```bash
+cargo add sentry
 ```
 
-# Step 3: Verify Error Reporting
-
-The quickest way to verify Sentry in your Rust application is to cause a panic:
+Initialize the SDK in your `main.rs`:
 
 ```rust
 fn main() {
-    let _guard = sentry::init("YOUR-GLITCHTIP-DSN-HERE");
+    let _guard = sentry::init(("YOUR_DSN", sentry::ClientOptions {
+        release: sentry::release_name!(),
+        traces_sample_rate: 0.01, // 1% of transactions
+        ..Default::default()
+    }));
 
-    // GlitchTip will capture this
-    panic!("Oh no, an error!");
+    // Your application code here
 }
 ```
 
-# Additional settings
+The `_guard` ensures events are flushed when it goes out of scope. Do not drop it early.
 
-The Rust SDK accepts various configuration options. Here's an example that sets the release name.
+Verify your setup:
 
 ```rust
-let _guard = sentry::init((
-    "YOUR-GLITCHTIP-DSN-HERE",
-    sentry::ClientOptions {
-        release: sentry::release_name!(),
-        ..Default::default()
-    },
-));
+sentry::capture_message("Test GlitchTip error", sentry::Level::Error);
 ```
+
+## Tips
+
+- The `release_name!()` macro automatically sets the release to your crate version.
+- Panics are captured automatically when using the default integrations.
+- Set `traces_sample_rate` to a low value in production to save disk space.

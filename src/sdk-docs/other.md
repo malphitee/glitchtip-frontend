@@ -1,3 +1,5 @@
-The platform you selected doesn't match anything on our list, so there might not be an SDK for you.
+The platform you selected doesn't have specific setup instructions yet.
 
-However, [many SDKs are available on GitHub](https://github.com/getsentry/), so you might be able to find what you're looking for there. If you'd like, you can edit the project settings to change the platform.
+Many sentry-compatible SDKs are available as open-source packages. Search for a sentry SDK for your language or framework on your package manager. Configure the SDK with the DSN shown on this page.
+
+If you'd like, you can edit the project settings to change the platform.

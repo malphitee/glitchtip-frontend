@@ -101,9 +101,19 @@ mat-card-title {
   padding-bottom: 8px;
 }
 
-ul {
+ul:not(markdown ul) {
   list-style: none;
   padding: unset;
+}
+
+markdown ul {
+  list-style: disc outside;
+  padding-left: 20px;
+}
+
+markdown ol {
+  list-style: decimal outside;
+  padding-left: 20px;
 }
 
 body {
