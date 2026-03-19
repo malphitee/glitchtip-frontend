@@ -6,8 +6,8 @@ import {
   inject,
   input,
   resource,
-  effect,
 } from "@angular/core";
+import { NgTemplateOutlet } from "@angular/common";
 import { RouterLink } from "@angular/router";
 import { MarkdownComponent, provideMarkdown } from "ngx-markdown";
 
@@ -22,8 +22,8 @@ import { client } from "src/app/shared/api/api";
   templateUrl: "./issue-zero-states.component.html",
   styleUrls: ["./issue-zero-states.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, CopyInputComponent, MarkdownComponent],
-  providers: [provideMarkdown()]
+  imports: [RouterLink, NgTemplateOutlet, CopyInputComponent, MarkdownComponent],
+  providers: [provideMarkdown()],
 })
 export class IssueZeroStatesComponent implements OnInit {
   projects = input<string[]>();
@@ -110,6 +110,32 @@ export class IssueZeroStatesComponent implements OnInit {
   activeProjectSlug = computed(() => this.activeProject()?.slug);
   activeProjectPlatformName = computed(() => this.activeProject()?.name);
   firstProjectKey = computed(() => this.projectKeyResource.value());
+  private dsn = computed(() => this.firstProjectKey()?.dsn.public ?? null);
+
+  private platformMdSrc = computed(() => {
+    const platform = this.activeProjectPlatform();
+    if (!platform || platform === "other" || platform === "") return null;
+    return `/static/sdk-docs/${platform}.md`;
+  });
+
+  private platformMdRaw = resource({
+    params: () => this.platformMdSrc(),
+    loader: async ({ params: src }) => {
+      if (!src) return undefined;
+      return fetch(src)
+        .then((r) => (r.ok ? r.text() : undefined))
+        .catch(() => undefined);
+    },
+  });
+
+  platformMdLoading = this.platformMdRaw.isLoading;
+  platformMdContent = computed(() => this.withDsn(this.platformMdRaw.value()));
+
+  private withDsn(raw: string | undefined): string | undefined {
+    if (!raw) return undefined;
+    const dsn = this.dsn();
+    return dsn ? raw.replaceAll("YOUR_DSN", dsn) : raw;
+  }
 
   /**
    * Corresponds to project picker/header nav/project IDs in the URL
@@ -142,24 +168,6 @@ export class IssueZeroStatesComponent implements OnInit {
         projectsFromParams.includes(project.id) && project.isMember === false,
     );
   });
-
-  constructor() {
-    effect(() => {
-      const projectKey = this.firstProjectKey();
-      if (projectKey) {
-        const dsn = projectKey.dsn.public;
-        const elements = document.querySelectorAll("span.token.string");
-        for (const element of Array.from(elements)) {
-          if (
-            element.textContent === '"YOUR_DSN"' ||
-            element.textContent === '"YOUR-GLITCHTIP-DSN-HERE"'
-          ) {
-            element.innerHTML = '"' + dsn + '"';
-          }
-        }
-      }
-    });
-  }
 
   ngOnInit() {
     this.projectsService.retrieveProjects();
