@@ -75,6 +75,7 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
       eventsCount.eventCount! +
       eventsCount.transactionEventCount! +
       eventsCount.uptimeCheckEventCount! +
+      eventsCount.logEventCount! * 0.1 +
       eventsCount.fileSizeMb!;
 
     return { ...eventsCount, total };

@@ -40,6 +40,7 @@
         <div class="error-event" [style.width.%]="eventsPercent.errorEvents"></div>
         <div class="uptime-event" [style.width.%]="eventsPercent.uptimeEvents"></div>
         <div class="transaction-event" [style.width.%]="eventsPercent.transactionEvents"></div>
+        <div class="log-event" [style.width.%]="eventsPercent.logEvents"></div>
       </div>
       @if (eventsCountWithTotal(); as count) {
         <div
@@ -54,6 +55,7 @@
             <li><b class="error" i18n>Issue events:</b> {{ count.eventCount }}</li>
             <li><b class="uptime" i18n>Uptime events:</b> {{ count.uptimeCheckEventCount }}</li>
             <li><b class="performance" i18n>Performance events:</b> {{ count.transactionEventCount }}</li>
+            <li><b class="log" i18n>Log events:</b> {{ count.logEventCount }}</li>
             <li><b class="file-size" i18n>File storage:</b> {{ count.fileSizeMb }} MB</li>
             <li i18n>Total events used: {{ count.total }}</li>
           </ul>

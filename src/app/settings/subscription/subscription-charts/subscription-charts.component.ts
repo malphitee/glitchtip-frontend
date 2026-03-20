@@ -63,6 +63,7 @@ export class SubscriptionChartsComponent {
       errorEvents: (events.eventCount! / eventsAllowed) * 100,
       transactionEvents: (events.transactionEventCount! / eventsAllowed) * 100,
       uptimeEvents: (events.uptimeCheckEventCount! / eventsAllowed) * 100,
+      logEvents: (events.logEventCount! / eventsAllowed) * 100,
       fileSize: (events.fileSizeMb! / eventsAllowed) * 100,
     };
   });
