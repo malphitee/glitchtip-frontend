@@ -112,10 +112,14 @@ export class IssueZeroStatesComponent implements OnInit {
   firstProjectKey = computed(() => this.projectKeyResource.value());
   private dsn = computed(() => this.firstProjectKey()?.dsn.public ?? null);
 
-  private platformMdSrc = computed(() => {
+  platformHasDocs = computed(() => {
     const platform = this.activeProjectPlatform();
-    if (!platform || platform === "other" || platform === "") return null;
-    return `/static/sdk-docs/${platform}.md`;
+    return !!platform && platform !== "other";
+  });
+
+  private platformMdSrc = computed(() => {
+    if (!this.platformHasDocs()) return null;
+    return `/static/sdk-docs/${this.activeProjectPlatform()}.md`;
   });
 
   private platformMdRaw = resource({
