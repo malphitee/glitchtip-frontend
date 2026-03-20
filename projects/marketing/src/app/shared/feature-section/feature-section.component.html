@@ -14,7 +14,7 @@
     [class.pad-left]="direction() === 'left'"
     [class.pad-right]="direction() === 'right'"
   >
-    @if (icon()) {
+    @if (icon() && heading()) {
       <div class="feature-header">
         <mat-icon class="feature-icon">{{ icon() }}</mat-icon>
         <h2 class="fancy marketing-subheading">{{ heading() }}</h2>

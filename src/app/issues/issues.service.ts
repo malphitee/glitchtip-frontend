@@ -375,6 +375,61 @@ export class IssuesService extends StatefulService<IssuesState> {
     }
   }
 
+  async deleteIssuesByIds(orgSlug: string) {
+    const issues = this.selectedIssues();
+    const shouldResetCursor = issues.length >= (this.issues()?.length ?? 0);
+    const { error } = await client.DELETE(
+      "/api/0/organizations/{organization_slug}/issues/",
+      {
+        params: {
+          path: {
+            organization_slug: orgSlug,
+          },
+          query: {
+            id: issues.map((issue) => parseInt(issue)),
+          },
+        },
+      },
+    );
+    if (error) {
+      this.snackbar.open($localize`Error, unable to delete issues`);
+    } else {
+      this.setDeleteByIdsComplete(shouldResetCursor);
+    }
+  }
+
+  async bulkDeleteIssues(
+    orgSlug: string,
+    projectIds: string[],
+    query?: string | null,
+    start?: string | undefined,
+    end?: string | undefined,
+    environment?: string | undefined,
+  ) {
+    const { error } = await client.DELETE(
+      "/api/0/organizations/{organization_slug}/issues/",
+      {
+        params: {
+          path: {
+            organization_slug: orgSlug,
+          },
+          query: {
+            project: projectIds?.map((id) => parseInt(id)),
+            query,
+            start,
+            end,
+            environment: environment ? [environment] : undefined,
+          },
+        },
+      },
+    );
+    if (error) {
+      this.snackbar.open($localize`Error, unable to delete issues`);
+    } else {
+      this.setBulkDeleteComplete();
+    }
+  }
+
   private setUpdateSelectedIssues(selectedIssues: string[]) {
     this.setState({
       selectedIssues,
@@ -448,5 +503,39 @@ export class IssuesService extends StatefulService<IssuesState> {
       }
       return update;
     });
+  }
+
+  private setDeleteByIdsComplete(resetCursor: boolean) {
+    this.setState({
+      selectedIssues: [],
+      allResultsSelected: false,
+    });
+    if (resetCursor && this.params()?.cursor) {
+      void this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { cursor: null },
+        queryParamsHandling: "merge",
+        replaceUrl: true,
+      });
+      return;
+    }
+    this.issuesResource.reload();
+  }
+
+  private setBulkDeleteComplete() {
+    this.setState({
+      selectedIssues: [],
+      allResultsSelected: false,
+    });
+    if (this.params()?.cursor) {
+      void this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { cursor: null },
+        queryParamsHandling: "merge",
+        replaceUrl: true,
+      });
+      return;
+    }
+    this.issuesResource.reload();
   }
 }

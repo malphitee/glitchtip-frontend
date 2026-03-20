@@ -9,6 +9,7 @@ import {
 import { TeamsService } from "../teams/teams.service";
 import { Team } from "../teams/teams.interfaces";
 import { OrganizationsService } from "../organizations.service";
+import { ProjectsService } from "../../projects/projects.service";
 import { client, handleError } from "../../shared/api/api";
 import { components } from "../api-schema";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
@@ -53,6 +54,7 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
   private organizationsService = inject(OrganizationsService);
   private snackBar = inject(MatSnackBar);
   private teamsService = inject(TeamsService);
+  private projectsService = inject(ProjectsService);
 
   readonly initialLoad = computed(() => this.state().initialLoad);
   readonly organizationMembers = computed(
@@ -155,6 +157,7 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
       } else {
         this.organizationsService.setActiveOrganizationSlug(null);
       }
+      this.projectsService.retrieveProjects();
       this.setDeleteOrganizationComplete();
       this.snackBar.open(
         `You have successfully deleted ${name} from your organizations`,

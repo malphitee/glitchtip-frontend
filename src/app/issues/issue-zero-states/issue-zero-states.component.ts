@@ -150,7 +150,10 @@ export class IssueZeroStatesComponent implements OnInit {
         const dsn = projectKey.dsn.public;
         const elements = document.querySelectorAll("span.token.string");
         for (const element of Array.from(elements)) {
-          if (element.textContent === '"YOUR-GLITCHTIP-DSN-HERE"') {
+          if (
+            element.textContent === '"YOUR_DSN"' ||
+            element.textContent === '"YOUR-GLITCHTIP-DSN-HERE"'
+          ) {
             element.innerHTML = '"' + dsn + '"';
           }
         }
