@@ -71,10 +71,17 @@
   >
 </ng-template>
 
+<ng-template #noResults>
+  <h3 data-cy="no-results" class="section-header-text" i18n>No events match your filters.</h3>
+  <p class="body-text" i18n
+    >Try changing your search parameters to get something to show here.</p
+  >
+</ng-template>
+
 <div class="empty-states">
   @if (displayZeroStates()) {
     @if (orgHasAProject() === false) {
-      <h3 class="section-header-text" i18n
+      <h3 data-cy="no-projects" class="section-header-text" i18n
         >This organization has no projects.</h3
       >
       <p class="body-text" i18n
@@ -113,7 +120,7 @@
                     GlitchTip</h2
                   >
                   @if (platformMdContent(); as platformMd) {
-                    <markdown [data]="platformMd"></markdown>
+                    <markdown data-cy="sdk-docs" [data]="platformMd"></markdown>
                   } @else if (!platformMdLoading()) {
                     <ng-container
                       [ngTemplateOutlet]="gettingStarted"
@@ -126,7 +133,7 @@
                   <ng-container
                     [ngTemplateOutlet]="gettingStarted"
                   ></ng-container>
-                  <p i18n
+                  <p data-cy="platform-other-notice" i18n
                     >The platform you selected doesn't have specific setup
                     instructions yet. Many sentry-compatible SDKs are available
                     as open-source packages — search for a sentry SDK for your
@@ -145,6 +152,7 @@
                 <p class="body-text" i18n
                   >If you go to this project's
                   <a
+                    data-cy="platform-settings-link"
                     [routerLink]="[
                       '/',
                       activeOrganizationSlug(),
@@ -198,20 +206,10 @@
           </div>
         } @else {
           <!-- No issues match the filters, in general -->
-          <h3 class="section-header-text" i18n
-            >No events match your filters.</h3
-          >
-          <p class="body-text" i18n
-            >Try changing your search parameters to get something to show
-            here.</p
-          >
+          <ng-container [ngTemplateOutlet]="noResults"></ng-container>
         }
       } @else {
-        <h3 i18n>No events match your filters.</h3>
-        <p class="body-text" i18n
-          >You have multiple projects selected. Select a single project to learn
-          more about why there's nothing here.</p
-        >
+        <ng-container [ngTemplateOutlet]="noResults"></ng-container>
       }
     }
   }
