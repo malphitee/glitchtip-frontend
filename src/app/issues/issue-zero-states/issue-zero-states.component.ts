@@ -133,13 +133,12 @@ export class IssueZeroStatesComponent implements OnInit {
   });
 
   platformMdLoading = this.platformMdRaw.isLoading;
-  platformMdContent = computed(() => this.withDsn(this.platformMdRaw.value()));
-
-  private withDsn(raw: string | undefined): string | undefined {
+  platformMdContent = computed(() => {
+    const raw = this.platformMdRaw.value();
     if (!raw) return undefined;
     const dsn = this.dsn();
     return dsn ? raw.replaceAll("YOUR_DSN", dsn) : raw;
-  }
+  });
 
   /**
    * Corresponds to project picker/header nav/project IDs in the URL
