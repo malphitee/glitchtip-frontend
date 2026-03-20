@@ -1254,32 +1254,19 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/0/stripe/subscriptions/{organization_slug}/events_count/": {
+    "/api/0/stripe/subscriptions/{organization_slug}/events_count/period/": {
         parameters: {
-            query?: never;
+            query?: {
+                periods_ago?: number;
+            };
             header?: never;
-            path?: never;
+            path: {
+                organization_slug: string;
+            };
             cookie?: never;
         };
-        /** Subscription Events Count */
-        get: operations["apps_stripe_api_subscription_events_count"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/0/stripe/subscriptions/{organization_slug}/events_count/previous_period/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Subscription Events Count Previous Period */
-        get: operations["apps_stripe_api_subscription_events_count_previous_period"];
+        /** Subscription Events Count Period */
+        get: operations["apps_stripe_api_subscription_events_count_period"];
         put?: never;
         post?: never;
         delete?: never;
@@ -7505,31 +7492,11 @@ export interface operations {
             };
         };
     };
-    apps_stripe_api_subscription_events_count: {
+    apps_stripe_api_subscription_events_count_period: {
         parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                organization_slug: string;
+            query?: {
+                periods_ago?: number;
             };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EventsCountSchema"];
-                };
-            };
-        };
-    };
-    apps_stripe_api_subscription_events_count_previous_period: {
-        parameters: {
-            query?: never;
             header?: never;
             path: {
                 organization_slug: string;

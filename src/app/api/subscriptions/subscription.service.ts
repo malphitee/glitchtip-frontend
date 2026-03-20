@@ -60,10 +60,11 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
   );
 
   eventCountResource = apiResource(this.organizationSlug, (orgSlug) => ({
-    url: "/api/0/stripe/subscriptions/{organization_slug}/events_count/",
+    url: "/api/0/stripe/subscriptions/{organization_slug}/events_count/period/",
     options: {
       params: {
         path: { organization_slug: orgSlug },
+        query: { periods_ago: 0 },
       },
     },
   }));
@@ -82,10 +83,11 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
   });
 
   previousPeriodResource = apiResource(this.organizationSlug, (orgSlug) => ({
-    url: "/api/0/stripe/subscriptions/{organization_slug}/events_count/previous_period/",
+    url: "/api/0/stripe/subscriptions/{organization_slug}/events_count/period/",
     options: {
       params: {
         path: { organization_slug: orgSlug },
+        query: { periods_ago: 1 },
       },
     },
   }));
