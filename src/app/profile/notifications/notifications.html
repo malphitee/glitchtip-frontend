@@ -58,7 +58,7 @@
         @for (projects of groupedProjects() | keyvalue; track projects) {
           <div>
             <div class="org-name mat-h3 body-text-strong">
-              {{ projects.value[0].organization.name }} blah
+              {{ projects.value[0].organization.name }}
             </div>
             <div class="border">
               @for (project of projects.value; track project; let i = $index) {

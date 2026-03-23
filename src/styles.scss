@@ -101,9 +101,19 @@ mat-card-title {
   padding-bottom: 8px;
 }
 
-ul {
+ul:not(markdown ul) {
   list-style: none;
   padding: unset;
+}
+
+markdown ul {
+  list-style: disc outside;
+  padding-left: 20px;
+}
+
+markdown ol {
+  list-style: decimal outside;
+  padding-left: 20px;
 }
 
 body {
@@ -148,6 +158,12 @@ mat-sidenav-container {
         ),
     )
   );
+}
+
+// This makes the dropdown menus the full size of the sidenav
+.mat-mdc-menu-panel.nav-menu {
+  max-width: none !important;
+  width: 220px !important;
 }
 
 .l-body {
@@ -316,6 +332,10 @@ gt-issue-chart {
   background-color: var(--mat-sys-primary) !important;
 
   .mdc-list-item__primary-text {
+    color: var(--mat-sys-on-primary) !important;
+  }
+
+  mat-icon {
     color: var(--mat-sys-on-primary) !important;
   }
 }

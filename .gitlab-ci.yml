@@ -14,7 +14,6 @@ variables:
 
 include:
   - template: SAST.gitlab-ci.yml
-  - template: Dependency-Scanning.gitlab-ci.yml
   - template: Secret-Detection.gitlab-ci.yml
 
 stages:
@@ -95,12 +94,13 @@ build-docker:
 
 upload-sourcemaps:
   stage: deploy
-  image: getsentry/sentry-cli
+  image: alpine:latest
   dependencies:
     - build-assets
   script:
-    - VERSION=glitchtip@${CI_COMMIT_REF_NAME#*v}
-    - sentry-cli sourcemaps upload --release ${VERSION} dist/glitchtip-frontend/browser
+    - apk add --no-cache curl zip
+    - export VERSION=glitchtip@${CI_COMMIT_REF_NAME#*v}
+    - sh scripts/upload-sourcemaps.sh dist/glitchtip-frontend/browser
   allow_failure: true
   only:
     refs:

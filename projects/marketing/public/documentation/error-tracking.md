@@ -17,9 +17,9 @@ Once you have created your GlitchTip project, the next step is to set up your we
            "
        />
        <img
-           src="/assets/screenshots/start-project@1xpng"
+           src="/assets/screenshots/start-project@1x.png"
            srcset="
-               /assets/screenshots/start-project@1xpng,
+               /assets/screenshots/start-project@1x.png,
                /assets/screenshots/start-project@2xpng 2x,
                /assets/screenshots/start-project@3xpng 3x,
            "
@@ -44,9 +44,9 @@ Next, add some code to your project that will generate an error, such as dividin
            "
        />
        <img
-           src="/assets/screenshots/one-issue@1xpng"
+           src="/assets/screenshots/one-issue@1x.png"
            srcset="
-               /assets/screenshots/one-issue@1xpng,
+               /assets/screenshots/one-issue@1x.png,
                /assets/screenshots/one-issue@2xpng 2x,
                /assets/screenshots/one-issue@3xpng 3x,
            "
@@ -71,9 +71,9 @@ Now that GlitchTip is receiving your project’s errors, you will probably want 
            "
        />
        <img
-           src="/assets/screenshots/new-project-alert@1xpng"
+           src="/assets/screenshots/new-project-alert@1x.png"
            srcset="
-               /assets/screenshots/new-project-alert@1xpng,
+               /assets/screenshots/new-project-alert@1x.png,
                /assets/screenshots/new-project-alert@2xpng 2x,
                /assets/screenshots/new-project-alert@3xpng 3x,
            "
@@ -84,3 +84,14 @@ Now that GlitchTip is receiving your project’s errors, you will probably want 
 </div>
 
 Here you can specify when you want to receive alerts based on the frequency of errors. By default, new project alerts send emails to a project’s team members, but you can also add a webhook URL by clicking “Add An Alert Recipient.”
+
+## Source Maps
+
+For JavaScript projects, upload source maps to get readable stack traces. Use the [GlitchTip CLI (Beta)](/documentation/cli) to inject debug IDs and upload source maps:
+
+```bash
+glitchtip-cli sourcemaps inject ./dist
+glitchtip-cli sourcemaps upload ./dist --org my-org --project my-project
+```
+
+See the [SDK documentation](/sdkdocs) for framework-specific setup instructions.

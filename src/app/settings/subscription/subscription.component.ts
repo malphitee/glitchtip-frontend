@@ -23,6 +23,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatCardModule } from "@angular/material/card";
 import { CurrencyPipe, DatePipe } from "@angular/common";
 import { OrganizationsService } from "src/app/api/organizations.service";
+import { TopAppBar } from "src/app/shared/top-app-bar/top-app-bar";
 
 interface Percentages {
   total: number;
@@ -38,6 +39,7 @@ interface Percentages {
   styleUrls: ["./subscription.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TopAppBar,
     MatCardModule,
     MatDialogModule,
     RouterLink,
@@ -69,7 +71,7 @@ export class SubscriptionComponent
   subscriptionRefreshTimeout = this.service.subscriptionRefreshTimeout;
   eventsCountWithTotal = this.service.eventsCountWithTotal;
   totalEventsAllowed = this.service.totalEventsAllowed;
-  activeOrganization = this.orgService.activeOrganization;
+    activeOrganization = this.orgService.activeOrganization;
   activeOrganizationSlug = this.orgService.activeOrganizationSlug;
   billingPortalLoading = this.service.billingPortalLoading;
   billingPortalLoadingError = this.service.billingPortalLoadingError;

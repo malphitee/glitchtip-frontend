@@ -76,8 +76,8 @@ export class TransactionGroups implements OnInit {
   sorts = [
     { param: "-avg_duration", display: "Slowest" },
     { param: "avg_duration", display: "Fastest" },
-    { param: "-transaction_count", display: "Most Frequent" },
-    { param: "transaction_count", display: "Least Frequent" },
+    { param: "-count", display: "Most Frequent" },
+    { param: "count", display: "Least Frequent" },
   ];
   tooltipDisabled = false;
   transactionCountPluralMapping: { [k: string]: string } = {
@@ -100,7 +100,7 @@ export class TransactionGroups implements OnInit {
       this.service.params.set({
         orgSlug: this.orgSlug(),
         cursor: this.cursor(),
-        query: this.query() ?? "is:unresolved",
+        query: this.query(),
         start: this.start(),
         end: this.end(),
         sort: this.sort(),

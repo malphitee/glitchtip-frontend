@@ -122,6 +122,7 @@ export class IssuesPage implements OnInit, OnDestroy {
   mediumScreenColumns = ["select", "title", "events"];
   isLargeScreen = signal(true);
   displayedColumns = signal(this.allColumns);
+  private lastClickedIssueId = signal<string | null>(null);
   breakPointSignal = toSignal(
     this.breakPointObserver.observe([
       Breakpoints.Medium,
@@ -335,8 +336,74 @@ export class IssuesPage implements OnInit, OnDestroy {
     });
   }
 
-  toggleCheck(issueId: number) {
-    this.service.toggleSelectOne(issueId.toString());
+  deleteSelectedIssues() {
+    const allResultsSelected = this.allResultsSelected();
+    const count = allResultsSelected
+      ? (this.paginator()?.hits ?? this.numberOfSelectedIssues())
+      : this.numberOfSelectedIssues();
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      restoreFocus: false,
+      height: "200px",
+      width: "350px",
+      data: {
+        title: $localize`Delete issues`,
+        message: $localize`Are you sure you want to delete ${count} issue(s)? You will permanently lose these issues and all associated events.`,
+        confirmText: $localize`Delete`,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      const orgSlug = this.orgSlug();
+      if (confirmed && orgSlug) {
+        if (allResultsSelected) {
+          this.service.bulkDeleteIssues(
+            orgSlug,
+            this.projects(),
+            this.query(),
+            this.start(),
+            this.end(),
+            this.environment(),
+          );
+        } else {
+          this.service.deleteIssuesByIds(orgSlug);
+        }
+      }
+    });
+  }
+
+  toggleCheck(event: MouseEvent, issueId: number) {
+    event.preventDefault();
+    const issueIdStr = issueId.toString();
+
+    if (event.shiftKey && this.lastClickedIssueId() !== null) {
+      const issues = this.issues();
+      const lastIndex = issues.findIndex(
+        (i) => i.id.toString() === this.lastClickedIssueId(),
+      );
+      const currentIndex = issues.findIndex(
+        (i) => i.id.toString() === issueIdStr,
+      );
+
+      if (lastIndex !== -1 && currentIndex !== -1) {
+        const start = Math.min(lastIndex, currentIndex);
+        const end = Math.max(lastIndex, currentIndex);
+        const idsInRange = issues
+          .slice(start, end + 1)
+          .map((i) => i.id.toString());
+        if (issues[currentIndex].isSelected) {
+          this.service.deselectRange(idsInRange);
+        } else {
+          this.service.selectRange(idsInRange);
+        }
+      } else {
+        this.service.toggleSelectOne(issueIdStr);
+      }
+    } else {
+      this.service.toggleSelectOne(issueIdStr);
+    }
+
+    this.lastClickedIssueId.set(issueIdStr);
   }
 
   toggleSelectAllOnPage() {
