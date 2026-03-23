@@ -4,13 +4,13 @@ GlitchTip can ingest, store, and query application logs sent via the OpenTelemet
 
 ## Enabling Logs
 
-Set the following environment variable on your GlitchTip server:
+Log ingestion is enabled by default. To disable it, set:
 
 ```
-GLITCHTIP_ENABLE_LOGS=True
+GLITCHTIP_ENABLE_LOGS=False
 ```
 
-When disabled (the default), log events are rejected at ingest.
+When disabled, log events are rejected at ingest.
 
 ## Sending Logs
 

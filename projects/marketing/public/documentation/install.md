@@ -194,7 +194,7 @@ Optional environment variables:
 - `GLITCHTIP_MAX_UPTIME_CHECK_LIFE_DAYS` Deprecated — use `GLITCHTIP_UPTIME_RETENTION_DAYS` instead.
 - `GLITCHTIP_ENABLE_UPTIME` (Default True) Set to False to disable uptime monitoring.
 - `GLITCHTIP_UPTIME_ALLOW_PRIVATE_IPS` (Default False) Allow uptime monitors to target private/internal IPs (RFC1918, loopback, link-local). Set to True if monitoring services on an internal network. Default False prevents SSRF attacks against internal infrastructure.
-- `GLITCHTIP_ENABLE_LOGS` (Default False) When True, enables [log ingestion](/documentation/logs) and the logs UI. Logs are sent via the OpenTelemetry Protocol (OTLP).
+- `GLITCHTIP_ENABLE_LOGS` (Default True) Enables [log ingestion](/documentation/logs) and the logs UI. Logs are sent via the OpenTelemetry Protocol (OTLP). Set to False to disable.
 - `GLITCHTIP_ENABLE_MCP` (Default False) Enable the built-in [MCP server](/documentation/mcp) for AI-assisted debugging and monitoring.
 - `MAINTENANCE_EVENT_FREEZE` (Default False) Freezes acceptance of new events. Use during database maintenance.
 - `GLITCHTIP_INSTANCE_NAME` Custom instance name displayed in the UI. Supports markdown. Example: `"[My Company's](https://example.com) GlitchTip"`
