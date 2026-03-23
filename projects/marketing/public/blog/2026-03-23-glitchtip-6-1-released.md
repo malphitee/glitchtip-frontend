@@ -23,7 +23,7 @@ Enable today and get your hosting bill down. Note that DuckDB does use more RAM 
 The open-source sentry-sdk added logging support and it’s now supported in GlitchTip. We strongly recommend using it with DuckDB enabled, as logging storage costs grow quickly.
 
 ## Model Context Protocol (MCP)
-GlitchTip doesn’t force AI on you. We don’t sell it ourselves. But MCP is there if you want it. Use it with tools like Claude Code or Zed or whatever you decide to fit YOUR needs, not our VC funders (which we lack). Ask your own agent to identify slow SQL queries, triage (and fix) issues, or anything else you can imagine. It’s fully optional, disabled by default, and puts you back into control of your own data.
+GlitchTip doesn’t force AI on you. We don’t sell it ourselves. But MCP is there if you want it. Use it with tools like Claude Code or Zed or whatever you decide to fit YOUR needs, not our VC funders (which we lack). Ask your own agent to identify slow SQL queries, triage (and fix) issues, or anything else you can imagine. It’s fully optional, disabled by default, and puts you in control of your own data.
 
 ## Performance Monitoring Improvements
 Did I say MCP can identify slow SQL queries? GlitchTip 6.1 refactors our internals for performance monitoring, supporting both transactions and spans. Due to the huge volume of span data, we do require DuckDB to be enabled for spans (transactions will continue to work without). These are available today in our API and MCP server. Frontend and further refinement is coming soon.
