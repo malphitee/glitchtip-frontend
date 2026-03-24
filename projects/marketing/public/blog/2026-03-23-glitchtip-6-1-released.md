@@ -9,13 +9,15 @@ GlitchTip 6.1 is a feature heavy release, while keeping everything optional and 
 ## Cold Storage with optional DuckDB
 It’s time to reduce your storage costs while keeping old data around longer.
 
-Our competitors use several databases, giving benefits of both row and columnar databases at the cost of operational complexity and sky-high resource needs. GlitchTip 6.1 enables DuckDB by default when either a volume or S3-compatible object storage is present. 
+Observability platforms often use several databases, which provides the benefits of both row and columnar databases at the cost of operational complexity and sky-high resource needs.
 
-The best part is that DuckDB is simple — it’s just part of our Python process and it stores Parquet data cheaply via better compression. Your GlitchTip instance may already be using object storage for source map, minidump, etc. uploads.
+GlitchTip 6.1 takes a simpler approach. DuckDB runs inside your existing Python process — no extra service, no extra container — and stores event data as compressed Parquet files. Older events are automatically offloaded to cold storage instead of deleted. You keep your history; your database stays lean.
 
 ### New Configuration Settings:
-* `GLITCHTIP_EVENT_HOT_DAYS`: Number of days to store in fast Postgres storage.
-* `GLITCHTIP_EVENT_COLD_DAYS`: Number of days to store in cheap Parquet storage, if available.
+DuckDB can now be enabled when a local volume or S3-compatible bucket is present. Cold storage handling is configurable via these environment variables:
+*  `GLITCHTIP_ENABLE_DUCKDB`: Disabled by default, set to true to enable the cold storage feature
+* `GLITCHTIP_EVENT_HOT_DAYS`: Number of days to store error events in fast Postgres storage
+* `GLITCHTIP_LOG_HOT_DAYS`: Number of days to store logs in Postgres
 
 Enable today and get your hosting bill down. Note that DuckDB does use more RAM (we default to an extra 128MB needed), but it is still well under the 32GB our competitor recommends.
 
@@ -32,7 +34,7 @@ Did I say MCP can identify slow SQL queries? GlitchTip 6.1 refactors our interna
 We continue refining our stacktrace enhancement stack. 6.1 now supports minidump and source contexts for Java.
 
 ## Platform as a Service and Railway support
-A core value of GlitchTip is to be fully OSI-approved, open source, and easy to host. To achieve that, we officially support many PaaS vendors and have added an official Railway template. I won’t insist on your trust: if you don’t want me hosting GlitchTip, host it yourself or use one of many PaaS providers such as Railway, PikaPods, and [Elest.io](https://elest.io/).
+A core value of GlitchTip is to be fully OSI-approved, open source, and easy to host. To achieve that, we officially support many PaaS vendors and have added an official Railway template. I won’t insist on your trust: if you don’t want me hosting GlitchTip, host it yourself or use one of many PaaS providers such as [Railway](https://railway.com/new/template/glitchtip?utm_medium=integration&utm_source=button&utm_campaign=glitchtip), [PikaPods](https://www.pikapods.com/pods?run=glitchtip), and [Elest.io](https://elest.io/).
 
 ## What’s Next?
 We’re going to pivot away from prioritizing donations and toward being clear that we expect for-profit companies to fund the open source that they use. To improve that experience, we'll be working to roll out “license keys”. This will include self-serve sign up for a license key based support plan. When set, we’ll replace the “Support GlitchTip” banner with a support page. This is 100% open source. Nothing will stop you from hacking it and lying about having support, but when you request support in-app, it will attach an ID that lets us check if you're an active user in Stripe and prioritize the support request accordingly.
