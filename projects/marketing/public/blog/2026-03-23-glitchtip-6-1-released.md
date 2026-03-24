@@ -11,7 +11,7 @@ It’s time to reduce your storage costs while keeping old data around longer.
 
 Observability platforms often use several databases, which provides the benefits of both row and columnar databases at the cost of operational complexity and sky-high resource needs.
 
-GlitchTip 6.1 takes a simpler approach. DuckDB runs inside your existing Python process — no extra service, no extra container — and stores event data as compressed Parquet files. Older events are automatically offloaded to cold storage instead of deleted. You keep your history; your database stays lean.
+GlitchTip 6.1 takes a simpler approach. DuckDB runs inside your existing Python process and stores event data as compressed Parquet files, requiring no extra service and no extra container. Older events are automatically offloaded to cold storage instead of deleted. You keep your history while your database stays lean.
 
 ### New Configuration Settings:
 DuckDB can now be enabled when a local volume or S3-compatible bucket is present. Cold storage handling is configurable via these environment variables:
@@ -22,6 +22,9 @@ DuckDB can now be enabled when a local volume or S3-compatible bucket is present
 Enable today and get your hosting bill down. Note that DuckDB does use more RAM (we default to an extra 128MB needed), but it is still well under the 32GB our competitor recommends.
 
 ## Logging
+<div style="width: 800px; max-width: 100%; margin: 0 auto;">
+    <img src="assets/home/logs@1x.png" alt="New logs page on the GlitchTip app">
+</div>
 The open-source sentry-sdk added logging support and it’s now supported in GlitchTip. We strongly recommend using it with DuckDB enabled, as logging storage costs grow quickly.
 
 ## Model Context Protocol (MCP)
