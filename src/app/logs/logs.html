@@ -136,10 +136,10 @@
           @if (isLoadingMore()) {
             <span>Loading...</span>
           } @else {
-            <ng-container>
-              <mat-icon>expand_more</mat-icon>
+            <div class="load-more-icon-text">
+              <mat-icon matButtonIcon>expand_more</mat-icon>
               <span i18n>Load more</span>
-            </ng-container>
+            </div>
           }
         </button>
       </div>
