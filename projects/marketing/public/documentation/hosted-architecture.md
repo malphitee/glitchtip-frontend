@@ -1,6 +1,8 @@
 # Hosted GlitchTip: Architecture & Security Compliance
 
-This document outlines the infrastructure, security controls, and data policies for the Hosted GlitchTip SaaS. Our architecture is designed to ensure data residency, transparency, and security, adhering to principles found in HIPAA, SOC II, and ISO 27001 frameworks.
+This page outlines the infrastructure, security controls, and data policies for the Hosted GlitchTip SaaS. Our architecture is designed to ensure data residency, transparency, and security, adhering to principles found in HIPAA, SOC II, and ISO 27001 frameworks.
+
+For HIPAA-specific information including BAA availability, see our [HIPAA page](/hipaa).
 
 ## Core Infrastructure & Third-Party Processors
 
@@ -13,6 +15,17 @@ Burke Software functions as a data processor. We do not sell or share user data 
 - Payments: Stripe (PCI-DSS Service Provider Level 1)
 
 ![](/assets/glitchtip-saas.png)
+
+## 🇪🇺 EU Hosting & Data Sovereignty
+
+For organizations with data residency requirements, GlitchTip offers a fully independent EU instance hosted in Frankfurt, Germany (DigitalOcean FRA1).
+
+- **EU Instance**: [eu.glitchtip.com](https://eu.glitchtip.com)
+- **US Instance**: [app.glitchtip.com](https://app.glitchtip.com)
+
+All data on the EU instance — including error events, user accounts, and transactional email — stays within the EU. The two instances are completely separate; there is no data replication between regions.
+
+Both instances offer identical plans and features. To get started with EU hosting, sign up directly at [eu.glitchtip.com](https://eu.glitchtip.com).
 
 ## Security by Design
 
@@ -92,11 +105,7 @@ Following resolution, a root cause analysis is conducted to update policy and pr
 
 ## HIPAA Compliance
 
-Hosted GlitchTip's security controls (encryption, access logs, backup retention) are designed to align with the HIPAA Security Rule.
-
-Standard Plans: Suitable for organizations that need HIPAA-aligned security controls but do not require a Business Associate Agreement (BAA).
-
-Enterprise Plans: For organizations requiring a signed Business Associate Agreement (BAA), please contact sales@glitchtip.com.
+For HIPAA BAA information and compliance plan options, see our [HIPAA page](/hipaa).
 
 ## Vulnerability Disclosure
 

@@ -1,4 +1,4 @@
-import { Component, ViewChild, AfterViewChecked, input, inject } from "@angular/core";
+import { Component, ViewChild, AfterViewChecked, input, inject, signal } from "@angular/core";
 import { MatTabGroup, MatTabsModule } from "@angular/material/tabs";
 import { LinksService } from "../../links.service";
 import { environment } from "src/environments/environment";
@@ -8,10 +8,17 @@ import {
   MatCardHeader,
   MatCardTitle,
 } from "@angular/material/card";
-import { QuestionAndAnswerComponent } from "./question-and-answer/question-and-answer.component";
 import { RouterLink } from "@angular/router";
 import { MatIcon } from "@angular/material/icon";
+import { MatTooltip } from "@angular/material/tooltip";
+import { MatExpansionModule } from "@angular/material/expansion";
+import { MatDivider } from "@angular/material/divider";
+import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { DecimalPipe } from "@angular/common";
+import { PricingAddonCardComponent } from "../pricing-addon-card/pricing-addon-card.component";
+import { hostedFaqs, selfHostedFaqs } from "./payment-faqs";
+import { planOptions, selfHostedPlanOptions } from "./payment-plans";
+
 /**
  * Copied HTML from the frontend version of this, pulled some data that is
  * currently in use and hardcoded here, and sharing the SCSS file
@@ -27,8 +34,12 @@ import { DecimalPipe } from "@angular/common";
     MatCardTitle,
     MatCardHeader,
     MatIcon,
+    MatTooltip,
+    MatExpansionModule,
+    MatDivider,
+    MatButtonToggleModule,
     RouterLink,
-    QuestionAndAnswerComponent,
+    PricingAddonCardComponent,
   ],
   styleUrls: [
     "../../../../../../src/app/settings/subscription/payment/payment.component.scss",
@@ -43,33 +54,12 @@ export class PaymentComponent implements AfterViewChecked {
   billingEmail = environment.billingEmail;
   registerLink = this.links.registerLink;
   selectedTab = 0;
+  billingPeriod = signal<"monthly" | "annual">("monthly");
 
-  /**
-   * Pulled from frontend's payment component's planOptions$, pruned to use
-   * only what's needed
-   */
-  planOptions = [
-    {
-      name: "Free",
-      description: "Up to 1000 events per month",
-      plans: [{ amount: 0 }],
-    },
-    {
-      name: "Small",
-      description: "Up to 100k events per month",
-      plans: [{ amount: 15 }],
-    },
-    {
-      name: "Medium",
-      description: "Up to 500k events per month",
-      plans: [{ amount: 50 }],
-    },
-    {
-      name: "Large",
-      description: "Up to 3 million events per month",
-      plans: [{ amount: 250 }],
-    },
-  ];
+  hostedFaqs = hostedFaqs;
+  selfHostedFaqs = selfHostedFaqs;
+  planOptions = planOptions;
+  selfHostedPlanOptions = selfHostedPlanOptions;
 
   setSelectedTab(value: number) {
     this.selectedTab = value;
