@@ -17,7 +17,7 @@ export interface PlanOption {
 
 export const planOptions: PlanOption[] = [
   {
-    name: "Hobby",
+    name: "Free",
     subtitle: "For Personal Projects",
     features: [
       { text: "Up to 1,000 events/mo" },
@@ -28,9 +28,9 @@ export const planOptions: PlanOption[] = [
     monthlyPrice: "Free",
   },
   {
-    name: "Starter",
+    name: "Small",
     subtitle: "For small teams",
-    includesFrom: "Hobby",
+    includesFrom: "Free",
     features: [
       { text: "Up to 100k events/mo" },
       { text: "Support access" },
@@ -39,9 +39,9 @@ export const planOptions: PlanOption[] = [
     annualPrice: 150,
   },
   {
-    name: "Growth",
+    name: "Medium",
     subtitle: "For growing businesses",
-    includesFrom: "Starter",
+    includesFrom: "Small",
     features: [
       { text: "Up to 500k events/mo" },
       { text: "Priority email & live chat support" },
@@ -50,9 +50,9 @@ export const planOptions: PlanOption[] = [
     annualPrice: 500,
   },
   {
-    name: "Scale",
+    name: "Large",
     subtitle: "For large scaling organizations",
-    includesFrom: "Growth",
+    includesFrom: "Medium",
     features: [
       { text: "Up to 3 million events/mo" },
       { text: "Development support & prioritization" },
@@ -105,7 +105,7 @@ export const selfHostedPlanOptions: PlanOption[] = [
     includesFrom: "Commercial",
     features: [
       { text: "Custom Branding" },
-      { text: "Single Sign On integrations" },
+      { text: "Single Sign-On integration" },
       { text: "Development support & prioritization" },
     ],
     monthlyPrice: "Custom",

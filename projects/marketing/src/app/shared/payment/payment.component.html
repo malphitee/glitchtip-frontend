@@ -60,7 +60,7 @@
                 </p>
                 <p class="savings">
                   <!-- "Free"/"Custom" strings excluded by @else if condition above -->
-                  Save ${{ ($any(product.monthlyPrice) as number) * 12 - ($any(product.annualPrice) as number) | number }} / year
+                  Save ${{ $any(product.monthlyPrice) * 12 - $any(product.annualPrice) | number }} / year
                 </p>
               } @else {
                 <p>
@@ -87,7 +87,7 @@
       <mkt-pricing-addon-card
         icon="medical_information"
         title="US Healthcare: HIPAA-compliant hosting available"
-        subtitle="Add on to Scale plans"
+        subtitle="Add on to Large plans"
         buttonText="Learn More"
         buttonUrl="/hipaa"
       />
@@ -165,7 +165,7 @@
                 </p>
                 <p class="savings">
                   <!-- "Free"/"Custom" strings excluded by @else if condition above -->
-                  Save ${{ ($any(product.monthlyPrice) as number) * 12 - ($any(product.annualPrice) as number) | number }}{{ product.priceSuffix ? '/user' : '' }} / year
+                  Save ${{ $any(product.monthlyPrice) * 12 - $any(product.annualPrice) }}{{ product.priceSuffix ? '/user' : '' }} / year
                 </p>
               } @else {
                 <p>

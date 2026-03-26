@@ -12,7 +12,7 @@ export const hostedFaqs: Faq[] = [
   {
     question: "Is there a free trial?",
     answer:
-      "Our Hobby plan is free forever with up to 1,000 events per month. You can upgrade to a paid plan at any time.",
+      "Our Free plan is free forever with up to 1,000 events per month. You can upgrade to a paid plan at any time.",
   },
   {
     question: "What happens when I exceed my event limit?",
@@ -46,9 +46,9 @@ export const hostedFaqs: Faq[] = [
   },
   {
     question:
-      "What's the difference between the Growth and Scale plans?",
+      "What's the difference between the Medium and Large plans?",
     answer:
-      "In addition to increased event limits, the Scale plan includes development support & prioritization, as well as a Business Associate Agreement (BAA) available upon request, while Growth plan support includes only priority email & live chat support.",
+      "In addition to increased event limits, the Large plan includes development support & prioritization, as well as a Business Associate Agreement (BAA) available upon request, while Medium plan support includes only priority email & live chat support.",
   },
 ];
 
