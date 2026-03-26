@@ -32,7 +32,7 @@ export const planOptions: PlanOption[] = [
     subtitle: "For small teams",
     includesFrom: "Hobby",
     features: [
-      { text: "up to 100k events/mo" },
+      { text: "Up to 100k events/mo" },
       { text: "Support access" },
     ],
     monthlyPrice: 15,
@@ -43,7 +43,7 @@ export const planOptions: PlanOption[] = [
     subtitle: "For growing businesses",
     includesFrom: "Starter",
     features: [
-      { text: "up to 500k events/mo" },
+      { text: "Up to 500k events/mo" },
       { text: "Priority email & live chat support" },
     ],
     monthlyPrice: 50,
@@ -54,7 +54,7 @@ export const planOptions: PlanOption[] = [
     subtitle: "For large scaling organizations",
     includesFrom: "Growth",
     features: [
-      { text: "up to 3 million events/mo" },
+      { text: "Up to 3 million events/mo" },
       { text: "Development support & prioritization" },
       { text: "Business Associate Agreement (BAA) available upon request" },
     ],

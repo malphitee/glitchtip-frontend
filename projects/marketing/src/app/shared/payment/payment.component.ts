@@ -1,4 +1,4 @@
-import { Component, ViewChild, AfterViewChecked, input, inject } from "@angular/core";
+import { Component, ViewChild, AfterViewChecked, input, inject, signal } from "@angular/core";
 import { MatTabGroup, MatTabsModule } from "@angular/material/tabs";
 import { LinksService } from "../../links.service";
 import { environment } from "src/environments/environment";
@@ -54,7 +54,7 @@ export class PaymentComponent implements AfterViewChecked {
   billingEmail = environment.billingEmail;
   registerLink = this.links.registerLink;
   selectedTab = 0;
-  billingPeriod: "monthly" | "annual" = "monthly";
+  billingPeriod = signal<"monthly" | "annual">("monthly");
 
   hostedFaqs = hostedFaqs;
   selfHostedFaqs = selfHostedFaqs;

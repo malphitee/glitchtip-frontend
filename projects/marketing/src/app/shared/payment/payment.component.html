@@ -15,8 +15,8 @@
             <mat-card-title>{{ product.name }}</mat-card-title>
             @if (product.annualPrice) {
               <mat-button-toggle-group
-                [value]="billingPeriod"
-                (change)="billingPeriod = $event.value"
+                [value]="billingPeriod()"
+                (change)="billingPeriod.set($event.value)"
                 class="billing-toggle"
               >
                 <mat-button-toggle value="monthly">Monthly</mat-button-toggle>
@@ -51,7 +51,7 @@
                 <p>
                   <span class="marketing-small-heading">Free ($0)</span>
                 </p>
-              } @else if (billingPeriod === 'annual' && product.annualPrice) {
+              } @else if (billingPeriod() === 'annual' && product.annualPrice) {
                 <p>
                   <span class="marketing-small-heading">
                     ${{ product.annualPrice | number }}
@@ -59,7 +59,8 @@
                   / year
                 </p>
                 <p class="savings">
-                  Save ${{ $any(product.monthlyPrice) * 12 - $any(product.annualPrice) | number }} / year
+                  <!-- "Free"/"Custom" strings excluded by @else if condition above -->
+                  Save ${{ ($any(product.monthlyPrice) as number) * 12 - ($any(product.annualPrice) as number) | number }} / year
                 </p>
               } @else {
                 <p>
@@ -115,8 +116,8 @@
             <mat-card-title>{{ product.name }}</mat-card-title>
             @if (product.annualPrice && product.annualPrice !== 'Custom') {
               <mat-button-toggle-group
-                [value]="billingPeriod"
-                (change)="billingPeriod = $event.value"
+                [value]="billingPeriod()"
+                (change)="billingPeriod.set($event.value)"
                 class="billing-toggle"
               >
                 <mat-button-toggle value="monthly">Monthly</mat-button-toggle>
@@ -155,7 +156,7 @@
                 <p>
                   <span class="marketing-small-heading">Custom</span>
                 </p>
-              } @else if (billingPeriod === 'annual' && product.annualPrice && product.annualPrice !== 'Custom') {
+              } @else if (billingPeriod() === 'annual' && product.annualPrice && product.annualPrice !== 'Custom') {
                 <p>
                   <span class="marketing-small-heading">
                     ${{ product.annualPrice | number }}
@@ -163,7 +164,8 @@
                   {{ product.priceSuffix ? '/user/year' : '/ year' }}
                 </p>
                 <p class="savings">
-                  Save ${{ $any(product.monthlyPrice) * 12 - $any(product.annualPrice) | number }}{{ product.priceSuffix ? '/user' : '' }} / year
+                  <!-- "Free"/"Custom" strings excluded by @else if condition above -->
+                  Save ${{ ($any(product.monthlyPrice) as number) * 12 - ($any(product.annualPrice) as number) | number }}{{ product.priceSuffix ? '/user' : '' }} / year
                 </p>
               } @else {
                 <p>
