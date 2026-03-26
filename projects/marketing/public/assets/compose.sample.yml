@@ -5,6 +5,8 @@ x-environment: &default-environment
   EMAIL_URL: consolemail:// # Example smtp://email:password@smtp_url:port https://glitchtip.com/documentation/install#configuration
   GLITCHTIP_DOMAIN: https://glitchtip.example.com # Change this to your domain
   DEFAULT_FROM_EMAIL: email@example.com # Change this to your email
+  ENABLE_ADMIN: "False" # Set to True to enable Django Admin at /admin/
+  ENABLE_OPENAPI: "False" # Set to True to enable OpenAPI spec at /api/docs
   # PORT: 8000 # If changing, change the web service port too
 
 x-depends_on: &default-depends_on
@@ -27,23 +29,12 @@ services:
     depends_on: *default-depends_on
     ports:
       - "8000:8000"
-    environment: *default-environment
+    environment:
+      <<: *default-environment
+      SERVER_ROLE: all_in_one
     restart: unless-stopped
     volumes:
       - uploads:/code/uploads
-  worker:
-    image: glitchtip/glitchtip:6 # Check https://glitchtip.com/blog/ for new major versions
-    command: ./bin/run-worker.sh
-    depends_on: *default-depends_on
-    environment: *default-environment
-    restart: unless-stopped
-    volumes:
-      - uploads:/code/uploads
-  migrate: # Runs database migrations on startup, then exits. This is normal.
-    image: glitchtip/glitchtip:6 # Check https://glitchtip.com/blog/ for new major versions
-    depends_on: *default-depends_on
-    command: ./bin/run-migrate.sh
-    environment: *default-environment
 
 volumes:
   pg-data:

@@ -1,7 +1,7 @@
-To start using GlitchTip, you need to:
+To start using GlitchTip, you will need to:
 
 1. Install the sentry SDK for your platform into your project.
-2. Configure it with your **DSN** (Data Source Name) so it knows where to send events. Your DSN is shown below, and can also be found in your project's settings.
+2. Configure it with your **DSN** (Data Source Name) so it knows where to send events. Your DSN can be found in your project's settings.
 3. Initialize the SDK early in your application's startup.
 
 ## General Configuration
