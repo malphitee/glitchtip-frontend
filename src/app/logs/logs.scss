@@ -180,6 +180,11 @@
   }
 }
 
+.load-more-icon-text {
+  display: flex;
+  align-items: center;
+}
+
 // Light mode adjustments
 @media (prefers-color-scheme: light) {
   .log-container {
