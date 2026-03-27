@@ -60,25 +60,15 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
   );
 
   eventCountResource = apiResource(this.organizationSlug, (orgSlug) => ({
-    url: "/api/0/stripe/subscriptions/{organization_slug}/events_count/",
+    url: "/api/0/stripe/subscriptions/{organization_slug}/events_count/period/",
     options: {
       params: {
         path: { organization_slug: orgSlug },
+        query: { periods_ago: 0 },
       },
     },
   }));
-  eventsCountWithTotal = computed(() => {
-    const eventsCount = this.eventCountResource.value();
-    if (!eventsCount) return eventsCount;
-
-    const total =
-      eventsCount.eventCount! +
-      eventsCount.transactionEventCount! +
-      eventsCount.uptimeCheckEventCount! +
-      eventsCount.fileSizeMb!;
-
-    return { ...eventsCount, total };
-  });
+  eventsCountWithTotal = computed(() => this.eventCountResource.value());
 
   dailyEventsResource = apiResource(this.organizationSlug, (orgSlug) => ({
     url: "/api/0/stripe/subscriptions/{organization_slug}/events_count/daily/",
@@ -94,10 +84,11 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
   });
 
   previousPeriodResource = apiResource(this.organizationSlug, (orgSlug) => ({
-    url: "/api/0/stripe/subscriptions/{organization_slug}/events_count/previous_period/",
+    url: "/api/0/stripe/subscriptions/{organization_slug}/events_count/period/",
     options: {
       params: {
         path: { organization_slug: orgSlug },
+        query: { periods_ago: 1 },
       },
     },
   }));
@@ -124,7 +115,7 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
 
     if (totalDays <= 0 || elapsedDays < 1) return null;
 
-    return Math.round((currentEvents.total / elapsedDays) * totalDays);
+    return Math.round(((currentEvents.total ?? 0) / elapsedDays) * totalDays);
   });
 
   billingPortalLoading = computed(() => this.state().billingPortalLoading);

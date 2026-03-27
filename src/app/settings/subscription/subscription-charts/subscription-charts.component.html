@@ -14,7 +14,7 @@
     />
     <gt-summary-card
       [title]="'Last Month'"
-      [value]="'' + (previousPeriod()?.total ?? 0)"
+      [value]="'' + previousPeriodTotal()"
       [subtitle]="lastMonthPercent() + '% of limit (' + totalEventsAllowed() + ')'"
       [percent]="lastMonthPercent()"
       [isOverLimit]="lastMonthPercent() >= 80"
@@ -58,6 +58,13 @@
             <div class="breakdown-bar breakdown-bar--uptime" [style.width.%]="breakdown.uptime.percent"></div>
           </div>
           <span class="breakdown-value">{{ breakdown.uptime.count }} ({{ breakdown.uptime.percent }}%)</span>
+        </div>
+        <div class="breakdown-row">
+          <span class="breakdown-label" i18n>Logs</span>
+          <div class="breakdown-bar-track">
+            <div class="breakdown-bar breakdown-bar--logs" [style.width.%]="breakdown.logs.percent"></div>
+          </div>
+          <span class="breakdown-value">{{ breakdown.logs.count }} ({{ breakdown.logs.percent }}%)</span>
         </div>
         <div class="breakdown-file-storage" i18n>File storage: {{ breakdown.fileSizeMb }} MB</div>
       </mat-card-content>

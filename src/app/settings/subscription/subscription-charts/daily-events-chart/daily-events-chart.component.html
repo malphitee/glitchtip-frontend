@@ -12,33 +12,45 @@
           <span i18n>Issues</span>
         </span>
         <span class="legend-item">
+          <span class="legend-swatch legend-swatch--uptime"></span>
+          <span i18n>Uptime</span>
+        </span>
+        <span class="legend-item">
+          <span class="legend-swatch legend-swatch--logs"></span>
+          <span i18n>Logs</span>
+        </span>
+        <span class="legend-item">
           <span class="legend-swatch legend-swatch--projected"></span>
           <span i18n>Projected</span>
         </span>
       </div>
     </div>
-    <div class="chart-container" #containerRef>
-      <ngx-charts-bar-vertical-stacked
-        [results]="chartData()"
-        [view]="view()"
-        [customColors]="customColors"
-        [xAxis]="true"
-        [yAxis]="true"
-        [animations]="true"
-        [showXAxisLabel]="false"
-        [showYAxisLabel]="false"
-        [legend]="false"
-        [barPadding]="4"
-        [xAxisTickFormatting]="xAxisTickFormatting"
-        [noBarWhenZero]="false"
-      >
-        <ng-template #tooltipTemplate let-model="model">
-          <div class="tooltip">
-            <div>{{ model.name }}: {{ model.value }}</div>
-          </div>
-        </ng-template>
-      </ngx-charts-bar-vertical-stacked>
-    </div>
+    @if (chartData().length > 0) {
+      <div class="chart-container" #containerRef>
+        <ngx-charts-bar-vertical-stacked
+          [results]="chartData()"
+          [view]="view()"
+          [customColors]="customColors"
+          [xAxis]="true"
+          [yAxis]="true"
+          [animations]="true"
+          [showXAxisLabel]="false"
+          [showYAxisLabel]="false"
+          [legend]="false"
+          [barPadding]="4"
+          [xAxisTickFormatting]="xAxisTickFormatting"
+          [noBarWhenZero]="false"
+        >
+          <ng-template #tooltipTemplate let-model="model">
+            <div class="tooltip">
+              <div>{{ model.name }}: {{ model.value }}</div>
+            </div>
+          </ng-template>
+        </ngx-charts-bar-vertical-stacked>
+      </div>
+    } @else {
+      <div class="chart-no-data body-text-strong" i18n>No event data available for this period.</div>
+    }
     <div class="chart-footer">
       <span class="caption-text">{{ periodRange() }}</span>
       @if (predictedTotal() !== null) {

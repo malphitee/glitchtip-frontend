@@ -35,36 +35,32 @@ export class DailyEventsChartComponent implements OnDestroy {
     { name: "Performance", value: "var(--mat-sys-primary)" },
     { name: "Issues", value: "var(--issues-color)" },
     { name: "Uptime", value: "var(--uptime-color)" },
+    { name: "Logs", value: "var(--logs-color)" },
     { name: "Projected", value: "var(--mat-sys-surface-container-high)" },
   ];
-
-  /** Map from short label back to full date string for tooltip/formatting */
-  private labelToDate = new Map<string, string>();
 
   chartData = computed(() => {
     const events = this.dailyEvents();
     const endDate = this.periodEnd();
     const predicted = this.predictedTotal();
-    this.labelToDate.clear();
 
     const series: { name: string; series: { name: string; value: number }[] }[] = [];
-    const allDates: string[] = [];
 
     for (const entry of events) {
-      allDates.push(entry.date);
       series.push({
         name: entry.date,
         series: [
           { name: "Performance", value: entry.transactionEventCount },
           { name: "Issues", value: entry.eventCount },
           { name: "Uptime", value: entry.uptimeCheckEventCount },
+          { name: "Logs", value: entry.logEventCount },
         ],
       });
     }
 
     if (endDate && predicted !== null && events.length > 0) {
       const totalActual = events.reduce(
-        (sum, e) => sum + e.eventCount + e.transactionEventCount + e.uptimeCheckEventCount,
+        (sum, e) => sum + e.eventCount + e.transactionEventCount + e.uptimeCheckEventCount + e.logEventCount * 0.1,
         0,
       );
       const remaining = Math.max(0, predicted - totalActual);
@@ -81,7 +77,6 @@ export class DailyEventsChartComponent implements OnDestroy {
         futureDate.setDate(futureDate.getDate() + i);
         if (futureDate > end) break;
         const dateStr = futureDate.toISOString().split("T")[0];
-        allDates.push(dateStr);
         series.push({
           name: dateStr,
           series: [
@@ -89,13 +84,6 @@ export class DailyEventsChartComponent implements OnDestroy {
           ],
         });
       }
-    }
-
-    // Build label map for tick formatting
-    for (const dateStr of allDates) {
-      const d = new Date(dateStr + "T00:00:00");
-      const label = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(d);
-      this.labelToDate.set(dateStr, label);
     }
 
     return series;

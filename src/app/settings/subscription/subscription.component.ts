@@ -24,7 +24,6 @@ import { MatDividerModule } from "@angular/material/divider";
 import { OrganizationsService } from "src/app/api/organizations.service";
 import { TopAppBar } from "src/app/shared/top-app-bar/top-app-bar";
 import { SubscriptionChartsComponent } from "./subscription-charts/subscription-charts.component";
-import { UpgradeBannerComponent } from "src/app/shared/upgrade-banner/upgrade-banner.component";
 
 @Component({
   selector: "gt-subscription",
@@ -44,7 +43,6 @@ import { UpgradeBannerComponent } from "src/app/shared/upgrade-banner/upgrade-ba
     DatePipe,
     MatDividerModule,
     SubscriptionChartsComponent,
-    UpgradeBannerComponent,
   ],
 })
 export class SubscriptionComponent
@@ -68,8 +66,6 @@ export class SubscriptionComponent
   activeOrganizationSlug = this.orgService.activeOrganizationSlug;
   billingPortalLoading = this.service.billingPortalLoading;
   billingPortalLoadingError = this.service.billingPortalLoadingError;
-  thisMonthPercent = this.service.thisMonthPercent;
-
   daysRemaining = computed(() => {
     const subscription = this.service.subscription();
     if (!subscription?.currentPeriodEnd) return null;

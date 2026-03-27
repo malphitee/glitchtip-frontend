@@ -43,10 +43,16 @@ export class SubscriptionChartsComponent {
 
   thisMonthPercent = this.subscriptionService.thisMonthPercent;
 
+  previousPeriodTotal = computed(() => {
+    const prev = this.previousPeriod();
+    if (!prev) return 0;
+    return prev.total ?? (prev.eventCount + prev.transactionEventCount + prev.uptimeCheckEventCount + (prev.logEventCount ?? 0) * 0.1);
+  });
+
   lastMonthPercent = computed(() => {
-    const total = this.previousPeriod()?.total;
+    const total = this.previousPeriodTotal();
     const allowed = this.totalEventsAllowed();
-    if (total == null || !allowed) return 0;
+    if (!allowed) return 0;
     return Math.round((total / allowed) * 100);
   });
 
@@ -73,6 +79,10 @@ export class SubscriptionChartsComponent {
       uptime: {
         count: events.uptimeCheckEventCount ?? 0,
         percent: Math.round(((events.uptimeCheckEventCount ?? 0) / total) * 100),
+      },
+      logs: {
+        count: events.logEventCount ?? 0,
+        percent: Math.round(((events.logEventCount ?? 0) / total) * 100),
       },
       fileSizeMb: events.fileSizeMb ?? 0,
     };

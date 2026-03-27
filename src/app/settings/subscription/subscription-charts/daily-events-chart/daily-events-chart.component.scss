@@ -35,6 +35,14 @@
     background-color: var(--issues-color);
   }
 
+  &--uptime {
+    background-color: var(--uptime-color);
+  }
+
+  &--logs {
+    background-color: var(--logs-color);
+  }
+
   &--projected {
     background-color: var(--mat-sys-surface-container-high);
   }
@@ -43,6 +51,12 @@
 .chart-container {
   width: 100%;
   height: 200px;
+}
+
+.chart-no-data {
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--mat-sys-on-surface-variant);
 }
 
 .chart-footer {

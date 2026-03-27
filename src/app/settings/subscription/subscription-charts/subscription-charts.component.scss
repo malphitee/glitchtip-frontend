@@ -62,6 +62,10 @@
   &--uptime {
     background-color: var(--uptime-color);
   }
+
+  &--logs {
+    background-color: var(--logs-color);
+  }
 }
 
 .breakdown-value {

@@ -1288,15 +1288,15 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/0/stripe/subscriptions/{organization_slug}/events_count/previous_period/": {
+    "/api/0/stripe/subscriptions/{organization_slug}/events_count/period/": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Subscription Events Count Previous Period */
-        get: operations["apps_stripe_api_subscription_events_count_previous_period"];
+        /** Subscription Events Count for Period */
+        get: operations["apps_stripe_api_subscription_events_count_period"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4609,6 +4609,8 @@ export interface components {
             logEventCount: number;
             /** Filesizemb */
             fileSizeMb: number;
+            /** Total */
+            total?: number;
         };
         /** DailyEventCountEntry */
         DailyEventCountEntry: {
@@ -4620,6 +4622,8 @@ export interface components {
             transactionEventCount: number;
             /** Uptimecheckeventcount */
             uptimeCheckEventCount: number;
+            /** Logeventcount */
+            logEventCount: number;
         };
         /** DailyEventsCountSchema */
         DailyEventsCountSchema: {
@@ -7581,9 +7585,11 @@ export interface operations {
             };
         };
     };
-    apps_stripe_api_subscription_events_count_previous_period: {
+    apps_stripe_api_subscription_events_count_period: {
         parameters: {
-            query?: never;
+            query?: {
+                periods_ago?: number;
+            };
             header?: never;
             path: {
                 organization_slug: string;
@@ -7598,7 +7604,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PreviousPeriodEventsCountSchema"];
+                    "application/json": components["schemas"]["EventsCountSchema"];
                 };
             };
         };

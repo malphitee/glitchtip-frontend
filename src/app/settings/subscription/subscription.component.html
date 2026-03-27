@@ -58,12 +58,6 @@
                   payment is past due.</p
                 >
               }
-              @if (subscription.effectivePrice === 0) {
-                <gt-upgrade-banner
-                  [usagePercent]="thisMonthPercent() >= 80 ? thisMonthPercent() : null"
-                  (upgradeClick)="manageSubscription()"
-                />
-              }
               <div class="plan-header">
                 <span class="body-text-strong"
                   >{{ subscription.product.name }}</span
@@ -119,9 +113,6 @@
       }
     }
     @if (!subscription() || subscription()!.status === "canceled") {
-      <gt-upgrade-banner
-        (upgradeClick)="manageSubscription()"
-      />
       <gt-payment></gt-payment>
     }
   }
