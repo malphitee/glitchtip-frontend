@@ -8,7 +8,7 @@ import {
   signal,
 } from "@angular/core";
 import { ResponseTimeSeries } from "../uptime.interfaces";
-import { AreaChartModule } from "@swimlane/ngx-charts";
+import { AreaChartComponent } from "@glitchtip/ng-charts";
 import { DatePipe } from "@angular/common";
 
 @Component({
@@ -21,7 +21,7 @@ import { DatePipe } from "@angular/common";
       float: right;
     }
   `,
-  imports: [AreaChartModule, DatePipe],
+  imports: [AreaChartComponent, DatePipe],
 })
 export class MonitorResponseChart implements OnDestroy {
   // Manages observation of the chart's container element for size changes.

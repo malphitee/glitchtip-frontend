@@ -1,4 +1,4 @@
-import { Series, DataItem } from "@swimlane/ngx-charts";
+import { Series, DataItem } from "@glitchtip/ng-charts";
 
 export type MonitorType =
   | "Ping"

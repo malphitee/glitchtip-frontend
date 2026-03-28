@@ -5,7 +5,7 @@ import {
   computed,
 } from "@angular/core";
 import { DatePipe, I18nPluralPipe } from "@angular/common";
-import { NgxChartsModule } from "@swimlane/ngx-charts";
+import { BarVerticalComponent } from "@glitchtip/ng-charts";
 import {
   FormattedStatsDataPoint,
   StatsDataPointBase,
@@ -17,7 +17,7 @@ const HIGH_THRESHOLD_RATIO = 0.8;
 @Component({
   selector: "gt-issue-chart",
   standalone: true,
-  imports: [DatePipe, I18nPluralPipe, NgxChartsModule],
+  imports: [DatePipe, I18nPluralPipe, BarVerticalComponent],
   templateUrl: "./issue-chart.html",
   styleUrl: "./issue-chart.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
