@@ -8,7 +8,7 @@ import {
   input,
   signal,
 } from "@angular/core";
-import { BarChartModule } from "@swimlane/ngx-charts";
+import { BarVerticalStackedComponent } from "@glitchtip/ng-charts";
 import { MatCardModule } from "@angular/material/card";
 import { components } from "src/app/api/api-schema";
 
@@ -16,7 +16,7 @@ type DailyEventEntry = components["schemas"]["DailyEventCountEntry"];
 
 @Component({
   selector: "gt-daily-events-chart",
-  imports: [BarChartModule, MatCardModule],
+  imports: [BarVerticalStackedComponent, MatCardModule],
   templateUrl: "./daily-events-chart.component.html",
   styleUrls: ["./daily-events-chart.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
