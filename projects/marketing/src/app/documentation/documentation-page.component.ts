@@ -1,4 +1,5 @@
 import { Component, OnInit, inject } from "@angular/core";
+import { ViewportScroller } from "@angular/common";
 import { MatCard, MatCardContent } from "@angular/material/card";
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { MarkdownComponent, MarkdownService } from "ngx-markdown";
@@ -11,6 +12,7 @@ import { MarkdownComponent, MarkdownService } from "ngx-markdown";
 export class DocumentationPageComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private markdownService = inject(MarkdownService);
+  private viewportScroller = inject(ViewportScroller);
 
   slug: string | null = null;
 
@@ -22,8 +24,8 @@ export class DocumentationPageComponent implements OnInit {
         .toLowerCase()
         // replace non-letter characters with hyphens
         .replace(/[^\w]+/g, "-")
-        //trim hyphens at end of string
-        .replace(/\-$/, "");
+        //trim hyphens at start and end of string
+        .replace(/^-+|-+$/g, "");
       return (
         `<h${depth} class="anchor">` +
         `<a id="${escapedText}" href="${locationPrefix}#${escapedText}">` +
@@ -34,5 +36,12 @@ export class DocumentationPageComponent implements OnInit {
     };
 
     this.slug = locationPrefix + ".md";
+  }
+
+  onMarkdownReady() {
+    const fragment = this.route.snapshot.fragment;
+    if (fragment) {
+      this.viewportScroller.scrollToAnchor(fragment);
+    }
   }
 }
