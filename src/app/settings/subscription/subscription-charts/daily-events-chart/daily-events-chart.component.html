@@ -39,7 +39,7 @@
           [legend]="false"
           [barPadding]="4"
           [xAxisTickFormatting]="xAxisTickFormatting"
-          [noBarWhenZero]="false"
+          [noBarWhenZero]="true"
         >
           <ng-template #tooltipTemplate let-model="model">
             <div class="tooltip">
@@ -54,7 +54,7 @@
     <div class="chart-footer">
       <span class="caption-text">{{ periodRange() }}</span>
       @if (predictedTotal() !== null) {
-        <span class="caption-text" i18n>Predicted end of month: ~{{ predictedTotal() }}</span>
+        <span class="caption-text" i18n>Predicted end of month: ~{{ predictedTotal() | number: "1.0-0" }}</span>
       }
     </div>
   </mat-card-content>

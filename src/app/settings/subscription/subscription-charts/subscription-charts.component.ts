@@ -5,6 +5,7 @@ import {
   inject,
   input,
 } from "@angular/core";
+import { DecimalPipe } from "@angular/common";
 import { MatCardModule } from "@angular/material/card";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatDialog } from "@angular/material/dialog";
@@ -17,7 +18,15 @@ import { EventInfoComponent } from "src/app/shared/event-info/event-info.compone
 
 @Component({
   selector: "gt-subscription-charts",
-  imports: [MatCardModule, MatProgressSpinnerModule, DailyEventsChartComponent, SummaryCardComponent, MatIconModule, MatButtonModule],
+  imports: [
+    DecimalPipe,
+    MatCardModule,
+    MatProgressSpinnerModule,
+    DailyEventsChartComponent,
+    SummaryCardComponent,
+    MatIconModule,
+    MatButtonModule,
+  ],
   templateUrl: "./subscription-charts.component.html",
   styleUrls: ["./subscription-charts.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -32,8 +41,8 @@ export class SubscriptionChartsComponent {
 
   totalEventsAllowed = input.required<number | null>();
 
-  eventsCountWithTotal = this.subscriptionService.eventsCountWithTotal;
-  previousPeriod = this.subscriptionService.previousPeriodEvents;
+  eventsCountCurrentPeriod = this.subscriptionService.eventsCountCurrentPeriod;
+  previousPeriod = this.subscriptionService.eventsCountPreviousPeriod;
   predictedTotal = this.subscriptionService.predictedEndOfMonth;
   subscription = this.subscriptionService.subscription;
   dailyEvents = this.subscriptionService.dailyEvents;
@@ -45,41 +54,33 @@ export class SubscriptionChartsComponent {
 
   loading = computed(
     () =>
-      this.subscriptionService.previousPeriodResource.isLoading() ||
-      this.subscriptionService.eventCountResource.isLoading() ||
+      this.subscriptionService.eventsCountPreviousPeriodResource.isLoading() ||
+      this.subscriptionService.eventsCountCurrentPeriodResource.isLoading() ||
       this.subscriptionService.dailyEventsResource.isLoading(),
   );
-
-  thisMonthPercent = this.subscriptionService.thisMonthPercent;
 
   previousPeriodTotal = computed(() => {
     const prev = this.previousPeriod();
     if (!prev) return 0;
-    return prev.total ?? (prev.eventCount + prev.transactionEventCount + prev.uptimeCheckEventCount + (prev.logEventCount ?? 0) * 0.1);
-  });
-
-  lastMonthPercent = computed(() => {
-    const total = this.previousPeriodTotal();
-    const allowed = this.totalEventsAllowed();
-    if (!allowed) return 0;
-    return Math.round((total / allowed) * 100);
-  });
-
-  predictedPercent = computed(() => {
-    const predicted = this.predictedTotal();
-    const allowed = this.totalEventsAllowed();
-    if (predicted == null || !allowed) return 0;
-    return Math.round((predicted / allowed) * 100);
+    return (
+      prev.total ??
+      prev.eventCount +
+        prev.transactionEventCount +
+        prev.uptimeCheckEventCount +
+        (prev.logEventCount ?? 0) * 0.1
+    );
   });
 
   eventBreakdown = computed(() => {
-    const events = this.eventsCountWithTotal();
+    const events = this.eventsCountCurrentPeriod();
     if (!events) return null;
     const total = events.total || 1;
     return {
       performance: {
         count: events.transactionEventCount ?? 0,
-        percent: Math.round(((events.transactionEventCount ?? 0) / total) * 100),
+        percent: Math.round(
+          ((events.transactionEventCount ?? 0) / total) * 100,
+        ),
       },
       issues: {
         count: events.eventCount ?? 0,
@@ -87,11 +88,13 @@ export class SubscriptionChartsComponent {
       },
       uptime: {
         count: events.uptimeCheckEventCount ?? 0,
-        percent: Math.round(((events.uptimeCheckEventCount ?? 0) / total) * 100),
+        percent: Math.round(
+          ((events.uptimeCheckEventCount ?? 0) / total) * 100,
+        ),
       },
       logs: {
         count: events.logEventCount ?? 0,
-        percent: Math.round(((events.logEventCount ?? 0) / total) * 100),
+        percent: Math.round((((events.logEventCount ?? 0) * 0.1) / total) * 100),
       },
       fileSizeMb: events.fileSizeMb ?? 0,
     };

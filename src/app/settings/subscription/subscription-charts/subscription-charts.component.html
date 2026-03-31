@@ -5,27 +5,22 @@
 } @else {
   <div class="summary-cards">
     <gt-summary-card
-      [title]="'This Month'"
-      [value]="'' + (eventsCountWithTotal()?.total ?? 0)"
-      [subtitle]="thisMonthPercent() + '% of limit (' + totalEventsAllowed() + ')'"
-      [percent]="thisMonthPercent()"
-      [isOverLimit]="thisMonthPercent() >= 80"
+      title="This Month"
+      [value]="eventsCountCurrentPeriod()?.total ?? 0"
+      [eventsAllowed]="totalEventsAllowed()"
       i18n-title
     />
     <gt-summary-card
-      [title]="'Last Month'"
-      [value]="'' + previousPeriodTotal()"
-      [subtitle]="lastMonthPercent() + '% of limit (' + totalEventsAllowed() + ')'"
-      [percent]="lastMonthPercent()"
-      [isOverLimit]="lastMonthPercent() >= 80"
+      title="Last Month"
+      [value]="previousPeriodTotal()"
+      [eventsAllowed]="totalEventsAllowed()"
       i18n-title
     />
     <gt-summary-card
-      [title]="'Predicted End of Month'"
-      [value]="predictedTotal() !== null ? '~' + predictedTotal() : '--'"
-      [subtitle]="predictedTotal() === null ? 'Not enough data' : predictedPercent() >= 100 ? 'Over limit' : 'Within limit'"
-      [percent]="predictedPercent()"
-      [isOverLimit]="predictedPercent() >= 100"
+      title="Predicted End of Month"
+      [value]="predictedTotal()"
+      [eventsAllowed]="totalEventsAllowed()"
+      [limitThreshold]="100"
       i18n-title
     />
   </div>
@@ -48,28 +43,28 @@
           <div class="breakdown-bar-track">
             <div class="breakdown-bar breakdown-bar--performance" [style.width.%]="breakdown.performance.percent"></div>
           </div>
-          <span class="breakdown-value">{{ breakdown.performance.count }} ({{ breakdown.performance.percent }}%)</span>
+          <span class="breakdown-value">{{ breakdown.performance.count | number: "1.0-0" }} ({{ breakdown.performance.percent }}%)</span>
         </div>
         <div class="breakdown-row">
           <span class="breakdown-label" i18n>Issues</span>
           <div class="breakdown-bar-track">
             <div class="breakdown-bar breakdown-bar--issues" [style.width.%]="breakdown.issues.percent"></div>
           </div>
-          <span class="breakdown-value">{{ breakdown.issues.count }} ({{ breakdown.issues.percent }}%)</span>
+          <span class="breakdown-value">{{ breakdown.issues.count | number: "1.0-0" }} ({{ breakdown.issues.percent }}%)</span>
         </div>
         <div class="breakdown-row">
           <span class="breakdown-label" i18n>Uptime</span>
           <div class="breakdown-bar-track">
             <div class="breakdown-bar breakdown-bar--uptime" [style.width.%]="breakdown.uptime.percent"></div>
           </div>
-          <span class="breakdown-value">{{ breakdown.uptime.count }} ({{ breakdown.uptime.percent }}%)</span>
+          <span class="breakdown-value">{{ breakdown.uptime.count | number: "1.0-0" }} ({{ breakdown.uptime.percent }}%)</span>
         </div>
         <div class="breakdown-row">
           <span class="breakdown-label" i18n>Logs</span>
           <div class="breakdown-bar-track">
             <div class="breakdown-bar breakdown-bar--logs" [style.width.%]="breakdown.logs.percent"></div>
           </div>
-          <span class="breakdown-value">{{ breakdown.logs.count }} ({{ breakdown.logs.percent }}%)</span>
+          <span class="breakdown-value">{{ breakdown.logs.count | number: "1.0-0" }} ({{ breakdown.logs.percent }}%)</span>
         </div>
         <div class="breakdown-file-storage" i18n>File storage: {{ breakdown.fileSizeMb }} MB</div>
       </mat-card-content>

@@ -2,7 +2,11 @@
   <mat-card-content>
     <div class="summary-title">{{ title() }}</div>
     <div class="summary-value" [class.over-limit-text]="isOverLimit()">
-      {{ value() }}
+      @if (value() !== null) {
+        {{ value() | number: "1.0-0" }}
+      } @else {
+        0
+      }
     </div>
     <div class="summary-subtitle">{{ subtitle() }}</div>
     <mat-progress-bar

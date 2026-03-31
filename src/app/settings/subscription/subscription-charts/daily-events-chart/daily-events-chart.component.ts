@@ -8,6 +8,7 @@ import {
   input,
   signal,
 } from "@angular/core";
+import { DecimalPipe } from "@angular/common";
 import { BarVerticalStackedComponent } from "@glitchtip/ng-charts";
 import { MatCardModule } from "@angular/material/card";
 import { components } from "src/app/api/api-schema";
@@ -16,7 +17,7 @@ type DailyEventEntry = components["schemas"]["DailyEventCountEntry"];
 
 @Component({
   selector: "gt-daily-events-chart",
-  imports: [BarVerticalStackedComponent, MatCardModule],
+  imports: [DecimalPipe, BarVerticalStackedComponent, MatCardModule],
   templateUrl: "./daily-events-chart.component.html",
   styleUrls: ["./daily-events-chart.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
