@@ -1,6 +1,6 @@
 @if (chartData().length > 0 && scale()) {
 <div #containerRef class="chart-container">
-  <ngx-charts-area-chart
+  <ng-charts-area-chart
     [showXAxisLabel]="false"
     [showYAxisLabel]="true"
     [xAxis]="true"
@@ -23,6 +23,6 @@
       {{ model[0].name | date: "short" }}<br />
       {{ model[0].value }}ms
     </ng-template>
-  </ngx-charts-area-chart>
+  </ng-charts-area-chart>
 </div>
 }
