@@ -50,7 +50,7 @@
     "@browser-logos/safari-ios": "^1.0.15",
     "@egoistdeveloper/operating-system-logos": "~1.2.3",
     "@github/webauthn-json": "^2.1.1",
-    "@glitchtip/ng-charts": "^1.1.0",
+    "@glitchtip/ng-charts": "^1.2.0",
     "@micro-sentry/angular": "^7.2.0",
     "@stripe/stripe-js": "^8.6.0",
     "date-fns": "^4.1.0",

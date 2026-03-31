@@ -257,7 +257,7 @@ mat-sidenav-container {
 }
 
 gt-issue-chart {
-  .ngx-charts {
+  .ng-charts {
     // Hide tick labels
     .tick text {
       display: none !important;
@@ -302,7 +302,7 @@ gt-issue-chart {
 }
 
 @media (prefers-color-scheme: dark) {
-  .ngx-charts {
+  .ng-charts {
     text {
       fill: var(--mat-sys-on-background) !important;
     }
