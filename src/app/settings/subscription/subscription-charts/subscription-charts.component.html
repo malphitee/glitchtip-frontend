@@ -50,7 +50,12 @@
           style="left: {{ eventsPercent.total < 100 ? eventsPercent.total : 100 }}%"
         >{{ count.total }}</div>
         <div class="breakdown-section">
-          <span class="body-text-strong" i18n>Event Breakdown</span>
+          <div class="breakdown-header">
+            <span class="body-text-strong" i18n>Event Breakdown</span>
+            <button mat-icon-button (click)="openEventInfo()" class="info-button" aria-label="How are events counted?">
+              <mat-icon>help_outline</mat-icon>
+            </button>
+          </div>
           <ul class="usage-details">
             <li><b class="error" i18n>Issue events:</b> {{ count.eventCount }}</li>
             <li><b class="uptime" i18n>Uptime events:</b> {{ count.uptimeCheckEventCount }}</li>

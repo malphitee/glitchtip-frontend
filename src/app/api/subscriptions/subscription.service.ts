@@ -72,12 +72,14 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
     const eventsCount = this.eventCountResource.value();
     if (!eventsCount) return eventsCount;
 
-    const total =
-      eventsCount.eventCount! +
-      eventsCount.transactionEventCount! +
-      eventsCount.uptimeCheckEventCount! +
-      eventsCount.logEventCount! * 0.1 +
-      eventsCount.fileSizeMb!;
+    const total = Math.round(
+      (eventsCount.eventCount! +
+        eventsCount.transactionEventCount! +
+        eventsCount.uptimeCheckEventCount! +
+        eventsCount.logEventCount! * 0.1 +
+        eventsCount.fileSizeMb!) *
+        10,
+    ) / 10;
 
     return { ...eventsCount, total };
   });

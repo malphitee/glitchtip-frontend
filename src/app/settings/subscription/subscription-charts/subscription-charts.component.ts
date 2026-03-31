@@ -7,18 +7,27 @@ import {
 } from "@angular/core";
 import { DatePipe } from "@angular/common";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatDialog } from "@angular/material/dialog";
+import { MatIconModule } from "@angular/material/icon";
+import { MatButtonModule } from "@angular/material/button";
 import { SubscriptionService } from "src/app/api/subscriptions/subscription.service";
 import { SummaryCardComponent } from "./summary-card/summary-card.component";
+import { EventInfoComponent } from "src/app/shared/event-info/event-info.component";
 
 @Component({
   selector: "gt-subscription-charts",
-  imports: [MatProgressSpinnerModule, SummaryCardComponent, DatePipe],
+  imports: [MatProgressSpinnerModule, SummaryCardComponent, DatePipe, MatIconModule, MatButtonModule],
   templateUrl: "./subscription-charts.component.html",
   styleUrls: ["./subscription-charts.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SubscriptionChartsComponent {
   private subscriptionService = inject(SubscriptionService);
+  private dialog = inject(MatDialog);
+
+  openEventInfo() {
+    this.dialog.open(EventInfoComponent);
+  }
 
   totalEventsAllowed = input.required<number | null>();
 
