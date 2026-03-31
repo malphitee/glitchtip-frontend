@@ -71,9 +71,9 @@
                 >
                 <mat-divider vertical />
                 <span class="body-text" i18n
-                  >Billing Cycle:
-                  {{ subscription.currentPeriodStart | date }} to
-                  {{ subscription.currentPeriodEnd | date }}
+                  >Usage period:
+                  {{ (subscription.subscriptionCycleStart ?? subscription.currentPeriodStart) | date }} to
+                  {{ (subscription.subscriptionCycleEnd ?? subscription.currentPeriodEnd) | date }}
                   @if (daysRemaining() !== null) {
                     ({{ daysRemaining() }}
                     {{ daysRemaining() === 1 ? "day" : "days" }} remaining)

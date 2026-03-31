@@ -52,7 +52,6 @@
       <div class="chart-no-data body-text-strong" i18n>No event data available for this period.</div>
     }
     <div class="chart-footer">
-      <span class="caption-text">{{ periodRange() }}</span>
       @if (predictedTotal() !== null) {
         <span class="caption-text" i18n>Predicted end of month: ~{{ predictedTotal() | number: "1.0-0" }}</span>
       }

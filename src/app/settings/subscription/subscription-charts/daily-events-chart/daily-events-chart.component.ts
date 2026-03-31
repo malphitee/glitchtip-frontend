@@ -100,16 +100,6 @@ export class DailyEventsChartComponent implements OnDestroy {
     return "";
   };
 
-  periodRange = computed(() => {
-    const events = this.dailyEvents();
-    const endDate = this.periodEnd();
-    if (events.length === 0) return "";
-    const start = new Date(events[0].date);
-    const end = endDate ? new Date(endDate) : new Date(events[events.length - 1].date);
-    const fmt = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" });
-    return `${fmt.format(start)} \u2013 ${fmt.format(end)}`;
-  });
-
   @ViewChild("containerRef")
   set containerRef(element: ElementRef<HTMLDivElement> | undefined) {
     if (element) {
