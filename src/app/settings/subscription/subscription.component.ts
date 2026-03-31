@@ -16,7 +16,6 @@ import {
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { PaymentComponent } from "./payment/payment.component";
 import { MatButtonModule } from "@angular/material/button";
-import { LoadingButtonComponent } from "src/app/shared/loading-button/loading-button.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatCardModule } from "@angular/material/card";
 import { CurrencyPipe, DatePipe } from "@angular/common";
@@ -36,7 +35,6 @@ import { SubscriptionChartsComponent } from "./subscription-charts/subscription-
     RouterLink,
     MatFormFieldModule,
     MatButtonModule,
-    LoadingButtonComponent,
     PaymentComponent,
     MatProgressSpinnerModule,
     CurrencyPipe,

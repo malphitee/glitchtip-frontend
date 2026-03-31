@@ -4,12 +4,19 @@
   </ng-container>
   <ng-container slot="right">
     @if (subscription() && subscription()!.status !== "canceled") {
-      <gt-loading-button
+      <button
+        mat-flat-button
         color="primary"
+        class="manage-subscription-button"
         (click)="manageSubscription()"
-        [loading]="billingPortalLoading()"
-        buttonText="Manage Subscription"
-      />
+        [disabled]="billingPortalLoading()"
+      >
+        @if (billingPortalLoading()) {
+          <mat-spinner diameter="18" />
+        }
+        <span class="manage-subscription-text-long" i18n>Manage Subscription</span>
+        <span class="manage-subscription-text-short" i18n>Manage</span>
+      </button>
     }
   </ng-container>
 </gt-top-app-bar>

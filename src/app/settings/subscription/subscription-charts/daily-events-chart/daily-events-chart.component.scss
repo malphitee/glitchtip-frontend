@@ -1,3 +1,5 @@
+@use "src/assets/styles/_variables.scss" as vars;
+
 .daily-chart-card {
   margin-top: 16px;
 }
@@ -7,11 +9,14 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 8px;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .chart-legend {
   display: flex;
-  gap: 16px;
+  flex-wrap: wrap;
+  gap: 8px 16px;
   font-size: 0.85em;
 }
 
@@ -62,6 +67,8 @@
 .chart-footer {
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px;
   margin-top: 8px;
 }
 
