@@ -1,6 +1,6 @@
 ---
-title: 'GlitchTip 6 released'
-description: 'Performance and improved stacktraces'
+title: "GlitchTip 6 released"
+description: "Performance and improved stacktraces"
 published: true
 ---
 

@@ -1,6 +1,6 @@
 ---
-title: 'Upcoming: GlitchTip 4.0'
-description: 'Our reworked API will significantly increase efficiency'
+title: "Upcoming: GlitchTip 4.0"
+description: "Our reworked API will significantly increase efficiency"
 published: true
 ---
 

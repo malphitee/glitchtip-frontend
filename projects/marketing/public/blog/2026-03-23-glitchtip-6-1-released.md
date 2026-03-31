@@ -1,6 +1,6 @@
 ---
-title: 'GlitchTip 6.1 released'
-description: 'Logs, cold storage, MCP and minidump support'
+title: "GlitchTip 6.1 released"
+description: "Logs, cold storage, MCP and minidump support"
 published: true
 ---
 

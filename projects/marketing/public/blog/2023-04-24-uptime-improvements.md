@@ -1,7 +1,7 @@
 ---
 title: "Improvements to Uptime Monitoring"
 description: "GlitchTip's uptime monitoring has been upgraded under the hood to improve performance and reliability"
-author: David Burke
+author: "David Burke"
 published: true
 ---
 
