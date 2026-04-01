@@ -27,8 +27,8 @@ export class DocumentationPageComponent implements OnInit {
         //trim hyphens at start and end of string
         .replace(/^-+|-+$/g, "");
       return (
-        `<h${depth}>` +
-        `<a id="${escapedText}" class="anchor" href="${locationPrefix}#${escapedText}">` +
+        `<h${depth} class="anchor">` +
+        `<a id="${escapedText}" href="${locationPrefix}#${escapedText}">` +
         text +
         "</a>" +
         `</h${depth}>`
