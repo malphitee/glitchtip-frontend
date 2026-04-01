@@ -11,11 +11,21 @@
         (click)="manageSubscription()"
         [disabled]="billingPortalLoading()"
       >
+        <span
+          class="manage-subscription-text-long"
+          [style.visibility]="billingPortalLoading() ? 'hidden' : 'visible'"
+          i18n
+          >Manage Subscription</span
+        >
+        <span
+          class="manage-subscription-text-short"
+          [style.visibility]="billingPortalLoading() ? 'hidden' : 'visible'"
+          i18n
+          >Manage</span
+        >
         @if (billingPortalLoading()) {
-          <mat-spinner diameter="18" />
+          <mat-spinner class="manage-subscription-spinner" diameter="18" />
         }
-        <span class="manage-subscription-text-long" i18n>Manage Subscription</span>
-        <span class="manage-subscription-text-short" i18n>Manage</span>
       </button>
     }
   </ng-container>
@@ -66,19 +76,26 @@
                 >
               }
               <div class="plan-header">
-                <span class="body-text-strong"
-                  >{{ subscription.product.name }}</span
-                >
+                <span class="body-text-strong">{{
+                  subscription.product.name
+                }}</span>
                 <mat-divider vertical />
                 <span class="body-text" i18n
                   >Usage period:
-                  {{ (subscription.subscriptionCycleStart ?? subscription.currentPeriodStart) | date }} to
-                  {{ (subscription.subscriptionCycleEnd ?? subscription.currentPeriodEnd) | date }}
+                  {{
+                    subscription.subscriptionCycleStart ??
+                      subscription.currentPeriodStart | date
+                  }}
+                  to
+                  {{
+                    subscription.subscriptionCycleEnd ??
+                      subscription.currentPeriodEnd | date
+                  }}
                   @if (daysRemaining() !== null) {
                     ({{ daysRemaining() }}
                     {{ daysRemaining() === 1 ? "day" : "days" }} remaining)
-                  }</span
-                >
+                  }
+                </span>
               </div>
               <mat-divider />
               <gt-subscription-charts

@@ -1,5 +1,16 @@
 @use "src/assets/styles/_variables.scss" as vars;
 
+.manage-subscription-button {
+  position: relative;
+}
+
+.manage-subscription-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
 .manage-subscription-text-short {
   @media screen and (min-width: vars.$small) {
     display: none;
