@@ -52,16 +52,12 @@ export class SubscriptionChartsComponent {
     return sub?.subscriptionCycleEnd ?? sub?.currentPeriodEnd ?? null;
   });
 
-  loading = computed(
-    () =>
-      this.subscriptionService.eventsCountPreviousPeriodResource.isLoading() ||
-      this.subscriptionService.eventsCountCurrentPeriodResource.isLoading() ||
-      this.subscriptionService.dailyEventsResource.isLoading(),
-  );
+  currentPeriodLoading = this.subscriptionService.currentPeriodLoading;
+  previousPeriodLoading = this.subscriptionService.previousPeriodLoading;
 
   previousPeriodTotal = computed(() => {
     const prev = this.previousPeriod();
-    if (!prev) return 0;
+    if (!prev) return null;
     return (
       prev.total ??
       prev.eventCount +

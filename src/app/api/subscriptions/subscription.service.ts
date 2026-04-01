@@ -71,9 +71,13 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
       },
     }),
   );
-  eventsCountCurrentPeriod = computed(() =>
-    this.eventsCountCurrentPeriodResource.value(),
-  );
+  // We let events count resources fail silently,
+  // since display components handle missing data
+  eventsCountCurrentPeriod = computed(() => {
+    if (this.eventsCountCurrentPeriodResource.error()) return null;
+    return this.eventsCountCurrentPeriodResource.value();
+  });
+  currentPeriodLoading = this.eventsCountCurrentPeriodResource.isLoading;
 
   eventsCountPreviousPeriodResource = apiResource(
     this.organizationSlug,
@@ -87,9 +91,11 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
       },
     }),
   );
-  eventsCountPreviousPeriod = computed(() =>
-    this.eventsCountPreviousPeriodResource.value(),
-  );
+  eventsCountPreviousPeriod = computed(() => {
+    if (this.eventsCountPreviousPeriodResource.error()) return null;
+    return this.eventsCountPreviousPeriodResource.value();
+  });
+  previousPeriodLoading = this.eventsCountPreviousPeriodResource.isLoading;
 
   dailyEventsResource = apiResource(this.organizationSlug, (orgSlug) => ({
     url: "/api/0/stripe/subscriptions/{organization_slug}/events_count/daily/",
@@ -100,7 +106,7 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
     },
   }));
   dailyEvents = computed(() => {
-    if (this.dailyEventsResource.serverError()) return [];
+    if (this.dailyEventsResource.error()) return [];
     return this.dailyEventsResource.value()?.data ?? [];
   });
 

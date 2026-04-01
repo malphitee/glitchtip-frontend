@@ -2,10 +2,12 @@
   <mat-card-content>
     <div class="summary-title">{{ title() }}</div>
     <div class="summary-value" [class.over-limit-text]="isOverLimit()">
-      @if (value() !== null) {
+      @if (loading()) {
+        <mat-spinner diameter="24"></mat-spinner>
+      } @else if (value() !== null) {
         {{ value() | number: "1.0-0" }}
       } @else {
-        0
+        —
       }
     </div>
     <div class="summary-subtitle">{{ subtitle() }}</div>

@@ -2,10 +2,11 @@ import { Component, ChangeDetectionStrategy, input, computed } from "@angular/co
 import { DecimalPipe } from "@angular/common";
 import { MatCardModule } from "@angular/material/card";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 
 @Component({
   selector: "gt-summary-card",
-  imports: [DecimalPipe, MatCardModule, MatProgressBarModule],
+  imports: [DecimalPipe, MatCardModule, MatProgressBarModule, MatProgressSpinnerModule],
   templateUrl: "./summary-card.component.html",
   styleUrls: ["./summary-card.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -15,6 +16,7 @@ export class SummaryCardComponent {
   value = input.required<number | null>();
   eventsAllowed = input.required<number | null>();
   limitThreshold = input(80);
+  loading = input(false);
 
   percent = computed(() => {
     const value = this.value();
