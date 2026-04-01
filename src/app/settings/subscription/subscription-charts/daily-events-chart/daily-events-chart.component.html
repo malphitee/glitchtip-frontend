@@ -27,7 +27,7 @@
     </div>
     @if (chartData().length > 0) {
       <div class="chart-container" #containerRef>
-        <ngx-charts-bar-vertical-stacked
+        <ng-charts-bar-vertical-stacked
           [results]="chartData()"
           [view]="view()"
           [customColors]="customColors"
@@ -46,7 +46,7 @@
               <div>{{ model.name }}: {{ model.value }}</div>
             </div>
           </ng-template>
-        </ngx-charts-bar-vertical-stacked>
+        </ng-charts-bar-vertical-stacked>
       </div>
     } @else {
       <div class="chart-no-data body-text-strong" i18n>No event data available for this period.</div>
