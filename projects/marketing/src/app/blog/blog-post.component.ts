@@ -37,7 +37,7 @@ export class BlogPostComponent implements OnInit {
       const frontMatter = match[0];
       content = markdown.replace(frontMatterRegex, "").trim();
 
-      const titleMatch = frontMatter.match(/title:\s*['"]?([^'"]+)['"]?/);
+      const titleMatch = frontMatter.match(/title:\s*"([^"]+)"/);
       if (titleMatch) {
         title = titleMatch[1];
       }

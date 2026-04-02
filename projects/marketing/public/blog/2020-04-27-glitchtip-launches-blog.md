@@ -1,6 +1,6 @@
 ---
-title: We have a GlitchTip blog!
-description: A quick update on our latest work.
+title: "We have a GlitchTip blog!"
+description: "A quick update on our latest work."
 published: true
 ---
 

@@ -1,6 +1,6 @@
 ---
-title: 'GlitchTip 4.0 Released'
-description: 'Event processing gets a major efficiency boost'
+title: "GlitchTip 4.0 Released"
+description: "Event processing gets a major efficiency boost"
 published: true
 ---
 

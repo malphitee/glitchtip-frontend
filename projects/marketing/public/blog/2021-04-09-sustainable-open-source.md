@@ -1,9 +1,9 @@
 ---
-title: 'Sustainable Open Source Development and GlitchTip'
-description: 'Introducing our paid support plans for self hosting'
+title: "Sustainable Open Source Development and GlitchTip"
+description: "Introducing our paid support plans for self hosting"
 published: true
 date: April 9, 2021
-author: David Burke
+author: "David Burke"
 ---
 
 Funding open source is a topic I think about a lot. My company, Burke Software and Consulting, has been developing open source software for about 10 years now and funding through mostly unrelated contract work.

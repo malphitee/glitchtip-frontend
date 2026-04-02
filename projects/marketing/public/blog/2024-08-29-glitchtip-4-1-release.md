@@ -1,6 +1,6 @@
 ---
-title: 'GlitchTip 4.1 Released'
-description: 'Improved auth flow security'
+title: "GlitchTip 4.1 Released"
+description: "Improved auth flow security"
 published: true
 ---
 

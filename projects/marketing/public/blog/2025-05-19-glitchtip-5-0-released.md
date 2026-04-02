@@ -1,6 +1,6 @@
 ---
-title: 'GlitchTip 5.0 Released and EU Server'
-description: 'Merge issue support, hosted servers on US and EU regions, breaking changes.'
+title: "GlitchTip 5.0 Released and EU Server"
+description: "Merge issue support, hosted servers on US and EU regions, breaking changes."
 published: true
 ---
 

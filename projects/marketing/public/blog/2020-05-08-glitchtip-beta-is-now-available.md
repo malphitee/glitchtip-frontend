@@ -1,6 +1,6 @@
 ---
-title: GlitchTip beta is now available
-description: Today we are releasing GlitchTip 0.0.1 to Docker Hub. We hope this will make it easier for interested users to preview GlitchTip and for developers to try it out for their own projects.
+title: "GlitchTip beta is now available"
+description: "Today we are releasing GlitchTip 0.0.1 to Docker Hub. We hope this will make it easier for interested users to preview GlitchTip and for developers to try it out for their own projects."
 published: true
 ---
 

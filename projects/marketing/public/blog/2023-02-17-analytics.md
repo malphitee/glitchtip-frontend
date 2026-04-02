@@ -1,7 +1,7 @@
 ---
-title: 'GlitchTip sharing analytics and modest growth'
-description: 'We are sharing our Plausible analytics and other stats'
-author: David Burke
+title: "GlitchTip sharing analytics and modest growth"
+description: "We are sharing our Plausible analytics and other stats"
+author: "David Burke"
 published: true
 ---
 
