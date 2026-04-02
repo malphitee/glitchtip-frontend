@@ -90,7 +90,7 @@ export class SubscriptionChartsComponent {
       },
       logs: {
         count: events.logEventCount ?? 0,
-        percent: Math.round((((events.logEventCount ?? 0) * 0.1) / total) * 100),
+        percent: Math.round(((events.logEventCount ?? 0) / total) * 100),
       },
       fileSizeMb: events.fileSizeMb ?? 0,
     };
