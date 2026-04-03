@@ -13,7 +13,25 @@ This is slow for a few reasons. There is overhead on threading. Redis-py is pret
 
 But what does slow mean? We need to define the goal. When I say fast and efficient I mean doing more work quickly with less resources (cpu/memory, which is to say money). Write the most unoptimized code you can but throw a massive k8s cluster at it and it will be "fast" at high concurrency. GlitchTip is not a VC funded mega venture. We need efficiency. Do the work with less ram, less cpu time. We need a benchmark that introduces some minor latency and high concurrency.
 
-[Chart goes here later]
+### Throughput (uncapped, 300 concurrency, 30s)
+
+| | django-vcache | django-valkey | Django RedisCache |
+|---|---|---|---|
+| **Requests/sec** | 1,643 | 1,125 | 284 |
+| **Avg latency** | 182 ms | 266 ms | 1,047 ms |
+| **P99 latency** | 197 ms | 292 ms | 1,188 ms |
+| **Peak RSS** | 213 MB | 177 MB | 600 MB |
+| **Valkey connections** | 2 | 301 | 4,480 |
+
+### Memory efficiency (rate-limited to 1,000 req/s, 250 concurrency, 120s)
+
+To compare memory fairly, all backends are rate-limited to the same throughput:
+
+| | django-vcache | django-valkey | Django RedisCache |
+|---|---|---|---|
+| **Actual req/s** | 999 | 999 | 300 (can't keep up) |
+| **Peak RSS** | 109 MB | 135 MB | 1,739 MB |
+| **Valkey connections** | 3 | 252 | 9,926 |
 
 These results aren't theoretical, django-vcache is here today and in production. Async becomes a first-class citizen while sync is still there when you need it. I used the Rust redis crate with a Python bridge that returns an Awaitable for async. It's 17x faster than stock Django Redis cache and uses just two connections (our benchmark clocks redis-py at 2,694).
 Migration is trivial:  `pip install django-vcache` and update CACHES:
