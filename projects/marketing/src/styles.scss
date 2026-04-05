@@ -278,6 +278,24 @@ a {
     border: 6px solid var(--mat-sys-outline-variant);
   }
 
+  table {
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    width: 100%;
+
+    th,
+    td {
+      padding: 8px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--mat-sys-outline-variant);
+    }
+
+    th {
+      font-weight: 600;
+      border-bottom: 2px solid var(--mat-sys-outline-variant);
+    }
+  }
+
   code {
     padding: 0 5px;
     background-color: var(--mat-sys-surface-variant);
