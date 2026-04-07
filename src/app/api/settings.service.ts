@@ -17,6 +17,7 @@ export class SettingsService {
   billingEnabled = computed(() => this.settings()?.billingEnabled);
   paidForGlitchTip = computed(() => this.settings()?.iPaidForGlitchTip);
   stripePublicKey = computed(() => this.settings()?.stripePublicKey);
+  stripePricingTableID = computed(() => this.settings()?.stripePricingTableID);
   sentryDSN = computed(() => this.settings()?.sentryDSN);
   environment = computed(() => this.settings()?.environment);
   chatwootWebsiteToken = computed(() => this.settings()?.chatwootWebsiteToken);

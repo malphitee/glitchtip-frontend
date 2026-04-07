@@ -155,6 +155,25 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
     return subscription?.product.events || null;
   });
 
+  customerSessionClientSecret = signal<string | null>(null);
+
+  async fetchCustomerSession(orgSlug: string) {
+    const { data } = await client.POST(
+      "/api/0/stripe/organizations/{organization_slug}/create-customer-session/",
+      { params: { path: { organization_slug: orgSlug } } },
+    );
+    if (data) {
+      this.customerSessionClientSecret.set(data.client_secret);
+    }
+  }
+
+  thisMonthPercent = computed(() => {
+    const total = this.totalEventsAllowed();
+    const current = this.eventsCountCurrentPeriod();
+    if (!total || !current?.total) return 0;
+    return Math.round((current.total / total) * 100);
+  });
+
   refreshTimerRef: NodeJS.Timeout | undefined = undefined;
 
   constructor() {

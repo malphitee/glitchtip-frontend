@@ -1,0 +1,17 @@
+@if (isDialog) {
+  <div class="pricing-table-header">
+    <h2 mat-dialog-title i18n>Compare Plans</h2>
+    <button mat-icon-button (click)="close()" aria-label="Close">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+}
+<mat-dialog-content [class]="isDialog ? 'pricing-table-content' : ''">
+  @if (stripePublicKey() && stripePricingTableID() && customerSessionClientSecret()) {
+    <stripe-pricing-table
+      [attr.pricing-table-id]="stripePricingTableID()"
+      [attr.publishable-key]="stripePublicKey()"
+      [attr.customer-session-client-secret]="customerSessionClientSecret()"
+    ></stripe-pricing-table>
+  }
+</mat-dialog-content>

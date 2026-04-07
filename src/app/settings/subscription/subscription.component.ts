@@ -4,8 +4,10 @@ import {
   computed,
   inject,
   input,
+  signal,
   OnInit,
 } from "@angular/core";
+import { MatDialog } from "@angular/material/dialog";
 import { RouterLink } from "@angular/router";
 import { StatefulComponent } from "src/app/shared/stateful-service/signal-state.component";
 import { environment } from "../../../environments/environment";
@@ -14,15 +16,19 @@ import {
   SubscriptionState,
 } from "src/app/api/subscriptions/subscription.service";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
-import { PaymentComponent } from "./payment/payment.component";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatCardModule } from "@angular/material/card";
 import { DatePipe } from "@angular/common";
 import { MatDividerModule } from "@angular/material/divider";
+import { MatIconModule } from "@angular/material/icon";
+import { MatSelectModule } from "@angular/material/select";
 import { OrganizationsService } from "src/app/api/organizations.service";
 import { TopAppBar } from "src/app/shared/top-app-bar/top-app-bar";
 import { SubscriptionChartsComponent } from "./subscription-charts/subscription-charts.component";
+import { UpgradeBannerComponent } from "src/app/shared/upgrade-banner/upgrade-banner.component";
+import { StripePricingTableComponent } from "./stripe-pricing-table/stripe-pricing-table.component";
+import { PaymentComponent } from "./payment/payment.component";
 
 @Component({
   selector: "gt-subscription",
@@ -35,11 +41,15 @@ import { SubscriptionChartsComponent } from "./subscription-charts/subscription-
     RouterLink,
     MatFormFieldModule,
     MatButtonModule,
-    PaymentComponent,
     MatProgressSpinnerModule,
     DatePipe,
     MatDividerModule,
+    MatIconModule,
     SubscriptionChartsComponent,
+    UpgradeBannerComponent,
+    MatSelectModule,
+    StripePricingTableComponent,
+    PaymentComponent,
   ],
 })
 export class SubscriptionComponent
@@ -47,6 +57,7 @@ export class SubscriptionComponent
   implements OnInit
 {
   private orgService = inject(OrganizationsService);
+  private dialog = inject(MatDialog);
 
   orgSlug = input.required<string>({ alias: "org-slug" });
   sessionId = input<string>("", { alias: "session_id" });
@@ -90,7 +101,11 @@ export class SubscriptionComponent
       return false;
     }
   });
+  thisMonthPercent = this.service.thisMonthPercent;
   billingEmail = environment.billingEmail;
+
+  // DEV ONLY - remove before committing
+  testBannerState = signal<"hidden" | "no-sub" | "free-low" | "free-high">("hidden");
 
   constructor() {
     const service = inject(SubscriptionService);
@@ -114,5 +129,22 @@ export class SubscriptionComponent
 
   manageSubscription() {
     this.service.redirectToBillingPortal();
+  }
+
+  openPricingTable() {
+    this.dialog.open(StripePricingTableComponent, {
+      width: "90vw",
+      maxWidth: "1200px",
+      maxHeight: "85vh",
+      data: { orgSlug: this.orgSlug() },
+    });
+  }
+
+  openBuiltInPricing() {
+    this.dialog.open(PaymentComponent, {
+      width: "90vw",
+      maxWidth: "1200px",
+      maxHeight: "85vh",
+    });
   }
 }

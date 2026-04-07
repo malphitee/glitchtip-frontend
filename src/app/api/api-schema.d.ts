@@ -1238,6 +1238,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/0/stripe/organizations/{organization_slug}/create-customer-session/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Stripe Customer Session
+         * @description Create a Stripe customer session client secret for the pricing table embed.
+         */
+        post: operations["apps_stripe_api_stripe_customer_session"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/0/stripe/subscriptions/": {
         parameters: {
             query?: never;
@@ -1952,6 +1972,8 @@ export interface components {
             enableOrganizationCreation: boolean;
             /** Stripepublickey */
             stripePublicKey: string | null;
+            /** Stripepricingtableid */
+            stripePricingTableID: string | null;
             /** Plausibleurl */
             plausibleUrl: string | null;
             /** Plausibledomain */
@@ -3333,7 +3355,7 @@ export interface components {
          * EventStatusDisplay
          * @enum {string}
          */
-        EventStatusDisplay: "unresolved" | "resolved" | "ignored";
+        EventStatusDisplay: "unresolved" | "resolved" | "ignored" | "merge";
         /** IssueDetailSchema */
         IssueDetailSchema: {
             /** Id */
@@ -3406,7 +3428,7 @@ export interface components {
          * IssueEventTypeDisplay
          * @enum {string}
          */
-        IssueEventTypeDisplay: "default" | "error" | "csp";
+        IssueEventTypeDisplay: "default" | "error" | "csp" | "expectct" | "expectstaple" | "hpkp";
         /** IssueReleaseSchema */
         IssueReleaseSchema: {
             /** Shortversion */
@@ -3441,7 +3463,7 @@ export interface components {
          * EventStatusEnum
          * @enum {string}
          */
-        EventStatusEnum: "unresolved" | "resolved" | "ignored";
+        EventStatusEnum: "unresolved" | "resolved" | "ignored" | "merge";
         /** StatusDetailsSchema */
         StatusDetailsSchema: {
             /** Inrelease */
@@ -4695,6 +4717,11 @@ export interface components {
         StripePortalSessionSchema: {
             /** Url */
             url: string;
+        };
+        /** StripeCustomerSessionSchema */
+        StripeCustomerSessionSchema: {
+            /** Client Secret */
+            client_secret: string;
         };
         /** CreateSubscriptionResponse */
         CreateSubscriptionResponse: {
@@ -7644,6 +7671,28 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["StripePortalSessionSchema"];
+                };
+            };
+        };
+    };
+    apps_stripe_api_stripe_customer_session: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                organization_slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StripeCustomerSessionSchema"];
                 };
             };
         };
