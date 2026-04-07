@@ -1,9 +1,9 @@
-<gt-preferences class="spacing"></gt-preferences>
-<gt-change-password class="spacing"></gt-change-password>
-<gt-social-auth class="spacing"></gt-social-auth>
-<gt-manage-emails class="spacing"></gt-manage-emails>
+<gt-preferences></gt-preferences>
+<gt-change-password></gt-change-password>
+<gt-social-auth class="full-span"></gt-social-auth>
+<gt-manage-emails class="full-span"></gt-manage-emails>
 
-<mat-card>
+<mat-card class="full-span">
   <mat-card-header>
     <mat-card-title i18n>Delete User Account</mat-card-title>
   </mat-card-header>
@@ -27,6 +27,8 @@
     <gt-loading-button
       data-test
       buttonText="Delete User Account"
+      buttonStyle="stroked"
+      color="warn"
       [loading]="userDeleteLoading() === true"
       (buttonClick)="deleteUser()"
       id="delete-user"

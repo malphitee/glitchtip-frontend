@@ -12,6 +12,7 @@ import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
   selector: "gt-loading-button",
   imports: [MatButtonModule, MatIconModule, MatProgressSpinnerModule],
   templateUrl: "./loading-button.component.html",
+  styleUrls: ["./loading-button.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoadingButtonComponent {
@@ -21,5 +22,6 @@ export class LoadingButtonComponent {
   /** For fullWidth to work, you may need to set width: 100% to app-loading-button */
   readonly fullWidth = input(false);
   readonly buttonStyle = input<"flat" | "stroked" | "basic">("flat");
+  readonly color = input<"primary" | "warn">("primary");
   readonly buttonClick = output();
 }
