@@ -14,10 +14,6 @@
   grid-column: 1 / -1;
 }
 
-gt-social-auth:not(:has(mat-card)) {
-  display: none;
-}
-
 .remove-content {
   display: flex;
   justify-content: space-between;
