@@ -7,11 +7,18 @@ x-environment: &default-environment
   DEFAULT_FROM_EMAIL: email@example.com # Change this to your email
   ENABLE_ADMIN: "False" # Set to True to enable Django Admin at /admin/
   ENABLE_OPENAPI: "False" # Set to True to enable OpenAPI spec at /api/docs
+  GLITCHTIP_ENABLE_MCP: "False" # Set to True to enable MCP server
+  GLITCHTIP_ENABLE_DUCKDB: "False" # Set to True to enable cold storage archival
   # PORT: 8000 # If changing, change the web service port too
+
+  ## To reduce RAM usage (targeting 256-512 MB), consider disabling:
+  # VALKEY_URL: "" # Disable Valkey, use Postgres for task queue and cache
+  # GLITCHTIP_ENABLE_LOGS: "False" # Disable log ingestion
+  # GLITCHTIP_ENABLE_UPTIME: "False" # Disable uptime monitoring
 
 x-depends_on: &default-depends_on
   - postgres
-  - valkey # Comment out when disabling valkey
+  - valkey # Remove when disabling Valkey
 
 services:
   postgres:
@@ -21,7 +28,7 @@ services:
     restart: unless-stopped
     volumes:
       - pg-data:/var/lib/postgresql
-  valkey: # Recommended. Postgres can be used as a fallback by removing this and setting VALKEY_URL to blank.
+  valkey: # Recommended. Remove this service when disabling Valkey.
     image: valkey/valkey:9
     restart: unless-stopped
   web:

@@ -6,7 +6,7 @@ Not sure which? Elestio, Pikapods, and Nodion all support GlitchTip via a revenu
 
 ### System Requirements
 
-GlitchTip requires PostgreSQL (14+), a web service, and a worker service. Valkey (or redis) 7+ is optional.
+GlitchTip requires PostgreSQL (14+) and a single service (or separate web and worker services for scaling). Valkey (or redis) 7+ is optional.
 
 - Recommended system requirements: 512 MB RAM, x86 or arm64 CPU
 - Minimum system requirements: 256 MB RAM when using all-in-one setup. Careful configuration will allow 128 MB + swap.
@@ -19,8 +19,8 @@ For best performance, use a proxy or load balancer that supports request bufferi
 
 Docker Compose is a simple way to run GlitchTip on a single server.
 
-1. Install Docker and Docker Compose. On Debian/Ubuntu this is `sudo apt install docker-compose docker.io`
-2. Copy [compose.sample.yml](/assets/compose.sample.yml) or [compose.minimal.yml](/assets/compose.minimal.yml) to your server as `compose.yml`. Use "sample" for a more scalable and robust installation. Use "minimal" for trial or small instances when you want the lightest system requirements possible. Minimal omits Valkey and uses an all-in-one Python process. It's safe to pick one and switch later.
+1. Install Docker. On Debian/Ubuntu this is `sudo apt install docker.io`
+2. Copy [compose.sample.yml](/assets/compose.sample.yml) to your server as `compose.yml`. For low-RAM setups (256-512 MB), see the commented options in the file for disabling Valkey and optional features.
 3. Edit the environment section of compose.yml. See the Configuration section below.
 
 It's highly recommended configuring SSL next. Use nginx or preferred solution.
@@ -142,10 +142,7 @@ Installing GlitchTip with Helm for Kubernetes is a good option for high throughp
 2. Review our [values.yaml](https://gitlab.com/glitchtip/glitchtip-helm-chart/-/blob/master/values.yaml) and [values.sample.yaml](https://gitlab.com/glitchtip/glitchtip-helm-chart/-/blob/master/values.sample.yaml). At a minimum, decide if using helm postgresql and set env.secret.SECRET_KEY
 3. Install the chart `helm install glitchtip glitchtip/glitchtip -f your-values.yaml`. You'll need to specify your own values.yml file or make use of `--set`.
 
-For postgresql, we recommend an externally managed database and providing only the `DATABASE_URL` environment variable. If using helm managed postgresql, then make sure to consider:
-
-- If you uninstall the chart, it will not delete the pvc. If you reinstall the chart, it won't have the correct password because of this.
-- postgresql helm chart does not support major upgrades (such as 14.0 to 15.0). It will fail to start. You could export to a sql file and import if downtime is acceptable. Minor updates are supported.
+For postgresql, we recommend an externally managed database and providing only the `DATABASE_URL` environment variable.
 
 For high availability, production servers we recommend using multiple Kubernetes Nodes, an ingress and/or load balancer, a pod disruption budget, anti-affinity, and a managed PostgreSQL high availability database.
 
@@ -181,9 +178,6 @@ Required environment variables:
 Optional environment variables:
 
 - `I_PAID_FOR_GLITCHTIP` [Donate](https://liberapay.com/GlitchTip/donate), set this to "true", and some neat things will happen. This won't enable extra features but it will enable our team to continue building GlitchTip. We pay programmers, designers, illustrators, and free tier hosting on app.glitchtip.com without venture capital. We ask that all self-host users pitch in with a suggested donation of $5 per month per user. Prefer an invoice and support instead? Business users can also consider a paid support plan. Reach out to us at sales@glitchtip.com. Contributors on [Gitlab](https://gitlab.com/glitchtip) should also enable this.
-- `GLITCHTIP_MAX_EVENT_LIFE_DAYS` Deprecated — use `GLITCHTIP_RETENTION_DAYS` instead.
-- `GLITCHTIP_MAX_TRANSACTION_EVENT_LIFE_DAYS` Deprecated — use `GLITCHTIP_TRANSACTION_RETENTION_DAYS` instead.
-- `GLITCHTIP_MAX_FILE_LIFE_DAYS` Deprecated — use `GLITCHTIP_FILE_RETENTION_DAYS` instead.
 - `VALKEY_URL` Set valkey host explicitly. Example: `redis://:password@host:port/database`. You may also set them separately with `VALKEY_HOST`, `VALKEY_PORT`, `VALKEY_DATABASE`, and `VALKEY_PASSWORD`. For compability reasons, REDIS_* will also work. Set to empty string to disable VALKEY and utilize Postgres for task queue, cache, and session storage.
 - `DATABASE_URL` Set PostgreSQL connect string. PostgreSQL 14 and above are supported.
 - `CACHE_URL` use alternative cache backend for django, defaults to `VALKEY_URL`
@@ -191,17 +185,17 @@ Optional environment variables:
 - `ENABLE_USER_REGISTRATION` (Default True) When True, any user will be able to register through the self-signup. When False, user self-signup is disabled after the first user is registered. Subsequent users must use social apps if enabled or be created by a superuser on the backend and organization invitations may only be sent to existing users.
 - `ENABLE_SOCIAL_APPS_USER_REGISTRATION` (Default `ENABLE_USER_REGISTRATION`) When True, any user will be able to register through social apps. When False, unregistered user login is disabled after the first user is registered. Subsequent users must use the self-signup or be created by a superuser on the backend.
 - `ENABLE_ORGANIZATION_CREATION` (Default False) When False, only superusers will be able to create new organizations after the first. When True, any user can create a new organization.
-- `GLITCHTIP_MAX_UPTIME_CHECK_LIFE_DAYS` Deprecated — use `GLITCHTIP_UPTIME_RETENTION_DAYS` instead.
 - `GLITCHTIP_ENABLE_UPTIME` (Default True) Set to False to disable uptime monitoring.
 - `GLITCHTIP_UPTIME_ALLOW_PRIVATE_IPS` (Default False) Allow uptime monitors to target private/internal IPs (RFC1918, loopback, link-local). Set to True if monitoring services on an internal network. Default False prevents SSRF attacks against internal infrastructure.
 - `GLITCHTIP_ENABLE_LOGS` (Default True) Enables [log ingestion](/documentation/logs) and the logs UI. Logs are sent via the OpenTelemetry Protocol (OTLP). Set to False to disable.
 - `GLITCHTIP_ENABLE_MCP` (Default False) Enable the built-in [MCP server](/documentation/mcp) for AI-assisted debugging and monitoring.
-- `MAINTENANCE_EVENT_FREEZE` (Default False) Freezes acceptance of new events. Use during database maintenance.
 - `GLITCHTIP_INSTANCE_NAME` Custom instance name displayed in the UI. Supports markdown. Example: `"[My Company's](https://example.com) GlitchTip"`
 - `ALLOWED_HOSTS` (Default `*`) Comma-separated list of allowed hostnames. Restrict this in production for added security.
 - `CSRF_TRUSTED_ORIGINS` Comma-separated list of trusted origins for CSRF. Required when using a reverse proxy with a different domain.
 - `BASE_PATH` Set when running GlitchTip under a subpath (e.g. `/glitchtip`).
 - `PROXY_ENV` (Default False) Set to True to trust HTTP_PROXY, HTTPS_PROXY, and NO_PROXY environment variables.
+- `GLITCHTIP_EMBED_WORKER` (Default False) Run the background worker within the web server process instead of separately. Equivalent to `SERVER_ROLE=all_in_one`.
+- `SKIP_INIT` (Default False) Skip automatic database migrations and partition maintenance on startup. Useful in environments with pre/post upgrade hooks (e.g., the Helm chart sets this by default).
 - `LOG_LEVEL` (Default WARNING) Python log level. Set to `INFO` or `DEBUG` for troubleshooting.
 - `ENABLE_OBSERVABILITY_API` (Default False) Enable Prometheus metrics endpoint.
 
@@ -220,8 +214,6 @@ GlitchTip automatically cleans up old data based on configurable retention perio
 | `GLITCHTIP_UPTIME_RETENTION_DAYS` | `GLITCHTIP_RETENTION_DAYS` | Uptime check retention |
 | `GLITCHTIP_FILE_RETENTION_DAYS` | `GLITCHTIP_RETENTION_DAYS` | File (sourcemap, debug symbol) retention |
 | `GLITCHTIP_RELEASE_RETENTION_DAYS` | 365 | Release retention |
-
-The deprecated variable names (`GLITCHTIP_MAX_EVENT_LIFE_DAYS`, etc.) still work as fallbacks.
 
 ### Cold Storage
 
@@ -246,7 +238,6 @@ GLITCHTIP_ENABLE_DUCKDB=true
 |---|---|---|
 | `DUCKDB_MEMORY_LIMIT` | `128MB` | Memory limit for DuckDB queries. Prevents OOM during archival by spilling to disk. Set to empty string to disable. |
 | `DUCKDB_TEMP_DIRECTORY` | `/tmp` | Writable directory for DuckDB spill-to-disk |
-| `DUCKDB_EXTENSION_DIRECTORY` | (none) | Path to pre-installed DuckDB extensions (pre-installed in Docker image at `/opt/duckdb/extensions`) |
 
 **Cleanup:**
 
@@ -266,30 +257,17 @@ Scaling GlitchTip? Review these granian (web server) and django-vtasks (worker) 
 - `SECURE_HSTS_PRELOAD` (Default False)
 - `SECURE_HSTS_INCLUDE_SUBDOMAINS` (Default False)
 
-### All-in-One Mode
-
-For small instances or trial setups, GlitchTip can run the web server, worker, and migrations in a single process. This significantly reduces memory usage, allowing GlitchTip to run on as little as 256MB of RAM.
-
-To enable this, use the `./bin/run-all-in-one.sh` script, set the environment variable `SERVER_ROLE=all_in_one`, or set `GLITCHTIP_EMBED_WORKER=true`.
-
-When using All-in-One mode:
-- Background tasks are run within the web server process.
-- Database migrations and partition maintenance are performed automatically on startup.
-- It is recommended for instances with low traffic. For higher throughput, use separate web and worker services.
-
 ### Advanced settings for cache and tasks
 
 By default, Valkey is used for the task queue, cache, and sessions. Valkey data is important to be available but is not necessarily worth backing up. When Valkey is disabled, Postgres will be used instead. Redis is also likely to work, but less tested.
 
-- `SESSION_ENGINE` Controls where Django stores session data [See Django documentation](https://docs.djangoproject.com/en/4.0/ref/settings/#std-setting-SESSION_ENGINE).
 - `SESSION_COOKIE_AGE` The age of session cookies, in seconds. Defaults to [Django default](https://docs.djangoproject.com/en/4.0/ref/settings/#std-setting-SESSION_COOKIE_AGE)
 
-If using Sentinel, set `VALKEY_URL` with the sentinel protocol. Example: `sentinel://localhost:26379/mymaster/1`. The task queue (django-vtasks) reuses the cache connection, so no separate broker configuration is needed.
+Sentinel is supported for high availability. Set `CACHE_SENTINEL_URL` to override the cache location with a sentinel topology. The task queue (django-vtasks) reuses the cache connection, so no separate broker configuration is needed.
 
 - `CACHE_SENTINEL_URL` Set to host:port of the sentinel instance(s). Comma-separated for multiple. Do not include the protocol nor password. For example `valkey:26379` or `sentinel1:26379,sentinel2:26379`.
-- `CACHE_SENTINEL_PASSWORD` Set when using a password with Sentinel
-
-Other cache backends may work but are not tested. Consider submitting a merge request to add support for your preferred solution.
+- `CACHE_SENTINEL_SERVICE_NAME` (Default `mymaster`) Sentinel service name.
+- `CACHE_SENTINEL_DB` (Default 0) Sentinel database number.
 
 ### Advanced database permissions
 
@@ -343,7 +321,7 @@ ALTER DEFAULT PRIVILEGES FOR ROLE glitchtip_maintainer IN SCHEMA public
 
 ### File storage
 
-Storage is necessary to enable file uploads, such as sourcemaps. GlitchTip can support both local storage and remote storage via [django-storages](https://django-storages.readthedocs.io/en/latest/).
+Storage is necessary to enable file uploads, such as sourcemaps, and is also used by [cold storage](#cold-storage) when enabled. GlitchTip can support both local storage and remote storage via [django-storages](https://django-storages.readthedocs.io/en/latest/). Many providers offer S3-compatible object storage (DigitalOcean Spaces, Cloudflare R2, Backblaze B2, MinIO, etc.).
 
 GlitchTip maps environment variables to django-storages configuration. If you find that your configuration option is supported by django-storages but not GlitchTip, please submit a [merge request](https://gitlab.com/glitchtip/glitchtip-backend/-/merge_requests).
 
@@ -378,7 +356,7 @@ GlitchTip maps environment variables to django-storages configuration. If you fi
 
 #### Local Docker Volume
 
-For local storage with Docker, use a volume. Refer to Kubernetes or Docker Compose documentation on creating volumes. In the future, docker-compose examples with volumes will be provided by default.
+For local storage with Docker, use a volume. The compose sample includes an `uploads` volume by default.
 
 ### Search Language
 
