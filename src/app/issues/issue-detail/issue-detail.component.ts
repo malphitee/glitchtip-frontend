@@ -86,9 +86,7 @@ export class IssueDetailComponent implements OnInit {
           string,
           string | null,
         ];
-      case "expectct":
-      case "expectstaple":
-      case "hpkp":
+      case "default":
         return [metadata.message || "", metadata.origin || null] as [
           string,
           string | null,
@@ -108,9 +106,7 @@ export class IssueDetailComponent implements OnInit {
         return metadata.value as string;
       case "csp":
         return metadata.message as string;
-      case "expectct":
-      case "expectstaple":
-      case "hpkp":
+      case "default":
         return "";
       default:
         return issue.culprit as string;

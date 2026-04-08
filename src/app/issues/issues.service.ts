@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { client } from "../shared/api/api";
 import { StatefulService } from "../shared/stateful-service/signal-state.service";
 import { getPaginationHeaders, getPaginator } from "../shared/pagination.utils";
-import { IssueStatus, StatsPeriod } from "./interfaces";
+import { IssueStatus, IssueStatusUpdate, StatsPeriod } from "./interfaces";
 import { apiResource } from "../shared/api/api-resource-factory";
 
 export interface DataParams {
@@ -290,7 +290,7 @@ export class IssuesService extends StatefulService<IssuesState> {
     this.setCancelAllResultsSelection();
   }
 
-  async updateStatusByIssueId(orgSlug: string, status: IssueStatus) {
+  async updateStatusByIssueId(orgSlug: string, status: IssueStatusUpdate) {
     const issues = this.selectedIssues();
     if (status === "merge") {
       await this.mergeIssues(orgSlug, issues);
@@ -336,7 +336,7 @@ export class IssuesService extends StatefulService<IssuesState> {
   }
 
   async bulkUpdateStatus(
-    status: IssueStatus,
+    status: IssueStatusUpdate,
     orgSlug: string,
     projectIds: string[],
     query?: string | null,

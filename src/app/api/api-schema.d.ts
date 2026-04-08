@@ -172,7 +172,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/0/projects/{organization_slug}/{project_slug}/files/difs/assemble": {
+    "/api/0/projects/{organization_slug}/{project_slug}/files/difs/assemble/": {
         parameters: {
             query?: never;
             header?: never;
@@ -216,7 +216,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /** List Dsyms */
+        get: operations["apps_difs_api_list_dsyms"];
         put?: never;
         /** Dsyms */
         post: operations["apps_difs_api_dsyms"];
@@ -1254,15 +1255,15 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/0/stripe/subscriptions/{organization_slug}/events_count/": {
+    "/api/0/stripe/subscriptions/{organization_slug}/events_count/period/": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Subscription Events Count */
-        get: operations["apps_stripe_api_subscription_events_count"];
+        /** Subscription Events Count For Period */
+        get: operations["apps_stripe_api_subscription_events_count_for_period"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1280,23 +1281,6 @@ export interface paths {
         };
         /** Subscription Events Count Daily */
         get: operations["apps_stripe_api_subscription_events_count_daily"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/0/stripe/subscriptions/{organization_slug}/events_count/period/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Subscription Events Count for Period */
-        get: operations["apps_stripe_api_subscription_events_count_period"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1958,6 +1942,8 @@ export interface components {
             billingEnabled: boolean;
             /** Ipaidforglitchtip */
             iPaidForGlitchTip: boolean;
+            /** Licensekey */
+            licenseKey: string;
             /** Enableuserregistration */
             enableUserRegistration: boolean;
             /** Enablesocialappsuserregistration */
@@ -2136,8 +2122,15 @@ export interface components {
              * @enum {string}
              */
             type: "app";
-        } & {
-            [key: string]: unknown;
+            app_start_time?: string | null;
+            device_app_hash?: string | null;
+            build_type?: string | null;
+            app_identifier?: string | null;
+            app_name?: string | null;
+            app_version?: string | null;
+            app_build?: string | null;
+            app_memory?: number | null;
+            in_foreground?: boolean | null;
         };
         BrowserContext: {
             /**
@@ -2145,8 +2138,8 @@ export interface components {
              * @enum {string}
              */
             type: "browser";
-        } & {
-            [key: string]: unknown;
+            name: string;
+            version?: string | null;
         };
         /** ClientSDKInfo */
         ClientSDKInfo: {
@@ -2188,8 +2181,11 @@ export interface components {
              * @enum {string}
              */
             type: "culture";
-        } & {
-            [key: string]: unknown;
+            calendar?: string | null;
+            display_name?: string | null;
+            locale?: string | null;
+            is_24_hour_format?: boolean | null;
+            timezone?: string | null;
         };
         /** DebugMeta */
         DebugMeta: {
@@ -2202,8 +2198,45 @@ export interface components {
              * @enum {string}
              */
             type: "device";
-        } & {
-            [key: string]: unknown;
+            name?: string | null;
+            family?: string | null;
+            model?: string | null;
+            model_id?: string | null;
+            arch?: string | null;
+            battery_level?: number | null;
+            orientation?: string | null;
+            manufacturer?: string | null;
+            brand?: string | null;
+            screen_resolution?: string | null;
+            screen_height_pixels?: number | null;
+            screen_width_pixels?: number | null;
+            screen_density?: number | null;
+            screen_dpi?: number | null;
+            online?: boolean | null;
+            charging?: boolean | null;
+            low_memory?: boolean | null;
+            simulator?: boolean | null;
+            memory_size?: number | null;
+            free_memory?: number | null;
+            usable_memory?: number | null;
+            storage_size?: number | null;
+            free_storage?: number | null;
+            external_storage_size?: number | null;
+            external_free_storage?: number | null;
+            boot_time?: string | null;
+            timezone?: string | null;
+            language?: string | null;
+            processor_count?: number | null;
+            cpu_description?: string | null;
+            processor_frequency?: number | null;
+            device_type?: string | null;
+            battery_status?: string | null;
+            device_unique_identifier?: string | null;
+            supports_vibration?: boolean | null;
+            supports_accelerometer?: boolean | null;
+            supports_gyroscope?: boolean | null;
+            supports_audio?: boolean | null;
+            supports_location_service?: boolean | null;
         };
         /** EventBreadcrumb */
         EventBreadcrumb: {
@@ -2379,8 +2412,21 @@ export interface components {
              * @enum {string}
              */
             type: "gpu";
-        } & {
-            [key: string]: unknown;
+            name: string;
+            version?: string | null;
+            id?: string | null;
+            vendor_id?: string | null;
+            vendor_name?: string | null;
+            memory_size?: number | null;
+            api_type?: string | null;
+            multi_threaded_rendering?: boolean | null;
+            npot_support?: string | null;
+            max_texture_size?: number | null;
+            graphics_shader_level?: string | null;
+            supports_draw_call_instancing?: boolean | null;
+            supports_ray_tracing?: boolean | null;
+            supports_compute_shaders?: boolean | null;
+            supports_geometry_shaders?: boolean | null;
         };
         /** IngestEventException */
         IngestEventException: {
@@ -2470,9 +2516,11 @@ export interface components {
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
              */
-            type: "elf" | "macho" | "pe" | "wasm";
+            type: "elf" | "macho" | "pe" | "pe_dotnet" | "wasm";
             /** Debug Id */
             debug_id?: string | null;
+            /** Debug Checksum */
+            debug_checksum?: string | null;
             /** Image Addr */
             image_addr?: string | null;
             /** Image Size */
@@ -2488,8 +2536,13 @@ export interface components {
              * @enum {string}
              */
             type: "os";
-        } & {
-            [key: string]: unknown;
+            name: string;
+            version?: string | null;
+            build?: string | null;
+            kernel_version?: string | null;
+            rooted?: boolean | null;
+            theme?: string | null;
+            raw_description?: string | null;
         };
         /** OtherDebugImage */
         OtherDebugImage: {
@@ -2522,8 +2575,9 @@ export interface components {
              * @enum {string}
              */
             type: "runtime";
-        } & {
-            [key: string]: unknown;
+            name?: string | null;
+            version?: string | null;
+            raw_description?: string | null;
         };
         /** SourceMapImage */
         SourceMapImage: {
@@ -2632,8 +2686,20 @@ export interface components {
              * @enum {string}
              */
             type: "trace";
-        } & {
-            [key: string]: unknown;
+            trace_id: string;
+            span_id: string;
+            parent_span_id?: string | null;
+            op?: string | null;
+            status?: string | null;
+            exclusive_time?: number | null;
+            client_sample_rate?: number | null;
+            tags?: {
+                [key: string]: unknown;
+            } | unknown[] | null;
+            dynamic_sampling_context?: {
+                [key: string]: unknown;
+            } | null;
+            origin?: string | null;
         };
         /** ValueEventBreadcrumb */
         ValueEventBreadcrumb: {
@@ -2686,17 +2752,11 @@ export interface components {
             url?: string | null;
             /** Config */
             config?: Record<string, unknown> | null;
-            /** Tagstoadd */
-            tagsToAdd?: string[] | null;
-        };
-        /** TestAlertResultSchema */
-        TestAlertResultSchema: {
-            /** Recipient Type */
-            recipientType: string;
-            /** Status */
-            status: string;
-            /** Message */
-            message?: string | null;
+            /**
+             * Tags To Add
+             * @description List of additional tags to include in the alert
+             */
+            tagsToAdd?: unknown[] | null;
         };
         /** ProjectAlertSchema */
         ProjectAlertSchema: {
@@ -2755,7 +2815,7 @@ export interface components {
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
              */
-            recipientType: "discord" | "googlechat" | "webhook" | "ntfy" | "teams";
+            recipientType: "discord" | "googlechat" | "ntfy" | "teams" | "webhook";
             /**
              * Url
              * Format: uri
@@ -2776,9 +2836,9 @@ export interface components {
              * Format: uri
              */
             url: string;
-            /** Bot Email */
+            /** Botemail */
             botEmail: string;
-            /** Api Key */
+            /** Apikey */
             apiKey: string;
             /** Channel */
             channel: string;
@@ -2789,6 +2849,15 @@ export interface components {
             topic: string;
             /** Tagstoadd */
             tagsToAdd?: string[] | null;
+        };
+        /** TestAlertResultSchema */
+        TestAlertResultSchema: {
+            /** Recipienttype */
+            recipientType: string;
+            /** Status */
+            status: string;
+            /** Message */
+            message?: string | null;
         };
         /** AssemblePayload */
         AssemblePayload: {
@@ -2802,6 +2871,38 @@ export interface components {
             debug_id?: string | null;
             /** Chunks */
             chunks?: string[];
+        };
+        /** DebugFileSchema */
+        DebugFileSchema: {
+            /** Id */
+            id: string;
+            /** Uuid */
+            uuid?: string | null;
+            /** Debugid */
+            debugId?: string | null;
+            /** Cpuname */
+            cpuName: string;
+            /** Objectname */
+            objectName: string;
+            /** Symboltype */
+            symbolType?: string | null;
+            /** Size */
+            size: number;
+            /** Sha1 */
+            sha1: string;
+            /**
+             * Datecreated
+             * Format: date-time
+             */
+            dateCreated: string;
+            /** Headers */
+            headers: {
+                [key: string]: string;
+            };
+            /** Data */
+            data: {
+                [key: string]: unknown;
+            };
         };
         /** EnvironmentSchema */
         EnvironmentSchema: {
@@ -3216,27 +3317,36 @@ export interface components {
                 [key: string]: unknown;
             } | null;
             user?: components["schemas"]["EventUser"] | null;
+            /**
+             * Hashes
+             * @default []
+             */
+            hashes: string[];
             /** Title */
             title: string;
             /** Transaction */
             transaction: string;
             /** Tags */
             tags: Record<string, unknown>;
-            /** Hashes */
-            hashes: unknown[];
         };
+        /**
+         * EventStatusDisplay
+         * @enum {string}
+         */
+        EventStatusDisplay: "unresolved" | "resolved" | "ignored";
         /** IssueDetailSchema */
         IssueDetailSchema: {
             /** Id */
             id: string;
             /** Count */
             count: string;
-            /** Type */
-            type: string;
-            /** Level */
-            level: string;
-            /** Status */
-            status: string;
+            type: components["schemas"]["IssueEventTypeDisplay"];
+            level: components["schemas"]["LogLevelDisplay"];
+            status: components["schemas"]["EventStatusDisplay"];
+            /** Metadata */
+            metadata: {
+                [key: string]: unknown;
+            };
             project: components["schemas"]["ProjectReference"];
             /** Shortid */
             shortId: string;
@@ -3251,8 +3361,8 @@ export interface components {
             stats: {
                 [key: string]: number[][];
             } | null;
-            /** Share Id */
-            share_id?: number | null;
+            /** Shareid */
+            shareId?: number | null;
             /** Logger */
             logger?: string | null;
             /**
@@ -3260,19 +3370,19 @@ export interface components {
              * @default Not implemented
              */
             permalink: string | null;
-            /** Status Details */
-            status_details?: {
+            /** Statusdetails */
+            statusDetails?: {
                 [key: string]: string;
             } | null;
-            /** Subscription Details */
-            subscription_details?: string | null;
+            /** Subscriptiondetails */
+            subscriptionDetails?: string | null;
             /**
-             * User Count
+             * Usercount
              * @default 0
              */
-            user_count: number | null;
-            /** Matching Event Id */
-            matching_event_id?: string | null;
+            userCount: number | null;
+            /** Matchingeventid */
+            matchingEventId?: string | null;
             firstRelease?: components["schemas"]["IssueReleaseSchema"] | null;
             lastRelease?: components["schemas"]["IssueReleaseSchema"] | null;
             /**
@@ -3287,13 +3397,16 @@ export interface components {
             lastSeen: string;
             /** Title */
             title: string;
-            /** Metadata */
-            metadata: Record<string, unknown>;
             /** Culprit */
             culprit?: string | null;
             /** Userreportcount */
             userReportCount: number;
         };
+        /**
+         * IssueEventTypeDisplay
+         * @enum {string}
+         */
+        IssueEventTypeDisplay: "default" | "error" | "csp";
         /** IssueReleaseSchema */
         IssueReleaseSchema: {
             /** Shortversion */
@@ -3308,6 +3421,11 @@ export interface components {
             /** Version */
             version: string;
         };
+        /**
+         * LogLevelDisplay
+         * @enum {string}
+         */
+        LogLevelDisplay: "sample" | "debug" | "info" | "warning" | "error" | "fatal";
         /** ProjectReference */
         ProjectReference: {
             /** Id */
@@ -3378,12 +3496,13 @@ export interface components {
             id: string;
             /** Count */
             count: string;
-            /** Type */
-            type: string;
-            /** Level */
-            level: string;
-            /** Status */
-            status: string;
+            type: components["schemas"]["IssueEventTypeDisplay"];
+            level: components["schemas"]["LogLevelDisplay"];
+            status: components["schemas"]["EventStatusDisplay"];
+            /** Metadata */
+            metadata: {
+                [key: string]: unknown;
+            };
             project: components["schemas"]["ProjectReference"];
             /** Shortid */
             shortId: string;
@@ -3434,8 +3553,6 @@ export interface components {
             lastSeen: string;
             /** Title */
             title: string;
-            /** Metadata */
-            metadata: Record<string, unknown>;
             /** Culprit */
             culprit?: string | null;
         };
@@ -3860,7 +3977,7 @@ export interface components {
              * Features
              * @default []
              */
-            features: unknown[];
+            features: string[];
             /**
              * Hasaccess
              * @default true
@@ -4283,7 +4400,7 @@ export interface components {
              * Features
              * @default []
              */
-            features: unknown[];
+            features: string[];
             /**
              * Hasaccess
              * @default true
@@ -4368,7 +4485,7 @@ export interface components {
              * Features
              * @default []
              */
-            features: unknown[];
+            features: string[];
             /**
              * Hasaccess
              * @default true
@@ -4594,8 +4711,10 @@ export interface components {
             /** Organization */
             organization: string;
         };
-        /** EventsCountSchema */
-        EventsCountSchema: {
+        /** SubscriptionUsageSchema */
+        SubscriptionUsageSchema: {
+            /** Total */
+            total: number;
             /** Eventcount */
             eventCount: number;
             /** Transactioneventcount */
@@ -4606,12 +4725,13 @@ export interface components {
             logEventCount: number;
             /** Filesizemb */
             fileSizeMb: number;
-            /** Total */
-            total?: number;
         };
         /** DailyEventCountEntry */
         DailyEventCountEntry: {
-            /** Date */
+            /**
+             * Date
+             * Format: date
+             */
             date: string;
             /** Eventcount */
             eventCount: number;
@@ -4624,22 +4744,8 @@ export interface components {
         };
         /** DailyEventsCountSchema */
         DailyEventsCountSchema: {
+            /** Data */
             data: components["schemas"]["DailyEventCountEntry"][];
-        };
-        /** PreviousPeriodEventsCountSchema */
-        PreviousPeriodEventsCountSchema: {
-            /** Eventcount */
-            eventCount: number;
-            /** Transactioneventcount */
-            transactionEventCount: number;
-            /** Uptimecheckeventcount */
-            uptimeCheckEventCount: number;
-            /** Logeventcount */
-            logEventCount: number;
-            /** Filesizemb */
-            fileSizeMb: number;
-            /** Total */
-            total: number;
         };
         /** RepositorySchema */
         RepositorySchema: {
@@ -5593,6 +5699,34 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    apps_difs_api_list_dsyms: {
+        parameters: {
+            query?: {
+                /** @description Number of results to return per page. */
+                limit?: number | null;
+                /** @description The pagination cursor value. */
+                cursor?: string | null;
+            };
+            header?: never;
+            path: {
+                organization_slug: string;
+                project_slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DebugFileSchema"][];
+                };
             };
         };
     };
@@ -7538,9 +7672,11 @@ export interface operations {
             };
         };
     };
-    apps_stripe_api_subscription_events_count: {
+    apps_stripe_api_subscription_events_count_for_period: {
         parameters: {
-            query?: never;
+            query?: {
+                periods_ago?: number;
+            };
             header?: never;
             path: {
                 organization_slug: string;
@@ -7555,7 +7691,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["EventsCountSchema"];
+                    "application/json": components["schemas"]["SubscriptionUsageSchema"];
                 };
             };
         };
@@ -7578,30 +7714,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DailyEventsCountSchema"];
-                };
-            };
-        };
-    };
-    apps_stripe_api_subscription_events_count_period: {
-        parameters: {
-            query?: {
-                periods_ago?: number;
-            };
-            header?: never;
-            path: {
-                organization_slug: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EventsCountSchema"];
                 };
             };
         };
