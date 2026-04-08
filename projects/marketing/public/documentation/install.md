@@ -127,7 +127,7 @@ To update, click the update button in Railway for each service (GlitchTip, Postg
 ## RepoCloud
 
 <a href="https://repocloud.io/?ref=ek83qs8">
-<img src="https://repocloud.io/static/bluelogo.png" alt="Deploy on RepoCloud" style="width:200px;"/>
+<img src="/assets/repocloud.png" alt="Deploy on RepoCloud" style="width:200px;"/>
 </a>
 
 RepoCloud provides a one-click deployment for open source applications, including GlitchTip.
@@ -137,8 +137,6 @@ Sign up and run GlitchTip on RepoCloud [here](https://repocloud.io/?ref=ek83qs8)
 ## Helm
 
 Installing GlitchTip with Helm for Kubernetes is a good option for high throughput sites and users who are very comfortable using Kubernetes.
-
-app.glitchtip.com uses this method with a managed DigitalOcean database.
 
 1. Add our Helm chart repo `helm repo add glitchtip https://gitlab.com/api/v4/projects/16325141/packages/helm/stable`
 2. Review our [values.yaml](https://gitlab.com/glitchtip/glitchtip-helm-chart/-/blob/master/values.yaml) and [values.sample.yaml](https://gitlab.com/glitchtip/glitchtip-helm-chart/-/blob/master/values.sample.yaml). At a minimum, decide if using helm postgresql and set env.secret.SECRET_KEY
@@ -183,9 +181,9 @@ Required environment variables:
 Optional environment variables:
 
 - `I_PAID_FOR_GLITCHTIP` [Donate](https://liberapay.com/GlitchTip/donate), set this to "true", and some neat things will happen. This won't enable extra features but it will enable our team to continue building GlitchTip. We pay programmers, designers, illustrators, and free tier hosting on app.glitchtip.com without venture capital. We ask that all self-host users pitch in with a suggested donation of $5 per month per user. Prefer an invoice and support instead? Business users can also consider a paid support plan. Reach out to us at sales@glitchtip.com. Contributors on [Gitlab](https://gitlab.com/glitchtip) should also enable this.
-- `GLITCHTIP_MAX_EVENT_LIFE_DAYS` (Default 90) Events and associated data older than this will be deleted.
-- `GLITCHTIP_MAX_TRANSACTION_EVENT_LIFE_DAYS` (Default to max event life days) Transaction events older than this will be deleted.
-- `GLITCHTIP_MAX_FILE_LIFE_DAYS` (Defaults to max event life days) Files older than this will be deleted. Files with any reference to a recent event are excluded. For example, a year old file that is used for an active release with event data, will not be deleted.
+- `GLITCHTIP_MAX_EVENT_LIFE_DAYS` Deprecated — use `GLITCHTIP_RETENTION_DAYS` instead.
+- `GLITCHTIP_MAX_TRANSACTION_EVENT_LIFE_DAYS` Deprecated — use `GLITCHTIP_TRANSACTION_RETENTION_DAYS` instead.
+- `GLITCHTIP_MAX_FILE_LIFE_DAYS` Deprecated — use `GLITCHTIP_FILE_RETENTION_DAYS` instead.
 - `VALKEY_URL` Set valkey host explicitly. Example: `redis://:password@host:port/database`. You may also set them separately with `VALKEY_HOST`, `VALKEY_PORT`, `VALKEY_DATABASE`, and `VALKEY_PASSWORD`. For compability reasons, REDIS_* will also work. Set to empty string to disable VALKEY and utilize Postgres for task queue, cache, and session storage.
 - `DATABASE_URL` Set PostgreSQL connect string. PostgreSQL 14 and above are supported.
 - `CACHE_URL` use alternative cache backend for django, defaults to `VALKEY_URL`
@@ -193,9 +191,12 @@ Optional environment variables:
 - `ENABLE_USER_REGISTRATION` (Default True) When True, any user will be able to register through the self-signup. When False, user self-signup is disabled after the first user is registered. Subsequent users must use social apps if enabled or be created by a superuser on the backend and organization invitations may only be sent to existing users.
 - `ENABLE_SOCIAL_APPS_USER_REGISTRATION` (Default `ENABLE_USER_REGISTRATION`) When True, any user will be able to register through social apps. When False, unregistered user login is disabled after the first user is registered. Subsequent users must use the self-signup or be created by a superuser on the backend.
 - `ENABLE_ORGANIZATION_CREATION` (Default False) When False, only superusers will be able to create new organizations after the first. When True, any user can create a new organization.
-- `GLITCHTIP_MAX_UPTIME_CHECK_LIFE_DAYS` (Default to max event life days) Uptime check data older than this will be deleted.
+- `GLITCHTIP_MAX_UPTIME_CHECK_LIFE_DAYS` Deprecated — use `GLITCHTIP_UPTIME_RETENTION_DAYS` instead.
 - `GLITCHTIP_ENABLE_UPTIME` (Default True) Set to False to disable uptime monitoring.
-- `GLITCHTIP_ENABLE_MCP` (Default False) Enable the MCP (Model Context Protocol) server.
+- `GLITCHTIP_UPTIME_ALLOW_PRIVATE_IPS` (Default False) Allow uptime monitors to target private/internal IPs (RFC1918, loopback, link-local). Set to True if monitoring services on an internal network. Default False prevents SSRF attacks against internal infrastructure.
+- `GLITCHTIP_ENABLE_LOGS` (Default True) Enables [log ingestion](/documentation/logs) and the logs UI. Logs are sent via the OpenTelemetry Protocol (OTLP). Set to False to disable.
+- `GLITCHTIP_ENABLE_MCP` (Default False) Enable the built-in [MCP server](/documentation/mcp) for AI-assisted debugging and monitoring.
+- `MAINTENANCE_EVENT_FREEZE` (Default False) Freezes acceptance of new events. Use during database maintenance.
 - `GLITCHTIP_INSTANCE_NAME` Custom instance name displayed in the UI. Supports markdown. Example: `"[My Company's](https://example.com) GlitchTip"`
 - `ALLOWED_HOSTS` (Default `*`) Comma-separated list of allowed hostnames. Restrict this in production for added security.
 - `CSRF_TRUSTED_ORIGINS` Comma-separated list of trusted origins for CSRF. Required when using a reverse proxy with a different domain.
@@ -203,6 +204,53 @@ Optional environment variables:
 - `PROXY_ENV` (Default False) Set to True to trust HTTP_PROXY, HTTPS_PROXY, and NO_PROXY environment variables.
 - `LOG_LEVEL` (Default WARNING) Python log level. Set to `INFO` or `DEBUG` for troubleshooting.
 - `ENABLE_OBSERVABILITY_API` (Default False) Enable Prometheus metrics endpoint.
+
+### Data Retention
+
+GlitchTip automatically cleans up old data based on configurable retention periods.
+
+| Variable | Default | Description |
+|---|---|---|
+| `GLITCHTIP_RETENTION_DAYS` | 90 | Master default for all retention periods |
+| `GLITCHTIP_EVENT_RETENTION_DAYS` | `GLITCHTIP_RETENTION_DAYS` | Error event retention (hot + cold) |
+| `GLITCHTIP_EVENT_HOT_DAYS` | 30 | Days to keep events in PostgreSQL before archival |
+| `GLITCHTIP_TRANSACTION_RETENTION_DAYS` | `GLITCHTIP_RETENTION_DAYS` | Transaction retention (hot + cold) |
+| `GLITCHTIP_LOG_RETENTION_DAYS` | `GLITCHTIP_RETENTION_DAYS` | Log retention (hot + cold) |
+| `GLITCHTIP_LOG_HOT_DAYS` | 7 | Days to keep logs in PostgreSQL before archival |
+| `GLITCHTIP_UPTIME_RETENTION_DAYS` | `GLITCHTIP_RETENTION_DAYS` | Uptime check retention |
+| `GLITCHTIP_FILE_RETENTION_DAYS` | `GLITCHTIP_RETENTION_DAYS` | File (sourcemap, debug symbol) retention |
+| `GLITCHTIP_RELEASE_RETENTION_DAYS` | 365 | Release retention |
+
+The deprecated variable names (`GLITCHTIP_MAX_EVENT_LIFE_DAYS`, etc.) still work as fallbacks.
+
+### Cold Storage
+
+GlitchTip supports a hot/cold storage architecture. Recent data lives in PostgreSQL (hot) for fast queries. Older data is archived to Parquet files on S3 or the local filesystem (cold), queryable via DuckDB. This enables longer retention without growing your PostgreSQL database.
+
+To enable cold storage:
+
+```
+GLITCHTIP_ENABLE_DUCKDB=true
+```
+
+**Storage backend** — choose one:
+
+| Variable | Description |
+|---|---|
+| `GLITCHTIP_COLD_STORAGE_BUCKET` | S3 bucket for cold storage. Defaults to `AWS_STORAGE_BUCKET_NAME` if set. Files use a `cold_storage/` prefix. |
+| `GLITCHTIP_COLD_STORAGE_DIR` | Local filesystem directory for cold storage (alternative to S3) |
+
+**DuckDB tuning:**
+
+| Variable | Default | Description |
+|---|---|---|
+| `DUCKDB_MEMORY_LIMIT` | `128MB` | Memory limit for DuckDB queries. Prevents OOM during archival by spilling to disk. Set to empty string to disable. |
+| `DUCKDB_TEMP_DIRECTORY` | `/tmp` | Writable directory for DuckDB spill-to-disk |
+| `DUCKDB_EXTENSION_DIRECTORY` | (none) | Path to pre-installed DuckDB extensions (pre-installed in Docker image at `/opt/duckdb/extensions`) |
+
+**Cleanup:**
+
+- `GLITCHTIP_COLD_STORAGE_CLEANUP_ENABLED` (Default True) When True, GlitchTip deletes expired cold storage files. Set to False if using S3 lifecycle policies for cleanup instead.
 
 ### Server configuration
 

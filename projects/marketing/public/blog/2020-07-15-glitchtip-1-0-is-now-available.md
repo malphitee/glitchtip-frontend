@@ -1,6 +1,6 @@
 ---
-title: GlitchTip 1.0 is now available
-description: Today we are releasing GlitchTip 1.0 to Docker Hub. It's our first stable release that's ready for general usage!
+title: "GlitchTip 1.0 is now available"
+description: "Today we are releasing GlitchTip 1.0 to Docker Hub. It's our first stable release that's ready for general usage!"
 published: true
 ---
 

@@ -12,6 +12,12 @@ export const routes: Routes = [
       import("./pricing/pricing.component").then((m) => m.PricingComponent),
   },
   {
+    path: "hipaa",
+    loadComponent: () =>
+      import("./hipaa/hipaa.component").then((m) => m.HipaaComponent),
+    title: "HIPAA Compliance",
+  },
+  {
     path: "legal/:slug",
     loadComponent: () =>
       import("./legal/legal.component").then((m) => m.LegalComponent),

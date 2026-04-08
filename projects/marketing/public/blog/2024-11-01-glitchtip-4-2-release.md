@@ -1,6 +1,6 @@
 ---
-title: 'GlitchTip 4.2 Released'
-description: 'More control over incoming events'
+title: "GlitchTip 4.2 Released"
+description: "More control over incoming events"
 published: true
 ---
 

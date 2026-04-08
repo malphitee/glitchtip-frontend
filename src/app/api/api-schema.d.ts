@@ -475,6 +475,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/0/issues/{issue_id}/commits/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Issue Commits
+         * @description Return commits from the release where this issue first appeared.
+         */
+        get: operations["apps_issue_events_api_issues_list_issue_commits"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/0/organizations/{organization_slug}/issues/{issue_id}/": {
         parameters: {
             query?: never;
@@ -598,6 +618,108 @@ export interface paths {
         post?: never;
         /** Delete Hash */
         delete: operations["apps_issue_events_api_hashes_delete_hash"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/0/organizations/{organization_slug}/logs/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Logs
+         * @description List log events for an organization with optional filtering.
+         *
+         *     Queries hot storage (PostgreSQL) for recent data and cold storage
+         *     (S3 Parquet via DuckDB) for older data seamlessly.
+         *
+         *     Supports filtering by:
+         *     - project: List of project IDs
+         *     - level: List of log levels (trace, debug, info, warn, error, fatal)
+         *     - service: Service name (exact match)
+         *     - environment: Environment name (exact match)
+         *     - host: Host name (exact match)
+         *     - traceId: Trace ID for correlation
+         *     - query: Full-text search in log body
+         *     - start/end: Time range filtering (defaults to last 7 days)
+         *     - cursor: Pagination cursor for "load more"
+         *     - limit: Results per page (1-200, default 100)
+         */
+        get: operations["apps_logs_api_list_logs"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/0/organizations/{organization_slug}/logs/{log_id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Log
+         * @description Get a single log event by ID (searches both hot and cold storage).
+         */
+        get: operations["apps_logs_api_get_log"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/0/organizations/{organization_slug}/logs/stats/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Log Stats
+         * @description Get log statistics for an organization.
+         *
+         *     Returns hourly counts grouped by level for charting.
+         *     Supports filtering by project and level.
+         *     Time range defaults to last 7 days, max 90 days.
+         */
+        get: operations["apps_logs_api_get_log_stats"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/0/organizations/{organization_slug}/logs/resources/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Log Resources
+         * @description List unique resource names (service, environment, host) for an organization.
+         *
+         *     Returns resources ordered by last_seen (most recent first).
+         *     Used to populate filter dropdowns in the UI.
+         */
+        get: operations["apps_logs_api_list_log_resources"];
+        put?: never;
+        post?: never;
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -761,23 +883,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/0/organizations/{organization_slug}/transactions/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List Transactions */
-        get: operations["apps_performance_api_list_transactions"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/0/organizations/{organization_slug}/transaction-groups/": {
         parameters: {
             query?: never;
@@ -804,6 +909,74 @@ export interface paths {
         };
         /** Get Transaction Group */
         get: operations["apps_performance_api_get_transaction_group"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/0/organizations/{organization_slug}/transaction-groups/{id}/spans/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Transaction Spans */
+        get: operations["apps_performance_api_list_transaction_spans"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/0/organizations/{organization_slug}/span-groups/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Span Groups */
+        get: operations["apps_performance_api_list_span_groups"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/0/organizations/{organization_slug}/n-plus-one/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List N Plus One Patterns */
+        get: operations["apps_performance_api_list_n_plus_one_patterns"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/0/organizations/{organization_slug}/transaction-groups/{id}/trend/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Transaction Trend */
+        get: operations["apps_performance_api_get_transaction_trend"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1092,6 +1265,58 @@ export interface paths {
         get: operations["apps_stripe_api_subscription_events_count"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/0/stripe/subscriptions/{organization_slug}/events_count/daily/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Subscription Events Count Daily */
+        get: operations["apps_stripe_api_subscription_events_count_daily"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/0/stripe/subscriptions/{organization_slug}/events_count/period/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Subscription Events Count for Period */
+        get: operations["apps_stripe_api_subscription_events_count_period"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/0/organizations/{organization_slug}/repos/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Repositories */
+        get: operations["apps_sourcecode_api_list_repositories"];
+        put?: never;
+        /** Create Repository */
+        post: operations["apps_sourcecode_api_create_repository"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1650,6 +1875,42 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/0/organizations/{organization_slug}/releases/{version}/deploys/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Deploys */
+        get: operations["apps_releases_api_list_deploys"];
+        put?: never;
+        /** Create Deploy */
+        post: operations["apps_releases_api_create_deploy"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/0/organizations/{organization_slug}/releases/{version}/commits/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Commits */
+        get: operations["apps_releases_api_list_commits"];
+        put?: never;
+        /** Create Commits */
+        post: operations["apps_releases_api_create_commits"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/0/organizations/{organization_slug}/releases/{version}/assemble/": {
         parameters: {
             query?: never;
@@ -1723,6 +1984,8 @@ export interface components {
             serverTimeZone: string;
             /** Glitchtipinstancename */
             glitchtipInstanceName: string | null;
+            /** Enabledfeatures */
+            enabledFeatures: string[];
         };
         /** SocialAppSchema */
         SocialAppSchema: {
@@ -1931,7 +2194,7 @@ export interface components {
         /** DebugMeta */
         DebugMeta: {
             /** Images */
-            images: (components["schemas"]["SourceMapImage"] | components["schemas"]["OtherDebugImage"])[];
+            images: ((components["schemas"]["SourceMapImage"] | components["schemas"]["JvmDebugImage"] | components["schemas"]["NativeDebugImage"]) | components["schemas"]["OtherDebugImage"])[];
         };
         DeviceContext: {
             /**
@@ -2175,6 +2438,19 @@ export interface components {
             /** Values */
             values: components["schemas"]["IngestEventException"][];
         };
+        /** JvmDebugImage */
+        JvmDebugImage: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "jvm";
+            /**
+             * Debug Id
+             * Format: uuid
+             */
+            debug_id: string;
+        };
         /** LockReason */
         LockReason: {
             /** Type */
@@ -2187,6 +2463,24 @@ export interface components {
             class_name?: string | null;
             /** Thread Id */
             thread_id?: string | null;
+        };
+        /** NativeDebugImage */
+        NativeDebugImage: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "elf" | "macho" | "pe" | "wasm";
+            /** Debug Id */
+            debug_id?: string | null;
+            /** Image Addr */
+            image_addr?: string | null;
+            /** Image Size */
+            image_size?: number | null;
+            /** Code File */
+            code_file?: string | null;
+            /** Code Id */
+            code_id?: string | null;
         };
         OSContext: {
             /**
@@ -2966,11 +3260,8 @@ export interface components {
              * @default Not implemented
              */
             permalink: string | null;
-            /**
-             * Status Details
-             * @default {}
-             */
-            status_details: {
+            /** Status Details */
+            status_details?: {
                 [key: string]: string;
             } | null;
             /** Subscription Details */
@@ -2982,6 +3273,8 @@ export interface components {
             user_count: number | null;
             /** Matching Event Id */
             matching_event_id?: string | null;
+            firstRelease?: components["schemas"]["IssueReleaseSchema"] | null;
+            lastRelease?: components["schemas"]["IssueReleaseSchema"] | null;
             /**
              * Firstseen
              * Format: date-time
@@ -3001,6 +3294,20 @@ export interface components {
             /** Userreportcount */
             userReportCount: number;
         };
+        /** IssueReleaseSchema */
+        IssueReleaseSchema: {
+            /** Shortversion */
+            shortVersion: string;
+            /**
+             * Datecreated
+             * Format: date-time
+             */
+            dateCreated: string;
+            /** Datereleased */
+            dateReleased: string | null;
+            /** Version */
+            version: string;
+        };
         /** ProjectReference */
         ProjectReference: {
             /** Id */
@@ -3017,11 +3324,38 @@ export interface components {
          * @enum {string}
          */
         EventStatusEnum: "unresolved" | "resolved" | "ignored";
+        /** StatusDetailsSchema */
+        StatusDetailsSchema: {
+            /** Inrelease */
+            inRelease?: string | null;
+            /** Innextrelease */
+            inNextRelease?: boolean | null;
+        };
         /** UpdateIssueSchema */
         UpdateIssueSchema: {
             status?: components["schemas"]["EventStatusEnum"] | null;
+            statusDetails?: components["schemas"]["StatusDetailsSchema"] | null;
             /** Merge */
             merge?: number | null;
+        };
+        /**
+         * CommitSchema
+         * @description Output schema for commit data, matching documented public API.
+         */
+        CommitSchema: {
+            /** Id */
+            id: string;
+            /**
+             * Message
+             * @default
+             */
+            message: string | null;
+            /** Datecreated */
+            dateCreated?: string | null;
+            /** Authorname */
+            authorName?: string | null;
+            /** Authoremail */
+            authorEmail?: string | null;
         };
         /** IssueFilters */
         IssueFilters: {
@@ -3073,11 +3407,8 @@ export interface components {
              * @default Not implemented
              */
             permalink: string | null;
-            /**
-             * Statusdetails
-             * @default {}
-             */
-            statusDetails: {
+            /** Statusdetails */
+            statusDetails?: {
                 [key: string]: string;
             } | null;
             /** Subscriptiondetails */
@@ -3089,6 +3420,8 @@ export interface components {
             userCount: number | null;
             /** Matchingeventid */
             matchingEventId?: string | null;
+            firstRelease?: components["schemas"]["IssueReleaseSchema"] | null;
+            lastRelease?: components["schemas"]["IssueReleaseSchema"] | null;
             /**
              * Firstseen
              * Format: date-time
@@ -3180,6 +3513,186 @@ export interface components {
         IssueHashQuerySchema: {
             /** Id */
             id: string[];
+        };
+        /**
+         * LogFilterSchema
+         * @description Schema for log filtering parameters.
+         */
+        LogFilterSchema: {
+            /**
+             * Project
+             * @description Filter by project IDs
+             */
+            project?: number[] | null;
+            /**
+             * Level
+             * @description Filter by log levels
+             */
+            level?: string[] | null;
+            /**
+             * Service
+             * @description Filter by service name
+             */
+            service?: string | null;
+            /**
+             * Environment
+             * @description Filter by environment
+             */
+            environment?: string | null;
+            /**
+             * Host
+             * @description Filter by host name
+             */
+            host?: string | null;
+            /**
+             * Traceid
+             * @description Filter by trace ID
+             */
+            traceId?: string | null;
+            /**
+             * Query
+             * @description Search in log body
+             */
+            query?: string | null;
+            /**
+             * Start
+             * @description Start of time range
+             */
+            start?: string | null;
+            /**
+             * End
+             * @description End of time range
+             */
+            end?: string | null;
+            /**
+             * Cursor
+             * @description Pagination cursor
+             */
+            cursor?: string | null;
+            /**
+             * Limit
+             * @description Results per page
+             * @default 100
+             */
+            limit: number;
+        };
+        /**
+         * LogEventSchema
+         * @description Schema for log event API responses.
+         */
+        LogEventSchema: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Timestamp
+             * Format: date-time
+             */
+            timestamp: string;
+            /** Level */
+            level: string;
+            /** Body */
+            body: string;
+            /**
+             * Service
+             * @default
+             */
+            service: string | null;
+            /**
+             * Environment
+             * @default
+             */
+            environment: string | null;
+            /**
+             * Host
+             * @default
+             */
+            host: string | null;
+            /** Traceid */
+            traceID?: string | null;
+            /** Spanid */
+            spanID?: string | null;
+            /** Severitynumber */
+            severityNumber?: number | null;
+            /** Data */
+            data?: {
+                [key: string]: unknown;
+            };
+            /** Projectid */
+            projectId: number;
+        };
+        /**
+         * LogStatsFilterSchema
+         * @description Schema for log stats filtering parameters.
+         */
+        LogStatsFilterSchema: {
+            /**
+             * Project
+             * @description Filter by project IDs
+             */
+            project?: number[] | null;
+            /**
+             * Level
+             * @description Filter by log levels
+             */
+            level?: string[] | null;
+            /**
+             * Service
+             * @description Filter by service names
+             */
+            service?: string[] | null;
+            /**
+             * Environment
+             * @description Filter by environment names
+             */
+            environment?: string[] | null;
+            /**
+             * Start
+             * @description Start of time range
+             */
+            start?: string | null;
+            /**
+             * End
+             * @description End of time range
+             */
+            end?: string | null;
+        };
+        /**
+         * LogStatsSchema
+         * @description Schema for log stats response.
+         */
+        LogStatsSchema: {
+            /** Intervals */
+            intervals: string[];
+            /** Series */
+            series: components["schemas"]["LogStatsSeriesSchema"][];
+        };
+        /**
+         * LogStatsSeriesSchema
+         * @description A single series in the stats response.
+         */
+        LogStatsSeriesSchema: {
+            /** Name */
+            name: string;
+            /** Data */
+            data: number[];
+        };
+        /**
+         * LogResourceSchema
+         * @description Schema for resource name in list.
+         */
+        LogResourceSchema: {
+            /** Name */
+            name: string;
+            /** Type */
+            type: string;
+            /**
+             * Lastseen
+             * Format: date-time
+             */
+            lastSeen: string;
         };
         /** OrganizationSchema */
         OrganizationSchema: {
@@ -3558,22 +4071,6 @@ export interface components {
             /** Acceptinvite */
             acceptInvite: boolean;
         };
-        /** TransactionEventSchema */
-        TransactionEventSchema: {
-            /** Event Id */
-            event_id?: string | null;
-            /**
-             * Timestamp
-             * @description Datetime reported by client as the time the measurement finished
-             */
-            timestamp?: string | null;
-            /**
-             * Start Timestamp
-             * Format: date-time
-             * @description Datetime reported by client as the time the measurement started
-             */
-            start_timestamp: string;
-        };
         /** TransactionGroupFilters */
         TransactionGroupFilters: {
             /** Start */
@@ -3585,31 +4082,179 @@ export interface components {
              * @default -avg_duration
              * @enum {string}
              */
-            sort: "created" | "-created" | "avg_duration" | "-avg_duration" | "transaction_count" | "-transaction_count";
+            sort: "created" | "-created" | "avg_duration" | "-avg_duration" | "count" | "-count";
             /**
-             * Environment
+             * Project
              * @default []
              */
-            environment: string[];
+            project: number[];
             /** Query */
             query?: string | null;
         };
         /** TransactionGroupSchema */
         TransactionGroupSchema: {
-            /** Avgduration */
-            avgDuration: number | null;
-            /** Transactioncount */
-            transactionCount: number;
             /** Project */
             project: number;
-            /** ID */
-            id?: number | null;
+            /** Id */
+            id: number;
             /** Transaction */
             transaction: string;
             /** Op */
             op: string;
-            /** Method */
-            method?: string | null;
+            /**
+             * Method
+             * @default
+             */
+            method: string | null;
+            /**
+             * Count
+             * @default 0
+             */
+            count: number;
+            /**
+             * Avg Duration
+             * @description Average duration in ms
+             * @default 0
+             */
+            avgDuration: number;
+            /** P50 */
+            p50?: number | null;
+            /** P95 */
+            p95?: number | null;
+            /**
+             * Error Count
+             * @default 0
+             */
+            errorCount: number;
+            /**
+             * First Seen
+             * Format: date-time
+             */
+            firstSeen: string;
+            /**
+             * Last Seen
+             * Format: date-time
+             */
+            lastSeen: string;
+            /**
+             * Errorrate
+             * @description Delegates to TransactionGroup.error_rate property.
+             */
+            readonly errorRate: number;
+            /**
+             * Throughput
+             * @description Delegates to TransactionGroup.throughput property.
+             */
+            readonly throughput: number | null;
+        };
+        /** SpanGroupFilters */
+        SpanGroupFilters: {
+            /** Start */
+            start?: string | null;
+            /** End */
+            end?: string | null;
+        };
+        /** SpanGroupSchema */
+        SpanGroupSchema: {
+            /** Op */
+            op: string;
+            /** Description */
+            description: string;
+            /** Count */
+            count: number;
+            /** Avgduration */
+            avgDuration: number;
+            /** P95Duration */
+            p95Duration: number;
+            /** Totaltime */
+            totalTime: number;
+        };
+        /** OrgSpanGroupFilters */
+        OrgSpanGroupFilters: {
+            /** Start */
+            start?: string | null;
+            /** End */
+            end?: string | null;
+            /**
+             * Project
+             * @default []
+             */
+            project: number[];
+            /** Op */
+            op?: string | null;
+            /**
+             * Sort
+             * @default -total_time
+             * @enum {string}
+             */
+            sort: "total_time" | "-total_time" | "avg_duration" | "-avg_duration" | "count" | "-count";
+            /**
+             * Limit
+             * @default 50
+             */
+            limit: number;
+        };
+        /** NPlusOneFilters */
+        NPlusOneFilters: {
+            /** Start */
+            start?: string | null;
+            /** End */
+            end?: string | null;
+            /**
+             * Project
+             * @default []
+             */
+            project: number[];
+            /**
+             * Op
+             * @default db
+             */
+            op: string | null;
+            /**
+             * Threshold
+             * @default 5
+             */
+            threshold: number;
+            /**
+             * Limit
+             * @default 50
+             */
+            limit: number;
+        };
+        /** NPlusOnePatternSchema */
+        NPlusOnePatternSchema: {
+            /** Transactionname */
+            transactionName: string;
+            /** Op */
+            op: string;
+            /** Description */
+            description: string;
+            /** Totalspans */
+            totalSpans: number;
+            /** Transactioncount */
+            transactionCount: number;
+            /** Spanspertxn */
+            spansPerTxn: number;
+            /** Avgduration */
+            avgDuration: number;
+            /** Totaltime */
+            totalTime: number;
+        };
+        /** TransactionTrendSchema */
+        TransactionTrendSchema: {
+            /**
+             * Date
+             * Format: date-time
+             */
+            date: string;
+            /** Count */
+            count: number;
+            /** Transactioncount */
+            transactionCount: number;
+            /** Avgduration */
+            avgDuration: number;
+            /** Totaltime */
+            totalTime: number;
         };
         /** ProjectOrganizationSchema */
         ProjectOrganizationSchema: {
@@ -3957,8 +4602,82 @@ export interface components {
             transactionEventCount: number;
             /** Uptimecheckeventcount */
             uptimeCheckEventCount: number;
+            /** Logeventcount */
+            logEventCount: number;
             /** Filesizemb */
             fileSizeMb: number;
+            /** Total */
+            total?: number;
+        };
+        /** DailyEventCountEntry */
+        DailyEventCountEntry: {
+            /** Date */
+            date: string;
+            /** Eventcount */
+            eventCount: number;
+            /** Transactioneventcount */
+            transactionEventCount: number;
+            /** Uptimecheckeventcount */
+            uptimeCheckEventCount: number;
+            /** Logeventcount */
+            logEventCount: number;
+        };
+        /** DailyEventsCountSchema */
+        DailyEventsCountSchema: {
+            data: components["schemas"]["DailyEventCountEntry"][];
+        };
+        /** PreviousPeriodEventsCountSchema */
+        PreviousPeriodEventsCountSchema: {
+            /** Eventcount */
+            eventCount: number;
+            /** Transactioneventcount */
+            transactionEventCount: number;
+            /** Uptimecheckeventcount */
+            uptimeCheckEventCount: number;
+            /** Logeventcount */
+            logEventCount: number;
+            /** Filesizemb */
+            fileSizeMb: number;
+            /** Total */
+            total: number;
+        };
+        /** RepositorySchema */
+        RepositorySchema: {
+            /** Id */
+            id: string;
+            /**
+             * Datecreated
+             * Format: date-time
+             */
+            dateCreated: string;
+            /** Name */
+            name: string;
+            /**
+             * Url
+             * @default
+             */
+            url: string | null;
+            /**
+             * Status
+             * @default active
+             */
+            status: string;
+            /** Provider */
+            provider?: Record<string, unknown> | null;
+        };
+        /** RepositoryIn */
+        RepositoryIn: {
+            /** Name */
+            name: string;
+            /**
+             * Url
+             * @default
+             */
+            url: string;
+            /** Provider */
+            provider?: {
+                [key: string]: unknown;
+            } | null;
         };
         /** ArtifactBundleAssembleIn */
         ArtifactBundleAssembleIn: {
@@ -4305,6 +5024,13 @@ export interface components {
             /** Slug */
             slug?: string | null;
         };
+        /** ReleaseRepositorySchema */
+        ReleaseRepositorySchema: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+        };
         /** ReleaseSchema */
         ReleaseSchema: {
             /** Ref */
@@ -4322,10 +5048,16 @@ export interface components {
             shortVersion: string;
             /** Projects */
             projects: components["schemas"]["NameSlugProjectSchema"][];
+            repository?: components["schemas"]["ReleaseRepositorySchema"] | null;
             /** Url */
             url?: string | null;
             /** Data */
             data?: Record<string, unknown>;
+            /**
+             * Commit Count
+             * @default 0
+             */
+            commitCount: number;
             /**
              * Deploy Count
              * @default 0
@@ -4376,6 +5108,66 @@ export interface components {
             } | null;
             /** Name */
             name: string;
+            /**
+             * Size
+             * @default 0
+             */
+            size: number;
+        };
+        /** DeploySchema */
+        DeploySchema: {
+            /**
+             * Datecreated
+             * Format: date-time
+             */
+            dateCreated: string;
+            /** Datestarted */
+            dateStarted: string | null;
+            /** Datefinished */
+            dateFinished: string | null;
+            /** ID */
+            id?: number | null;
+            /** Environment */
+            environment: string;
+            /**
+             * Url
+             * @default
+             */
+            url: string | null;
+        };
+        /** DeployIn */
+        DeployIn: {
+            /** Environment */
+            environment: string;
+            /**
+             * Url
+             * @default
+             */
+            url: string;
+            /** Datestarted */
+            dateStarted?: string | null;
+            /** Datefinished */
+            dateFinished?: string | null;
+        };
+        /** CommitIn */
+        CommitIn: {
+            /** Id */
+            id: string;
+            /**
+             * Message
+             * @default
+             */
+            message: string;
+            /**
+             * Authorname
+             * @default
+             */
+            authorName: string;
+            /**
+             * Authoremail
+             * @default
+             */
+            authorEmail: string;
         };
         /** AssembleSchema */
         AssembleSchema: {
@@ -5306,6 +6098,28 @@ export interface operations {
             };
         };
     };
+    apps_issue_events_api_issues_list_issue_commits: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                issue_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CommitSchema"][];
+                };
+            };
+        };
+    };
     apps_issue_events_api_issues_update_organization_issue: {
         parameters: {
             query?: never;
@@ -5588,6 +6402,133 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    apps_logs_api_list_logs: {
+        parameters: {
+            query?: {
+                /** @description Filter by project IDs */
+                project?: number[] | null;
+                /** @description Filter by log levels */
+                level?: string[] | null;
+                /** @description Filter by service name */
+                service?: string | null;
+                /** @description Filter by environment */
+                environment?: string | null;
+                /** @description Filter by host name */
+                host?: string | null;
+                /** @description Filter by trace ID */
+                traceId?: string | null;
+                /** @description Search in log body */
+                query?: string | null;
+                /** @description Start of time range */
+                start?: string | null;
+                /** @description End of time range */
+                end?: string | null;
+                /** @description Pagination cursor */
+                cursor?: string | null;
+                /** @description Results per page */
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                organization_slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LogEventSchema"][];
+                };
+            };
+        };
+    };
+    apps_logs_api_get_log: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                organization_slug: string;
+                log_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LogEventSchema"];
+                };
+            };
+        };
+    };
+    apps_logs_api_get_log_stats: {
+        parameters: {
+            query?: {
+                /** @description Filter by project IDs */
+                project?: number[] | null;
+                /** @description Filter by log levels */
+                level?: string[] | null;
+                /** @description Filter by service names */
+                service?: string[] | null;
+                /** @description Filter by environment names */
+                environment?: string[] | null;
+                /** @description Start of time range */
+                start?: string | null;
+                /** @description End of time range */
+                end?: string | null;
+            };
+            header?: never;
+            path: {
+                organization_slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LogStatsSchema"];
+                };
+            };
+        };
+    };
+    apps_logs_api_list_log_resources: {
+        parameters: {
+            query?: {
+                resource_type?: string | null;
+            };
+            header?: never;
+            path: {
+                organization_slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LogResourceSchema"][];
+                };
             };
         };
     };
@@ -5936,40 +6877,13 @@ export interface operations {
             };
         };
     };
-    apps_performance_api_list_transactions: {
-        parameters: {
-            query?: {
-                /** @description Number of results to return per page. */
-                limit?: number | null;
-                /** @description The pagination cursor value. */
-                cursor?: string | null;
-            };
-            header?: never;
-            path: {
-                organization_slug: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TransactionEventSchema"][];
-                };
-            };
-        };
-    };
     apps_performance_api_list_transaction_groups: {
         parameters: {
             query?: {
                 start?: string | null;
                 end?: string | null;
-                sort?: "created" | "-created" | "avg_duration" | "-avg_duration" | "transaction_count" | "-transaction_count";
-                environment?: string[];
+                sort?: "created" | "-created" | "avg_duration" | "-avg_duration" | "count" | "-count";
+                project?: number[];
                 query?: string | null;
                 /** @description Number of results to return per page. */
                 limit?: number | null;
@@ -6014,6 +6928,116 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TransactionGroupSchema"];
+                };
+            };
+        };
+    };
+    apps_performance_api_list_transaction_spans: {
+        parameters: {
+            query?: {
+                start?: string | null;
+                end?: string | null;
+            };
+            header?: never;
+            path: {
+                organization_slug: string;
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SpanGroupSchema"][];
+                };
+            };
+        };
+    };
+    apps_performance_api_list_span_groups: {
+        parameters: {
+            query?: {
+                start?: string | null;
+                end?: string | null;
+                project?: number[];
+                op?: string | null;
+                sort?: "total_time" | "-total_time" | "avg_duration" | "-avg_duration" | "count" | "-count";
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                organization_slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SpanGroupSchema"][];
+                };
+            };
+        };
+    };
+    apps_performance_api_list_n_plus_one_patterns: {
+        parameters: {
+            query?: {
+                start?: string | null;
+                end?: string | null;
+                project?: number[];
+                op?: string | null;
+                threshold?: number;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                organization_slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NPlusOnePatternSchema"][];
+                };
+            };
+        };
+    };
+    apps_performance_api_get_transaction_trend: {
+        parameters: {
+            query?: {
+                start?: string | null;
+                end?: string | null;
+            };
+            header?: never;
+            path: {
+                organization_slug: string;
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TransactionTrendSchema"][];
                 };
             };
         };
@@ -6532,6 +7556,105 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["EventsCountSchema"];
+                };
+            };
+        };
+    };
+    apps_stripe_api_subscription_events_count_daily: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                organization_slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DailyEventsCountSchema"];
+                };
+            };
+        };
+    };
+    apps_stripe_api_subscription_events_count_period: {
+        parameters: {
+            query?: {
+                periods_ago?: number;
+            };
+            header?: never;
+            path: {
+                organization_slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EventsCountSchema"];
+                };
+            };
+        };
+    };
+    apps_sourcecode_api_list_repositories: {
+        parameters: {
+            query?: {
+                /** @description Number of results to return per page. */
+                limit?: number | null;
+                /** @description The pagination cursor value. */
+                cursor?: string | null;
+            };
+            header?: never;
+            path: {
+                organization_slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RepositorySchema"][];
+                };
+            };
+        };
+    };
+    apps_sourcecode_api_create_repository: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                organization_slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RepositoryIn"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RepositorySchema"];
                 };
             };
         };
@@ -7831,6 +8954,106 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    apps_releases_api_list_deploys: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                organization_slug: string;
+                version: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DeploySchema"][];
+                };
+            };
+        };
+    };
+    apps_releases_api_create_deploy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                organization_slug: string;
+                version: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeployIn"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DeploySchema"];
+                };
+            };
+        };
+    };
+    apps_releases_api_list_commits: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                organization_slug: string;
+                version: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CommitSchema"][];
+                };
+            };
+        };
+    };
+    apps_releases_api_create_commits: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                organization_slug: string;
+                version: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CommitIn"][];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReleaseSchema"];
+                };
             };
         };
     };

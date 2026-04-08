@@ -1,4 +1,4 @@
-<div class="mat-typography" [class.dialog-content]="dialog">
+<div [class.dialog-content]="dialog">
   @if (dialog) {
     <h2 i18n>Events</h2>
   }
@@ -19,6 +19,10 @@
       <li i18n
         ><b>Performance:</b> Each time your app sends GlitchTip a transaction
         report for a tracked activity on your app</li
+      >
+      <li i18n
+        ><b>Logs:</b> Each log entry counts as 1/10 of an event — so 10 log
+        entries equal 1 event toward your limit</li
       >
       <li i18n
         ><b>Releases:</b> Each megabyte of file storage is counted as an

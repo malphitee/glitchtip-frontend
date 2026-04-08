@@ -7,17 +7,38 @@
       [opened]="navOpen()"
       (closed)="closeSideNav()"
       [mode]="mobileNav() === true ? 'over' : 'side'"
+      [class.collapsed]="isCollapsed()"
     >
       <mat-toolbar class="logo-toolbar">
-        <img
-          class="main-logo"
-          routerLink="."
-          (click)="reload()"
-          src="static/assets/images/glitchtip-logo-v1.svg"
-          alt="GlitchTip"
-        />
+        @if (!isCollapsed()) {
+          <img
+            class="main-logo"
+            routerLink="."
+            (click)="reload()"
+            src="static/assets/images/glitchtip-logo-v1.svg"
+            alt="GlitchTip"
+          />
+        } @else {
+          <img
+            class="collapsed-logo"
+            routerLink="."
+            (click)="reload()"
+            src="static/assets/images/glitchtip-logo-collasped.svg"
+            alt="GlitchTip"
+          />
+        }
+        <button
+          mat-icon-button
+          class="collapse-toggle"
+          (click)="toggleCollapse()"
+        >
+          @if (isCollapsed()) {
+            <mat-icon>left_panel_open</mat-icon>
+          } @else {
+            <mat-icon>left_panel_close</mat-icon>
+          }
+        </button>
       </mat-toolbar>
-      @for (org of organizations(); track org.id) {}
       @if (contextLoaded() && organizations().length === 0 && canCreateOrg()) {
         <div class="org-create-button-container">
           <a
@@ -73,57 +94,138 @@
         </mat-form-field>
       }
       <mat-nav-list>
-        <mat-tree
-          #tree
-          [dataSource]="menuData()"
-          [childrenAccessor]="childrenAccessor"
-        >
-          <!-- Default template for navigable items -->
-          <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
-            @if (activeOrganization() || !node.requiresActiveOrg) {
-              <a
-                mat-list-item
-                [routerLink]="getRouteWithOrgSlug(node.route)"
-                routerLinkActive
-                [routerLinkActiveOptions]="{
-                  exact: node.useExactRoute ?? false,
-                }"
-                #issuesLink="routerLinkActive"
-                [activated]="issuesLink.isActive"
-                >{{ node.name }}</a
-              >
-            } @else {
-              <mat-list-item disabled>
-                {{ node.name }}
-              </mat-list-item>
-            }
-          </mat-tree-node>
-
-          <!-- Template for expandable nav nodes -->
-          <mat-tree-node
-            isExpandable
-            *matTreeNodeDef="let node; when: hasChild"
-            matTreeNodePadding
-            [isDisabled]="!activeOrganization() && node.requiresActiveOrg"
-            [cdkTreeNodeTypeaheadLabel]="node.name"
-          >
-            <mat-list-item
-              matTreeNodeToggle
-              [disabled]="!activeOrganization() && node.requiresActiveOrg"
+        <mat-divider class="nav-section-divider"></mat-divider>
+        <!-- Main nav items -->
+        @for (item of visibleNavItems(); track item.route) {
+          @if (activeOrganization()) {
+            <a
+              mat-list-item
+              [routerLink]="getRouteWithOrgSlug(item.route)"
+              routerLinkActive="mdc-list-item--activated"
+              [matTooltip]="item.name"
+              [matTooltipDisabled]="!isCollapsed()"
+              matTooltipPosition="right"
             >
-              <span matListItemTitle>{{ node.name }}</span>
-              <div matListItemMeta>
-                <mat-icon>
-                  {{
-                    tree.isExpanded(node) ? "arrow_drop_down" : "arrow_right"
-                  }}
-                </mat-icon>
-              </div>
+              <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+              <span class="nav-text">{{ item.name }}</span>
+            </a>
+          } @else {
+            <mat-list-item
+              disabled
+              [matTooltip]="item.name"
+              [matTooltipDisabled]="!isCollapsed()"
+              matTooltipPosition="right"
+            >
+              <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+              <span class="nav-text">{{ item.name }}</span>
             </mat-list-item>
-          </mat-tree-node>
-        </mat-tree>
-        <a mat-list-item (click)="this.logout()" i18n>Log Out</a>
+          }
+        }
+
+        <mat-divider class="nav-section-divider"></mat-divider>
+
+        <!-- Organization menu item -->
+        <div
+          routerLinkActive
+          [routerLinkActiveOptions]="{
+            paths: 'subset',
+            queryParams: 'ignored',
+            fragment: 'ignored',
+            matrixParams: 'ignored',
+          }"
+          #orgWrapper="routerLinkActive"
+        >
+          <button
+            mat-list-item
+            [matMenuTriggerFor]="orgMenu"
+            [disabled]="!activeOrganization()"
+            [class.active-section]="orgWrapper.isActive"
+            matTooltip="Organization"
+            [matTooltipDisabled]="!isCollapsed()"
+            matTooltipPosition="right"
+            i18n-matTooltip
+          >
+            <mat-icon matListItemIcon>account_tree</mat-icon>
+            <span matListItemTitle class="nav-text" i18n>Organization</span>
+            <div matListItemMeta>
+              <mat-icon class="arrow-icon">arrow_drop_down</mat-icon>
+            </div>
+          </button>
+          @for (item of visibleOrgMenuItems(); track item.route) {
+            <a
+              [routerLink]="getRouteWithOrgSlug(item.route)"
+              style="display: none"
+            ></a>
+          }
+        </div>
+
+        <!-- Profile menu item -->
+        <div
+          routerLinkActive
+          [routerLinkActiveOptions]="{
+            paths: 'subset',
+            queryParams: 'ignored',
+            fragment: 'ignored',
+            matrixParams: 'ignored',
+          }"
+          #profileWrapper="routerLinkActive"
+        >
+          <button
+            mat-list-item
+            [matMenuTriggerFor]="profileMenu"
+            [class.active-section]="profileWrapper.isActive"
+            matTooltip="Profile"
+            [matTooltipDisabled]="!isCollapsed()"
+            matTooltipPosition="right"
+            i18n-matTooltip
+          >
+            <mat-icon matListItemIcon>account_circle</mat-icon>
+            <span matListItemTitle class="nav-text" i18n>Profile</span>
+            <div matListItemMeta>
+              <mat-icon class="arrow-icon">arrow_drop_down</mat-icon>
+            </div>
+          </button>
+          @for (item of profileMenuItems; track item.route) {
+            <a [routerLink]="item.route" style="display: none"></a>
+          }
+        </div>
       </mat-nav-list>
+
+      <mat-menu #orgMenu="matMenu" class="nav-menu" xPosition="after">
+        @if (activeOrganization()) {
+          @for (item of visibleOrgMenuItems(); track item.route) {
+            <button
+              mat-menu-item
+              [routerLink]="getRouteWithOrgSlug(item.route)"
+              routerLinkActive="active-menu-item"
+              [routerLinkActiveOptions]="{ exact: item.exactRoute ?? false }"
+            >
+              <mat-icon>{{ item.icon }}</mat-icon>
+              <span>{{ item.name }}</span>
+            </button>
+          }
+        }
+      </mat-menu>
+
+      <mat-menu #profileMenu="matMenu" class="nav-menu" xPosition="after">
+        @for (item of profileMenuItems; track item.route) {
+          <button
+            mat-menu-item
+            [routerLink]="item.route"
+            routerLinkActive="active-menu-item"
+            [routerLinkActiveOptions]="{ exact: item.exactRoute ?? false }"
+          >
+            <mat-icon>{{ item.icon }}</mat-icon>
+            <span>{{ item.name }}</span>
+          </button>
+        }
+        <mat-divider></mat-divider>
+        <button mat-menu-item (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          <span i18n>Log Out</span>
+        </button>
+      </mat-menu>
+
       @if (paidForGlitchTip() === false) {
         <mat-divider class="support-cta-divider"></mat-divider>
         <div class="support-cta-container">

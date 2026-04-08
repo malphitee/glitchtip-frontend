@@ -10,17 +10,100 @@ mat-sidenav-container {
   right: 0;
 }
 
-mat-sidenav {
-  width: variables.$side-nav-width;
-}
-
 mat-nav-list {
   padding: 10px;
+
+
+
+  button[mat-list-item] {
+    border: none;
+    text-align: inherit;
+  }
+
+  .nav-section-divider {
+    margin-left: -10px;
+    margin-right: -10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border-color: var(--mat-sys-outline-variant);
+  }
 
   // TODO: Find a more reliable way to change icon color
   .mdc-list-item--disabled {
     mat-icon {
-      opacity: .25;
+      opacity: 0.25;
+    }
+  }
+}
+
+.active-section {
+  background-color: var(--mat-sys-primary);
+
+  .mdc-list-item__primary-text,
+  span[matListItemTitle],
+  mat-icon {
+    color: var(--mat-sys-on-primary);
+  }
+
+  .arrow-icon {
+    color: var(--mat-sys-on-primary);
+  }
+}
+
+.active-menu-item {
+  background-color: var(--mat-sys-surface-container-highest);
+}
+
+mat-sidenav {
+  width: variables.$side-nav-width;
+
+  mat-icon[matListItemIcon] {
+    margin-right: 8px;
+    margin-left: 8px;
+  }
+
+  &.collapsed {
+    width: 72px;
+
+    .org-create-button-container,
+    .org-dropdown-container,
+    .support-cta-container,
+    .version {
+      display: none;
+    }
+
+    .nav-text {
+      display: none;
+    }
+
+    mat-nav-list {
+      padding: 16px;
+    }
+
+    mat-list-item {
+      justify-content: center;
+      padding: 0;
+    }
+
+    [matListItemMeta] {
+      display: none;
+    }
+
+    .logo-toolbar {
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-top: 8px;
+
+      .collapsed-logo {
+        width: 24px;
+        margin-bottom: 20px;
+        cursor: pointer;
+      }
+
+      .collapse-toggle {
+        margin-right: 0;
+      }
     }
   }
 }
@@ -28,23 +111,31 @@ mat-nav-list {
 .logo-toolbar {
   height: fit-content;
   padding-top: 16px;
-  background-color: transparent;
+  justify-content: space-between;
 
   .main-logo {
     width: 115px;
     cursor: pointer;
+  }
+
+  .collapse-toggle {
+    margin-right: 8px;
+    @media screen and (max-width: variables.$small) {
+      display: none;
+    }
   }
 }
 
 .org-create-button-container,
 .org-dropdown-container {
   width: 100%;
-  padding: 25px 15px 0px 15px;
+  padding: 25px 15px 0 15px;
 }
 
 .org-create-button {
   height: 48px;
 }
+
 .support-cta-divider {
   border-color: var(--mat-sys-outline-variant);
 }
@@ -71,5 +162,18 @@ mat-nav-list {
     font-weight: 300;
     font-size: small;
     text-decoration: none;
+  }
+}
+
+mat-list-item,
+button[mat-list-item] {
+  .arrow-icon {
+    transition:
+      transform 200ms ease-in-out,
+      color 200ms ease-in-out;
+  }
+
+  &[aria-expanded="true"] .arrow-icon {
+    transform: rotate(180deg);
   }
 }

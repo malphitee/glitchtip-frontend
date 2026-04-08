@@ -1,7 +1,7 @@
 ---
-title: 'Improvements to Uptime Monitoring'
+title: "Improvements to Uptime Monitoring"
 description: "GlitchTip's uptime monitoring has been upgraded under the hood to improve performance and reliability"
-author: David Burke
+author: "David Burke"
 published: true
 ---
 
@@ -20,7 +20,7 @@ We wanted GlitchTip’s uptime monitoring feature to support more configuration 
             "
         />
         <img
-            src="/assets/screenshots/monitor-detail@1xpng"
+            src="/assets/screenshots/monitor-detail@1x.png"
             srcset="
                 /assets/screenshots/monitor-detail@1x.png,
                 /assets/screenshots/monitor-detail@2x.png 2x,

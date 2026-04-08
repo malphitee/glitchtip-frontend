@@ -1,5 +1,16 @@
-import { seedBackend, requestLogin, getDSN, uniqueId } from "./utils.cy";
-import { seededOrg, seededProject1 } from "../fixtures/variables";
+import { seedBackend, requestLogin } from "./utils.cy";
+import { seededOrg, seededProject3, seededTeam } from "../fixtures/variables";
+
+function createProject(body: { name: string; platform?: string }) {
+  return cy.getCookie("csrftoken").then((cookie) =>
+    cy.request({
+      method: "POST",
+      url: `/api/0/teams/${seededOrg.slug}/${seededTeam.name}/projects/`,
+      headers: { "X-CSRFToken": cookie!.value },
+      body,
+    }),
+  );
+}
 
 describe("Issues Page", () => {
   beforeEach(() => {
@@ -42,56 +53,96 @@ describe("Issues Page", () => {
       cy.get('[data-cy="list-title"]').contains("Issues (55)");
     },
   );
-
-  // it("should test event detail request body structured and raw views", function () {
-  //   const testEvent = {
-  //     message: "Test Event with POST Body",
-  //     level: "error",
-  //     event_id: uniqueId(),
-  //     platform: "javascript",
-  //     sdk: {
-  //       name: "sentry.javascript.browser",
-  //       packages: [{ name: "npm:@sentry/browser", version: "5.29.2" }],
-  //       version: "5.29.2",
-  //     },
-  //     timestamp: Date.now() / 1000,
-  //     request: {
-  //       url: "http://localhost:4201/api/test",
-  //       method: "POST",
-  //       data: {
-  //         a: "foo",
-  //         b: [1, 2]
-  //       },
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:87.0) Gecko/20100101 Firefox/87.0"
-  //       }
-  //     }
-  //   };
-  //   cy.visit(`/${organization.slug}/issues`);
-  //   cy.wait(1000);
-  //   cy.get("gt-project-filter-bar mat-expansion-panel-header").click();
-  //   cy.get("gt-project-filter-bar").contains(project.name).click();
-  //   cy.get("[data-test-dsn]")
-  //     .invoke("val")
-  //     .then((dsn) => {
-  //       const url = getDSN(dsn as string);
-  //       cy.request("POST", url, testEvent);
-  //       cy.wait(3000);
-  //       cy.visit(`/${organization.slug}/issues`);
-  //       cy.wait(2000);
-  //       cy.get(".title-cell").find("a").first().click();
-  //       cy.wait(2000);
-  //       cy.get('mat-button-toggle[value="structured"]').should('have.class', 'mat-button-toggle-checked');
-  //       cy.get('gt-entry-data').contains('a').parent().should('contain', 'foo');
-  //       cy.get('gt-entry-data').contains('b').parent().should('contain', '[1,2]');
-  //       cy.get('mat-button-toggle[value="raw"]').click();
-  //       cy.wait(500);
-  //       cy.get('mat-button-toggle[value="raw"]').should('have.class', 'mat-button-toggle-checked');
-  //       cy.get('pre code[gtPrism]').should('contain', '"a": "foo"');
-  //       cy.get('pre code[gtPrism]').should('contain', '"b": [');
-  //       cy.get('pre code[gtPrism]').should('contain', '1,');
-  //       cy.get('pre code[gtPrism]').should('contain', '2');
-  //     });
-  // });
 });
+
+describe(
+  "Issue Zero States - new projects",
+  { defaultCommandTimeout: 6000, requestTimeout: 10000 },
+  () => {
+    before(() => {
+      seedBackend(true, true);
+      requestLogin();
+    });
+
+    it("shows correct zero state for each project configuration", () => {
+      cy.intercept("GET", "/api/0/organizations/*/issues/?*").as("issues");
+
+      // Create all projects upfront so we only seed and log in once
+      createProject({ name: "test-python", platform: "python" })
+        .then((res) => res.body.id)
+        .as("pythonId");
+      createProject({ name: "test-other", platform: "other" })
+        .then((res) => res.body.id)
+        .as("otherId");
+      createProject({ name: "test-noplatform" })
+        .then((res) => res.body.id)
+        .as("noplatformId");
+      // A fresh org with no projects, to test that specific zero state
+      cy.getCookie("csrftoken").then((cookie) =>
+        cy.request({
+          method: "POST",
+          url: "/api/0/organizations/",
+          headers: { "X-CSRFToken": cookie!.value },
+          body: { name: "zero-states-empty-org" },
+        }),
+      )
+        .then((res) => res.body.slug)
+        .as("emptyOrgSlug");
+
+      // Platform with SDK docs: shows platform-specific markdown with DSN substituted
+      cy.get("@pythonId").then((id) => {
+        cy.request(`/api/0/projects/${seededOrg.slug}/test-python/keys/`).then(
+          (keysRes) => {
+            const dsn = keysRes.body[0].dsn.public;
+            cy.visit(`/${seededOrg.slug}/issues?project=${id}`);
+            cy.wait("@issues");
+            cy.get("[data-cy=sdk-docs]").should("contain", dsn);
+          },
+        );
+      });
+      // "Other" platform: no specific docs, shows generic notice
+      cy.get("@otherId").then((id) => {
+        cy.visit(`/${seededOrg.slug}/issues?project=${id}`);
+        cy.wait("@issues");
+        cy.get("[data-cy=platform-other-notice]");
+      });
+      // No platform set: prompt to configure one in settings
+      cy.get("@noplatformId").then((id) => {
+        cy.visit(`/${seededOrg.slug}/issues?project=${id}`);
+        cy.wait("@issues");
+        cy.get("[data-cy=platform-settings-link]");
+      });
+      // Org with no projects at all
+      cy.get("@emptyOrgSlug").then((slug) => {
+        cy.visit(`/${slug}/issues`);
+        cy.wait("@issues");
+        cy.get("[data-cy=no-projects]");
+      });
+    });
+
+  },
+);
+
+describe(
+  "Issue Zero States - existing events",
+  { defaultCommandTimeout: 6000, requestTimeout: 10000 },
+  () => {
+    beforeEach(() => {
+      seedBackend(true, true);
+      requestLogin();
+      cy.intercept("GET", "/api/0/organizations/*/issues/?*").as("issues");
+    });
+
+    it("shows no-match message for a project that has had events", () => {
+      cy.request(
+        `/api/0/projects/${seededOrg.slug}/${seededProject3.slug}/`,
+      ).then((res) => {
+        cy.visit(
+          `/${seededOrg.slug}/issues?project=${res.body.id}&query=is%3Aresolved`,
+        );
+        cy.wait("@issues");
+        cy.get("[data-cy=no-results]");
+      });
+    });
+  },
+);

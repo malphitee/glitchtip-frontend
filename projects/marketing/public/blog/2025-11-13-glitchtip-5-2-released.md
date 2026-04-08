@@ -1,6 +1,6 @@
 ---
-title: 'GlitchTip 5.2 Released'
-description: 'A Modern Design Refresh with Material Design 3 and PostgreSQL-Only Mode. And new DOS mitigation.'
+title: "GlitchTip 5.2 Released"
+description: "A Modern Design Refresh with Material Design 3 and PostgreSQL-Only Mode. And new DOS mitigation."
 published: true
 ---
 

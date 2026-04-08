@@ -1,6 +1,6 @@
 ---
-title: 'GlitchTip 5.1 Released'
-description: 'Featuring security best practices, performance boosts, and new features'
+title: "GlitchTip 5.1 Released"
+description: "Featuring security best practices, performance boosts, and new features"
 published: true
 ---
 

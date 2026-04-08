@@ -1,9 +1,9 @@
 ---
-title: 'Building the GlitchTip identity'
-description: 'Learn how we built our brand'
+title: "Building the GlitchTip identity"
+description: "Learn how we built our brand"
 published: true
 date: April 23, 2021
-author: Brendan Berkley
+author: "Brendan Berkley"
 ---
 
 Building a brand is an important part of launching a product. How important is certainly a matter of debate. But ultimately, a good identity conveys professionalism, which builds trust. A good name and brand can do a lot of marketing work for you if you do it right.

@@ -7,6 +7,8 @@ x-environment: &default-environment
   DEFAULT_FROM_EMAIL: email@example.com # Change this to your email
   ENABLE_ADMIN: "False" # Set to True to enable Django Admin at /admin/
   ENABLE_OPENAPI: "False" # Set to True to enable OpenAPI spec at /api/docs
+  GLITCHTIP_ENABLE_LOGS: "False" # Set to True to enable log ingestion
+  GLITCHTIP_ENABLE_UPTIME: "False" # Set to True to enable uptime monitoring
   # PORT: 8000 # If changing, change the web service port too
 
 x-depends_on: &default-depends_on

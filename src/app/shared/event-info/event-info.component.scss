@@ -1,7 +1,10 @@
+@use "src/assets/styles/_variables.scss" as vars;
+
 p {
   margin-top: 16px;
 }
 
 .dialog-content {
+  font-family: vars.$font-sans-serif;
   padding: 24px;
 }

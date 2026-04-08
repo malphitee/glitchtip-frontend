@@ -96,6 +96,11 @@ export const routes: Routes = [
             },
           },
           {
+            path: "logs",
+            loadChildren: () => import("./logs/routes"),
+            title: "Logs",
+          },
+          {
             path: "uptime-monitors",
             loadChildren: () => import("./uptime/routes"),
             title: "Uptime Monitors",

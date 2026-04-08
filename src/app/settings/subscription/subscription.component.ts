@@ -7,9 +7,7 @@ import {
   OnInit,
 } from "@angular/core";
 import { RouterLink } from "@angular/router";
-import { MatDialog, MatDialogModule } from "@angular/material/dialog";
 import { StatefulComponent } from "src/app/shared/stateful-service/signal-state.component";
-import { EventInfoComponent } from "src/app/shared/event-info/event-info.component";
 import { environment } from "../../../environments/environment";
 import {
   SubscriptionService,
@@ -18,19 +16,13 @@ import {
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { PaymentComponent } from "./payment/payment.component";
 import { MatButtonModule } from "@angular/material/button";
-import { LoadingButtonComponent } from "src/app/shared/loading-button/loading-button.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatCardModule } from "@angular/material/card";
-import { CurrencyPipe, DatePipe } from "@angular/common";
+import { DatePipe } from "@angular/common";
+import { MatDividerModule } from "@angular/material/divider";
 import { OrganizationsService } from "src/app/api/organizations.service";
-
-interface Percentages {
-  total: number;
-  errorEvents: number;
-  transactionEvents: number;
-  uptimeEvents: number;
-  fileSize: number;
-}
+import { TopAppBar } from "src/app/shared/top-app-bar/top-app-bar";
+import { SubscriptionChartsComponent } from "./subscription-charts/subscription-charts.component";
 
 @Component({
   selector: "gt-subscription",
@@ -38,16 +30,16 @@ interface Percentages {
   styleUrls: ["./subscription.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TopAppBar,
     MatCardModule,
-    MatDialogModule,
     RouterLink,
     MatFormFieldModule,
     MatButtonModule,
-    LoadingButtonComponent,
     PaymentComponent,
     MatProgressSpinnerModule,
-    CurrencyPipe,
     DatePipe,
+    MatDividerModule,
+    SubscriptionChartsComponent,
   ],
 })
 export class SubscriptionComponent
@@ -55,7 +47,6 @@ export class SubscriptionComponent
   implements OnInit
 {
   private orgService = inject(OrganizationsService);
-  dialog = inject(MatDialog);
 
   orgSlug = input.required<string>({ alias: "org-slug" });
   sessionId = input<string>("", { alias: "session_id" });
@@ -67,12 +58,22 @@ export class SubscriptionComponent
   subscription = this.service.subscription;
   subscriptionLoading = this.service.subscriptionLoading;
   subscriptionRefreshTimeout = this.service.subscriptionRefreshTimeout;
-  eventsCountWithTotal = this.service.eventsCountWithTotal;
   totalEventsAllowed = this.service.totalEventsAllowed;
   activeOrganization = this.orgService.activeOrganization;
   activeOrganizationSlug = this.orgService.activeOrganizationSlug;
   billingPortalLoading = this.service.billingPortalLoading;
   billingPortalLoadingError = this.service.billingPortalLoadingError;
+  daysRemaining = computed(() => {
+    const subscription = this.service.subscription();
+    const endDate = subscription?.subscriptionCycleEnd ?? subscription?.currentPeriodEnd;
+    if (!endDate) return null;
+    const end = new Date(endDate);
+    const now = new Date();
+    const diff = Math.ceil(
+      (end.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
+    );
+    return Math.max(0, diff);
+  });
 
   promptForProject = computed(() => {
     const status = this.orgService.activeOrganizationLoaded();
@@ -90,18 +91,6 @@ export class SubscriptionComponent
     }
   });
   billingEmail = environment.billingEmail;
-  eventsPercent = computed<Percentages>(() => {
-    const eventsAllowed = this.totalEventsAllowed();
-    const events = this.eventsCountWithTotal();
-    return {
-      total: (events?.total! / eventsAllowed!) * 100,
-      errorEvents: (events?.eventCount! / eventsAllowed!) * 100,
-      transactionEvents:
-        (events?.transactionEventCount! / eventsAllowed!) * 100,
-      uptimeEvents: (events?.uptimeCheckEventCount! / eventsAllowed!) * 100,
-      fileSize: (events?.fileSizeMb! / eventsAllowed!) * 100,
-    };
-  });
 
   constructor() {
     const service = inject(SubscriptionService);
@@ -121,12 +110,6 @@ export class SubscriptionComponent
     if (this.billingPortalRedirect()) {
       this.orgService.repeatRefreshOrgDetail();
     }
-  }
-
-  openEventInfoDialog() {
-    this.dialog.open(EventInfoComponent, {
-      maxWidth: "300px",
-    });
   }
 
   manageSubscription() {

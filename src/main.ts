@@ -82,7 +82,7 @@ const bootstrap = () =>
     providers: [
       ...extraProviders,
       provideZonelessChangeDetection(),
-      provideAnimationsAsync(), // ngx-charts uses this, should be removed
+      provideAnimationsAsync(), // ng-charts uses this, should be removed
       provideRouter(
         routes,
         withComponentInputBinding(),

@@ -41,6 +41,10 @@ html {
   --success-color: #4caf50;
   --success-container: #c8e6c9;
   --on-success: #1b5e20;
+
+  --issues-color: #f27121;
+  --uptime-color: #8a2387;
+  --logs-color: #2196f3;
 }
 
 .light {
@@ -101,9 +105,19 @@ mat-card-title {
   padding-bottom: 8px;
 }
 
-ul {
+ul:not(markdown ul) {
   list-style: none;
   padding: unset;
+}
+
+markdown ul {
+  list-style: disc outside;
+  padding-left: 20px;
+}
+
+markdown ol {
+  list-style: decimal outside;
+  padding-left: 20px;
 }
 
 body {
@@ -148,6 +162,12 @@ mat-sidenav-container {
         ),
     )
   );
+}
+
+// This makes the dropdown menus the full size of the sidenav
+.mat-mdc-menu-panel.nav-menu {
+  max-width: none !important;
+  width: 220px !important;
 }
 
 .l-body {
@@ -241,7 +261,7 @@ mat-sidenav-container {
 }
 
 gt-issue-chart {
-  .ngx-charts {
+  .ng-charts {
     // Hide tick labels
     .tick text {
       display: none !important;
@@ -286,7 +306,7 @@ gt-issue-chart {
 }
 
 @media (prefers-color-scheme: dark) {
-  .ngx-charts {
+  .ng-charts {
     text {
       fill: var(--mat-sys-on-background) !important;
     }
@@ -316,6 +336,10 @@ gt-issue-chart {
   background-color: var(--mat-sys-primary) !important;
 
   .mdc-list-item__primary-text {
+    color: var(--mat-sys-on-primary) !important;
+  }
+
+  mat-icon {
     color: var(--mat-sys-on-primary) !important;
   }
 }

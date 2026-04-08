@@ -15,9 +15,9 @@ After creating your account, the first step in getting GlitchTip up and running 
             "
         />
         <img
-            src="/assets/screenshots/new-org@1xpng"
+            src="/assets/screenshots/new-org@1x.png"
             srcset="
-                /assets/screenshots/new-org@1xpng,
+                /assets/screenshots/new-org@1x.png,
                 /assets/screenshots/new-org@2xpng 2x,
                 /assets/screenshots/new-org@3xpng 3x,
             "
@@ -42,9 +42,9 @@ If you are using our hosted service, after you create an organization you will b
             "
         />
         <img
-            src="/assets/screenshots/subscription@1xpng"
+            src="/assets/screenshots/subscription@1x.png"
             srcset="
-                /assets/screenshots/subscription@1xpng,
+                /assets/screenshots/subscription@1x.png,
                 /assets/screenshots/subscription@2xpng 2x,
                 /assets/screenshots/subscription@3xpng 3x,
             "
@@ -69,9 +69,9 @@ The next step is to set up a project. A project corresponds to a single endpoint
             "
         />
         <img
-            src="/assets/screenshots/new-project@1xpng"
+            src="/assets/screenshots/new-project@1x.png"
             srcset="
-                /assets/screenshots/new-project@1xpng,
+                /assets/screenshots/new-project@1x.png,
                 /assets/screenshots/new-project@2xpng 2x,
                 /assets/screenshots/new-project@3xpng 3x,
             "
@@ -96,9 +96,9 @@ When making a project, you will also need to create a team if you have not alrea
             "
         />
         <img
-            src="/assets/screenshots/new-team@1xpng"
+            src="/assets/screenshots/new-team@1x.png"
             srcset="
-                /assets/screenshots/new-team@1xpng,
+                /assets/screenshots/new-team@1x.png,
                 /assets/screenshots/new-team@2xpng 2x,
                 /assets/screenshots/new-team@3xpng 3x,
             "
