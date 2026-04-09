@@ -1,5 +1,5 @@
 ---
-title: "Making Django Fast: VTasks processes tasks 27x faster than Celery"
+title: "Making Django Fast: VTasks processes tasks 4x faster than Celery"
 description: "Introducing django-vtasks, an async-first task queue that extends Django 6.0's task framework with scheduling, batching, and high-performance Valkey support."
 author: "David Burke"
 published: true
@@ -21,12 +21,15 @@ VTasks extends Django 6.0's new task framework with scheduling, batching, and a 
 
 ### Benchmarks
 
-| | VTasks | Celery | Speedup |
-|---|---|---|---|
-| **Enqueue rate** | ~1,200 ops/s | ~650 ops/s | 1.9x |
-| **Processing rate** | ~250 ops/s | ~166 ops/s | 1.5x |
+All benchmarks simulate async Django views dispatching tasks. Tasks sleep for 10ms to simulate a lightweight DB query or API call. Enqueue uses `await aenqueue()` for VTasks and `sync_to_async(task.delay)` for Celery — the real code you'd write in an async view.
 
-See [full benchmarks](https://django-vtasks.glitchtip.com/benchmarks/) for methodology and results.
+| | Enqueue (ops/s) | Process (ops/s) | Peak RSS (MB) | Valkey Conns |
+|---|---|---|---|---|
+| **VTasks** | 5,203 | 3,796 | 76 | 3 |
+| **Celery Threads** | 2,228 | 894 | 123 | 11 |
+| **RQ** | 436 | 25 | 170 | 4 |
+
+VTasks: 4x faster processing, 2x faster enqueue, 38% less memory, 73% fewer connections. See [full benchmarks](https://django-vtasks.glitchtip.com/benchmarks/) for methodology, cloud latency results, and how to reproduce.
 
 VTasks simplifies the deployment of GlitchTip. It's one process and one database (valkey optional). Add valkey/redis and tasks will use the faster backend. We get the complex user stories of Celery, the minimalism of django-tasks, and the speed that no other solution offers.
 
