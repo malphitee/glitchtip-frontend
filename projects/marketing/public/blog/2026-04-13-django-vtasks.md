@@ -17,7 +17,7 @@ Presenting [Django VTasks](https://django-vtasks.glitchtip.com).
 
 <!-- TODO: logo image -->
 
-VTasks extends Django 6.0's new task framework with scheduling, batching, and a high-performance Valkey backend (or slower ORM backend). It powers [GlitchTip's](https://glitchtip.com) handling of millions of error events with a single process and a single database while fitting in 512mb total system ram. VTasks runs standalone or embedded into your ASGI Django App. An asyncio loop dispatches tasks and supports sync tasks via `to_thread`. With async tasks, we get high performance and 0 thread overhead. The scheduler runs in-process and locks itself so that you can scale horizontally without thinking about it.
+VTasks extends Django 6.0's new task framework with scheduling, batching, and a high-performance Valkey backend (or slower ORM backend). It powers GlitchTip's handling of millions of error events with a single process and a single database while fitting in 512mb total system ram. VTasks runs standalone or embedded into your ASGI Django App. An asyncio loop dispatches tasks and supports sync tasks via `to_thread`. With async tasks, we get high performance and 0 thread overhead. The scheduler runs in-process and locks itself so that you can scale horizontally without thinking about it.
 
 ### Benchmarks
 
@@ -31,7 +31,7 @@ All benchmarks simulate async Django views dispatching tasks. Tasks sleep for 10
 
 VTasks: 4x faster processing, 2x faster enqueue, 38% less memory, 73% fewer connections. See [full benchmarks](https://django-vtasks.glitchtip.com/benchmarks/) for methodology, cloud latency results, and how to reproduce.
 
-VTasks simplifies the deployment of GlitchTip. It's one process and one database (valkey optional). Add valkey/redis and tasks will use the faster backend. We get the complex user stories of Celery, the minimalism of django-tasks, and the speed that no other solution offers.
+VTasks simplifies the deployment of GlitchTip. It's one process and one database (valkey optional). Add valkey/redis and tasks will use the faster backend. We get the complex user stories of Celery, the minimalism of django-tasks, and speed that no other solution offers.
 
 ```python
 from django_vtasks import task
