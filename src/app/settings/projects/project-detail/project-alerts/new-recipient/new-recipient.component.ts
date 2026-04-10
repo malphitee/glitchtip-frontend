@@ -16,6 +16,7 @@ import {
   ReactiveFormsModule,
 } from "@angular/forms";
 import { RecipientType } from "src/app/api/projects/project-alerts/project-alerts.interface";
+import { resolveRecipientIcon } from "../project-alerts.component";
 import { urlRegex } from "src/app/shared/validators";
 import { MatButtonModule } from "@angular/material/button";
 import { LoadingButtonComponent } from "../../../../../shared/loading-button/loading-button.component";
@@ -61,6 +62,8 @@ export class NewRecipientComponent implements OnInit {
     channel: new FormControl(""),
     topic: new FormControl("GlitchTip Alerts"),
   });
+
+  resolveIcon = resolveRecipientIcon;
 
   recipientType = this.recipientForm.get("recipientType") as FormControl;
   url = this.recipientForm.get("url") as FormControl;

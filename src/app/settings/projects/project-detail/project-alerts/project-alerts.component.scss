@@ -131,7 +131,6 @@ mat-card-header {
   }
 
   .alert-type {
-    padding-left: 2px;
     margin-right: 8px;
     font-size: 20px;
     width: 24px;
@@ -158,18 +157,17 @@ mat-card-header {
     text-overflow: ellipsis;
   }
 
-  .trash {
-    justify-self: flex-end;
-    margin-left: 16px;
+  .recipient-actions {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    gap: 6px;
+  }
+
+  .recipient-action {
     width: 28px;
     height: 28px;
     line-height: 28px;
-
-    mat-icon {
-      font-size: 24px;
-      width: 24px;
-      height: 24px;
-    }
   }
 }
 

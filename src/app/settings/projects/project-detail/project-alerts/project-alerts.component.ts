@@ -12,9 +12,17 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
 import { components } from "src/app/api/api-schema";
 import { NewRecipientComponent } from "./new-recipient/new-recipient.component";
+import { RecipientType } from "src/app/api/projects/project-alerts/project-alerts.interface";
 
 type ProjectAlert = components["schemas"]["ProjectAlertSchema"];
 type AlertRecipient = components["schemas"]["AlertRecipientSchema"];
+
+export const iconXrefMapping: Partial<Record<RecipientType, string>> = {
+  teams: "microsoft",
+};
+export function resolveRecipientIcon(type: RecipientType): string {
+  return iconXrefMapping[type] ?? type;
+}
 
 @Component({
   selector: "gt-project-alerts",
@@ -57,6 +65,7 @@ export class ProjectAlertsComponent implements OnInit {
   newAlertLoading = this.#service.newAlertLoading;
   newAlertError = this.#service.newAlertError;
   accessProjectWrite = this.organizationsService.accessProjectWrite;
+  resolveRecipientIcon = resolveRecipientIcon;
 
   ngOnInit(): void {
     this.#service.setParams(this.orgSlug(), this.projectSlug());

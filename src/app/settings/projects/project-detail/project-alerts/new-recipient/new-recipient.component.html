@@ -31,8 +31,8 @@
         ) {
           <mat-form-field class="webhook" appearance="outline">
             <mat-label>Webhook URL</mat-label>
-            <svg matPrefix class="slack">
-              <use [attr.xlink:href]="'#' + recipientType.value"></use>
+            <svg matPrefix>
+              <use [attr.xlink:href]="'#' + resolveIcon(recipientType.value)"></use>
             </svg>
             <input
               matInput

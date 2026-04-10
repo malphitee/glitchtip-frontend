@@ -12,6 +12,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 @Component({
   selector: "gt-frame-title",
   templateUrl: "./frame-title.component.html",
+  styleUrl: "./frame-title.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatTooltipModule, MatButtonModule, MatIconModule],
 })
