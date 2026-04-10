@@ -1,3 +1,7 @@
+:host {
+  display: block;
+}
+
 .upgrade-banner {
   --mat-card-container-color: var(--mat-sys-surface-container-highest);
   background-color: var(--mat-sys-surface-container-highest);

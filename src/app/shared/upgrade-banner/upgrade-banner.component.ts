@@ -16,6 +16,8 @@ import { MatCardModule } from "@angular/material/card";
 })
 export class UpgradeBannerComponent {
   readonly usagePercent = input<number | null>(null);
+  readonly hideActions = input(false);
+  readonly variant = input<"upgrade" | "get-started">("upgrade");
 
   readonly upgradeClick = output<void>();
   readonly comparePlansClick = output<void>();

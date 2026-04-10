@@ -4634,18 +4634,24 @@ export interface components {
             stripeID: string;
             /** Price */
             price: string;
+            /** Interval */
+            interval?: string;
         };
         /** StripeProductExpandedPriceSchema */
         StripeProductExpandedPriceSchema: {
             /** Stripeid */
             stripeID: string;
             defaultPrice: components["schemas"]["StripeNestedPriceSchema"];
+            /** Prices */
+            prices?: components["schemas"]["StripeNestedPriceSchema"][];
             /** Name */
             name: string;
             /** Description */
             description: string;
             /** Events */
             events: number;
+            /** MarketingFeatures */
+            marketingFeatures?: string[];
         };
         /**
          * CollectionMethod

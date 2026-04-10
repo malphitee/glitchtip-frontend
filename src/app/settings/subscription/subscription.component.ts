@@ -4,31 +4,29 @@ import {
   computed,
   inject,
   input,
-  signal,
   OnInit,
 } from "@angular/core";
+import { DatePipe } from "@angular/common";
+import { MatButtonModule } from "@angular/material/button";
+import { MatCardModule } from "@angular/material/card";
 import { MatDialog } from "@angular/material/dialog";
+import { MatDividerModule } from "@angular/material/divider";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatIconModule } from "@angular/material/icon";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { RouterLink } from "@angular/router";
-import { StatefulComponent } from "src/app/shared/stateful-service/signal-state.component";
-import { environment } from "../../../environments/environment";
+import { OrganizationsService } from "src/app/api/organizations.service";
 import {
   SubscriptionService,
   SubscriptionState,
 } from "src/app/api/subscriptions/subscription.service";
-import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
-import { MatButtonModule } from "@angular/material/button";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatCardModule } from "@angular/material/card";
-import { DatePipe } from "@angular/common";
-import { MatDividerModule } from "@angular/material/divider";
-import { MatIconModule } from "@angular/material/icon";
-import { MatSelectModule } from "@angular/material/select";
-import { OrganizationsService } from "src/app/api/organizations.service";
+import { StatefulComponent } from "src/app/shared/stateful-service/signal-state.component";
 import { TopAppBar } from "src/app/shared/top-app-bar/top-app-bar";
-import { SubscriptionChartsComponent } from "./subscription-charts/subscription-charts.component";
 import { UpgradeBannerComponent } from "src/app/shared/upgrade-banner/upgrade-banner.component";
-import { StripePricingTableComponent } from "./stripe-pricing-table/stripe-pricing-table.component";
+import { environment } from "../../../environments/environment";
 import { PaymentComponent } from "./payment/payment.component";
+import { PaymentService } from "./payment/payment.service";
+import { SubscriptionChartsComponent } from "./subscription-charts/subscription-charts.component";
 
 @Component({
   selector: "gt-subscription",
@@ -39,16 +37,14 @@ import { PaymentComponent } from "./payment/payment.component";
     TopAppBar,
     MatCardModule,
     RouterLink,
-    MatFormFieldModule,
     MatButtonModule,
+    MatFormFieldModule,
     MatProgressSpinnerModule,
     DatePipe,
     MatDividerModule,
     MatIconModule,
     SubscriptionChartsComponent,
     UpgradeBannerComponent,
-    MatSelectModule,
-    StripePricingTableComponent,
     PaymentComponent,
   ],
 })
@@ -57,6 +53,7 @@ export class SubscriptionComponent
   implements OnInit
 {
   private orgService = inject(OrganizationsService);
+  private paymentService = inject(PaymentService);
   private dialog = inject(MatDialog);
 
   orgSlug = input.required<string>({ alias: "org-slug" });
@@ -65,15 +62,15 @@ export class SubscriptionComponent
     alias: "billing_portal_redirect",
   });
 
-  fromStripe = this.service.fromStripe;
-  subscription = this.service.subscription;
-  subscriptionLoading = this.service.subscriptionLoading;
-  subscriptionRefreshTimeout = this.service.subscriptionRefreshTimeout;
-  totalEventsAllowed = this.service.totalEventsAllowed;
-  activeOrganization = this.orgService.activeOrganization;
-  activeOrganizationSlug = this.orgService.activeOrganizationSlug;
-  billingPortalLoading = this.service.billingPortalLoading;
-  billingPortalLoadingError = this.service.billingPortalLoadingError;
+  readonly fromStripe = this.service.fromStripe;
+  readonly subscription = this.service.subscription;
+  readonly subscriptionLoading = this.service.subscriptionLoading;
+  readonly subscriptionRefreshTimeout = this.service.subscriptionRefreshTimeout;
+  readonly totalEventsAllowed = this.service.totalEventsAllowed;
+  readonly activeOrganization = this.orgService.activeOrganization;
+  readonly activeOrganizationSlug = this.orgService.activeOrganizationSlug;
+  readonly billingPortalLoading = this.service.billingPortalLoading;
+  readonly billingPortalLoadingError = this.service.billingPortalLoadingError;
   daysRemaining = computed(() => {
     const subscription = this.service.subscription();
     const endDate = subscription?.subscriptionCycleEnd ?? subscription?.currentPeriodEnd;
@@ -104,8 +101,20 @@ export class SubscriptionComponent
   thisMonthPercent = this.service.thisMonthPercent;
   billingEmail = environment.billingEmail;
 
-  // DEV ONLY - remove before committing
-  testBannerState = signal<"hidden" | "no-sub" | "free-low" | "free-high">("hidden");
+  nextPlanPrice = computed(() => {
+    const subscription = this.subscription();
+    const products = this.paymentService.products();
+    if (!subscription || !products.length) return null;
+
+    const currentProductId = subscription.product.stripeID;
+    const currentIndex = products.findIndex(
+      (p) => p.stripeID === currentProductId,
+    );
+    if (currentIndex === -1 || currentIndex >= products.length - 1) return null;
+
+    const nextProduct = products[currentIndex + 1];
+    return nextProduct.defaultPrice;
+  });
 
   constructor() {
     const service = inject(SubscriptionService);
@@ -118,6 +127,7 @@ export class SubscriptionComponent
   ngOnInit(): void {
     this.orgService.activeOrganizationResource.reload();
     this.service.loadDetailData(this.orgSlug());
+    this.paymentService.productsResource.reload();
 
     if (this.sessionId()) {
       this.service.refreshUntilSubscriptionOrTimeout();
@@ -131,20 +141,19 @@ export class SubscriptionComponent
     this.service.redirectToBillingPortal();
   }
 
-  openPricingTable() {
-    this.dialog.open(StripePricingTableComponent, {
-      width: "90vw",
-      maxWidth: "1200px",
-      maxHeight: "85vh",
-      data: { orgSlug: this.orgSlug() },
-    });
+  upgradeToNextPlan() {
+    const price = this.nextPlanPrice();
+    const org = this.orgService.activeOrganization();
+    if (price && org) {
+      this.paymentService.dispatchSubscriptionCreation(org, price);
+    }
   }
 
   openBuiltInPricing() {
     this.dialog.open(PaymentComponent, {
       width: "90vw",
       maxWidth: "1200px",
-      maxHeight: "85vh",
+      maxHeight: "90vh",
     });
   }
 }

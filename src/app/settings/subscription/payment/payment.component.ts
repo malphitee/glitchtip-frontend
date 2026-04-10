@@ -3,16 +3,22 @@ import {
   ChangeDetectionStrategy,
   inject,
   OnInit,
+  signal,
 } from "@angular/core";
+import {
+  MatDialogModule,
+  MatDialogRef,
+} from "@angular/material/dialog";
+import { MatButtonModule } from "@angular/material/button";
+import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { StatefulComponent } from "src/app/shared/stateful-service/signal-state.component";
 import { environment } from "../../../../environments/environment";
 import { EventInfoComponent } from "../../../shared/event-info/event-info.component";
-import { MatDividerModule } from "@angular/material/divider";
 import { LoadingButtonComponent } from "../../../shared/loading-button/loading-button.component";
 import { MatIconModule } from "@angular/material/icon";
 import { MatCardModule } from "@angular/material/card";
 import { DecimalPipe } from "@angular/common";
-import { PaymentService, PaymentState, Price } from "./payment.service";
+import { PaymentService, PaymentState, Price, Product } from "./payment.service";
 import { OrganizationsService } from "src/app/api/organizations.service";
 
 @Component({
@@ -23,8 +29,10 @@ import { OrganizationsService } from "src/app/api/organizations.service";
   imports: [
     MatCardModule,
     MatIconModule,
+    MatButtonModule,
+    MatButtonToggleModule,
+    MatDialogModule,
     LoadingButtonComponent,
-    MatDividerModule,
     EventInfoComponent,
     DecimalPipe,
   ],
@@ -34,10 +42,13 @@ export class PaymentComponent
   implements OnInit
 {
   private organizationService = inject(OrganizationsService);
+  private dialogRef = inject(MatDialogRef, { optional: true });
 
-  products = this.service.products;
-  subscriptionCreationLoadingId = this.service.subscriptionCreationLoadingId;
-  billingEmail = environment.billingEmail;
+  readonly isDialog = !!this.dialogRef;
+  readonly billingInterval = signal<"monthly" | "yearly">("monthly");
+  readonly products = this.service.products;
+  readonly subscriptionCreationLoadingId = this.service.subscriptionCreationLoadingId;
+  readonly billingEmail = environment.billingEmail;
 
   constructor() {
     const service = inject(PaymentService);
@@ -56,5 +67,14 @@ export class PaymentComponent
     if (activeOrganization) {
       this.service.dispatchSubscriptionCreation(activeOrganization, price);
     }
+  }
+
+  getActivePrice(product: Product): Price {
+    const interval =
+      this.billingInterval() === "yearly" ? "year" : "month";
+    return (
+      product.prices.find((p) => p.interval === interval) ||
+      product.defaultPrice
+    );
   }
 }

@@ -23,6 +23,10 @@
           i18n
           >Manage</span
         >
+        <mat-icon
+          [style.visibility]="billingPortalLoading() ? 'hidden' : 'visible'"
+          >open_in_new</mat-icon
+        >
         @if (billingPortalLoading()) {
           <mat-spinner class="manage-subscription-spinner" diameter="18" />
         }
@@ -31,24 +35,6 @@
   </ng-container>
 </gt-top-app-bar>
 <section class="l-body">
-  <!-- DEV ONLY - remove before committing -->
-  <mat-form-field appearance="outline" style="margin-bottom: 16px">
-    <mat-label>Banner state (test only)</mat-label>
-    <mat-select [value]="testBannerState()" (valueChange)="testBannerState.set($event)">
-      <mat-option value="hidden">Paid plan (banner hidden)</mat-option>
-      <mat-option value="no-sub">No/canceled subscription</mat-option>
-      <mat-option value="free-low">Free plan, usage &lt; 80%</mat-option>
-      <mat-option value="free-high">Free plan, usage ≥ 80%</mat-option>
-    </mat-select>
-  </mat-form-field>
-  @if (testBannerState() === "no-sub") {
-    <gt-upgrade-banner (upgradeClick)="openPricingTable()" (comparePlansClick)="openBuiltInPricing()" />
-  } @else if (testBannerState() === "free-low") {
-    <gt-upgrade-banner [usagePercent]="null" (upgradeClick)="openPricingTable()" (comparePlansClick)="openBuiltInPricing()" />
-  } @else if (testBannerState() === "free-high") {
-    <gt-upgrade-banner [usagePercent]="85" (upgradeClick)="openPricingTable()" (comparePlansClick)="openBuiltInPricing()" />
-  }
-  <!-- END DEV ONLY -->
   @if (fromStripe()) {
     <span class="body-text-strong">Redirected from Stripe</span>
   }
@@ -77,9 +63,9 @@
       @if (subscription.effectivePrice === 0) {
         <gt-upgrade-banner
           [usagePercent]="thisMonthPercent() >= 80 ? thisMonthPercent() : null"
-          (upgradeClick)="openPricingTable()"
+          (upgradeClick)="upgradeToNextPlan()"
           (comparePlansClick)="openBuiltInPricing()"
-                 />
+        />
       }
       <mat-card>
         <mat-card-content>
@@ -101,14 +87,12 @@
                 >
               }
               <div class="plan-header">
-                <div class="plan-header-top">
-                  <span class="body-text-strong">{{
-                    subscription.product.name
-                  }}</span>
-                  <button mat-stroked-button (click)="manageSubscription()" [disabled]="billingPortalLoading()" i18n>View Invoices <mat-icon>open_in_new</mat-icon></button>
-                </div>
+                <span class="body-text-strong">{{
+                  subscription.product.name
+                }}</span>
+                <mat-divider vertical />
                 <span class="body-text" i18n
-                  >Usage period:
+                  >Billing Cycle:
                   {{
                     subscription.subscriptionCycleStart ??
                       subscription.currentPeriodStart | date
@@ -165,10 +149,11 @@
     }
     @if (!subscription() || subscription()!.status === "canceled") {
       <gt-upgrade-banner
-        (upgradeClick)="openPricingTable()"
-        (comparePlansClick)="openBuiltInPricing()"
-             />
-      <gt-stripe-pricing-table [orgSlug]="orgSlug()" />
+        class="get-started-banner"
+        [hideActions]="true"
+        variant="get-started"
+      />
+      <gt-payment></gt-payment>
     }
   }
 </section>

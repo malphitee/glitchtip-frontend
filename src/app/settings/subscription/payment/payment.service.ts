@@ -11,6 +11,17 @@ type Organization = components["schemas"]["OrganizationDetailSchema"];
 export interface Price
   extends Omit<components["schemas"]["StripeNestedPriceSchema"], "price"> {
   price: number;
+  interval?: string;
+}
+
+export interface Product
+  extends Omit<
+    components["schemas"]["StripeProductExpandedPriceSchema"],
+    "defaultPrice" | "prices"
+  > {
+  defaultPrice: Price;
+  prices: Price[];
+  marketingFeatures: string[];
 }
 
 export interface PaymentState {
@@ -33,7 +44,7 @@ export class PaymentService extends StatefulService<PaymentState> {
   );
 
   productsResource = apiResource(() => ({ url: "/api/0/stripe/products/" }));
-  products = computed(
+  products = computed<Product[]>(
     () =>
       this.productsResource
         .value()
@@ -43,6 +54,11 @@ export class PaymentService extends StatefulService<PaymentState> {
             ...product.defaultPrice,
             price: parseFloat(product.defaultPrice.price),
           },
+          prices: (product.prices || []).map((p) => ({
+            ...p,
+            price: parseFloat(p.price),
+          })),
+          marketingFeatures: product.marketingFeatures || [],
           name: product.name.startsWith("GlitchTip ")
             ? product.name.slice(10)
             : product.name,
