@@ -102,6 +102,19 @@
                     </div>
                   }
                   <div class="recipient-actions">
+                    @if (recipient.recipientType !== "email") {
+                      <button
+                        class="recipient-action small-icon-button"
+                        mat-icon-button
+                        color="primary"
+                        attr.aria-label="Edit recipient"
+                        (click)="
+                          openEditNewRecipientDialog(recipient, recipientIndex)
+                        "
+                      >
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                    }
                     <button
                       class="recipient-action small-icon-button"
                       mat-icon-button
@@ -283,16 +296,16 @@
                               <mat-icon>send</mat-icon>
                             }
                           </button>
+                          <button
+                            class="recipient-action small-icon-button"
+                            mat-icon-button
+                            color="primary"
+                            attr.aria-label="Edit recipient"
+                            (click)="openEditRecipientDialog(recipient, alert)"
+                          >
+                            <mat-icon>edit</mat-icon>
+                          </button>
                         }
-                        <button
-                          class="recipient-action small-icon-button"
-                          mat-icon-button
-                          color="primary"
-                          attr.aria-label="Edit recipient"
-                          (click)="openEditRecipientDialog(recipient, alert)"
-                        >
-                          <mat-icon>edit</mat-icon>
-                        </button>
                         <button
                           class="recipient-action small-icon-button"
                           id="delete-recipient"

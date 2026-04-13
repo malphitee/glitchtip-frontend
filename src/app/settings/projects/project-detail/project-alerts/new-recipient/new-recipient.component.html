@@ -1,5 +1,7 @@
 <div class="dialog-wrapper">
-  <h1 mat-dialog-title>{{ data.editRecipient ? "Edit Alert Recipient" : "Add Alert Recipient" }}</h1>
+  <h1 mat-dialog-title>{{
+    data.editRecipient ? "Edit Alert Recipient" : "Add Alert Recipient"
+  }}</h1>
   <form
     [formGroup]="recipientForm"
     (ngSubmit)="onSubmit()"
@@ -32,7 +34,9 @@
           <mat-form-field class="webhook" appearance="outline">
             <mat-label>Webhook URL</mat-label>
             <svg matPrefix>
-              <use [attr.xlink:href]="'#' + resolveIcon(recipientType.value)"></use>
+              <use
+                [attr.xlink:href]="'#' + resolveIcon(recipientType.value)"
+              ></use>
             </svg>
             <input
               matInput
@@ -46,7 +50,9 @@
               >
             }
             @if (recipientType.value === "ntfy") {
-              <mat-hint i18n>ntfy.sh topic URL or self-hosted endpoint</mat-hint>
+              <mat-hint i18n
+                >ntfy.sh topic URL or self-hosted endpoint</mat-hint
+              >
             }
             @if (recipientType.value === "teams") {
               <mat-hint i18n>Microsoft Teams Workflows webhook URL</mat-hint>
@@ -105,18 +111,16 @@
               formControlName="apiKey"
               placeholder="Bot API key"
             />
-            <mat-hint i18n>The bot's API key, shown when the bot is created</mat-hint>
+            <mat-hint i18n
+              >The bot's API key, shown when the bot is created</mat-hint
+            >
             @if (apiKey.errors?.required) {
               <mat-error>API key is required</mat-error>
             }
           </mat-form-field>
           <mat-form-field class="full-width" appearance="outline">
             <mat-label>Channel</mat-label>
-            <input
-              matInput
-              formControlName="channel"
-              placeholder="general"
-            />
+            <input matInput formControlName="channel" placeholder="general" />
             <mat-hint i18n>The channel to post alerts to</mat-hint>
             @if (channel.errors?.required) {
               <mat-error>Channel is required</mat-error>
@@ -142,7 +146,12 @@
       </div>
     </mat-dialog-content>
     <mat-dialog-actions>
-      <gt-loading-button type="submit" buttonText="Add Recipient">
+      <gt-loading-button
+        type="submit"
+        [buttonText]="
+          data.editRecipient ? 'Edit Recipient' : 'Add Recipient'
+        "
+      >
       </gt-loading-button>
       <button type="button" mat-flat-button mat-dialog-close> Cancel </button>
     </mat-dialog-actions>

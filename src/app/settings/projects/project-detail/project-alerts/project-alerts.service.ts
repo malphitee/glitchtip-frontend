@@ -11,7 +11,13 @@ import { apiResource } from "src/app/shared/api/api-resource-factory";
 
 type ProjectAlert = components["schemas"]["ProjectAlertSchema"];
 type AlertRecipient = components["schemas"]["AlertRecipientSchema"];
-type NewAlertRecipient = any;
+export type NewAlertRecipient = Omit<AlertRecipient, "id" | "url"> & {
+  url: string;
+  botEmail?: string;
+  apiKey?: string;
+  channel?: string;
+  topic?: string;
+};
 
 interface NewAlertState {
   newAlertOpen: boolean;
@@ -198,6 +204,18 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
     this.setRemoveNewAlertRecipient(url);
   }
 
+  editNewAlertRecipient(index: number, updatedRecipient: NewAlertRecipient) {
+    const newAlertState = this.state().newAlertState;
+    const recipients = [...(newAlertState.newProjectAlertRecipients ?? [])];
+    recipients[index] = updatedRecipient;
+    this.setState({
+      newAlertState: {
+        ...newAlertState,
+        newProjectAlertRecipients: recipients,
+      },
+    });
+  }
+
   async createNewAlert(properties: {
     timespanMinutes: number;
     quantity: number;
@@ -208,7 +226,7 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
       timespanMinutes: properties.timespanMinutes,
       quantity: properties.quantity,
       uptime: properties.uptime,
-      alertRecipients: this.newProjectAlertRecipients(),
+      alertRecipients: this.newProjectAlertRecipients() as any,
     };
     const params = this.#params();
     const { data, error } = await client.POST(
@@ -360,7 +378,7 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
         timespanMinutes: activeAlert.timespanMinutes,
         quantity: activeAlert.quantity,
         uptime: activeAlert.uptime,
-        alertRecipients: recipientsWithoutId,
+        alertRecipients: recipientsWithoutId as any,
       };
       const { data, error } = await client.PUT(
         "/api/0/projects/{organization_slug}/{project_slug}/alerts/{alert_id}/",
@@ -419,7 +437,7 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
       timespanMinutes: alert.timespanMinutes,
       quantity: alert.quantity,
       uptime: alert.uptime,
-      alertRecipients: recipientsWithoutId,
+      alertRecipients: recipientsWithoutId as any,
     };
     const params = this.#params();
     const { data, error } = await client.PUT(
@@ -679,7 +697,7 @@ export class ProjectAlertsService extends StatefulService<ProjectAlertState> {
     });
   }
 
-  private setUpdateAlertRecipientsError(err: any, id: number) {
+  private setUpdateAlertRecipientsError(err: any, _id: number) {
     const recipientDialogState = this.state().recipientDialogState;
     this.setState({
       recipientDialogState: {

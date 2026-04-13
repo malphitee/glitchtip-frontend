@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, inject, input } from "@angular/core";
 import { OrganizationsService } from "src/app/api/organizations.service";
-import { ProjectAlertsService } from "./project-alerts.service";
+import { NewAlertRecipient, ProjectAlertsService } from "./project-alerts.service";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
 import { AlertFormComponent } from "./alert-form/alert-form.component";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
@@ -79,8 +79,8 @@ export class ProjectAlertsComponent implements OnInit {
     this.#service.removeNewAlertRecipient(url);
   }
 
-  openUpdateRecipientDialog(alert: ProjectAlert) {
-    this.#service.openUpdateRecipientDialog(alert);
+  openCreateRecipientDialog() {
+    this.#service.openCreateRecipientDialog();
     const dialogRef = this.dialog.open(NewRecipientComponent, {
       data: { emailSelected: this.#service.emailSelected() },
     });
@@ -91,8 +91,22 @@ export class ProjectAlertsComponent implements OnInit {
     });
   }
 
-  openCreateRecipientDialog() {
-    this.#service.openCreateRecipientDialog();
+  openEditNewRecipientDialog(recipient: NewAlertRecipient, index: number) {
+    const dialogRef = this.dialog.open(NewRecipientComponent, {
+      data: {
+        emailSelected: this.#service.emailSelected(),
+        editRecipient: recipient,
+      },
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.#service.editNewAlertRecipient(index, result);
+      }
+    });
+  }
+
+  openUpdateRecipientDialog(alert: ProjectAlert) {
+    this.#service.openUpdateRecipientDialog(alert);
     const dialogRef = this.dialog.open(NewRecipientComponent, {
       data: { emailSelected: this.#service.emailSelected() },
     });

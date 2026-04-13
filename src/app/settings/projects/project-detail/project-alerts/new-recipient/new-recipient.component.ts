@@ -89,7 +89,7 @@ export class NewRecipientComponent implements OnInit {
       } else if (type === "email") {
         if (!this.data.editRecipient) this.url.setValue("");
       } else if (type === "discord") {
-        if (!this.data.editRecipient) this.url.setValue("");
+        if (!this.data.editRecipient) this.url.setValue("https://");
       } else if (type === "googlechat") {
         if (!this.data.editRecipient) this.url.setValue("https://chat.googleapis.com/v1/spaces/");
         this.url.setValidators([Validators.required]);
@@ -123,11 +123,13 @@ export class NewRecipientComponent implements OnInit {
       const r = this.data.editRecipient;
       this.recipientType.setValue(r.recipientType);
       if (r.url) this.url.setValue(r.url);
-      if (r.recipientType === "zulip" && r.config) {
-        this.botEmail.setValue(r.config.bot_email || "");
-        this.apiKey.setValue(r.config.api_key || "");
-        this.channel.setValue(r.config.channel || "");
-        this.topic.setValue(r.config.topic || "GlitchTip Alerts");
+      if (r.recipientType === "zulip") {
+        // Saved recipients use config values; pre-save recipients use flat fields
+        const cfg = r.config;
+        this.botEmail.setValue(cfg ? cfg.bot_email : (r.botEmail || ""));
+        this.apiKey.setValue(cfg ? cfg.api_key : (r.apiKey || ""));
+        this.channel.setValue(cfg ? cfg.channel : (r.channel || ""));
+        this.topic.setValue(cfg ? cfg.topic : (r.topic || "GlitchTip Alerts"));
       }
     }
   }
