@@ -15,8 +15,6 @@ Django 6.0 ships a task worker framework based on the fantastic django-tasks pac
 
 Presenting [Django VTasks](https://django-vtasks.glitchtip.com).
 
-<!-- TODO: logo image -->
-
 VTasks extends Django 6.0's new task framework with scheduling, batching, and a high-performance Valkey backend (or slower ORM backend). It powers GlitchTip's handling of millions of error events with a single process and a single database while fitting in 512mb total system ram. VTasks runs standalone or embedded into your ASGI Django App. An asyncio loop dispatches tasks and supports sync tasks via `to_thread`. With async tasks, we get high performance and 0 thread overhead. The scheduler runs in-process and locks itself so that you can scale horizontally without thinking about it.
 
 ### Benchmarks
