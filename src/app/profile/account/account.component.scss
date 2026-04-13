@@ -1,9 +1,17 @@
 @use "variables" as vars;
 
-.spacing {
-  display: block;
-  margin-top: 32px;
-  margin-bottom: 32px;
+:host {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+
+  @media (max-width: vars.$medium - 1) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.full-span {
+  grid-column: 1 / -1;
 }
 
 .remove-content {
@@ -19,8 +27,4 @@
   p {
     padding-right: 16px;
   }
-}
-
-gt-loading-button ::ng-deep button {
-  width: 180px;
 }

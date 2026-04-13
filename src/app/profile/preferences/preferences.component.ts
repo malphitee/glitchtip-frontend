@@ -53,7 +53,9 @@ export class PreferencesComponent implements OnInit {
 
   defaultTimeZone: string = "Default";
   timeZones: string[] = (Intl as any).supportedValuesOf("timeZone");
-  currentTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  currentTimeZone = Intl.DateTimeFormat()
+    .resolvedOptions()
+    .timeZone.replace(/_/g, " ");
   form = new FormGroup({
     name: new FormControl("", Validators.maxLength(255)),
     timeZone: new FormControl("", {

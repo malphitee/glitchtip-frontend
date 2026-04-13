@@ -1,4 +1,4 @@
-<mat-card class="half-width">
+<mat-card>
   <mat-card-header>
     <mat-card-title i18n>Preferences</mat-card-title>
   </mat-card-header>
@@ -42,12 +42,8 @@
           </mat-error>
           <mat-hint>Your system time zone is {{ currentTimeZone }}</mat-hint>
         </mat-form-field>
-        <mat-form-field
-          floatLabel="always"
-          class="full-width mt-2"
-          appearance="outline"
-        >
-          <mat-label>Theme</mat-label>
+        <div class="theme-field">
+          <label class="theme-label" i18n>Theme</label>
           <mat-button-toggle-group formControlName="theme" aria-label="Theme">
             <mat-button-toggle value="system" title="System">
               <mat-icon>brightness_medium</mat-icon>
@@ -59,8 +55,7 @@
               <mat-icon>dark_mode</mat-icon>
             </mat-button-toggle>
           </mat-button-toggle-group>
-          <textarea [style.display]="'none'" matInput></textarea>
-        </mat-form-field>
+        </div>
         <gt-loading-button buttonText="Update Preferences"></gt-loading-button>
       </form>
     }

@@ -3,7 +3,7 @@
     [class.full-width]="fullWidth()"
     (click)="buttonClick.emit()"
     mat-flat-button
-    color="primary"
+    [color]="color()"
     [disabled]="loading() || disabled()"
   >
     @if (loading()) {
@@ -18,7 +18,7 @@
     [class.full-width]="fullWidth()"
     (click)="buttonClick.emit()"
     mat-button
-    color="primary"
+    [color]="color()"
     [disabled]="loading() || disabled()"
   >
     @if (loading()) {
@@ -32,7 +32,7 @@
   <button
     (click)="buttonClick.emit()"
     mat-stroked-button
-    color="primary"
+    [color]="color()"
     [disabled]="loading() || disabled()"
   >
     @if (loading()) {
