@@ -1,41 +1,54 @@
 # Logs
 
-GlitchTip can ingest, store, and query application logs sent via the OpenTelemetry Protocol (OTLP). Logs can be correlated with traces and errors for full observability.
+GlitchTip can ingest, store, and query application logs. Logs are sent through the same SDK and endpoint you already use for errors, and can be correlated with traces and issues for full observability.
 
 ## Enabling Logs
 
-Log ingestion is enabled by default. To disable it, set:
+Log ingestion is enabled by default on the server. To disable it, set:
 
 ```
 GLITCHTIP_ENABLE_LOGS=False
 ```
 
-When disabled, log events are rejected at ingest.
+When disabled, log events are silently dropped at ingest.
 
 ## Sending Logs
 
-GlitchTip accepts logs via the OpenTelemetry OTLP endpoint. Configure your application's OpenTelemetry SDK to export logs to your GlitchTip instance.
+The easiest way to send logs to GlitchTip is with an MIT sentry SDK. GlitchTip accepts logs through the standard envelope endpoint, so no extra configuration is needed beyond enabling the feature in the SDK.
 
-### Python Example
-
-```bash
-pip install opentelemetry-sdk opentelemetry-exporter-otlp
-```
+### Python
 
 ```python
-from opentelemetry.sdk._logs import LoggerProvider
-from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
-from opentelemetry.exporter.otlp.proto.http._log_exporter import OTLPLogExporter
+import sentry_sdk
 
-logger_provider = LoggerProvider()
-logger_provider.add_log_record_processor(
-    BatchLogRecordProcessor(
-        OTLPLogExporter(endpoint="https://your-glitchtip.example.com/api/0/envelope/")
-    )
+sentry_sdk.init(
+    dsn="https://your-dsn@your-glitchtip.example.com/1",
+    traces_sample_rate=0.01,  # 1% of transactions — adjust to your needs
+    auto_session_tracking=False,  # GlitchTip does not support sessions
+    enable_logs=True,
 )
 ```
 
-Consult the [OpenTelemetry documentation](https://opentelemetry.io/docs/) for SDK setup in other languages.
+Logs emitted through the standard `logging` module are forwarded automatically. You can also call `sentry_sdk.logger.info(...)` directly.
+
+### JavaScript
+
+```javascript
+import * as Sentry from "@sentry/browser";
+
+Sentry.init({
+  dsn: "https://your-dsn@your-glitchtip.example.com/1",
+  tracesSampleRate: 0.01,
+  autoSessionTracking: false,
+  enableLogs: true,
+});
+```
+
+See the [SDK setup pages](/) for other languages — any SDK that supports the structured logs feature will work.
+
+### OpenTelemetry
+
+If your application already emits logs through OpenTelemetry, use the sentry-sdk's OTel logs integration rather than pointing an `OTLPLogExporter` at GlitchTip directly. GlitchTip does not expose a raw OTLP HTTP receiver — it accepts OTel-format log records only when they are wrapped in a sentry envelope by the SDK.
 
 ## Querying Logs
 
@@ -50,7 +63,7 @@ In the GlitchTip UI, navigate to your project's **Logs** page to browse and sear
 
 ### Trace Correlation
 
-Logs that include a `trace_id` are automatically linked to their corresponding trace. Click a log entry's trace ID to navigate to the associated transaction and spans.
+Logs that include a `trace_id` are linked to their corresponding transaction. Click a log entry's trace ID to navigate to the associated transaction and spans.
 
 ## Retention and Storage
 
