@@ -149,8 +149,4 @@ export class PaymentService extends StatefulService<PaymentState> {
     this.snackBar.open(message);
   }
 
-  clearState() {
-    super.clearState();
-    this.productsResource.set(undefined);
-  }
 }

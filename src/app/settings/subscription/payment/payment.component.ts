@@ -45,7 +45,7 @@ export class PaymentComponent
   private dialogRef = inject(MatDialogRef, { optional: true });
 
   readonly isDialog = !!this.dialogRef;
-  readonly billingInterval = signal<"monthly" | "yearly">("monthly");
+  readonly billingInterval = signal<"month" | "year">("month");
   readonly products = this.service.products;
   readonly subscriptionCreationLoadingId = this.service.subscriptionCreationLoadingId;
   readonly billingEmail = environment.billingEmail;
@@ -70,8 +70,10 @@ export class PaymentComponent
   }
 
   getActivePrice(product: Product): Price {
-    const interval =
-      this.billingInterval() === "yearly" ? "year" : "month";
+    const interval = this.billingInterval();
+    if (product.defaultPrice.interval === interval) {
+      return product.defaultPrice;
+    }
     return (
       product.prices.find((p) => p.interval === interval) ||
       product.defaultPrice

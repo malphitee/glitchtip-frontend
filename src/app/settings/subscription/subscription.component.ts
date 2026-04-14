@@ -101,19 +101,17 @@ export class SubscriptionComponent
   thisMonthPercent = this.service.thisMonthPercent;
   billingEmail = environment.billingEmail;
 
-  nextPlanPrice = computed(() => {
+  nextProduct = computed(() => {
     const subscription = this.subscription();
     const products = this.paymentService.products();
     if (!subscription || !products.length) return null;
 
-    const currentProductId = subscription.product.stripeID;
-    const currentIndex = products.findIndex(
-      (p) => p.stripeID === currentProductId,
-    );
-    if (currentIndex === -1 || currentIndex >= products.length - 1) return null;
+    const currentEvents = subscription.product.events ?? 0;
+    const upgrades = products
+      .filter((p) => p.events > currentEvents)
+      .sort((a, b) => a.events - b.events);
 
-    const nextProduct = products[currentIndex + 1];
-    return nextProduct.defaultPrice;
+    return upgrades[0] ?? null;
   });
 
   constructor() {
@@ -142,9 +140,15 @@ export class SubscriptionComponent
   }
 
   upgradeToNextPlan() {
-    const price = this.nextPlanPrice();
+    const product = this.nextProduct();
     const org = this.orgService.activeOrganization();
-    if (price && org) {
+    const subscription = this.subscription();
+    if (product && org) {
+      const currentInterval = subscription?.price?.interval;
+      const price =
+        (currentInterval &&
+          product.prices.find((p) => p.interval === currentInterval)) ||
+        product.defaultPrice;
       this.paymentService.dispatchSubscriptionCreation(org, price);
     }
   }

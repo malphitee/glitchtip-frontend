@@ -1,6 +1,3 @@
-@if (isDialog) {
-  <div class="dialog-header"></div>
-}
 @if (products(); as products) {
   <div [class.dialog-body]="isDialog">
     <div class="plans">
@@ -17,8 +14,8 @@
                     (change)="billingInterval.set($event.value)"
                     hideSingleSelectionIndicator
                   >
-                    <mat-button-toggle value="monthly" i18n>Monthly</mat-button-toggle>
-                    <mat-button-toggle value="yearly" i18n>Annual</mat-button-toggle>
+                    <mat-button-toggle value="month" i18n>Monthly</mat-button-toggle>
+                    <mat-button-toggle value="year" i18n>Annual</mat-button-toggle>
                   </mat-button-toggle-group>
                 }
               </div>

@@ -7,17 +7,10 @@
   overflow: hidden;
 }
 
-.dialog-header {
-  height: 24px;
-  flex-shrink: 0;
-  background-color: var(--mat-sys-surface-container-low);
-  border-bottom: 1px solid var(--mat-sys-outline-variant);
-}
-
 .dialog-body {
   flex: 1;
   overflow-y: auto;
-  padding: 24px 24px 24px;
+  padding: 24px 24px 0px;
   background-color: var(--mat-sys-surface-container-low);
 }
 
