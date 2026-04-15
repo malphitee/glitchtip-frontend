@@ -5,11 +5,13 @@ export const routes: Routes = [
     path: "",
     loadComponent: () =>
       import("./home.component").then((m) => m.HomeComponent),
+    title: "Open Source Error Tracking",
   },
   {
     path: "pricing",
     loadComponent: () =>
       import("./pricing/pricing.component").then((m) => m.PricingComponent),
+    title: "Pricing",
   },
   {
     path: "hipaa",

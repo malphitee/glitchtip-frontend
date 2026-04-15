@@ -3,6 +3,14 @@ import { Component, OnInit, inject } from "@angular/core";
 import { MatCard, MatCardContent } from "@angular/material/card";
 import { ActivatedRoute } from "@angular/router";
 import { MarkdownComponent } from "ngx-markdown";
+import { SeoService } from "../shared/seo.service";
+
+interface BlogFrontMatter {
+  title: string;
+  description?: string;
+  image?: string;
+  date?: string;
+}
 
 @Component({
   selector: "app-blog-post",
@@ -13,36 +21,55 @@ import { MarkdownComponent } from "ngx-markdown";
 export class BlogPostComponent implements OnInit {
   private http = inject(HttpClient);
   private route = inject(ActivatedRoute);
+  private seo = inject(SeoService);
 
   cleanedMarkdown: string | null = null;
   title: string | null = null;
 
   ngOnInit() {
-    const src = `/blog/${this.route.snapshot.params.slug}.md`;
+    const slug = this.route.snapshot.params.slug;
+    const src = `/blog/${slug}.md`;
     this.http.get(src, { responseType: "text" }).subscribe((data) => {
-      const { title, markdown } = this.parseFrontMatter(data);
-      this.title = title;
+      const { frontMatter, markdown } = this.parseFrontMatter(data);
+      this.title = frontMatter.title;
       this.cleanedMarkdown = markdown;
+      this.seo.setPageSeo({
+        title: frontMatter.title,
+        description: frontMatter.description,
+        image: frontMatter.image,
+        type: "article",
+        publishedTime: frontMatter.date || this.dateFromSlug(slug),
+      });
     });
   }
 
-  parseFrontMatter(markdown: string): { title: string; markdown: string } {
-    const frontMatterRegex = /---[\s\S]*?---/;
-    const match = markdown.match(frontMatterRegex);
-
-    let title = "";
-    let content = markdown;
-
-    if (match) {
-      const frontMatter = match[0];
-      content = markdown.replace(frontMatterRegex, "").trim();
-
-      const titleMatch = frontMatter.match(/title:\s*"([^"]+)"/);
-      if (titleMatch) {
-        title = titleMatch[1];
-      }
+  private parseFrontMatter(raw: string): {
+    frontMatter: BlogFrontMatter;
+    markdown: string;
+  } {
+    const match = raw.match(/^---\n([\s\S]*?)\n---\n?/);
+    if (!match) {
+      return { frontMatter: { title: "" }, markdown: raw };
     }
+    const body = raw.slice(match[0].length);
+    const fields: Record<string, string> = {};
+    for (const line of match[1].split("\n")) {
+      const kv = line.match(/^(\w+):\s*"?([^"]*?)"?\s*$/);
+      if (kv) fields[kv[1]] = kv[2];
+    }
+    return {
+      frontMatter: {
+        title: fields.title || "",
+        description: fields.description || undefined,
+        image: fields.image || undefined,
+        date: fields.date || undefined,
+      },
+      markdown: body,
+    };
+  }
 
-    return { title, markdown: content };
+  private dateFromSlug(slug: string): string | undefined {
+    const match = slug.match(/^(\d{4}-\d{2}-\d{2})/);
+    return match ? match[1] : undefined;
   }
 }

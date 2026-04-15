@@ -8,9 +8,11 @@ import {
   withInMemoryScrolling,
   InMemoryScrollingOptions,
   InMemoryScrollingFeature,
+  TitleStrategy,
 } from "@angular/router";
 
 import { routes } from "./app.routes";
+import { SeoTitleStrategy } from "./shared/seo-title-strategy";
 import { provideClientHydration } from "@angular/platform-browser";
 import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
 import { provideMarkdown } from "ngx-markdown";
@@ -39,5 +41,6 @@ export const appConfig: ApplicationConfig = {
       },
     }),
     provideClientHydration(),
+    { provide: TitleStrategy, useClass: SeoTitleStrategy },
   ],
 };
