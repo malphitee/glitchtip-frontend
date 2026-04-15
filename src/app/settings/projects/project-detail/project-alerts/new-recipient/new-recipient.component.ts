@@ -16,6 +16,7 @@ import {
   ReactiveFormsModule,
 } from "@angular/forms";
 import { RecipientType } from "src/app/api/projects/project-alerts/project-alerts.interface";
+import { resolveRecipientIcon } from "../project-alerts.component";
 import { urlRegex } from "src/app/shared/validators";
 import { MatButtonModule } from "@angular/material/button";
 import { LoadingButtonComponent } from "../../../../../shared/loading-button/loading-button.component";
@@ -48,36 +49,89 @@ export class NewRecipientComponent implements OnInit {
     { viewValue: "General (slack-compatible) Webhook", value: "webhook" },
     { viewValue: "Discord", value: "discord" },
     { viewValue: "Google Chat", value: "googlechat" },
+    { viewValue: "ntfy", value: "ntfy" },
+    { viewValue: "Microsoft Teams", value: "teams" },
+    { viewValue: "Zulip", value: "zulip" },
   ];
 
   recipientForm = new FormGroup({
     recipientType: new FormControl("", [Validators.required]),
     url: new FormControl(""),
+    botEmail: new FormControl(""),
+    apiKey: new FormControl(""),
+    channel: new FormControl(""),
+    topic: new FormControl("GlitchTip Alerts"),
   });
+
+  resolveIcon = resolveRecipientIcon;
 
   recipientType = this.recipientForm.get("recipientType") as FormControl;
   url = this.recipientForm.get("url") as FormControl;
+  botEmail = this.recipientForm.get("botEmail") as FormControl;
+  apiKey = this.recipientForm.get("apiKey") as FormControl;
+  channel = this.recipientForm.get("channel") as FormControl;
+  topic = this.recipientForm.get("topic") as FormControl;
 
   ngOnInit(): void {
-    // Dynamically set "url" validators
+    // Dynamically set validators based on recipient type
     this.recipientType.valueChanges.subscribe((type: RecipientType) => {
       this.url.clearValidators();
+      this.botEmail.clearValidators();
+      this.apiKey.clearValidators();
+      this.channel.clearValidators();
+
       if (type === "webhook") {
-        this.url.setValue("https://");
+        if (!this.data.editRecipient) this.url.setValue("https://");
         this.url.setValidators([
           Validators.required,
           Validators.pattern(urlRegex),
         ]);
       } else if (type === "email") {
-        this.url.setValue("");
-      } else if (type == "discord") {
-        this.url.setValue("");
-      } else if (type == "googlechat") {
-        this.url.setValue("https://chat.googleapis.com/v1/spaces/");
+        if (!this.data.editRecipient) this.url.setValue("");
+      } else if (type === "discord") {
+        if (!this.data.editRecipient) this.url.setValue("https://");
+      } else if (type === "googlechat") {
+        if (!this.data.editRecipient) this.url.setValue("https://chat.googleapis.com/v1/spaces/");
         this.url.setValidators([Validators.required]);
+      } else if (type === "ntfy") {
+        if (!this.data.editRecipient) this.url.setValue("https://ntfy.sh/");
+        this.url.setValidators([Validators.required]);
+      } else if (type === "teams") {
+        if (!this.data.editRecipient) this.url.setValue("https://");
+        this.url.setValidators([
+          Validators.required,
+          Validators.pattern(urlRegex),
+        ]);
+      } else if (type === "zulip") {
+        if (!this.data.editRecipient) this.url.setValue("https://");
+        this.url.setValidators([
+          Validators.required,
+          Validators.pattern(urlRegex),
+        ]);
+        this.botEmail.setValidators([Validators.required]);
+        this.apiKey.setValidators([Validators.required]);
+        this.channel.setValidators([Validators.required]);
       }
       this.url.updateValueAndValidity();
+      this.botEmail.updateValueAndValidity();
+      this.apiKey.updateValueAndValidity();
+      this.channel.updateValueAndValidity();
     });
+
+    // Pre-fill form when editing an existing recipient
+    if (this.data.editRecipient) {
+      const r = this.data.editRecipient;
+      this.recipientType.setValue(r.recipientType);
+      if (r.url) this.url.setValue(r.url);
+      if (r.recipientType === "zulip") {
+        // Saved recipients use config values; pre-save recipients use flat fields
+        const cfg = r.config;
+        this.botEmail.setValue(cfg ? cfg.bot_email : (r.botEmail || ""));
+        this.apiKey.setValue(cfg ? cfg.api_key : (r.apiKey || ""));
+        this.channel.setValue(cfg ? cfg.channel : (r.channel || ""));
+        this.topic.setValue(cfg ? cfg.topic : (r.topic || "GlitchTip Alerts"));
+      }
+    }
   }
 
   selectOptions(
@@ -91,7 +145,17 @@ export class NewRecipientComponent implements OnInit {
 
   onSubmit() {
     if (this.recipientForm.valid) {
-      this.dialogRef.close(this.recipientForm.value);
+      const value: any = {
+        recipientType: this.recipientType.value,
+        url: this.url.value,
+      };
+      if (this.recipientType.value === "zulip") {
+        value.botEmail = this.botEmail.value;
+        value.apiKey = this.apiKey.value;
+        value.channel = this.channel.value;
+        value.topic = this.topic.value;
+      }
+      this.dialogRef.close(value);
     }
   }
 }

@@ -25,8 +25,12 @@
 }
 
 .recipientDetails {
-  margin-top: 32px;
-  margin-bottom: 32px;
+  margin-top: 8px;
+  margin-bottom: 0;
+
+  mat-form-field:not(:last-of-type) {
+    margin-bottom: 16px;
+  }
 
   .webhook {
     width: 100%;
@@ -34,6 +38,7 @@
     svg {
       width: 24px;
       height: 24px;
+      overflow: hidden;
       vertical-align: -5px;
       margin: 0 8px;
     }
@@ -50,6 +55,17 @@
 
 .type {
   width: 100%;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.zulip-help {
+  margin-top: 0px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 mat-dialog-actions {

@@ -223,13 +223,13 @@ mat-sidenav-container {
   height: 24px !important;
   padding: 0px !important;
   display: inline-flex !important;
-  margin-right: 8px;
   align-items: center;
   justify-content: center;
 
-  & > *[role="img"] {
-    width: 18px;
-    height: 18px;
+  & > *[role="img"],
+  mat-spinner {
+    width: 18px !important;
+    height: 18px !important;
     font-size: 18px;
 
     svg {
@@ -237,6 +237,11 @@ mat-sidenav-container {
       height: 18px;
     }
   }
+}
+
+.input-icon-button {
+  @extend .small-icon-button;
+  margin-right: 8px;
 }
 
 .medium-icon-button {
