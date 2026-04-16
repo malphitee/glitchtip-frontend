@@ -114,6 +114,18 @@ export class SubscriptionComponent
     return upgrades[0] ?? null;
   });
 
+  readonly topPlanEvents = computed(() => {
+    const products = this.paymentService.products();
+    if (!products.length) return null;
+    return Math.max(...products.map((p) => p.events));
+  });
+
+  readonly freeEventLimit = computed(() => {
+    const products = this.paymentService.products();
+    const free = products.find((p) => p.defaultPrice.price === 0);
+    return free?.events ?? null;
+  });
+
   constructor() {
     const service = inject(SubscriptionService);
 

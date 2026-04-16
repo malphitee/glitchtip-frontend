@@ -3,7 +3,7 @@
     <div class="banner-content">
       @if (variant() === "get-started") {
         <h2 class="banner-headline fancy" i18n>Get started with GlitchTip</h2>
-        <p class="banner-description" i18n>Start free with 1,000 events/month, or support open source and go paid for up to 3M events and priority support.</p>
+        <p class="banner-description" i18n>Start free with {{ freeEventLabel() }} events/month, or support open source and go paid for up to {{ topPlanLabel() }} events and priority support.</p>
       } @else {
         <h2 class="banner-headline fancy" i18n>Don't lose events!</h2>
         @if (usagePercent() !== null) {
@@ -11,12 +11,12 @@
             You're at <strong>{{ usagePercent() }}%</strong> of your limit. Upgrade to Starter now.
           </p>
         }
-        <p class="banner-description" i18n>Support open source and get up to 3M events/month and priority support.</p>
+        <p class="banner-description" i18n>Support open source and get up to {{ topPlanLabel() }} events/month and priority support.</p>
       }
       @if (!hideActions()) {
         <div class="banner-actions">
           <button mat-flat-button color="primary" (click)="onUpgrade()" i18n>
-            Upgrade to 100k events/mo
+            Upgrade to {{ nextPlanLabel() }} events/mo
           </button>
           <button mat-stroked-button (click)="onComparePlans()" i18n>
             Compare Plans

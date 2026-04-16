@@ -63,6 +63,8 @@
       @if (subscription.effectivePrice === 0) {
         <gt-upgrade-banner
           [usagePercent]="thisMonthPercent() >= 80 ? thisMonthPercent() : null"
+          [nextPlanEvents]="nextProduct()?.events ?? null"
+          [topPlanEvents]="topPlanEvents()"
           (upgradeClick)="upgradeToNextPlan()"
           (comparePlansClick)="openBuiltInPricing()"
         />
@@ -152,6 +154,8 @@
         class="get-started-banner"
         [hideActions]="true"
         variant="get-started"
+        [freeEventLimit]="freeEventLimit()"
+        [topPlanEvents]="topPlanEvents()"
       />
       <gt-payment></gt-payment>
     }

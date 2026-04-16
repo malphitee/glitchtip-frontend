@@ -69,6 +69,13 @@ export class PaymentComponent
     }
   }
 
+  hasAnnualPrice(product: Product): boolean {
+    return (
+      product.defaultPrice.interval === "year" ||
+      product.prices.some((p) => p.interval === "year")
+    );
+  }
+
   getActivePrice(product: Product): Price {
     const interval = this.billingInterval();
     if (product.defaultPrice.interval === interval) {
