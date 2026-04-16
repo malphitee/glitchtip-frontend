@@ -29,7 +29,6 @@ import { MonitorInput, MonitorType } from "../uptime.interfaces";
 import { intRegex, urlRegex } from "src/app/shared/validators";
 import { SubscriptionService } from "src/app/api/subscriptions/subscription.service";
 import { EventInfoComponent } from "src/app/shared/event-info/event-info.component";
-import { MonitorService } from "../monitor.service";
 import { ServerError } from "src/app/shared/django.interfaces";
 import { OrganizationsService } from "src/app/api/organizations.service";
 import { components } from "src/app/api/api-schema";
@@ -84,7 +83,6 @@ const portUrlValidators = [
 export class MonitorFormComponent implements OnInit {
   private organizationsService = inject(OrganizationsService);
   private subscriptionService = inject(SubscriptionService);
-  private monitorService = inject(MonitorService);
   dialog = inject(MatDialog);
 
   readonly monitorSettings = input<MonitorDetail>();
@@ -148,7 +146,6 @@ export class MonitorFormComponent implements OnInit {
   });
 
   ngOnInit() {
-    this.monitorService.callSubscriptionDetails();
     const initialInterval = this.monitorSettings()?.interval ?? defaultInterval;
     this.intervalPerMonth.set(Math.floor(2592000 / initialInterval));
 

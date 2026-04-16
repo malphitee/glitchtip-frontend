@@ -2,6 +2,7 @@ import { computed, Injectable, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
 import { client } from "../../shared/api/api";
+import { OrganizationsService } from "../organizations.service";
 import { SettingsService } from "../settings.service";
 import { apiResource } from "src/app/shared/api/api-resource-factory";
 
@@ -26,11 +27,16 @@ const initialState: SubscriptionState = {
 })
 export class SubscriptionService extends StatefulService<SubscriptionState> {
   private settingsService = inject(SettingsService);
+  private organizationsService = inject(OrganizationsService);
   private router = inject(Router);
 
   stripePublicKey = this.settingsService.stripePublicKey;
 
-  organizationSlug = signal<string>("");
+  organizationSlug = computed(() =>
+    this.settingsService.billingEnabled()
+      ? (this.organizationsService.activeOrganizationSlug() ?? "")
+      : "",
+  );
   subscriptionResource = apiResource(this.organizationSlug, (orgSlug) => ({
     url: "/api/0/stripe/subscriptions/{organization_slug}/",
     options: {
@@ -59,8 +65,11 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
     () => this.state().subscriptionRefreshTimeout,
   );
 
+  /** Set to load event count and daily event resources (subscription detail page only) */
+  private detailSlug = signal<string>("");
+
   eventsCountCurrentPeriodResource = apiResource(
-    this.organizationSlug,
+    this.detailSlug,
     (orgSlug) => ({
       url: "/api/0/stripe/subscriptions/{organization_slug}/events_count/period/",
       options: {
@@ -80,7 +89,7 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
   currentPeriodLoading = this.eventsCountCurrentPeriodResource.isLoading;
 
   eventsCountPreviousPeriodResource = apiResource(
-    this.organizationSlug,
+    this.detailSlug,
     (orgSlug) => ({
       url: "/api/0/stripe/subscriptions/{organization_slug}/events_count/period/",
       options: {
@@ -97,7 +106,7 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
   });
   previousPeriodLoading = this.eventsCountPreviousPeriodResource.isLoading;
 
-  dailyEventsResource = apiResource(this.organizationSlug, (orgSlug) => ({
+  dailyEventsResource = apiResource(this.detailSlug, (orgSlug) => ({
     url: "/api/0/stripe/subscriptions/{organization_slug}/events_count/daily/",
     options: {
       params: {
@@ -152,9 +161,10 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
     super(initialState);
   }
 
-  retrieveSubscriptionData(orgSlug: string) {
+  /** Load event count and daily event data for the subscription detail page */
+  loadDetailData(orgSlug: string) {
     if (orgSlug) {
-      this.organizationSlug.set(orgSlug);
+      this.detailSlug.set(orgSlug);
     }
   }
 
@@ -261,7 +271,7 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
 
   clearState() {
     super.clearState();
-    this.organizationSlug.set("");
+    this.detailSlug.set("");
     this.subscriptionResource.set(undefined);
     this.eventsCountCurrentPeriodResource.set(undefined);
     this.dailyEventsResource.set(undefined);

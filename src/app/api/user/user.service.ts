@@ -2,6 +2,8 @@ import { computed, effect, inject, Injectable } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { client, handleError } from "../../shared/api/api";
 import { components } from "../api-schema";
+import { OrganizationsService } from "../organizations.service";
+import { SubscriptionService } from "../subscriptions/subscription.service";
 import { AuthService } from "src/app/auth.service";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
 import { apiResource } from "src/app/shared/api/api-resource-factory";
@@ -29,6 +31,8 @@ const mePath = { user_id: "me" } as const;
 })
 export class UserService extends StatefulService<UserState> {
   private snackBar = inject(MatSnackBar);
+  private organizationsService = inject(OrganizationsService);
+  private subscriptionService = inject(SubscriptionService);
 
   authService = inject(AuthService);
 
@@ -53,19 +57,35 @@ export class UserService extends StatefulService<UserState> {
     setTimeout(() => this.refresh(), 10000);
     effect(() => {
       const user = this.user();
-      if (user?.chatwootIdentifierHash) {
-        let chatwootUser = {
-          email: user.email,
-          identifier_hash: user.chatwootIdentifierHash,
-        };
-        // Chatwoot may not always be ready at this point
-        if ((window as any).$chatwoot) {
-          (window as any).$chatwoot.setUser(user.id, chatwootUser);
-        } else {
-          window.addEventListener("chatwoot:ready", function () {
-            (window as any).$chatwoot.setUser(user.id, chatwootUser);
-          });
+      const orgSlug = this.organizationsService.activeOrganizationSlug();
+      const subscription = this.subscriptionService.subscription();
+      if (!user?.chatwootIdentifierHash) return;
+
+      const chatwootUser = {
+        email: user.email,
+        identifier_hash: user.chatwootIdentifierHash,
+      };
+      const customAttrs = orgSlug
+        ? {
+            organizationSlug: orgSlug,
+            plan: subscription ? subscription.product.name : "free",
+            planStatus: subscription?.status ?? "free",
+          }
+        : null;
+
+      const applyChatwoot = () => {
+        (window as any).$chatwoot.setUser(user.id, chatwootUser);
+        if (customAttrs) {
+          (window as any).$chatwoot.setCustomAttributes(customAttrs);
         }
+      };
+
+      if ((window as any).$chatwoot) {
+        applyChatwoot();
+      } else {
+        window.addEventListener("chatwoot:ready", applyChatwoot, {
+          once: true,
+        });
       }
     });
   }
