@@ -3355,7 +3355,7 @@ export interface components {
          * EventStatusDisplay
          * @enum {string}
          */
-        EventStatusDisplay: "unresolved" | "resolved" | "ignored" | "merge";
+        EventStatusDisplay: "unresolved" | "resolved" | "ignored";
         /** IssueDetailSchema */
         IssueDetailSchema: {
             /** Id */
@@ -3463,7 +3463,7 @@ export interface components {
          * EventStatusEnum
          * @enum {string}
          */
-        EventStatusEnum: "unresolved" | "resolved" | "ignored" | "merge";
+        EventStatusEnum: "unresolved" | "resolved" | "ignored";
         /** StatusDetailsSchema */
         StatusDetailsSchema: {
             /** Inrelease */
