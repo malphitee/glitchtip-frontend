@@ -20,6 +20,7 @@ import { MatCardModule } from "@angular/material/card";
 import { DecimalPipe } from "@angular/common";
 import { PaymentService, PaymentState, Price, Product } from "./payment.service";
 import { OrganizationsService } from "src/app/api/organizations.service";
+import { SubscriptionService } from "src/app/api/subscriptions/subscription.service";
 
 @Component({
   selector: "gt-payment",
@@ -42,10 +43,15 @@ export class PaymentComponent
   implements OnInit
 {
   private organizationService = inject(OrganizationsService);
+  private subscriptionService = inject(SubscriptionService);
   private dialogRef = inject(MatDialogRef, { optional: true });
 
   readonly isDialog = !!this.dialogRef;
-  readonly billingInterval = signal<"month" | "year">("month");
+  readonly billingInterval = signal<"month" | "year">(
+    this.subscriptionService.subscription()?.price?.interval === "year"
+      ? "year"
+      : "month",
+  );
   readonly products = this.service.products;
   readonly subscriptionCreationLoadingId = this.service.subscriptionCreationLoadingId;
   readonly billingEmail = environment.billingEmail;
