@@ -102,7 +102,7 @@ export class SubscriptionComponent
 
   ngOnInit(): void {
     this.orgService.activeOrganizationResource.reload();
-    this.service.retrieveSubscriptionData(this.orgSlug());
+    this.service.loadDetailData(this.orgSlug());
 
     if (this.sessionId()) {
       this.service.refreshUntilSubscriptionOrTimeout();
