@@ -62,6 +62,9 @@ export class PaymentService extends StatefulService<PaymentState> {
           name: product.name.startsWith("GlitchTip ")
             ? product.name.slice(10)
             : product.name,
+          description: product.description
+            .replace(/\s*-\s*[Uu]p to .*/i, "")
+            .trim(),
         }))
         .sort(
           (a, b) => (a.defaultPrice.price || 0) - (b.defaultPrice.price || 0),
