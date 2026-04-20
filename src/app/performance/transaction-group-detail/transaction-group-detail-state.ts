@@ -25,6 +25,27 @@ export class TransactionGroupDetailService {
     },
   });
 
+  #spansResource = resource({
+    params: () => ({ params: this.#params() }),
+    loader: async ({ params }) => {
+      if (!params.params) {
+        return undefined;
+      }
+      const { data } = await client.GET(
+        "/api/0/organizations/{organization_slug}/transaction-groups/{id}/spans/",
+        {
+          params: {
+            path: {
+              organization_slug: params.params.orgSlug,
+              id: params.params.id,
+            },
+          },
+        },
+      );
+      return data;
+    },
+  });
+
   setParams(orgSlug: string, id: number) {
     this.#params.set({ orgSlug, id });
   }
@@ -35,4 +56,6 @@ export class TransactionGroupDetailService {
       this.#transactionGroupResource.hasValue() ||
       !this.#transactionGroupResource.isLoading(),
   );
+  spans = computed(() => this.#spansResource.value());
+  spansLoading = computed(() => this.#spansResource.isLoading());
 }

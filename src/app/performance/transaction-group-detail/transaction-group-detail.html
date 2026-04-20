@@ -35,6 +35,71 @@
     [title]="[group.transaction, null]"
   />
   <div class="row">
+    <div class="left">
+      <mat-card class="detail-card">
+        <mat-card-content>
+          <h2 class="mat-headline-6 span-breakdown-title">Span breakdown</h2>
+          <p class="mat-caption span-breakdown-subtitle">
+            Aggregated child spans for this transaction, ranked by total time.
+          </p>
+          @if (sortedSpans(); as spans) {
+            @if (spans.length === 0) {
+              <p class="mat-body-1 span-breakdown-empty">
+                No span data available for this transaction yet.
+              </p>
+            } @else {
+              <table
+                mat-table
+                matSort
+                matSortActive="totalTime"
+                matSortDirection="desc"
+                matSortDisableClear
+                (matSortChange)="onSortChange($event)"
+                [dataSource]="spans"
+                class="span-breakdown-table"
+              >
+                <ng-container matColumnDef="op">
+                  <th mat-header-cell *matHeaderCellDef>Operation</th>
+                  <td mat-cell *matCellDef="let row">{{ row.op }}</td>
+                </ng-container>
+                <ng-container matColumnDef="description">
+                  <th mat-header-cell *matHeaderCellDef>Description</th>
+                  <td mat-cell *matCellDef="let row" class="span-description">
+                    {{ row.description || "(none)" }}
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="count">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header class="num">Count</th>
+                  <td mat-cell *matCellDef="let row" class="num">{{ row.count }}</td>
+                </ng-container>
+                <ng-container matColumnDef="avgDuration">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header class="num">Avg</th>
+                  <td mat-cell *matCellDef="let row" class="num">
+                    {{ row.avgDuration | humanizeDuration }}
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="p95Duration">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header class="num">p95</th>
+                  <td mat-cell *matCellDef="let row" class="num">
+                    {{ row.p95Duration | humanizeDuration }}
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="totalTime">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header class="num">Total time</th>
+                  <td mat-cell *matCellDef="let row" class="num">
+                    {{ row.totalTime | humanizeDuration }}
+                  </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="spanColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: spanColumns"></tr>
+              </table>
+            }
+          } @else if (spansLoading()) {
+            <p class="mat-body-1 span-breakdown-empty">Loading…</p>
+          }
+        </mat-card-content>
+      </mat-card>
+    </div>
     <aside class="right">
       <mat-card>
         <mat-card-content>

@@ -44,6 +44,36 @@
   }
 }
 
+.span-breakdown-title {
+  margin: 0;
+}
+
+.span-breakdown-subtitle {
+  display: block;
+  margin: 0 0 16px;
+  opacity: 0.6;
+}
+
+.span-breakdown-empty {
+  margin: 16px 0 0;
+  opacity: 0.6;
+}
+
+.span-breakdown-table {
+  width: 100%;
+
+  .num {
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .span-description {
+    font-family: monospace;
+    font-size: 0.85em;
+    word-break: break-word;
+  }
+}
+
 dl {
   margin-top: 0;
 

@@ -17,7 +17,7 @@ export class HumanizeDurationPipe implements PipeTransform {
             : (milliseconds / 1000).toFixed(2)
         } seconds`;
       } else {
-        return `${milliseconds}ms`;
+        return `${+milliseconds.toFixed(2)}ms`;
       }
     } catch (err) {
       console.warn("Provided string was not a valid timedelta");
