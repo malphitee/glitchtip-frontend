@@ -9,13 +9,10 @@ GlitchTip aims to be resource efficient, simple, and useful. We need to scale up
 
 But do you? What if Postgres is good enough. What if we store old data on cheap S3-compatible storage? This is where an Online Analytical Processing (OLAP) database comes into play. DuckDB is an OLAP implementation that can run embedded, in-process of say a Django ASGI server. Storage goes to a volume or cheaper S3-compatible object storage.
 
-Accept event (error, log, span etc) in a lightweight API that validates and places into a Valkey (or Postgres) queue. And most of that in Rust, because why not. It's faster. It's small. Pydantic for validation, [django-vcache](https://gitlab.com/glitchtip/django-vcache) (our Rust-backed Valkey cache Backend) for fast Valkey interaction.
-
-Process the events in batches using [django-vtasks](https://gitlab.com/glitchtip/django-vtasks), our async task queue. Saving them to Postgres partitions.
-
-After X days (default of 30 for error events) copy the partition data to a parquet using arro3 (Fast Rust based parquet writer). Drop the postgres partition.
-
-Stitch the data back together during queries. Keep some metadata and small statistic aggregates in Postgres for fast lookups. Even a log call ranging between hot (Postgres) and cold (Parquet) logs stitch together silently in the backend.
+1. Accept event (error, log, span etc) in a lightweight API that validates and places into a Valkey (or Postgres) queue. And most of that in Rust, because why not. It's faster. It's small. Pydantic for validation, [django-vcache](https://gitlab.com/glitchtip/django-vcache) (our Rust-backed Valkey cache Backend) for fast Valkey interaction.
+2. Process the events in batches using [django-vtasks](https://gitlab.com/glitchtip/django-vtasks), our async task queue. Saving them to Postgres partitions.
+3. After X days (default of 30 for error events) copy the partition data to a parquet using arro3 (Fast Rust based parquet writer). Drop the postgres partition.
+4. Stitch the data back together during queries. Keep some metadata and small statistic aggregates in Postgres for fast lookups. Even a log call ranging between hot (Postgres) and cold (Parquet) logs stitch together silently in the backend.
 
 Enable this in GlitchTip today by setting `GLITCHTIP_ENABLE_DUCKDB=true` and ensure [S3-compatible storage is enabled](https://glitchtip.com/documentation/install#file-storage).
 
