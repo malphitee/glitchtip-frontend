@@ -67,6 +67,7 @@ const iconNames = [
   "arrow_drop_down",
   "arrow_right",
   "avg_pace",
+  "bar_chart_4_bars",
   "breaking_news",
   "brightness_medium",
   "chat",
