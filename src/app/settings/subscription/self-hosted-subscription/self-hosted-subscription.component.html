@@ -1,0 +1,76 @@
+<gt-top-app-bar>
+  <ng-container slot="left">
+    <h1 class="section-header-text" i18n>Subscription</h1>
+  </ng-container>
+</gt-top-app-bar>
+<section class="l-body">
+  @if (mode() === "self-hosted-licensed") {
+    <mat-card>
+      <mat-card-content>
+        <div class="license-banner">
+          <div class="license-info">
+            <div class="license-row">
+              <span class="body-text-strong" i18n>License Key</span>
+              <span class="body-text license-key-value">{{
+                maskedLicenseKey()
+              }}</span>
+            </div>
+            @if (activeOrganization()?.licenseBillingEmail; as email) {
+              <div class="license-row">
+                <span class="body-text-strong" i18n>Billing Email</span>
+                <span class="body-text">{{ email }}</span>
+              </div>
+            }
+          </div>
+          <div class="license-status">
+            <mat-icon>check_circle</mat-icon>
+            <span class="body-text-strong" i18n>License Entered</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  @if (mode() === "self-hosted-unlicensed") {
+    <mat-card>
+      <mat-card-content>
+        <div class="unlicensed-banner">
+          <div>
+            <p class="body-text" i18n>
+              Support GlitchTip development and unlock additional features by
+              entering a license key in
+              <a [routerLink]="['/', orgSlug(), 'settings']">General Settings</a
+              >.
+            </p>
+          </div>
+          <a
+            mat-flat-button
+            color="primary"
+            href="https://glitchtip.com/pricing"
+            target="_blank"
+            rel="noopener"
+            i18n
+            >Get a License</a
+          >
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  <mat-card>
+    <mat-card-content>
+      <div class="plan-header">
+        <span class="body-text-strong" i18n>Self-Hosted</span>
+        <mat-divider vertical />
+        <span class="body-text" i18n>Usage: Last 30 Days</span>
+      </div>
+      <mat-divider />
+      <gt-subscription-charts [totalEventsAllowed]="null" [showLimits]="false" />
+      <p class="body-text" i18n>
+        Questions? Contact us at
+        <a href="mailto:{{ billingEmail }}">{{ billingEmail }}</a
+        >.
+      </p>
+    </mat-card-content>
+  </mat-card>
+</section>

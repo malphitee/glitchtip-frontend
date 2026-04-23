@@ -40,6 +40,7 @@ export class SubscriptionChartsComponent {
   }
 
   totalEventsAllowed = input.required<number | null>();
+  showLimits = input(true);
 
   eventsCountCurrentPeriod = this.subscriptionService.eventsCountCurrentPeriod;
   previousPeriod = this.subscriptionService.eventsCountPreviousPeriod;

@@ -117,7 +117,6 @@ export class MainNavComponent {
       name: $localize`Subscription`,
       icon: "payment",
       route: ["org_slug", "settings", "subscription"],
-      requiresBilling: true,
     },
     {
       name: $localize`Teams`,

@@ -10,11 +10,15 @@
         —
       }
     </div>
-    <div class="summary-subtitle">{{ subtitle() }}</div>
-    <mat-progress-bar
-      mode="determinate"
-      [value]="percent() > 100 ? 100 : percent()"
-      [color]="isOverLimit() ? 'warn' : 'primary'"
-    />
+    @if (subtitle()) {
+      <div class="summary-subtitle">{{ subtitle() }}</div>
+    }
+    @if (showLimits()) {
+      <mat-progress-bar
+        mode="determinate"
+        [value]="percent() > 100 ? 100 : percent()"
+        [color]="isOverLimit() ? 'warn' : 'primary'"
+      />
+    }
   </mat-card-content>
 </mat-card>

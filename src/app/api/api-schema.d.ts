@@ -3968,6 +3968,16 @@ export interface components {
              * @default true
              */
             openMembership: boolean;
+            /**
+             * Licensekey
+             * @default
+             */
+            licenseKey?: string;
+            /**
+             * Licensebillingemail
+             * @default
+             */
+            licenseBillingEmail?: string;
         };
         /**
          * ProjectTeamSchema
@@ -4075,6 +4085,16 @@ export interface components {
              * @description The name of the organization
              */
             name: string;
+            /**
+             * Licensekey
+             * @default
+             */
+            licenseKey?: string;
+            /**
+             * Licensebillingemail
+             * @default
+             */
+            licenseBillingEmail?: string;
         };
         /** OrganizationUserSchema */
         OrganizationUserSchema: {

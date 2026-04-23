@@ -1,164 +1,171 @@
-<gt-top-app-bar>
-  <ng-container slot="left">
-    <h1 class="section-header-text" i18n>Subscription</h1>
-  </ng-container>
-  <ng-container slot="right">
-    @if (subscription() && subscription()!.status !== "canceled") {
-      <button
-        mat-flat-button
-        color="primary"
-        class="manage-subscription-button"
-        (click)="manageSubscription()"
-        [disabled]="billingPortalLoading()"
-      >
-        <span
-          class="manage-subscription-text-long"
-          [style.visibility]="billingPortalLoading() ? 'hidden' : 'visible'"
-          i18n
-          >Manage Subscription</span
+@if (isHosted() === true) {
+  <gt-top-app-bar>
+    <ng-container slot="left">
+      <h1 class="section-header-text" i18n>Subscription</h1>
+    </ng-container>
+    <ng-container slot="right">
+      @if (subscription() && subscription()!.status !== "canceled") {
+        <button
+          mat-flat-button
+          color="primary"
+          class="manage-subscription-button"
+          (click)="manageSubscription()"
+          [disabled]="billingPortalLoading()"
         >
-        <span
-          class="manage-subscription-text-short"
-          [style.visibility]="billingPortalLoading() ? 'hidden' : 'visible'"
-          i18n
-          >Manage</span
-        >
-        <mat-icon
-          [style.visibility]="billingPortalLoading() ? 'hidden' : 'visible'"
-          >open_in_new</mat-icon
-        >
-        @if (billingPortalLoading()) {
-          <mat-spinner class="manage-subscription-spinner" diameter="18" />
-        }
-      </button>
-    }
-  </ng-container>
-</gt-top-app-bar>
-<section class="l-body">
-  @if (fromStripe()) {
-    <span class="body-text-strong">Redirected from Stripe</span>
-  }
-  @if (subscriptionLoading() || subscriptionRefreshTimeout()) {
-    <mat-card>
-      <mat-card-header></mat-card-header>
-      <mat-card-content>
-        @if (subscriptionLoading()) {
-          <div class="spinner-container">
-            <mat-spinner diameter="36"></mat-spinner>
-          </div>
-        }
-        @if (subscriptionRefreshTimeout()) {
-          <div>
-            GlitchTip was unable to find a subscription for your account. If you
-            just signed up for a subscription on our payment platform, please
-            contact us at
-            <a href="mailto:{{ billingEmail }}">{{ billingEmail }}</a
-            >.
-          </div>
-        }
-      </mat-card-content>
-    </mat-card>
-  } @else {
-    @if (subscription(); as subscription) {
-      @if (subscription.effectivePrice === 0) {
-        <gt-upgrade-banner
-          [usagePercent]="thisMonthPercent() >= 80 ? thisMonthPercent() : null"
-          [eventThrottleRate]="activeOrganization()?.eventThrottleRate ?? null"
-          [isAcceptingEvents]="activeOrganization()?.isAcceptingEvents ?? null"
-          [nextPlanEvents]="nextProduct()?.events ?? null"
-          [upgradeLoading]="upgradeLoading()"
-          (upgradeClick)="upgradeToNextPlan()"
-          (comparePlansClick)="openBuiltInPricing()"
-        />
+          <span
+            class="manage-subscription-text-long"
+            [style.visibility]="billingPortalLoading() ? 'hidden' : 'visible'"
+            i18n
+            >Manage Subscription</span
+          >
+          <span
+            class="manage-subscription-text-short"
+            [style.visibility]="billingPortalLoading() ? 'hidden' : 'visible'"
+            i18n
+            >Manage</span
+          >
+          <mat-icon
+            [style.visibility]="billingPortalLoading() ? 'hidden' : 'visible'"
+            >open_in_new</mat-icon
+          >
+          @if (billingPortalLoading()) {
+            <mat-spinner class="manage-subscription-spinner" diameter="18" />
+          }
+        </button>
       }
+    </ng-container>
+  </gt-top-app-bar>
+  <section class="l-body">
+    @if (fromStripe()) {
+      <span class="body-text-strong">Redirected from Stripe</span>
+    }
+    @if (subscriptionLoading() || subscriptionRefreshTimeout()) {
       <mat-card>
+        <mat-card-header></mat-card-header>
         <mat-card-content>
-          <div>
-            @if (
-              subscription.status === "active" ||
-              subscription.status === "trialing" ||
-              subscription.status === "past_due"
-            ) {
-              @if (subscription.status === "trialing") {
-                <p class="body-text no-bottom-margin" i18n
-                  >This organization has a trial subscription to GlitchTip.</p
-                >
-              }
-              @if (subscription.status === "past_due") {
-                <p class="body-text" i18n
-                  >This organization has a subscription to GlitchTip, but the
-                  payment is past due.</p
-                >
-              }
-              <div class="plan-header">
-                <span class="body-text-strong">{{
-                  subscription.product.name
-                }}</span>
-                <mat-divider vertical />
-                <span class="body-text" i18n
-                  >Billing Cycle:
-                  {{
-                    subscription.subscriptionCycleStart ??
-                      subscription.currentPeriodStart | date
-                  }}
-                  to
-                  {{
-                    subscription.subscriptionCycleEnd ??
-                      subscription.currentPeriodEnd | date
-                  }}
-                  @if (daysRemaining() !== null) {
-                    ({{ daysRemaining() }}
-                    {{ daysRemaining() === 1 ? "day" : "days" }} remaining)
-                  }
-                </span>
-              </div>
-              <mat-divider />
-              <gt-subscription-charts
-                [totalEventsAllowed]="totalEventsAllowed()"
-              />
-              <p class="body-text" i18n
-                >If you have questions about your subscription, please contact
-                us at <a href="mailto:{{ billingEmail }}">{{ billingEmail }}</a
-                >.
-              </p>
-              <mat-error>{{ billingPortalLoadingError() }}</mat-error>
-            } @else {
-              <p class="body-text" i18n
-                >This organization does not have an active subscription to
-                GlitchTip. Pick a plan to get started.</p
-              >
-            }
-          </div>
+          @if (subscriptionLoading()) {
+            <div class="spinner-container">
+              <mat-spinner diameter="36"></mat-spinner>
+            </div>
+          }
+          @if (subscriptionRefreshTimeout()) {
+            <div>
+              GlitchTip was unable to find a subscription for your account. If
+              you just signed up for a subscription on our payment platform,
+              please contact us at
+              <a href="mailto:{{ billingEmail }}">{{ billingEmail }}</a
+              >.
+            </div>
+          }
         </mat-card-content>
       </mat-card>
-      @if (promptForProject()) {
+    } @else {
+      @if (subscription(); as subscription) {
+        @if (subscription.effectivePrice === 0) {
+          <gt-upgrade-banner
+            [usagePercent]="
+              thisMonthPercent() >= 80 ? thisMonthPercent() : null
+            "
+            [nextPlanEvents]="nextProduct()?.events ?? null"
+            [topPlanEvents]="topPlanEvents()"
+            [upgradeLoading]="upgradeLoading()"
+            (upgradeClick)="upgradeToNextPlan()"
+            (comparePlansClick)="openBuiltInPricing()"
+          />
+        }
         <mat-card>
           <mat-card-content>
-            <p i18n
-              >Now that you have an organization and a subscription, create a
-              project.</p
-            >
-            @if (activeOrganizationSlug(); as slug) {
-              <a
-                mat-flat-button
-                [routerLink]="['/', slug, 'settings', 'projects', 'new']"
-                color="primary"
-                i18n
-                >Create New Project</a
-              >
-            }
+            <div>
+              @if (
+                subscription.status === "active" ||
+                subscription.status === "trialing" ||
+                subscription.status === "past_due"
+              ) {
+                @if (subscription.status === "trialing") {
+                  <p class="body-text no-bottom-margin" i18n
+                    >This organization has a trial subscription to GlitchTip.</p
+                  >
+                }
+                @if (subscription.status === "past_due") {
+                  <p class="body-text" i18n
+                    >This organization has a subscription to GlitchTip, but the
+                    payment is past due.</p
+                  >
+                }
+                <div class="plan-header">
+                  <span class="body-text-strong">{{
+                    subscription.product.name
+                  }}</span>
+                  <mat-divider vertical />
+                  <span class="body-text" i18n
+                    >Billing Cycle:
+                    {{
+                      subscription.subscriptionCycleStart ??
+                        subscription.currentPeriodStart | date
+                    }}
+                    to
+                    {{
+                      subscription.subscriptionCycleEnd ??
+                        subscription.currentPeriodEnd | date
+                    }}
+                    @if (daysRemaining() !== null) {
+                      ({{ daysRemaining() }}
+                      {{ daysRemaining() === 1 ? "day" : "days" }} remaining)
+                    }
+                  </span>
+                </div>
+                <mat-divider />
+                <gt-subscription-charts
+                  [totalEventsAllowed]="totalEventsAllowed()"
+                />
+                <p class="body-text" i18n
+                  >If you have questions about your subscription, please contact
+                  us at
+                  <a href="mailto:{{ billingEmail }}">{{ billingEmail }}</a
+                  >.
+                </p>
+                <mat-error>{{ billingPortalLoadingError() }}</mat-error>
+              } @else {
+                <p class="body-text" i18n
+                  >This organization does not have an active subscription to
+                  GlitchTip. Pick a plan to get started.</p
+                >
+              }
+            </div>
           </mat-card-content>
         </mat-card>
+        @if (promptForProject()) {
+          <mat-card>
+            <mat-card-content>
+              <p i18n
+                >Now that you have an organization and a subscription, create a
+                project.</p
+              >
+              @if (activeOrganizationSlug(); as slug) {
+                <a
+                  mat-flat-button
+                  [routerLink]="['/', slug, 'settings', 'projects', 'new']"
+                  color="primary"
+                  i18n
+                  >Create New Project</a
+                >
+              }
+            </mat-card-content>
+          </mat-card>
+        }
+      }
+      @if (!subscription() || subscription()!.status === "canceled") {
+        <gt-upgrade-banner
+          class="get-started-banner"
+          [hideActions]="true"
+          variant="get-started"
+          [freeEventLimit]="freeEventLimit()"
+          [topPlanEvents]="topPlanEvents()"
+        />
+        <gt-payment></gt-payment>
       }
     }
-    @if (!subscription() || subscription()!.status === "canceled") {
-      <gt-upgrade-banner
-        class="get-started-banner"
-        [hideActions]="true"
-        variant="get-started"
-        [freeEventLimit]="freeEventLimit()"
-      />
-      <gt-payment></gt-payment>
-    }
-  }
-</section>
+  </section>
+} @else if (isHosted() === false) {
+  <gt-self-hosted-subscription />
+}

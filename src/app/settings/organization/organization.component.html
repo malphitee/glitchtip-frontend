@@ -31,6 +31,45 @@
         }
       </mat-card-content>
     </mat-card>
+    @if (showLicenseFields()) {
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title i18n>License</mat-card-title>
+        </mat-card-header>
+        <mat-divider></mat-divider>
+        <mat-card-content>
+          <form [formGroup]="licenseForm" (ngSubmit)="updateLicense()">
+            <mat-form-field appearance="outline">
+              <mat-label i18n>License Key</mat-label>
+              <input
+                matInput
+                formControlName="licenseKey"
+                placeholder="sub_..."
+              />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label i18n>Billing Email</mat-label>
+              <input
+                matInput
+                formControlName="licenseBillingEmail"
+                type="email"
+              />
+            </mat-form-field>
+            <gt-loading-button
+              [loading]="loading().updateOrganization"
+              mat-flat-button
+              color="primary"
+              buttonText="Update License"
+              i18n-buttonText
+            >
+            </gt-loading-button>
+          </form>
+          @if (errors().updateOrganization) {
+            <mat-error>{{ errors().updateOrganization }}</mat-error>
+          }
+        </mat-card-content>
+      </mat-card>
+    }
     <mat-card>
       <mat-card-header>
         <mat-card-title>Delete Organization</mat-card-title>
