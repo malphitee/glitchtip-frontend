@@ -11,7 +11,6 @@ type Organization = components["schemas"]["OrganizationDetailSchema"];
 export interface Price
   extends Omit<components["schemas"]["StripeNestedPriceSchema"], "price"> {
   price: number;
-  interval?: string;
 }
 
 export interface Product

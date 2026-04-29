@@ -8,15 +8,28 @@
         <h2 class="banner-headline fancy" i18n>Don't lose events!</h2>
         @if (usagePercent() !== null) {
           <p class="banner-usage" i18n>
-            You're at <strong>{{ usagePercent() }}%</strong> of your limit. Upgrade to Starter now.
+            You're at <strong>{{ usagePercent() }}%</strong> of your limit, upgrade now to avoid losing events.
           </p>
         }
         <p class="banner-description" i18n>Support open source and get up to {{ topPlanLabel() }} events/month and priority support.</p>
       }
       @if (!hideActions()) {
         <div class="banner-actions">
-          <button mat-flat-button color="primary" (click)="onUpgrade()" i18n>
-            Upgrade to {{ nextPlanLabel() }} events/mo
+          <button
+            mat-flat-button
+            color="primary"
+            class="upgrade-button"
+            [disabled]="upgradeLoading()"
+            (click)="onUpgrade()"
+          >
+            <span
+              [style.visibility]="upgradeLoading() ? 'hidden' : 'visible'"
+              i18n
+              >Upgrade to {{ nextPlanLabel() }} events/mo</span
+            >
+            @if (upgradeLoading()) {
+              <mat-spinner class="upgrade-button-spinner" diameter="18" />
+            }
           </button>
           <button mat-stroked-button (click)="onComparePlans()" i18n>
             Compare Plans

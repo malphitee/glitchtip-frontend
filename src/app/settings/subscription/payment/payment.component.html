@@ -39,28 +39,29 @@
               }
             </div>
             <div class="plan-bottom">
-              @let activePrice = getActivePrice(product);
-              @if (activePrice.price === 0) {
-                <p class="plan-price" i18n>
-                  <span class="price-amount">Free</span>
-                  <span class="price-detail">($0)</span>
-                </p>
-              } @else {
-                <p class="plan-price">
-                  <span class="price-amount"
-                    >${{ activePrice.price | number }}</span
-                  >
-                  <span class="price-detail" i18n>/ {{ activePrice.interval === "year" ? "year" : "month" }}</span>
-                </p>
+              @if (getActivePrice(product); as activePrice) {
+                @if (activePrice.price === 0) {
+                  <p class="plan-price" i18n>
+                    <span class="price-amount">Free</span>
+                    <span class="price-detail">($0)</span>
+                  </p>
+                } @else {
+                  <p class="plan-price">
+                    <span class="price-amount"
+                      >${{ activePrice.price | number }}</span
+                    >
+                    <span class="price-detail" i18n>/ {{ activePrice.interval === "year" ? "year" : "month" }}</span>
+                  </p>
+                }
+                <gt-loading-button
+                  buttonText="Select"
+                  [loading]="
+                    subscriptionCreationLoadingId() ===
+                    activePrice.stripeID
+                  "
+                  (buttonClick)="onSubmit(activePrice)"
+                ></gt-loading-button>
               }
-              <gt-loading-button
-                buttonText="Select"
-                [loading]="
-                  subscriptionCreationLoadingId() ===
-                  activePrice.stripeID
-                "
-                (buttonClick)="onSubmit(activePrice)"
-              ></gt-loading-button>
             </div>
           </mat-card-content>
         </mat-card>

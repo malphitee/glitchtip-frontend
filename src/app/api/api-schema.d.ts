@@ -1238,26 +1238,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/0/stripe/organizations/{organization_slug}/create-customer-session/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Stripe Customer Session
-         * @description Create a Stripe customer session client secret for the pricing table embed.
-         */
-        post: operations["apps_stripe_api_stripe_customer_session"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/0/stripe/subscriptions/": {
         parameters: {
             query?: never;
@@ -1972,8 +1952,6 @@ export interface components {
             enableOrganizationCreation: boolean;
             /** Stripepublickey */
             stripePublicKey: string | null;
-            /** Stripepricingtableid */
-            stripePricingTableID: string | null;
             /** Plausibleurl */
             plausibleUrl: string | null;
             /** Plausibledomain */
@@ -3356,6 +3334,24 @@ export interface components {
          * @enum {string}
          */
         EventStatusDisplay: "unresolved" | "resolved" | "ignored";
+        /** IssueActorSchema */
+        IssueActorSchema: {
+            /**
+             * Type
+             * @enum {string}
+             */
+            type: "user" | "team";
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Username */
+            username?: string | null;
+            /** Email */
+            email?: string | null;
+            /** Slug */
+            slug?: string | null;
+        };
         /** IssueDetailSchema */
         IssueDetailSchema: {
             /** Id */
@@ -3417,6 +3413,7 @@ export interface components {
              * Format: date-time
              */
             lastSeen: string;
+            assignedTo?: components["schemas"]["IssueActorSchema"] | null;
             /** Title */
             title: string;
             /** Culprit */
@@ -3428,7 +3425,7 @@ export interface components {
          * IssueEventTypeDisplay
          * @enum {string}
          */
-        IssueEventTypeDisplay: "default" | "error" | "csp" | "expectct" | "expectstaple" | "hpkp";
+        IssueEventTypeDisplay: "default" | "error" | "csp";
         /** IssueReleaseSchema */
         IssueReleaseSchema: {
             /** Shortversion */
@@ -3477,6 +3474,8 @@ export interface components {
             statusDetails?: components["schemas"]["StatusDetailsSchema"] | null;
             /** Merge */
             merge?: number | null;
+            /** Assignedto */
+            assignedTo?: string | null;
         };
         /**
          * CommitSchema
@@ -3573,6 +3572,7 @@ export interface components {
              * Format: date-time
              */
             lastSeen: string;
+            assignedTo?: components["schemas"]["IssueActorSchema"] | null;
             /** Title */
             title: string;
             /** Culprit */
@@ -4634,8 +4634,16 @@ export interface components {
             stripeID: string;
             /** Price */
             price: string;
-            /** Interval */
-            interval?: string;
+            /**
+             * Interval
+             * @default month
+             */
+            interval: string;
+            /**
+             * Is Public
+             * @default false
+             */
+            isPublic: boolean;
         };
         /** StripeProductExpandedPriceSchema */
         StripeProductExpandedPriceSchema: {
@@ -4643,15 +4651,15 @@ export interface components {
             stripeID: string;
             defaultPrice: components["schemas"]["StripeNestedPriceSchema"];
             /** Prices */
-            prices?: components["schemas"]["StripeNestedPriceSchema"][];
+            prices: components["schemas"]["StripeNestedPriceSchema"][];
+            /** Marketingfeatures */
+            marketingFeatures: string[];
             /** Name */
             name: string;
             /** Description */
             description: string;
             /** Events */
             events: number;
-            /** MarketingFeatures */
-            marketingFeatures?: string[];
         };
         /**
          * CollectionMethod
@@ -4723,11 +4731,6 @@ export interface components {
         StripePortalSessionSchema: {
             /** Url */
             url: string;
-        };
-        /** StripeCustomerSessionSchema */
-        StripeCustomerSessionSchema: {
-            /** Client Secret */
-            client_secret: string;
         };
         /** CreateSubscriptionResponse */
         CreateSubscriptionResponse: {
@@ -7677,28 +7680,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["StripePortalSessionSchema"];
-                };
-            };
-        };
-    };
-    apps_stripe_api_stripe_customer_session: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                organization_slug: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["StripeCustomerSessionSchema"];
                 };
             };
         };

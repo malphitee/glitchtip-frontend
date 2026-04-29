@@ -7,10 +7,11 @@ import {
 } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 
 @Component({
   selector: "gt-upgrade-banner",
-  imports: [MatCardModule, MatButtonModule],
+  imports: [MatCardModule, MatButtonModule, MatProgressSpinnerModule],
   templateUrl: "./upgrade-banner.component.html",
   styleUrls: ["./upgrade-banner.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -22,6 +23,7 @@ export class UpgradeBannerComponent {
   readonly nextPlanEvents = input<number | null>(null);
   readonly topPlanEvents = input<number | null>(null);
   readonly freeEventLimit = input<number | null>(null);
+  readonly upgradeLoading = input(false);
 
   readonly upgradeClick = output<void>();
   readonly comparePlansClick = output<void>();

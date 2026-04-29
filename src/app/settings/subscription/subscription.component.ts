@@ -71,6 +71,9 @@ export class SubscriptionComponent
   readonly activeOrganizationSlug = this.orgService.activeOrganizationSlug;
   readonly billingPortalLoading = this.service.billingPortalLoading;
   readonly billingPortalLoadingError = this.service.billingPortalLoadingError;
+  readonly upgradeLoading = computed(
+    () => this.paymentService.subscriptionCreationLoadingId() !== null,
+  );
   daysRemaining = computed(() => {
     const subscription = this.service.subscription();
     const endDate = subscription?.subscriptionCycleEnd ?? subscription?.currentPeriodEnd;
@@ -122,7 +125,7 @@ export class SubscriptionComponent
 
   readonly freeEventLimit = computed(() => {
     const products = this.paymentService.products();
-    const free = products.find((p) => p.defaultPrice.price === 0);
+    const free = products.find((p) => p.defaultPrice?.price === 0);
     return free?.events ?? null;
   });
 
@@ -155,14 +158,17 @@ export class SubscriptionComponent
     const product = this.nextProduct();
     const org = this.orgService.activeOrganization();
     const subscription = this.subscription();
-    if (product && org) {
-      const currentInterval = subscription?.price?.interval;
-      const price =
-        (currentInterval &&
-          product.prices.find((p) => p.interval === currentInterval)) ||
-        product.defaultPrice;
-      this.paymentService.dispatchSubscriptionCreation(org, price);
-    }
+    if (!product || !org) return;
+    const currentInterval = subscription?.price?.interval;
+    const price =
+      (product.defaultPrice.interval === currentInterval &&
+        product.defaultPrice.isPublic &&
+        product.defaultPrice) ||
+      product.prices.find(
+        (p) => p.interval === currentInterval && p.isPublic,
+      );
+    if (!price) return;
+    this.paymentService.dispatchSubscriptionCreation(org, price);
   }
 
   openBuiltInPricing() {
