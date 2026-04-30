@@ -33,6 +33,11 @@ export class TeamsService extends StatefulService<TeamsState> {
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
 
+  // Last-writer-wins guards: discard out-of-order responses on rapid switch.
+  private pendingTeamsOrgSlug?: string;
+  private pendingSingleTeamKey?: string;
+  private pendingTeamMembersKey?: string;
+
   readonly teams = computed(() => this.state().teams);
   readonly team = computed(() => this.state().team);
   readonly teamMembers = computed(() => this.state().teamMembers);
@@ -51,18 +56,21 @@ export class TeamsService extends StatefulService<TeamsState> {
   }
 
   async retrieveTeamsByOrg(orgSlug: string) {
+    this.pendingTeamsOrgSlug = orgSlug;
     const { data } = await client.GET(
       "/api/0/organizations/{organization_slug}/teams/",
       {
         params: { path: { organization_slug: orgSlug } },
       },
     );
-    if (data) {
+    if (data && this.pendingTeamsOrgSlug === orgSlug) {
       this.setTeams(data as any);
     }
   }
 
   async retrieveSingleTeam(orgSlug: string, teamSlug: string) {
+    const key = `${orgSlug}/${teamSlug}`;
+    this.pendingSingleTeamKey = key;
     const { data } = await client.GET(
       "/api/0/teams/{organization_slug}/{team_slug}/",
       {
@@ -74,12 +82,14 @@ export class TeamsService extends StatefulService<TeamsState> {
         },
       },
     );
-    if (data) {
+    if (data && this.pendingSingleTeamKey === key) {
       this.setSingleTeam(data);
     }
   }
 
   async retrieveTeamMembers(orgSlug: string, teamSlug: string) {
+    const key = `${orgSlug}/${teamSlug}`;
+    this.pendingTeamMembersKey = key;
     const { data } = await client.GET(
       "/api/0/teams/{organization_slug}/{team_slug}/members/",
       {
@@ -91,7 +101,7 @@ export class TeamsService extends StatefulService<TeamsState> {
         },
       },
     );
-    if (data) {
+    if (data && this.pendingTeamMembersKey === key) {
       this.setTeamMembers(data);
     }
   }

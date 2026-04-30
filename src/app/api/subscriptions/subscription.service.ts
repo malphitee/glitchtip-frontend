@@ -65,8 +65,15 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
     () => this.state().subscriptionRefreshTimeout,
   );
 
-  /** Set to load event count and daily event resources (subscription detail page only) */
-  private detailSlug = signal<string>("");
+  // Gates the detail-page resources below; component owns the on/off lifecycle.
+  private detailActive = signal(false);
+  private detailSlug = computed(() =>
+    this.detailActive() ? this.organizationSlug() : "",
+  );
+
+  setDetailActive(active: boolean) {
+    this.detailActive.set(active);
+  }
 
   eventsCountCurrentPeriodResource = apiResource(
     this.detailSlug,
@@ -166,13 +173,6 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
 
   constructor() {
     super(initialState);
-  }
-
-  /** Load event count and daily event data for the subscription detail page */
-  loadDetailData(orgSlug: string) {
-    if (orgSlug) {
-      this.detailSlug.set(orgSlug);
-    }
   }
 
   /**
@@ -283,7 +283,7 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
 
   clearState() {
     super.clearState();
-    this.detailSlug.set("");
+    this.detailActive.set(false);
     this.subscriptionResource.set(undefined);
     this.eventsCountCurrentPeriodResource.set(undefined);
     this.dailyEventsResource.set(undefined);

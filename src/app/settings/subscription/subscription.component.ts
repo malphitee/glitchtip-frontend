@@ -2,6 +2,7 @@ import {
   Component,
   ChangeDetectionStrategy,
   computed,
+  DestroyRef,
   effect,
   inject,
   input,
@@ -140,10 +141,15 @@ export class SubscriptionComponent
 
   constructor() {
     const service = inject(SubscriptionService);
+    const destroyRef = inject(DestroyRef);
 
     super(service);
 
     this.service = service;
+
+    // Gate detail-page resources to this component's lifetime; org-reactive while active.
+    service.setDetailActive(true);
+    destroyRef.onDestroy(() => service.setDetailActive(false));
 
     // Fire hosted-only fetches once settings confirm billing is enabled.
     effect(() => {
@@ -160,7 +166,6 @@ export class SubscriptionComponent
 
   ngOnInit(): void {
     this.orgService.activeOrganizationResource.reload();
-    this.service.loadDetailData(this.orgSlug());
   }
 
   manageSubscription() {

@@ -56,6 +56,9 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
   private teamsService = inject(TeamsService);
   private projectsService = inject(ProjectsService);
 
+  // Last-writer-wins guard: discard out-of-order responses on rapid org-switch.
+  private pendingMembersOrgSlug?: string;
+
   readonly initialLoad = computed(() => this.state().initialLoad);
   readonly organizationMembers = computed(
     () => this.state().organizationMembers,
@@ -179,13 +182,14 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
   }
 
   async retrieveOrganizationMembers(orgSlug: string) {
+    this.pendingMembersOrgSlug = orgSlug;
     const result = await client.GET(
       "/api/0/organizations/{organization_slug}/members/",
       {
         params: { path: { organization_slug: orgSlug } },
       },
     );
-    if (result.data) {
+    if (result.data && this.pendingMembersOrgSlug === orgSlug) {
       this.setActiveOrganizationMembers(result.data!);
     }
     return result;
