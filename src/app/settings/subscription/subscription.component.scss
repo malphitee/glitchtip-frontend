@@ -1,4 +1,4 @@
-@use "src/assets/styles/_variables.scss" as vars;
+@use "variables" as vars;
 
 .manage-subscription-button {
   position: relative;
@@ -34,16 +34,32 @@ mat-card {
 
 .plan-header {
   display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 8px 0;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 0;
 
   mat-divider {
-    height: 24px;
+    display: none;
   }
 
   .body-text {
     color: var(--mat-sys-on-surface-variant);
+    font-size: 0.875rem;
+    margin: 0;
+  }
+
+  @media screen and (min-width: vars.$small) {
+    .body-text {
+      font-size: inherit;
+    }
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+
+    mat-divider {
+      display: block;
+      height: 24px;
+    }
   }
 }
 
@@ -52,8 +68,8 @@ mat-error {
   display: block;
 }
 
-.page-header {
-  flex-wrap: wrap;
+.get-started-banner {
+  margin-bottom: 24px;
 }
 
 .spinner-container {

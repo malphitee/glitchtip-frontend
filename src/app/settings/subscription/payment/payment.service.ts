@@ -13,6 +13,16 @@ export interface Price
   price: number;
 }
 
+export interface Product
+  extends Omit<
+    components["schemas"]["StripeProductExpandedPriceSchema"],
+    "defaultPrice" | "prices"
+  > {
+  defaultPrice: Price;
+  prices: Price[];
+  marketingFeatures: string[];
+}
+
 export interface PaymentState {
   subscriptionCreationLoadingId: string | null;
 }
@@ -33,7 +43,7 @@ export class PaymentService extends StatefulService<PaymentState> {
   );
 
   productsResource = apiResource(() => ({ url: "/api/0/stripe/products/" }));
-  products = computed(
+  products = computed<Product[]>(
     () =>
       this.productsResource
         .value()
@@ -43,9 +53,17 @@ export class PaymentService extends StatefulService<PaymentState> {
             ...product.defaultPrice,
             price: parseFloat(product.defaultPrice.price),
           },
+          prices: (product.prices || []).map((p) => ({
+            ...p,
+            price: parseFloat(p.price),
+          })),
+          marketingFeatures: product.marketingFeatures || [],
           name: product.name.startsWith("GlitchTip ")
             ? product.name.slice(10)
             : product.name,
+          description: product.description
+            .replace(/\s*-\s*[Uu]p to .*/i, "")
+            .trim(),
         }))
         .sort(
           (a, b) => (a.defaultPrice.price || 0) - (b.defaultPrice.price || 0),
@@ -133,8 +151,4 @@ export class PaymentService extends StatefulService<PaymentState> {
     this.snackBar.open(message);
   }
 
-  clearState() {
-    super.clearState();
-    this.productsResource.set(undefined);
-  }
 }

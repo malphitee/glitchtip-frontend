@@ -155,6 +155,13 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
     return subscription?.product.events || null;
   });
 
+  thisMonthPercent = computed(() => {
+    const total = this.totalEventsAllowed();
+    const current = this.eventsCountCurrentPeriod();
+    if (!total || !current?.total) return 0;
+    return Math.round((current.total / total) * 100);
+  });
+
   refreshTimerRef: NodeJS.Timeout | undefined = undefined;
 
   constructor() {

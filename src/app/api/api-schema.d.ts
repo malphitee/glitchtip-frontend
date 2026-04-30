@@ -3334,6 +3334,24 @@ export interface components {
          * @enum {string}
          */
         EventStatusDisplay: "unresolved" | "resolved" | "ignored";
+        /** IssueActorSchema */
+        IssueActorSchema: {
+            /**
+             * Type
+             * @enum {string}
+             */
+            type: "user" | "team";
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Username */
+            username?: string | null;
+            /** Email */
+            email?: string | null;
+            /** Slug */
+            slug?: string | null;
+        };
         /** IssueDetailSchema */
         IssueDetailSchema: {
             /** Id */
@@ -3395,6 +3413,7 @@ export interface components {
              * Format: date-time
              */
             lastSeen: string;
+            assignedTo?: components["schemas"]["IssueActorSchema"] | null;
             /** Title */
             title: string;
             /** Culprit */
@@ -3455,6 +3474,8 @@ export interface components {
             statusDetails?: components["schemas"]["StatusDetailsSchema"] | null;
             /** Merge */
             merge?: number | null;
+            /** Assignedto */
+            assignedTo?: string | null;
         };
         /**
          * CommitSchema
@@ -3551,6 +3572,7 @@ export interface components {
              * Format: date-time
              */
             lastSeen: string;
+            assignedTo?: components["schemas"]["IssueActorSchema"] | null;
             /** Title */
             title: string;
             /** Culprit */
@@ -4612,12 +4634,26 @@ export interface components {
             stripeID: string;
             /** Price */
             price: string;
+            /**
+             * Interval
+             * @default month
+             */
+            interval: string;
+            /**
+             * Is Public
+             * @default false
+             */
+            isPublic: boolean;
         };
         /** StripeProductExpandedPriceSchema */
         StripeProductExpandedPriceSchema: {
             /** Stripeid */
             stripeID: string;
             defaultPrice: components["schemas"]["StripeNestedPriceSchema"];
+            /** Prices */
+            prices: components["schemas"]["StripeNestedPriceSchema"][];
+            /** Marketingfeatures */
+            marketingFeatures: string[];
             /** Name */
             name: string;
             /** Description */
