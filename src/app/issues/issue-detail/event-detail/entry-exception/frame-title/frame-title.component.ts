@@ -4,10 +4,15 @@ import {
   Input,
   input,
 } from "@angular/core";
-import type { Frame } from "src/app/issues/interfaces";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import type { Frame } from "src/app/issues/interfaces";
+import {
+  cleanIosPath,
+  isIosPlatform,
+  isSwiftNameMangled,
+} from "src/app/issues/utils";
 
 @Component({
   selector: "gt-frame-title",
@@ -19,6 +24,10 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 export class FrameTitleComponent {
   @Input() frame: Frame | undefined;
   readonly eventPlatform = input<string | null>();
+
+  private resolvePlatform(framePlatform: string | null): string | null {
+    return this.eventPlatform() || framePlatform;
+  }
 
   /** Show a tool tip with the absPath if it doesn't match filename or module */
   showToolTip(
@@ -40,7 +49,7 @@ export class FrameTitleComponent {
     filename: string | null,
     module: string | null,
   ): string | undefined {
-    const effectivePlatform = this.eventPlatform() || platform;
+    const effectivePlatform = this.resolvePlatform(platform);
     let displayValue: string | undefined;
 
     switch (effectivePlatform) {
@@ -52,25 +61,11 @@ export class FrameTitleComponent {
         displayValue = filename ? filename : module ? module : undefined;
     }
 
-    if (displayValue && this.isIosPlatform(platform)) {
-      displayValue = this.cleanIosPath(displayValue);
+    if (displayValue && isIosPlatform(effectivePlatform)) {
+      displayValue = cleanIosPath(displayValue);
     }
 
     return displayValue;
-  }
-
-  private cleanIosPath(path: string): string {
-    const appMatch = path.match(/([^\/]+\.app\/.+)$/);
-    if (appMatch) {
-      return appMatch[1];
-    }
-
-    const frameworkMatch = path.match(/([^\/]+\.framework\/.+)$/);
-    if (frameworkMatch) {
-      return frameworkMatch[1];
-    }
-
-    return path;
   }
 
   isUrl(str: string | null): boolean {
@@ -89,30 +84,15 @@ export class FrameTitleComponent {
   }
 
   cleanPackagePath(packagePath: string, framePlatform: string | null): string {
-    if (this.isIosPlatform(framePlatform)) {
-      return this.cleanIosPath(packagePath);
-    }
-
-    return packagePath;
-  }
-
-  isIosPlatform(framePlatform: string | null): boolean {
-    const effectivePlatform = this.eventPlatform() || framePlatform;
-    return effectivePlatform === "cocoa" || effectivePlatform === "objc";
+    return isIosPlatform(this.resolvePlatform(framePlatform))
+      ? cleanIosPath(packagePath)
+      : packagePath;
   }
 
   isMangledSwiftName(
     functionName: string | null,
     framePlatform: string | null,
   ): boolean {
-    if (!functionName) {
-      return false;
-    }
-
-    if (!this.isIosPlatform(framePlatform)) {
-      return false;
-    }
-
-    return functionName.startsWith("$s") || functionName.startsWith("_$s");
+    return isSwiftNameMangled(functionName, this.resolvePlatform(framePlatform));
   }
 }
