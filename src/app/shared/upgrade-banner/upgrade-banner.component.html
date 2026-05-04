@@ -16,6 +16,10 @@
               You're at <strong>{{ usagePercent() }}%</strong> of your event limit. Upgrade before throttling kicks in and support open source error tracking.
             </p>
           }
+        } @else {
+          <p class="banner-usage" i18n>
+            Support open source error tracking and avoid event loss as you scale.
+          </p>
         }
       }
       @if (!hideActions()) {
