@@ -1,4 +1,7 @@
 @if (frame !== undefined) {
+  @let display =
+    displayFilenameOrModule(frame.platform, frame.filename, frame.module);
+  @let mangled = isMangledSwiftName(frame.function, frame.platform);
   <section class="mat-typography">
     @if (frame.filename || frame.module) {
       <span
@@ -8,17 +11,9 @@
             : ''
         "
       >
-        {{
-          displayFilenameOrModule(frame.platform, frame.filename, frame.module)
-        }}
+        {{ display }}
       </span>
-      @if (
-        displayFilenameOrModule(
-          frame.platform,
-          frame.filename,
-          frame.module
-        ) === frame.module && frame.filename
-      ) {
+      @if (display === frame.module && frame.filename) {
         <a
           class="help-button small-icon-button"
           mat-icon-button
@@ -35,12 +30,14 @@
           >{{ frame.absPath ? sanitizeUrl(frame.absPath) : null }}</a
         >
       }
-      @if (frame.function) {
+      @if (frame.function && !mangled) {
         in
       }
     }
     <!-- TODO: Add rawFunction conditions-->
-    @if (frame.function) {
+    @if (
+      frame.function && (!mangled || (!frame.filename && !frame.module))
+    ) {
       {{ frame.function }}
     }
     @if (frame.lineNo && frame.lineNo > 0) {
@@ -50,7 +47,7 @@
       }
     }
     @if (frame.package) {
-      within {{ frame.package }}
+      within {{ cleanPackagePath(frame.package, frame.platform) }}
     }
     <!--origAbsPath not in frame docs
     code: https://gitlab.com/glitchtip/sentry-open-source/sentry/-/blob/master/src/sentry/static/sentry/app/components/events/interfaces/frame.jsx#L245
