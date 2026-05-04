@@ -3,15 +3,20 @@
     <div class="banner-content">
       @if (variant() === "get-started") {
         <h2 class="banner-headline fancy" i18n>Get started with GlitchTip</h2>
-        <p class="banner-description" i18n>Start free with {{ freeEventLabel() }} events/month, or support open source and go paid for up to {{ topPlanLabel() }} events and priority support.</p>
+        <p class="banner-description" i18n>Start free with {{ freeEventLabel() }} events/month, or support open source and go paid for plans up to {{ topPlanLabel() }} events/month and beyond, with priority support.</p>
       } @else {
         <h2 class="banner-headline fancy" i18n>Don't lose events!</h2>
         @if (usagePercent() !== null) {
-          <p class="banner-usage" i18n>
-            You're at <strong>{{ usagePercent() }}%</strong> of your limit, upgrade now to avoid losing events.
-          </p>
+          @if (isThrottling()) {
+            <p class="banner-usage" i18n>
+              Your event intake is being throttled. At <strong>{{ usagePercent() }}%</strong> of your limit, not every event is getting through. Upgrade to restore full coverage.
+            </p>
+          } @else {
+            <p class="banner-usage" i18n>
+              You're at <strong>{{ usagePercent() }}%</strong> of your event limit. Upgrade before throttling kicks in and support open source error tracking.
+            </p>
+          }
         }
-        <p class="banner-description" i18n>Support open source and get up to {{ topPlanLabel() }} events/month and priority support.</p>
       }
       @if (!hideActions()) {
         <div class="banner-actions">

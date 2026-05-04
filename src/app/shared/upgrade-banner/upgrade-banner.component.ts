@@ -37,6 +37,10 @@ export class UpgradeBannerComponent {
   readonly freeEventLabel = computed(() =>
     this.formatEvents(this.freeEventLimit()),
   );
+  readonly isThrottling = computed(() => {
+    const percent = this.usagePercent();
+    return percent !== null && percent > 100;
+  });
 
   onUpgrade() {
     this.upgradeClick.emit();
