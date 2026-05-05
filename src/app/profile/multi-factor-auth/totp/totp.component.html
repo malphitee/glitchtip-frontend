@@ -22,10 +22,14 @@
       @if (step(); as step) {
         <div class="totp-process">
           @if (step === 1) {
-            <div>
+            <div
+              matTooltip="Verify your email to continue"
+              [matTooltipDisabled]="emailVerification.isVerified() !== false"
+            >
               <button
                 mat-flat-button
                 color="primary"
+                [disabled]="emailVerification.isVerified() === false"
                 (click)="incrementStep()"
                 i18n
                 >Get Started</button
