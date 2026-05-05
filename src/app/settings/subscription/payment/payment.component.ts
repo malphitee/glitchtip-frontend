@@ -85,14 +85,11 @@ export class PaymentComponent
   getActivePrice(product: Product): Price | undefined {
     const interval = this.billingInterval();
     if (
-      product.defaultPrice.isPublic &&
-      (product.defaultPrice.interval === interval ||
-        product.defaultPrice.price === 0)
+      product.defaultPrice.interval === interval ||
+      product.defaultPrice.price === 0
     ) {
       return product.defaultPrice;
     }
-    return product.prices.find(
-      (p) => p.interval === interval && p.isPublic,
-    );
+    return product.prices.find((p) => p.interval === interval);
   }
 }
