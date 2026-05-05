@@ -69,30 +69,34 @@ export class IssueDetailComponent implements OnInit {
   issue = this.issueService.issue;
   issueTitle = computed(() => {
     const issue = this.issue();
-    if (!issue || issue.metadata === null) {
+    if (!issue) {
       return ["", null] as [string, string | null];
     }
-    const metadata = issue.metadata;
+    const metadata = issue.metadata ?? {};
     const culprit = issue.culprit;
+    const fallback = issue.title || "";
 
     switch (issue.type) {
       case "error":
         if (metadata.type) {
-          return [metadata.type!, culprit] as [string, string | null];
+          return [metadata.type, culprit] as [string, string | null];
         }
-        return [metadata.function!, culprit] as [string, string | null];
+        return [metadata.function || fallback, culprit] as [
+          string,
+          string | null,
+        ];
       case "csp":
-        return [metadata.directive || "", metadata.uri || null] as [
+        return [metadata.directive || fallback, metadata.uri || null] as [
           string,
           string | null,
         ];
       case "default":
-        return [metadata.message || "", metadata.origin || null] as [
+        return [metadata.message || fallback, metadata.origin || null] as [
           string,
           string | null,
         ];
       default:
-        return [metadata.title!, null] as [string, string | null];
+        return [metadata.title || fallback, null] as [string, string | null];
     }
   });
   issueSubtitle = computed<string>(() => {
