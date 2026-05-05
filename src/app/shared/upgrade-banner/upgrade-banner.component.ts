@@ -18,10 +18,11 @@ import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 })
 export class UpgradeBannerComponent {
   readonly usagePercent = input<number | null>(null);
+  readonly eventThrottleRate = input<number | null>(null);
+  readonly isAcceptingEvents = input<boolean | null>(null);
   readonly hideActions = input(false);
   readonly variant = input<"upgrade" | "get-started">("upgrade");
   readonly nextPlanEvents = input<number | null>(null);
-  readonly topPlanEvents = input<number | null>(null);
   readonly freeEventLimit = input<number | null>(null);
   readonly upgradeLoading = input(false);
 
@@ -31,15 +32,13 @@ export class UpgradeBannerComponent {
   readonly nextPlanLabel = computed(() =>
     this.formatEvents(this.nextPlanEvents()),
   );
-  readonly topPlanLabel = computed(() =>
-    this.formatEvents(this.topPlanEvents()),
-  );
   readonly freeEventLabel = computed(() =>
     this.formatEvents(this.freeEventLimit()),
   );
+  readonly isHardStopped = computed(() => this.isAcceptingEvents() === false);
   readonly isThrottling = computed(() => {
-    const percent = this.usagePercent();
-    return percent !== null && percent > 100;
+    const rate = this.eventThrottleRate();
+    return rate !== null && rate > 0;
   });
 
   onUpgrade() {
