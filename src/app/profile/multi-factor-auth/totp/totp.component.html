@@ -24,12 +24,12 @@
           @if (step === 1) {
             <div
               matTooltip="Verify your email to continue"
-              [matTooltipDisabled]="emailVerification.isVerified() !== false"
+              [matTooltipDisabled]="emailsService.isVerified() !== false"
             >
               <button
                 mat-flat-button
                 color="primary"
-                [disabled]="emailVerification.isVerified() === false"
+                [disabled]="emailsService.isVerified() === false"
                 (click)="incrementStep()"
                 i18n
                 >Get Started</button

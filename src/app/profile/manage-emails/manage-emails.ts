@@ -16,7 +16,7 @@ import { LoadingButtonComponent } from "../../shared/loading-button/loading-butt
 import { MatChipsModule } from "@angular/material/chips";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatCardModule } from "@angular/material/card";
-import { ManageEmailsState } from "./manage-emails-state";
+import { EmailsService } from "src/app/api/emails/emails.service";
 
 @Component({
   selector: "gt-manage-emails",
@@ -34,10 +34,9 @@ import { ManageEmailsState } from "./manage-emails-state";
     MatFormFieldModule,
     MatInputModule,
   ],
-  providers: [ManageEmailsState],
 })
 export class ManageEmails {
-  #service = inject(ManageEmailsState);
+  #service = inject(EmailsService);
 
   emailAddresses = this.#service.emailAddressesSorted;
   loadingStates = this.#service.loadingStates;

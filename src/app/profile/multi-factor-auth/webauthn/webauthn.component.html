@@ -25,14 +25,14 @@
       }
       <span
         matTooltip="Verify your email to continue"
-        [matTooltipDisabled]="emailVerification.isVerified() !== false"
+        [matTooltipDisabled]="emailsService.isVerified() !== false"
       >
         <gt-loading-button
           buttonText="Set up new device"
           [loading]="false"
           (buttonClick)="activateWebAuthn()"
           [disabled]="
-            hasTOTP() === undefined || emailVerification.isVerified() === false
+            hasTOTP() === undefined || emailsService.isVerified() === false
           "
           buttonStyle="flat"
         ></gt-loading-button>

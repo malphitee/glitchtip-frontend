@@ -3,7 +3,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { RouterLink } from "@angular/router";
-import { EmailVerificationService } from "src/app/api/email-verification/email-verification.service";
+import { EmailsService } from "src/app/api/emails/emails.service";
 
 @Component({
   selector: "gt-verify-email-banner",
@@ -13,13 +13,14 @@ import { EmailVerificationService } from "src/app/api/email-verification/email-v
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VerifyEmailBannerComponent {
-  readonly emailVerification = inject(EmailVerificationService);
+  readonly emailsService = inject(EmailsService);
 
   onResend() {
-    this.emailVerification.resendVerification();
+    const email = this.emailsService.primaryEmail();
+    if (email) this.emailsService.resendConfirmation(email);
   }
 
   onRefresh() {
-    this.emailVerification.refresh();
+    this.emailsService.refresh();
   }
 }

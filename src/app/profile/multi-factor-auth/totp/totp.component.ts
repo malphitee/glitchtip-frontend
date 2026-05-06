@@ -21,7 +21,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 
 import { MatDividerModule } from "@angular/material/divider";
 import { MatCardModule } from "@angular/material/card";
-import { EmailVerificationService } from "src/app/api/email-verification/email-verification.service";
+import { EmailsService } from "src/app/api/emails/emails.service";
 import { MultiFactorAuthService } from "../multi-factor-auth.service";
 import { FormErrorComponent } from "../../../shared/forms/form-error/form-error.component";
 import { ToDoItemComponent } from "../../../shared/to-do-item/to-do-item.component";
@@ -48,7 +48,7 @@ import { mapFormErrors } from "src/app/shared/forms/form.utils";
 })
 export class TOTPComponent implements OnDestroy {
   private service = inject(MultiFactorAuthService);
-  protected emailVerification = inject(EmailVerificationService);
+  protected emailsService = inject(EmailsService);
 
   @ViewChild("canvas", { static: false }) canvas: ElementRef | undefined;
   TOTPAuthenticator = this.service.TOTPAuthenticator;

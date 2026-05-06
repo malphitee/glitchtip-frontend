@@ -1,4 +1,5 @@
-@if (emailVerification.isVerified() === false) {
+@if (emailsService.isVerified() === false) {
+  @let resending = !!emailsService.loadingStates().resendConfirmation;
   <mat-card appearance="outlined" class="verify-email-banner">
     <mat-card-content>
       <div class="banner-content">
@@ -8,7 +9,7 @@
           you can set up multi-factor authentication. We use it to recover your
           account if you ever lose access.
         </p>
-        @if (emailVerification.primaryEmail(); as email) {
+        @if (emailsService.primaryEmail(); as email) {
           <p class="banner-email" i18n>
             A verification link was sent to <strong>{{ email }}</strong>.
           </p>
@@ -18,17 +19,13 @@
             mat-flat-button
             color="primary"
             class="resend-button"
-            [disabled]="emailVerification.resending()"
+            [disabled]="resending"
             (click)="onResend()"
           >
-            <span
-              [style.visibility]="
-                emailVerification.resending() ? 'hidden' : 'visible'
-              "
-              i18n
+            <span [style.visibility]="resending ? 'hidden' : 'visible'" i18n
               >Resend verification email</span
             >
-            @if (emailVerification.resending()) {
+            @if (resending) {
               <mat-spinner class="resend-button-spinner" diameter="18" />
             }
           </button>
