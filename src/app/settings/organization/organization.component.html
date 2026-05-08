@@ -47,14 +47,6 @@
                 placeholder="sub_..."
               />
             </mat-form-field>
-            <mat-form-field appearance="outline">
-              <mat-label i18n>Billing Email</mat-label>
-              <input
-                matInput
-                formControlName="licenseBillingEmail"
-                type="email"
-              />
-            </mat-form-field>
             <gt-loading-button
               [loading]="loading().updateOrganization"
               mat-flat-button

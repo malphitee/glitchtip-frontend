@@ -44,7 +44,6 @@ export class OrganizationComponent implements OnDestroy, OnInit {
   });
   licenseForm = new FormGroup({
     licenseKey: new FormControl(""),
-    licenseBillingEmail: new FormControl(""),
   });
   accessOrgAdmin = () => this.organizationsService.accessOrgAdmin();
   showLicenseFields = computed(
@@ -70,7 +69,6 @@ export class OrganizationComponent implements OnDestroy, OnInit {
         this.form.patchValue({ name: data.name });
         this.licenseForm.patchValue({
           licenseKey: data.licenseKey ?? "",
-          licenseBillingEmail: data.licenseBillingEmail ?? "",
         });
       }
     });
@@ -87,7 +85,6 @@ export class OrganizationComponent implements OnDestroy, OnInit {
   updateLicense() {
     this.organizationDetailService.updateLicense(
       this.licenseForm.value.licenseKey ?? "",
-      this.licenseForm.value.licenseBillingEmail ?? "",
     );
   }
 

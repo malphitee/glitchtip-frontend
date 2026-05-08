@@ -4,58 +4,36 @@
   </ng-container>
 </gt-top-app-bar>
 <section class="l-body">
-  @if (mode() === "self-hosted-licensed") {
-    <mat-card>
-      <mat-card-content>
-        <div class="license-banner">
-          <div class="license-info">
-            <div class="license-row">
-              <span class="body-text-strong" i18n>License Key</span>
-              <span class="body-text license-key-value">{{
-                maskedLicenseKey()
-              }}</span>
-            </div>
-            @if (activeOrganization()?.licenseBillingEmail; as email) {
-              <div class="license-row">
-                <span class="body-text-strong" i18n>Billing Email</span>
-                <span class="body-text">{{ email }}</span>
-              </div>
-            }
-          </div>
-          <div class="license-status">
-            <mat-icon>check_circle</mat-icon>
-            <span class="body-text-strong" i18n>License Entered</span>
-          </div>
-        </div>
-      </mat-card-content>
-    </mat-card>
-  }
-
-  @if (mode() === "self-hosted-unlicensed") {
-    <mat-card>
-      <mat-card-content>
-        <div class="unlicensed-banner">
-          <div>
-            <p class="body-text" i18n>
-              Support GlitchTip development and unlock additional features by
-              entering a license key in
-              <a [routerLink]="['/', orgSlug(), 'settings']">General Settings</a
-              >.
-            </p>
-          </div>
-          <a
-            mat-flat-button
-            color="primary"
-            href="https://glitchtip.com/pricing"
-            target="_blank"
-            rel="noopener"
-            i18n
-            >Get a License</a
-          >
-        </div>
-      </mat-card-content>
-    </mat-card>
-  }
+  <div class="contribute-grid">
+    <a
+      class="contribute-card"
+      href="https://liberapay.com/GlitchTip/donate"
+      target="_blank"
+      rel="noopener"
+    >
+      <mat-icon class="contribute-icon">favorite</mat-icon>
+      <div class="contribute-text">
+        <span class="body-text-strong" i18n>Donate</span>
+        <span class="caption-text" i18n
+          >Support open source development on Liberapay</span
+        >
+      </div>
+      <mat-icon class="external-icon">open_in_new</mat-icon>
+    </a>
+    <a
+      class="contribute-card"
+      href="https://gitlab.com/glitchtip/glitchtip"
+      target="_blank"
+      rel="noopener"
+    >
+      <mat-icon class="contribute-icon">code</mat-icon>
+      <div class="contribute-text">
+        <span class="body-text-strong" i18n>Contribute Code</span>
+        <span class="caption-text" i18n>Help build GlitchTip on GitLab</span>
+      </div>
+      <mat-icon class="external-icon">open_in_new</mat-icon>
+    </a>
+  </div>
 
   <mat-card>
     <mat-card-content>
@@ -65,12 +43,38 @@
         <span class="body-text" i18n>Usage: Last 30 Days</span>
       </div>
       <mat-divider />
-      <gt-subscription-charts [totalEventsAllowed]="null" [showLimits]="false" />
+      <gt-subscription-charts
+        [totalEventsAllowed]="null"
+        [showLimits]="false"
+      />
       <p class="body-text" i18n>
         Questions? Contact us at
         <a href="mailto:{{ billingEmail }}">{{ billingEmail }}</a
         >.
       </p>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card>
+    <mat-card-content>
+      <div class="cloud-cta">
+        <mat-icon class="cloud-cta-icon">cloud</mat-icon>
+        <div class="cloud-cta-text">
+          <span class="body-text-strong" i18n>Try GlitchTip Cloud</span>
+          <span class="caption-text" i18n
+            >Let us handle hosting, updates, and backups for you.</span
+          >
+        </div>
+        <a
+          mat-flat-button
+          color="primary"
+          href="https://app.glitchtip.com"
+          target="_blank"
+          rel="noopener"
+          i18n
+          >Get Started</a
+        >
+      </div>
     </mat-card-content>
   </mat-card>
 </section>

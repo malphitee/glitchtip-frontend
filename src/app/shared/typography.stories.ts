@@ -75,6 +75,7 @@ const iconNames = [
   "check_circle",
   "clear",
   "close",
+  "cloud",
   "code",
   "computer",
   "dark_mode",

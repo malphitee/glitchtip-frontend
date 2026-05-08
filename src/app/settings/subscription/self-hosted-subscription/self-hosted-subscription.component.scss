@@ -1,48 +1,7 @@
-.license-banner {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 16px;
-  flex-wrap: wrap;
-}
+@use "variables" as vars;
 
-.license-info {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.license-row {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-.license-key-value {
-  font-family: monospace;
-  color: var(--mat-sys-on-surface-variant);
-}
-
-.license-status {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--mat-sys-primary);
-}
-
-.unlicensed-banner {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
-
-  p {
-    margin: 0;
-  }
-}
-
-mat-card {
+mat-card,
+.contribute-grid {
   margin-top: 24px;
   margin-bottom: 24px;
 }
@@ -51,17 +10,108 @@ mat-card {
   margin-bottom: 0;
 }
 
-.plan-header {
+.contribute-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+
+  @media screen and (min-width: vars.$small) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.contribute-card {
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 8px 0;
+  padding: 16px 20px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: vars.$shape-radius;
+  background-color: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  text-decoration: none;
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background-color: var(--mat-sys-surface-container);
+  }
+
+  .contribute-icon {
+    color: var(--mat-sys-on-surface);
+    flex-shrink: 0;
+  }
+
+  .contribute-text {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 2px;
+  }
+
+  .external-icon {
+    flex-shrink: 0;
+    color: var(--mat-sys-on-surface-variant);
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.plan-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 0;
 
   mat-divider {
-    height: 24px;
+    display: none;
   }
 
   .body-text {
     color: var(--mat-sys-on-surface-variant);
+    font-size: 0.875rem;
+    margin: 0;
   }
+
+  @media screen and (min-width: vars.$small) {
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+
+    .body-text {
+      font-size: inherit;
+    }
+
+    mat-divider {
+      display: block;
+      height: 24px;
+    }
+  }
+}
+
+.cloud-cta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+
+  .cloud-cta-icon {
+    flex-shrink: 0;
+    color: var(--mat-sys-primary);
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+  }
+
+  .cloud-cta-text {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 200px;
+    gap: 2px;
+  }
+}
+
+.caption-text {
+  color: var(--mat-sys-on-surface-variant);
 }

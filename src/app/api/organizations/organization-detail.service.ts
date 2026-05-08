@@ -134,14 +134,16 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
     }
   }
 
-  async updateLicense(licenseKey: string, licenseBillingEmail: string) {
+  async updateLicense(licenseKey: string) {
+    const orgName = this.organizationsService.activeOrganization()?.name;
+    if (!orgName) return;
     this.setUpdateOrganizationStart();
     const orgSlug = this.organizationsService.activeOrganizationSlug();
     const { data, error, response } = await client.PUT(
       "/api/0/organizations/{organization_slug}/",
       {
         params: { path: { organization_slug: orgSlug } },
-        body: { name: this.organizationsService.activeOrganization()?.name ?? "", licenseKey, licenseBillingEmail },
+        body: { name: orgName, licenseKey },
       },
     );
     if (data) {
@@ -152,7 +154,7 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
     }
     if (response.status === 403) {
       this.setUpdateOrganizationError(
-        $localize`Only organization admins can update license settings.`,
+        $localize`Only users with a role of manager or above can update organizations.`,
       );
     } else {
       const errors = handleError(error, response);
