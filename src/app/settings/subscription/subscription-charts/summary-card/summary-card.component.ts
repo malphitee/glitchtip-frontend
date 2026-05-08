@@ -26,9 +26,7 @@ export class SummaryCardComponent {
     return Math.round((value / allowed) * 100);
   });
 
-  isOverLimit = computed(
-    () => this.showLimits() && this.percent() >= this.limitThreshold(),
-  );
+  isOverLimit = computed(() => this.percent() >= this.limitThreshold());
 
   subtitle = computed(() => {
     const value = this.value();

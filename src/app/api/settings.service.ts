@@ -15,7 +15,6 @@ export class SettingsService {
   settings = computed(() => this.settingsResource.value());
   socialApps = computed(() => this.settings()?.socialApps || []);
   billingEnabled = computed(() => this.settings()?.billingEnabled);
-  licenseKey = computed(() => this.settings()?.licenseKey ?? "");
   paidForGlitchTip = computed(() => this.settings()?.iPaidForGlitchTip);
   stripePublicKey = computed(() => this.settings()?.stripePublicKey);
   sentryDSN = computed(() => this.settings()?.sentryDSN);
