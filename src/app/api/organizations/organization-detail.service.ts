@@ -134,36 +134,6 @@ export class OrganizationDetailService extends StatefulService<OrganizationsStat
     }
   }
 
-  async updateLicense(licenseKey: string) {
-    const orgName = this.organizationsService.activeOrganization()?.name;
-    if (!orgName) return;
-    this.setUpdateOrganizationStart();
-    const orgSlug = this.organizationsService.activeOrganizationSlug();
-    const { data, error, response } = await client.PUT(
-      "/api/0/organizations/{organization_slug}/",
-      {
-        params: { path: { organization_slug: orgSlug } },
-        body: { name: orgName, licenseKey },
-      },
-    );
-    if (data) {
-      this.setUpdateOrganizationComplete();
-      this.organizationsService.refreshActiveOrganization();
-      this.snackBar.open($localize`License settings have been updated.`);
-      return;
-    }
-    if (response.status === 403) {
-      this.setUpdateOrganizationError(
-        $localize`Only users with a role of manager or above can update organizations.`,
-      );
-    } else {
-      const errors = handleError(error, response);
-      if (errors.detail.length) {
-        this.setUpdateOrganizationError(errors.detail[0].msg);
-      }
-    }
-  }
-
   /** Delete organization: route to home page */
   async deleteOrganization(slug: string, name: string) {
     this.setDeleteOrganizationStart();
