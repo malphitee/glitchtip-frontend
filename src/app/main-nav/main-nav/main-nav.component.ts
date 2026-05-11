@@ -32,7 +32,6 @@ interface NavItem {
   name: string;
   icon: string;
   route: string[];
-  requiresBilling?: boolean;
   requiresFeature?: string;
   exactRoute?: boolean;
 }
@@ -162,11 +161,7 @@ export class MainNavComponent {
     );
   });
 
-  visibleOrgMenuItems = computed(() => {
-    return this.orgMenuItems.filter(
-      (item) => !item.requiresBilling || this.billingEnabled(),
-    );
-  });
+  visibleOrgMenuItems = computed(() => this.orgMenuItems);
 
   isCollapsed = signal(false);
 
@@ -182,7 +177,6 @@ export class MainNavComponent {
   organizationsInitialLoad = this.organizationsService.initialLoad;
   isLoggedIn = this.auth.isAuthenticated;
   navOpen = this.mainNav.navOpen;
-  billingEnabled = this.settingsService.billingEnabled;
   paidForGlitchTip = this.settingsService.paidForGlitchTip;
   mobileNav = this.mainNav.mobileNav;
   version = this.settingsService.version;
