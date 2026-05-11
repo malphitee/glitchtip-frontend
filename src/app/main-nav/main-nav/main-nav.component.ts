@@ -161,7 +161,7 @@ export class MainNavComponent {
     );
   });
 
-  visibleOrgMenuItems = computed(() => this.orgMenuItems);
+  visibleOrgMenuItems = this.orgMenuItems;
 
   isCollapsed = signal(false);
 
