@@ -140,6 +140,7 @@ export class SubscriptionComponent
   ngOnInit(): void {
     this.orgService.activeOrganizationResource.reload();
     this.service.loadDetailData(this.orgSlug());
+    this.service.subscriptionResource.reload();
     this.paymentService.productsResource.reload();
 
     if (this.sessionId()) {

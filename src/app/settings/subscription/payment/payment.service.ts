@@ -1,8 +1,8 @@
 import { computed, Injectable, inject } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { Router } from "@angular/router";
 import { StatefulService } from "src/app/shared/stateful-service/signal-state.service";
 import { client } from "src/app/shared/api/api";
+import { SubscriptionService } from "src/app/api/subscriptions/subscription.service";
 
 import { components } from "src/app/api/api-schema";
 import { apiResource } from "src/app/shared/api/api-resource-factory";
@@ -36,7 +36,7 @@ const initialState: PaymentState = {
 })
 export class PaymentService extends StatefulService<PaymentState> {
   private snackBar = inject(MatSnackBar);
-  private router = inject(Router);
+  private subscriptionService = inject(SubscriptionService);
 
   readonly subscriptionCreationLoadingId = computed(
     () => this.state().subscriptionCreationLoadingId,
@@ -111,7 +111,8 @@ export class PaymentService extends StatefulService<PaymentState> {
       );
       throw error;
     }
-    this.router.navigate([organization.slug, "issues"]);
+    this.setState({ subscriptionCreationLoadingId: null });
+    this.subscriptionService.subscriptionResource.reload();
     return data;
   }
 
