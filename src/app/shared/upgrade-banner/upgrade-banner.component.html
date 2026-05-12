@@ -3,15 +3,34 @@
     <div class="banner-content">
       @if (variant() === "get-started") {
         <h2 class="banner-headline fancy" i18n>Get started with GlitchTip</h2>
-        <p class="banner-description" i18n>Start free with {{ freeEventLabel() }} events/month, or support open source and go paid for up to {{ topPlanLabel() }} events and priority support.</p>
+        <p class="banner-description" i18n
+          >Start free with {{ freeEventLabel() }} events/month, or go paid to
+          scale up and support open source error tracking with priority
+          support.</p
+        >
       } @else {
         <h2 class="banner-headline fancy" i18n>Don't lose events!</h2>
-        @if (usagePercent() !== null) {
+        @if (isHardStopped()) {
           <p class="banner-usage" i18n>
-            You're at <strong>{{ usagePercent() }}%</strong> of your limit, upgrade now to avoid losing events.
+            Your events are being rejected. Upgrade to resume event tracking.
+          </p>
+        } @else if (isThrottling()) {
+          <p class="banner-usage" i18n>
+            About <strong>{{ eventThrottleRate() }}%</strong> of your incoming
+            events are being dropped. Upgrade to restore full coverage.
+          </p>
+        } @else if (usagePercent() !== null) {
+          <p class="banner-usage" i18n>
+            You're at <strong>{{ usagePercent() }}%</strong> of your event
+            limit. Upgrade before throttling kicks in and support open source
+            error tracking.
+          </p>
+        } @else {
+          <p class="banner-usage" i18n>
+            Support open source error tracking and avoid event loss as you
+            scale.
           </p>
         }
-        <p class="banner-description" i18n>Support open source and get up to {{ topPlanLabel() }} events/month and priority support.</p>
       }
       @if (!hideActions()) {
         <div class="banner-actions">
