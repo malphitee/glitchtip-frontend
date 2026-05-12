@@ -212,6 +212,7 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
       );
     }
     if (data) {
+      this.setState({ billingPortalLoading: false });
       window.location.href = data.url;
     }
   }

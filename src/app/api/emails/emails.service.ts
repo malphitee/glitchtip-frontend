@@ -33,9 +33,9 @@ const initialState: EmailState = {
   addEmailError: "",
 };
 
-@Injectable()
-export class ManageEmailsState extends StatefulService<EmailState> {
-  #snackbar = inject(MatSnackBar);
+@Injectable({ providedIn: "root" })
+export class EmailsService extends StatefulService<EmailState> {
+  readonly #snackbar = inject(MatSnackBar);
   #emailAddressesResource = resource({
     loader: async ({ abortSignal }) => {
       const { data } = await client.GET("/api/0/users/{user_id}/emails/", {
@@ -57,6 +57,16 @@ export class ManageEmailsState extends StatefulService<EmailState> {
   );
   loadingStates = computed(() => this.state().loadingStates);
   addEmailError = computed(() => this.state().addEmailError);
+
+  primaryEmail = computed(
+    () => this.#emailAddressesResource.value()?.find((e) => e.isPrimary)?.email,
+  );
+
+  isVerified = computed(() => {
+    const emails = this.#emailAddressesResource.value();
+    if (!emails) return undefined;
+    return emails.find((e) => e.isPrimary)?.isVerified ?? false;
+  });
 
   constructor() {
     super(initialState);
@@ -167,7 +177,9 @@ export class ManageEmailsState extends StatefulService<EmailState> {
           resendConfirmation: "",
         },
       });
-      this.#snackbar.open(`A confirmation email has been sent to ${email}.`);
+      this.#snackbar.open(
+        $localize`A confirmation email has been sent to ${email}.`,
+      );
       return true;
     }
     if (error) {
@@ -183,5 +195,9 @@ export class ManageEmailsState extends StatefulService<EmailState> {
       }
     }
     return false;
+  }
+
+  refresh() {
+    this.#emailAddressesResource.reload();
   }
 }

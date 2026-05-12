@@ -22,10 +22,14 @@
       @if (step(); as step) {
         <div class="totp-process">
           @if (step === 1) {
-            <div>
+            <div
+              matTooltip="Verify your email to continue"
+              [matTooltipDisabled]="emailsService.isVerified() !== false"
+            >
               <button
                 mat-flat-button
                 color="primary"
+                [disabled]="emailsService.isVerified() === false"
                 (click)="incrementStep()"
                 i18n
                 >Get Started</button
@@ -114,7 +118,6 @@
                     app and submit this form to enable TOTP authentication:</p
                   >
                 </div>
-                <!-- <gt-form-error></gt-form-error> -->
                 <mat-form-field appearance="outline">
                   <mat-label i18n>6-digit Code</mat-label>
                   <input
