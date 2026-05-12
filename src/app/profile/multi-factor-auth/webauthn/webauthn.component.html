@@ -23,13 +23,20 @@
           <gt-form-error [error]="error"></gt-form-error>
         </div>
       }
-      <gt-loading-button
-        buttonText="Set up new device"
-        [loading]="false"
-        (buttonClick)="activateWebAuthn()"
-        [disabled]="hasTOTP() === undefined"
-        buttonStyle="flat"
-      ></gt-loading-button>
+      <span
+        matTooltip="Verify your email to continue"
+        [matTooltipDisabled]="emailsService.isVerified() !== false"
+      >
+        <gt-loading-button
+          buttonText="Set up new device"
+          [loading]="false"
+          (buttonClick)="activateWebAuthn()"
+          [disabled]="
+            hasTOTP() === undefined || emailsService.isVerified() === false
+          "
+          buttonStyle="flat"
+        ></gt-loading-button>
+      </span>
     }
     @if (stage() === 2) {
       <p i18n>Provide a name for your device to complete registration.</p>

@@ -15,6 +15,7 @@ import { MatCardModule } from "@angular/material/card";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { LoadingButtonComponent } from "../../../shared/loading-button/loading-button.component";
 import { FormErrorComponent } from "../../../shared/forms/form-error/form-error.component";
+import { EmailsService } from "src/app/api/emails/emails.service";
 import { MultiFactorAuthService } from "../multi-factor-auth.service";
 import { checkForOverflow } from "src/app/shared/shared.utils";
 
@@ -39,6 +40,7 @@ import { checkForOverflow } from "src/app/shared/shared.utils";
 export class WebAuthnComponent {
   private service = inject(MultiFactorAuthService);
   private snackBar = inject(MatSnackBar);
+  protected emailsService = inject(EmailsService);
 
   stage = this.service.webAuthnState;
   hasTOTP = this.service.TOTPAuthenticator;
