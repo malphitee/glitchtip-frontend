@@ -67,7 +67,6 @@
               thisMonthPercent() >= 80 ? thisMonthPercent() : null
             "
             [nextPlanEvents]="nextProduct()?.events ?? null"
-            [topPlanEvents]="topPlanEvents()"
             [upgradeLoading]="upgradeLoading()"
             (upgradeClick)="upgradeToNextPlan()"
             (comparePlansClick)="openBuiltInPricing()"
@@ -160,7 +159,6 @@
           [hideActions]="true"
           variant="get-started"
           [freeEventLimit]="freeEventLimit()"
-          [topPlanEvents]="topPlanEvents()"
         />
         <gt-payment></gt-payment>
       }
