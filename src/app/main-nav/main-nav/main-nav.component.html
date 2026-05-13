@@ -151,7 +151,7 @@
               <mat-icon class="arrow-icon">arrow_drop_down</mat-icon>
             </div>
           </button>
-          @for (item of visibleOrgMenuItems(); track item.route) {
+          @for (item of visibleOrgMenuItems; track item.route) {
             <a
               [routerLink]="getRouteWithOrgSlug(item.route)"
               style="display: none"
@@ -193,7 +193,7 @@
 
       <mat-menu #orgMenu="matMenu" class="nav-menu" xPosition="after">
         @if (activeOrganization()) {
-          @for (item of visibleOrgMenuItems(); track item.route) {
+          @for (item of visibleOrgMenuItems; track item.route) {
             <button
               mat-menu-item
               [routerLink]="getRouteWithOrgSlug(item.route)"

@@ -2,6 +2,7 @@ import {
   Component,
   ChangeDetectionStrategy,
   computed,
+  effect,
   inject,
   input,
   OnInit,
@@ -16,6 +17,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { RouterLink } from "@angular/router";
 import { OrganizationsService } from "src/app/api/organizations.service";
+import { SettingsService } from "src/app/api/settings.service";
 import {
   SubscriptionService,
   SubscriptionState,
@@ -26,6 +28,7 @@ import { UpgradeBannerComponent } from "src/app/shared/upgrade-banner/upgrade-ba
 import { environment } from "../../../environments/environment";
 import { PaymentComponent } from "./payment/payment.component";
 import { PaymentService } from "./payment/payment.service";
+import { SelfHostedSubscriptionComponent } from "./self-hosted-subscription/self-hosted-subscription.component";
 import { SubscriptionChartsComponent } from "./subscription-charts/subscription-charts.component";
 
 @Component({
@@ -46,6 +49,7 @@ import { SubscriptionChartsComponent } from "./subscription-charts/subscription-
     SubscriptionChartsComponent,
     UpgradeBannerComponent,
     PaymentComponent,
+    SelfHostedSubscriptionComponent,
   ],
 })
 export class SubscriptionComponent
@@ -53,8 +57,19 @@ export class SubscriptionComponent
   implements OnInit
 {
   private orgService = inject(OrganizationsService);
+  private settingsService = inject(SettingsService);
   private paymentService = inject(PaymentService);
   private dialog = inject(MatDialog);
+
+  /**
+   * `null` until settings load, then `true` for hosted (billing enabled) /
+   * `false` for self-hosted. The template renders nothing while `null` so
+   * neither mode flashes during the initial settings fetch.
+   */
+  isHosted = computed(() => {
+    if (!this.settingsService.initialLoad()) return null;
+    return this.settingsService.billingEnabled() === true;
+  });
 
   orgSlug = input.required<string>({ alias: "org-slug" });
   sessionId = input<string>("", { alias: "session_id" });
@@ -129,20 +144,23 @@ export class SubscriptionComponent
     super(service);
 
     this.service = service;
+
+    // Fire hosted-only fetches once settings confirm billing is enabled.
+    effect(() => {
+      if (this.isHosted() !== true) return;
+      this.paymentService.productsResource.reload();
+      if (this.sessionId()) {
+        this.service.refreshUntilSubscriptionOrTimeout();
+      }
+      if (this.billingPortalRedirect()) {
+        this.orgService.repeatRefreshOrgDetail();
+      }
+    });
   }
 
   ngOnInit(): void {
     this.orgService.activeOrganizationResource.reload();
     this.service.loadDetailData(this.orgSlug());
-    this.service.subscriptionResource.reload();
-    this.paymentService.productsResource.reload();
-
-    if (this.sessionId()) {
-      this.service.refreshUntilSubscriptionOrTimeout();
-    }
-    if (this.billingPortalRedirect()) {
-      this.orgService.repeatRefreshOrgDetail();
-    }
   }
 
   manageSubscription() {
@@ -157,8 +175,11 @@ export class SubscriptionComponent
     const currentInterval = subscription?.price?.interval;
     const price =
       (product.defaultPrice.interval === currentInterval &&
+        product.defaultPrice.isPublic &&
         product.defaultPrice) ||
-      product.prices.find((p) => p.interval === currentInterval);
+      product.prices.find(
+        (p) => p.interval === currentInterval && p.isPublic,
+      );
     if (!price) return;
     this.paymentService.dispatchSubscriptionCreation(org, price);
   }

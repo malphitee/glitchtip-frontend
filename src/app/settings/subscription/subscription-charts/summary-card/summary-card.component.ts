@@ -17,11 +17,12 @@ export class SummaryCardComponent {
   eventsAllowed = input.required<number | null>();
   limitThreshold = input(80);
   loading = input(false);
+  showLimits = input(true);
 
   percent = computed(() => {
     const value = this.value();
     const allowed = this.eventsAllowed();
-    if (value == null || !allowed) return 0;
+    if (!this.showLimits() || value == null || !allowed) return 0;
     return Math.round((value / allowed) * 100);
   });
 
@@ -30,8 +31,10 @@ export class SummaryCardComponent {
   subtitle = computed(() => {
     const value = this.value();
     if (value === null) return $localize`Not enough data`;
+    if (!this.showLimits()) return "";
     const percent = this.percent();
-    if (percent >= 100 && this.limitThreshold() === 100) return $localize`Over limit`;
+    if (percent >= 100 && this.limitThreshold() === 100)
+      return $localize`Over limit`;
     return `${percent}% of limit (${this.eventsAllowed()})`;
   });
 }
