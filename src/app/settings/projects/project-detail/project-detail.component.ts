@@ -184,7 +184,7 @@ export class ProjectDetailComponent implements OnInit {
       if (result) {
         this.#orgService.refreshActiveOrganization();
         this.#snackBar.open(
-          $localize`Your project has been sucessfully deleted`,
+          $localize`Your project has been successfully deleted`,
         );
         this.#router.navigate([this.orgSlug(), "settings", "projects"]);
       } else {
