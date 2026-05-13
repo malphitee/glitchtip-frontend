@@ -187,6 +187,10 @@ export class ProjectDetailComponent implements OnInit {
           $localize`Your project has been sucessfully deleted`,
         );
         this.#router.navigate([this.orgSlug(), "settings", "projects"]);
+      } else {
+        this.#snackBar.open(
+          this.deleteError(),
+        );
       }
     }
   }
