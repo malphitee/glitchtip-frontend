@@ -1,21 +1,27 @@
-# GlitchTip CLI (Beta)
-
-> **Beta**: The GlitchTip CLI is pre-1.0 software. Commands and options may change between releases.
+# GlitchTip CLI
 
 The GlitchTip CLI is a command-line tool for interacting with GlitchTip. It can upload source maps and debug symbols, manage releases, send test events, and more.
 
 ## Installation
 
+### Install Script (Linux, macOS, Windows)
+
+The install script detects your OS and architecture, downloads the appropriate pre-built binary, and installs it to `/usr/local/bin` (or `~/.local/bin` if `/usr/local/bin` is not writable):
+
+```bash
+curl -fsSL https://glitchtip.com/install.sh | sh
+```
+
 ### Pre-built Binaries
 
-Download a pre-built binary from the [releases page](https://gitlab.com/glitchtip/glitchtip-cli/-/releases).
+Or download a binary manually from the [releases page](https://gitlab.com/glitchtip/glitchtip-cli/-/releases).
 
 ### From Source
 
 If you have Rust installed:
 
 ```bash
-cargo install --git https://gitlab.com/glitchtip/glitchtip-cli.git
+cargo install glitchtip-cli
 ```
 
 ## Authentication
