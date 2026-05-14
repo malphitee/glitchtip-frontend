@@ -91,7 +91,7 @@ describe("Edit and Delete a project", () => {
 
   it("should remove the project and redirect to projects page", () => {
     cy.get("#delete-project").click();
-    cy.contains("Your project has been sucessfully deleted");
+    cy.contains("Your project has been successfully deleted");
     cy.url().should(
       "eq",
       `http://localhost:4200/${seededOrg.slug}/settings/projects`,
