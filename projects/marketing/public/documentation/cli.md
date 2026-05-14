@@ -4,7 +4,7 @@ The GlitchTip CLI is a command-line tool for interacting with GlitchTip. It can 
 
 ## Installation
 
-### Install Script (Linux, macOS, Windows)
+### Install Script
 
 The install script detects your OS and architecture, downloads the appropriate pre-built binary, and installs it to `/usr/local/bin` (or `~/.local/bin` if `/usr/local/bin` is not writable):
 
