@@ -13,9 +13,18 @@ export abstract class StatefulService<TState> {
     this.state = signal(initialState);
   }
 
-  /** Set partial state object combined with prior state without mutations */
+  /**
+   * Set partial state object combined with prior state without mutations.
+   *
+   * Uses `signal.update()` rather than `set({ ...this.state(), ... })` on
+   * purpose: the getter form is a tracked reactive read, so calling
+   * `setState` synchronously from an `effect()` would subscribe that effect
+   * to `state` and then write to it — a self-retriggering loop. `update()`
+   * reads the current value untracked, so `setState` is safe to call from
+   * any reactive context.
+   */
   setState(newState: Partial<TState>) {
-    this.state.set({ ...this.state(), ...newState });
+    this.state.update((state) => ({ ...state, ...newState }));
   }
 
   /**

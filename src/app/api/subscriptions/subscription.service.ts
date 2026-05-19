@@ -162,7 +162,7 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
     return Math.round((current.total / total) * 100);
   });
 
-  refreshTimerRef: NodeJS.Timeout | undefined = undefined;
+  refreshTimerRef: number | undefined = undefined;
 
   constructor() {
     super(initialState);
@@ -221,16 +221,20 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
    * Keep trying to get subscription, for users redirected from Stripe
    */
   refreshUntilSubscriptionOrTimeout() {
+    // Re-entry guard: only one polling timer should run at a time.
+    if (this.refreshTimerRef !== undefined) return;
     this.setSubscriptionRefreshingStart();
     let i = 0;
-    this.refreshTimerRef = setInterval(() => {
+    this.refreshTimerRef = window.setInterval(() => {
       this.subscriptionResource.reload();
       if (this.subscription()) {
         this.setSubscriptionRefreshingComplete();
         clearInterval(this.refreshTimerRef);
+        this.refreshTimerRef = undefined;
       } else if (i === 2) {
         this.setSubscriptionRefreshingTimeout();
         clearInterval(this.refreshTimerRef);
+        this.refreshTimerRef = undefined;
       }
       i++;
     }, 2000);
@@ -285,5 +289,6 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
     this.dailyEventsResource.set(undefined);
     this.eventsCountPreviousPeriodResource.set(undefined);
     clearInterval(this.refreshTimerRef);
+    this.refreshTimerRef = undefined;
   }
 }
