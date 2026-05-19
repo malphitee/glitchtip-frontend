@@ -222,6 +222,7 @@ export class IssuesPage implements OnInit, OnDestroy {
       const environments = this.availableEnvironments();
       if (
         project.length &&
+        !this.#environmentsService.isLoading() &&
         environment &&
         !environments.includes(environment)
       ) {
