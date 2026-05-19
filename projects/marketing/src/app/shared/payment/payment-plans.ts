@@ -84,7 +84,7 @@ export const selfHostedPlanOptions: PlanOption[] = [
     monthlyPrice: 5,
     annualPrice: 50,
     ctaText: "Get started",
-    ctaUrl: "mailto:sales@glitchtip.com",
+    ctaUrl: "https://glitchtip.com/documentation/install",
   },
   {
     name: "Commercial License",
