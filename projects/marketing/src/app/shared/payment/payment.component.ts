@@ -1,4 +1,4 @@
-import { Component, ViewChild, AfterViewChecked, input, inject, signal } from "@angular/core";
+import { Component, ViewChild, AfterViewChecked, OnInit, input, inject, signal } from "@angular/core";
 import { MatTabGroup, MatTabsModule } from "@angular/material/tabs";
 import { LinksService } from "../../links.service";
 import { environment } from "src/environments/environment";
@@ -8,7 +8,7 @@ import {
   MatCardHeader,
   MatCardTitle,
 } from "@angular/material/card";
-import { RouterLink } from "@angular/router";
+import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { MatIcon } from "@angular/material/icon";
 import { MatTooltip } from "@angular/material/tooltip";
 import { MatExpansionModule } from "@angular/material/expansion";
@@ -46,14 +46,16 @@ import { planOptions, selfHostedPlanOptions } from "./payment-plans";
     "./payment.component.scss",
   ],
 })
-export class PaymentComponent implements AfterViewChecked {
+export class PaymentComponent implements AfterViewChecked, OnInit {
   private links = inject(LinksService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
   @ViewChild("tabs", { static: false }) tabs?: MatTabGroup;
   readonly pricingPage = input<boolean>(false);
   billingEmail = environment.billingEmail;
   registerLink = this.links.registerLink;
-  selectedTab = 0;
+  selectedTab = signal(0);
   billingPeriod = signal<"monthly" | "annual">("monthly");
 
   hostedFaqs = hostedFaqs;
@@ -61,8 +63,20 @@ export class PaymentComponent implements AfterViewChecked {
   planOptions = planOptions;
   selfHostedPlanOptions = selfHostedPlanOptions;
 
+  ngOnInit(): void {
+    if (this.route.snapshot.queryParamMap.get("plan") === "self-hosted") {
+      this.selectedTab.set(1);
+    }
+  }
+
   setSelectedTab(value: number) {
-    this.selectedTab = value;
+    this.selectedTab.set(value);
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { plan: value === 1 ? "self-hosted" : null },
+      queryParamsHandling: "merge",
+      replaceUrl: true,
+    });
   }
 
   ngAfterViewChecked() {

@@ -1,4 +1,4 @@
-<mat-tab-group (selectedIndexChange)="setSelectedTab($event)">
+<mat-tab-group [selectedIndex]="selectedTab()" (selectedIndexChange)="setSelectedTab($event)">
   <mat-tab>
     <ng-template mat-tab-label>
       <div class="tab-label">
@@ -195,10 +195,10 @@
 @if (pricingPage()) {
   <section class="faq-section">
     <h2 class="marketing-body-strong">
-      Questions &amp; answers about {{ selectedTab === 0 ? 'hosted pricing' : 'self-hosted support' }}
+      Questions &amp; answers about {{ selectedTab() === 0 ? 'hosted pricing' : 'self-hosted support' }}
     </h2>
     <mat-accordion>
-      @for (faq of selectedTab === 0 ? hostedFaqs : selfHostedFaqs; track faq.question) {
+      @for (faq of selectedTab() === 0 ? hostedFaqs : selfHostedFaqs; track faq.question) {
         <mat-expansion-panel>
           <mat-expansion-panel-header>
             <mat-panel-title>{{ faq.question }}</mat-panel-title>
