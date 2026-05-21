@@ -46,10 +46,10 @@ export class EnvironmentsService {
   projectEnvironments = computed(
     () => this.#projectEnvironmentsResource.value() || [],
   );
-  isLoading = computed(() =>
+  hasValue = computed(() =>
     this.projectSlug()
-      ? this.#projectEnvironmentsResource.isLoading()
-      : this.#orgEnvironmentsResource.isLoading(),
+      ? this.#projectEnvironmentsResource.hasValue()
+      : this.#orgEnvironmentsResource.hasValue(),
   );
   environments = computed(() =>
     this.projectSlug() ? this.projectEnvironments() : this.orgEnvironments(),
