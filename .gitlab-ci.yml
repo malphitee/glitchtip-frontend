@@ -120,11 +120,8 @@ deploy-staging:
   environment:
     name: staging
     url: https://staging.glitchtip.com
-  only:
-    refs:
-      - master
-    variables:
-      - $CI_COMMIT_REF_PROTECTED
+  rules:
+    - if: '$CI_PROJECT_PATH == "glitchtip/glitchtip-frontend" && $CI_COMMIT_REF_NAME == "master" && $CI_COMMIT_REF_PROTECTED == "true"'
 
 pages:
   stage: deploy
