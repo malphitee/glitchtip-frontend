@@ -18,6 +18,7 @@ type ProjectAlert = components["schemas"]["ProjectAlertSchema"];
 type AlertRecipient = components["schemas"]["AlertRecipientSchema"];
 
 export const iconXrefMapping: Partial<Record<RecipientType, string>> = {
+  feishu: "webhook",
   teams: "microsoft",
 };
 export function resolveRecipientIcon(type: RecipientType): string {
