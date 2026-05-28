@@ -10,6 +10,7 @@
         <span class="u-hidden-mobile">Documentation</span>
         <span class="u-visible-mobile">Docs</span>
       </a>
+      <a [routerLink]="['support']">Support</a>
     </div>
     <div class="nav-divider"></div>
     <div class="nav-right">
@@ -44,6 +45,10 @@
     </a>
     <a [routerLink]="['documentation']" (click)="closeMobileMenu()">
       <span>Documentation</span>
+      <mat-icon>arrow_forward</mat-icon>
+    </a>
+    <a [routerLink]="['support']" (click)="closeMobileMenu()">
+      <span>Support</span>
       <mat-icon>arrow_forward</mat-icon>
     </a>
     <div class="mobile-menu-actions">
