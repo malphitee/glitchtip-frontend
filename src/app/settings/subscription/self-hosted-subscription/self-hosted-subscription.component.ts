@@ -13,6 +13,7 @@ import { TopAppBar } from "src/app/shared/top-app-bar/top-app-bar";
 import { SubscriptionChartsComponent } from "../subscription-charts/subscription-charts.component";
 import { environment } from "../../../../environments/environment";
 import { InstanceLicenseService } from "src/app/api/instance-license.service";
+import { SettingsService } from "src/app/api/settings.service";
 
 @Component({
   selector: "gt-self-hosted-subscription",
@@ -30,10 +31,11 @@ import { InstanceLicenseService } from "src/app/api/instance-license.service";
   ],
 })
 export class SelfHostedSubscriptionComponent {
+  private settings = inject(SettingsService);
   private instanceLicense = inject(InstanceLicenseService);
 
   billingEmail = environment.billingEmail;
-  hasLicense = this.instanceLicense.hasLicense;
+  paidForGlitchTip = this.settings.paidForGlitchTip;
   manageBillingLoading = signal(false);
 
   manageBilling() {

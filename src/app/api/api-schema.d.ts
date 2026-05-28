@@ -2006,8 +2006,6 @@ export interface components {
         };
         /** InstanceLicenseOut */
         InstanceLicenseOut: {
-            /** Licensekey */
-            licenseKey: string;
             /** Billingemail */
             billingEmail: string;
         };

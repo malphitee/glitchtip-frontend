@@ -3,7 +3,7 @@
     <h1 class="section-header-text" i18n>Subscription</h1>
   </ng-container>
   <ng-container slot="right">
-    @if (hasLicense()) {
+    @if (paidForGlitchTip()) {
       <button
         mat-flat-button
         color="primary"
@@ -12,16 +12,9 @@
         [disabled]="manageBillingLoading()"
       >
         <span
-          class="manage-billing-text-long"
           [style.visibility]="manageBillingLoading() ? 'hidden' : 'visible'"
           i18n
           >Manage Billing</span
-        >
-        <span
-          class="manage-billing-text-short"
-          [style.visibility]="manageBillingLoading() ? 'hidden' : 'visible'"
-          i18n
-          >Manage</span
         >
         <mat-icon
           [style.visibility]="manageBillingLoading() ? 'hidden' : 'visible'"
