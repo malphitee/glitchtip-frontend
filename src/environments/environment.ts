@@ -4,7 +4,5 @@
 
 export const environment = {
   billingEmail: "sales@glitchtip.com",
-  // Swap to the live_ URL when production portal config is ready.
-  stripePortalLoginUrl:
-    "https://billing.stripe.com/p/login/test_28EeVf87HfQjaXF0THd7q00",
+  stripePortalLoginUrl: "https://billing.stripe.com/p/login/aFa8wQbQngs69vu6SRds401",
 };
