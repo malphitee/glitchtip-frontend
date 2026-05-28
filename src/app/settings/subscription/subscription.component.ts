@@ -173,8 +173,6 @@ export class SubscriptionComponent
     const subscription = this.subscription();
     if (!product || !org) return;
     const currentInterval = subscription?.price?.interval;
-    // BE filters prices to is_public=True at the queryset level
-    // (apps/stripe/api.py), so every price returned here is already public.
     const price =
       (product.defaultPrice.interval === currentInterval &&
         product.defaultPrice) ||
