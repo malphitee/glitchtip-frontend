@@ -9,7 +9,7 @@
         color="primary"
         class="manage-billing-button"
         (click)="manageBilling()"
-        [disabled]="manageBillingLoading()"
+        [disabled]="manageBillingLoading() || !instanceLicense.billingEmail()"
       >
         <span
           [style.visibility]="manageBillingLoading() ? 'hidden' : 'visible'"

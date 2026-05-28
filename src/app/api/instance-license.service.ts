@@ -10,8 +10,4 @@ export class InstanceLicenseService {
   billingEmail = computed(
     () => this.#instanceLicenseResource.value()?.billingEmail ?? "",
   );
-
-  reload() {
-    this.#instanceLicenseResource.reload();
-  }
 }
