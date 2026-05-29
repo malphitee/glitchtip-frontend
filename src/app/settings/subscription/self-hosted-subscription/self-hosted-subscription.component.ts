@@ -39,10 +39,11 @@ export class SelfHostedSubscriptionComponent {
   manageBillingLoading = signal(false);
 
   manageBilling() {
-    const email = this.instanceLicense.billingEmail();
-    if (!email) return;
     this.manageBillingLoading.set(true);
-    const url = `${environment.stripePortalLoginUrl}?prefilled_email=${encodeURIComponent(email)}`;
+    const email = this.instanceLicense.billingEmail();
+    const url = email
+      ? `${environment.stripePortalLoginUrl}?prefilled_email=${encodeURIComponent(email)}`
+      : environment.stripePortalLoginUrl;
     window.location.href = url;
   }
 }
