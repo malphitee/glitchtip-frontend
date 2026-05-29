@@ -6,54 +6,6 @@ h2 {
   margin: 16px 0 0;
 }
 
-.callout {
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-  padding: 16px 20px;
-  border-radius: 8px;
-  background-color: var(--mat-sys-surface-container-high);
-  border: 1px solid var(--mat-sys-outline-variant);
-  margin: 16px 0 24px;
-
-  mat-icon {
-    flex-shrink: 0;
-    color: var(--mat-sys-on-surface-variant);
-    margin-top: 2px;
-  }
-
-  p {
-    margin: 0;
-  }
-}
-
-.license-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 14px;
-  border-radius: 999px;
-  background-color: var(--mat-sys-surface-container-high);
-  border: 1px solid var(--mat-sys-outline-variant);
-  margin: 16px 0 24px;
-  max-width: 100%;
-
-  mat-icon {
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
-    color: var(--mat-sys-primary);
-    flex-shrink: 0;
-  }
-
-  code {
-    font-family: ui-monospace, SFMono-Regular, monospace;
-    font-size: 0.875rem;
-    color: var(--mat-sys-on-surface);
-    word-break: break-all;
-  }
-}
-
 .contact-form {
   display: flex;
   flex-direction: column;

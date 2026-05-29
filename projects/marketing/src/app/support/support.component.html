@@ -6,26 +6,9 @@
 
     <h2 class="marketing-subheading">Contact support</h2>
     <p class="marketing-body">
-      Self-hosted operators with an active support plan can reach our team
-      via email. Include your license key for faster handling.
+      Send a support request to our team. A valid license key is required —
+      this form is for self-hosted operators with an active support plan.
     </p>
-
-    @if (licenseKeyFromUrl(); as key) {
-      <div class="license-chip">
-        <mat-icon>check_circle</mat-icon>
-        <span class="marketing-caption">License key from URL:</span>
-        <code>{{ key }}</code>
-      </div>
-    } @else {
-      <div class="callout">
-        <mat-icon>info</mat-icon>
-        <p class="marketing-body">
-          Open this page from your self-hosted GlitchTip's Support menu to
-          automatically include your license key, or paste it into the
-          message below.
-        </p>
-      </div>
-    }
 
     <form
       class="contact-form"
@@ -51,6 +34,26 @@
           contactForm.controls.email.errors?.["email"]
         ) {
           <mat-error>Enter a valid email address.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>License key</mat-label>
+        <input
+          matInput
+          formControlName="licenseKey"
+          placeholder="sub_xxxxxxxxxxxxxxxxxxxxxxxx"
+        />
+        @if (
+          contactForm.controls.licenseKey.touched &&
+          contactForm.controls.licenseKey.errors?.["required"]
+        ) {
+          <mat-error>License key is required.</mat-error>
+        } @else if (
+          contactForm.controls.licenseKey.touched &&
+          contactForm.controls.licenseKey.errors?.["pattern"]
+        ) {
+          <mat-error>License key should start with "sub_".</mat-error>
         }
       </mat-form-field>
 
