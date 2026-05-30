@@ -9,6 +9,7 @@ import { MatInputModule } from "@angular/material/input";
 import { MatSelectChange, MatSelectModule } from "@angular/material/select";
 import { MatButtonToggleChange, MatButtonToggleModule } from "@angular/material/button-toggle";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatIconModule } from "@angular/material/icon";
 
 @Component({
   selector: "gt-data-filter-bar",
@@ -22,6 +23,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     MatSelectModule,
     MatButtonToggleModule,
     MatTooltipModule,
+    MatIconModule,
     NgTemplateOutlet,
   ],
   templateUrl: "./data-filter-bar.component.html",
@@ -38,6 +40,7 @@ export class DataFilterBarComponent {
   currentStatsPeriod = input<"24h" | "14d">()
   @Input() environmentForm?: FormGroup;
   @Input() searchForm?: FormGroup;
+  readonly searchHelp = input<string>();
   protected breakPointObserver = inject(BreakpointObserver);
   readonly organizationEnvironments = input<string[]>([]);
   statsPeriodToggleDisabled = input(true)
