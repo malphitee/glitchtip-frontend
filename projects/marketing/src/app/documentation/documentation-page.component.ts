@@ -12,6 +12,15 @@ import { SeoService } from "../shared/seo.service";
  */
 const INSTANCE_PLACEHOLDER = "https://your-glitchtip.example.com";
 
+/**
+ * A normal public DNS hostname: dot-separated LDH labels (each starting and
+ * ending alphanumeric, ≤63 chars) and an alphabetic TLD. Deliberately rejects
+ * IP literals, `localhost`, single-label/internal hosts, and trailing-dot
+ * FQDNs. Note: a *valid* hostname can still be attacker-chosen — this only
+ * guarantees the shape, see parseInstanceOrigin().
+ */
+const STRICT_HOSTNAME = /^([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/;
+
 @Component({
   imports: [MatCard, MatCardContent, RouterLink, MarkdownComponent],
   templateUrl: "./documentation-page.component.html",
@@ -77,18 +86,10 @@ export class DocumentationPageComponent implements OnInit {
     if (!fragment) {
       return;
     }
-    const instance = new URLSearchParams(fragment).get("instance");
-    if (!instance) {
-      return;
-    }
-    let origin: string;
-    try {
-      const url = new URL(instance);
-      if (url.protocol !== "https:" && url.protocol !== "http:") {
-        return;
-      }
-      origin = url.origin;
-    } catch {
+    const origin = this.parseInstanceOrigin(
+      new URLSearchParams(fragment).get("instance"),
+    );
+    if (!origin) {
       return;
     }
     const root: HTMLElement | null =
@@ -103,6 +104,33 @@ export class DocumentationPageComponent implements OnInit {
         node.nodeValue = node.nodeValue.split(INSTANCE_PLACEHOLDER).join(origin);
       }
     }
+  }
+
+  /**
+   * Turn the `instance` fragment value into a trusted origin to show in the
+   * examples, or null (→ leave the generic placeholder) for anything we don't
+   * fully trust. A docs link is attacker-supplyable, so we fail closed and are
+   * strict: HTTPS only, no embedded credentials, a bare origin with nothing
+   * smuggled in the path/query/fragment, and a normal public domain (not an
+   * IP, localhost, or punycode lookalike). The value is only ever shown as
+   * text, never executed.
+   */
+  private parseInstanceOrigin(raw: string | null): string | null {
+    if (!raw || raw.length > 253) {
+      return null;
+    }
+    let url: URL;
+    try {
+      url = new URL(raw);
+    } catch {
+      return null;
+    }
+    if (url.protocol !== "https:") return null;
+    if (url.username || url.password) return null;
+    if (url.pathname !== "/" || url.search || url.hash) return null;
+    if (!STRICT_HOSTNAME.test(url.hostname)) return null;
+    if (url.hostname.includes("xn--")) return null;
+    return url.origin;
   }
 
   private titleFromSlug(slug: string): string {
