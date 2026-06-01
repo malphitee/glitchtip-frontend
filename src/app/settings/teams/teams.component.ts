@@ -62,7 +62,7 @@ export class TeamsComponent {
 
   constructor() {
     effect(() => {
-      this.teamsService.retrieveTeamsByOrg(this.orgSlug());
+      this.teamsService.setTeamsOrgSlug(this.orgSlug());
     });
   }
 

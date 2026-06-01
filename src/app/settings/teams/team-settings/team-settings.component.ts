@@ -1,7 +1,7 @@
 import {
   Component,
-  OnInit,
   ChangeDetectionStrategy,
+  effect,
   inject,
   input,
 } from "@angular/core";
@@ -32,7 +32,7 @@ import { MatCardModule } from "@angular/material/card";
     LoadingButtonComponent,
   ],
 })
-export class TeamSettingsComponent implements OnInit {
+export class TeamSettingsComponent {
   private teamsService = inject(TeamsService);
 
   team = this.teamsService.team;
@@ -44,9 +44,12 @@ export class TeamSettingsComponent implements OnInit {
   orgSlug = input.required<string>({ alias: "org-slug" });
   teamSlug = input.required<string>({ alias: "team-slug" });
 
-  ngOnInit(): void {
-    this.teamsService.retrieveSingleTeam(this.orgSlug(), this.teamSlug());
-    this.form.patchValue({ slug: this.teamSlug() });
+  constructor() {
+    effect(() => {
+      const teamSlug = this.teamSlug();
+      this.teamsService.setTeamKey(this.orgSlug(), teamSlug);
+      this.form.patchValue({ slug: teamSlug });
+    });
   }
 
   onSubmit() {

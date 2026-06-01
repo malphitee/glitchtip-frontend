@@ -67,7 +67,7 @@ export class NewProject {
 
   constructor() {
     effect(() => {
-      this.teamsService.retrieveTeamsByOrg(this.orgSlug());
+      this.teamsService.setTeamsOrgSlug(this.orgSlug());
     });
     effect(() => {
       const teams = this.teams();

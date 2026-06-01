@@ -61,8 +61,8 @@ export class TeamMembersComponent implements OnInit {
       )
       .subscribe(({ orgSlug, teamSlug }) => {
         if (orgSlug && teamSlug) {
-          this.teamsService.retrieveTeamMembers(orgSlug, teamSlug);
-          this.organizationsService.retrieveOrganizationMembers(orgSlug);
+          this.teamsService.setTeamMembersKey(orgSlug, teamSlug);
+          this.organizationsService.setMembersOrgSlug(orgSlug);
         }
       });
     this.userService.getUserDetails();

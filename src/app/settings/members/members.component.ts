@@ -49,7 +49,7 @@ export class MembersComponent {
 
   constructor() {
     effect(() => {
-      this.organizationDetailService.retrieveOrganizationMembers(this.orgSlug());
+      this.organizationDetailService.setMembersOrgSlug(this.orgSlug());
     });
   }
 
