@@ -159,7 +159,10 @@ export class SubscriptionComponent
   }
 
   ngOnInit(): void {
-    this.orgService.activeOrganizationResource.reload();
+    // The subscription and active organization are app-wide reactive resources
+    // already populated by the organization frame, so we don't reload them on
+    // entry (that double-fetched on initial load). Per-page usage (event counts)
+    // is loaded/refreshed here and the subscription refreshes via its own flows.
     this.service.loadDetailData(this.orgSlug());
   }
 

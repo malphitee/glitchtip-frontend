@@ -32,9 +32,14 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
 
   stripePublicKey = this.settingsService.stripePublicKey;
 
+  // Key the subscription fetch on the explicitly-selected org (route / switcher),
+  // not the activeOrganizationSlug fallback which defaults to organizations()[0].
+  // This resource is read app-wide (e.g. the Chatwoot effect in UserService), so
+  // keying on the fallback briefly fetches the first org's subscription before the
+  // route resolves — the "loads both orgs' subscriptions" / wrong-org fetch.
   organizationSlug = computed(() =>
     this.settingsService.billingEnabled()
-      ? (this.organizationsService.activeOrganizationSlug() ?? "")
+      ? (this.organizationsService.selectedOrganizationSlug() ?? "")
       : "",
   );
   subscriptionResource = apiResource(this.organizationSlug, (orgSlug) => ({
@@ -284,7 +289,13 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
   clearState() {
     super.clearState();
     this.detailSlug.set("");
-    this.subscriptionResource.set(undefined);
+    // Intentionally NOT clearing subscriptionResource here: it is keyed on the
+    // selected org slug, which is unchanged on client-side re-entry within the
+    // same org, so once cleared it would not refetch and the page would render
+    // the empty "no subscription" view until a full page reload. It updates
+    // reactively on org change and is reloaded by the flows that mutate it
+    // (free-tier creation, post-Stripe return). The per-page usage resources
+    // below are safe to clear; they refetch via loadDetailData on re-entry.
     this.eventsCountCurrentPeriodResource.set(undefined);
     this.dailyEventsResource.set(undefined);
     this.eventsCountPreviousPeriodResource.set(undefined);
