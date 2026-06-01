@@ -145,15 +145,16 @@ export class EventDetailComponent {
         $localize`Set up MCP`,
         { duration: 12000 },
       );
+      // Pass this instance's origin in the URL fragment (not a query param) so
+      // the docs can pre-fill the setup examples. Fragments stay client-side
+      // and aren't sent to glitchtip.com, so a self-hoster's domain isn't
+      // logged there.
+      const docsUrl =
+        "https://glitchtip.com/documentation/mcp#instance=" +
+        encodeURIComponent(window.location.origin);
       ref
         .onAction()
-        .subscribe(() =>
-          window.open(
-            "https://glitchtip.com/documentation/mcp",
-            "_blank",
-            "noopener",
-          ),
-        );
+        .subscribe(() => window.open(docsUrl, "_blank", "noopener"));
     } else {
       this.snackBar.open($localize`Copied for AI`);
     }
