@@ -175,11 +175,8 @@ export class SubscriptionComponent
     const currentInterval = subscription?.price?.interval;
     const price =
       (product.defaultPrice.interval === currentInterval &&
-        product.defaultPrice.isPublic &&
         product.defaultPrice) ||
-      product.prices.find(
-        (p) => p.interval === currentInterval && p.isPublic,
-      );
+      product.prices.find((p) => p.interval === currentInterval);
     if (!price) return;
     this.paymentService.dispatchSubscriptionCreation(org, price);
   }

@@ -21,6 +21,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/0/instance-license/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Instance License */
+        get: operations["glitchtip_api_api_get_instance_license"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/0/": {
         parameters: {
             query?: never;
@@ -1942,8 +1959,6 @@ export interface components {
             billingEnabled: boolean;
             /** Ipaidforglitchtip */
             iPaidForGlitchTip: boolean;
-            /** Licensekey */
-            licenseKey: string;
             /** Enableuserregistration */
             enableUserRegistration: boolean;
             /** Enablesocialappsuserregistration */
@@ -1988,6 +2003,11 @@ export interface components {
             client_id: string;
             /** Provider */
             provider: string;
+        };
+        /** InstanceLicenseOut */
+        InstanceLicenseOut: {
+            /** Billingemail */
+            billingEmail: string;
         };
         /** APIRootSchema */
         APIRootSchema: {
@@ -3968,16 +3988,6 @@ export interface components {
              * @default true
              */
             openMembership: boolean;
-            /**
-             * Licensekey
-             * @default
-             */
-            licenseKey?: string;
-            /**
-             * Licensebillingemail
-             * @default
-             */
-            licenseBillingEmail?: string;
         };
         /**
          * ProjectTeamSchema
@@ -4085,16 +4095,6 @@ export interface components {
              * @description The name of the organization
              */
             name: string;
-            /**
-             * Licensekey
-             * @default
-             */
-            licenseKey?: string;
-            /**
-             * Licensebillingemail
-             * @default
-             */
-            licenseBillingEmail?: string;
         };
         /** OrganizationUserSchema */
         OrganizationUserSchema: {
@@ -4659,11 +4659,6 @@ export interface components {
              * @default month
              */
             interval: string;
-            /**
-             * Is Public
-             * @default false
-             */
-            isPublic: boolean;
         };
         /** StripeProductExpandedPriceSchema */
         StripeProductExpandedPriceSchema: {
@@ -5438,6 +5433,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SettingsOut"];
+                };
+            };
+        };
+    };
+    glitchtip_api_api_get_instance_license: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InstanceLicenseOut"];
                 };
             };
         };
