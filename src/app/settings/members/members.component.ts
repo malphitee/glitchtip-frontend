@@ -1,7 +1,7 @@
 import {
   Component,
-  OnInit,
   ChangeDetectionStrategy,
+  effect,
   inject,
   input,
 } from "@angular/core";
@@ -33,11 +33,11 @@ type Member = components["schemas"]["OrganizationUserSchema"];
     MatChipsModule,
     LoadingButtonComponent,
     MatTooltipModule,
-    TopAppBar
+    TopAppBar,
   ],
   providers: [MembersService],
 })
-export class MembersComponent implements OnInit {
+export class MembersComponent {
   private organizationsService = inject(OrganizationsService);
   private organizationDetailService = inject(OrganizationDetailService);
   private membersService = inject(MembersService);
@@ -47,8 +47,10 @@ export class MembersComponent implements OnInit {
   members = this.membersService.members;
   accessMemberWrite = this.organizationsService.accessMemberWrite;
 
-  ngOnInit(): void {
-    this.organizationDetailService.retrieveOrganizationMembers(this.orgSlug());
+  constructor() {
+    effect(() => {
+      this.organizationDetailService.setMembersOrgSlug(this.orgSlug());
+    });
   }
 
   resendInvite(member: Member) {
