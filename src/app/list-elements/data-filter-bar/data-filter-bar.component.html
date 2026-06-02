@@ -17,22 +17,6 @@
               formControlName="query"
               data-cy="list-search-field"
             />
-            @if (searchHelp(); as help) {
-              <button
-                matSuffix
-                type="button"
-                mat-icon-button
-                class="input-icon-button"
-                [matTooltip]="help"
-                matTooltipPosition="above"
-                matTooltipClass="search-help-tooltip"
-                aria-label="Search syntax help"
-                i18n-aria-label
-                data-cy="list-search-help"
-              >
-                <mat-icon>help</mat-icon>
-              </button>
-            }
           </mat-form-field>
         </form>
       }
