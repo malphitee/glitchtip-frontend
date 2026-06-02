@@ -12,6 +12,8 @@
     <gt-data-filter-bar
       [environmentForm]="environmentForm"
       [searchForm]="form"
+      searchHelp="Tokens combine with spaces — all must match (no OR). Filters like is:unresolved, level:error, or environment:production must match exactly. Plain words match whole words in the text; add * for partial matches (e.g. pay*), not available on tags."
+      i18n-searchHelp
       [sortForm]="sortForm"
       [currentStatsPeriod]="statsPeriod()"
       [sorts]="sorts"
