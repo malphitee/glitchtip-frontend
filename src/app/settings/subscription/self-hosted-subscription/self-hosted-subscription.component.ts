@@ -32,7 +32,7 @@ import { SettingsService } from "src/app/api/settings.service";
 })
 export class SelfHostedSubscriptionComponent {
   private settings = inject(SettingsService);
-  protected instanceLicense = inject(InstanceLicenseService);
+  private instanceLicense = inject(InstanceLicenseService);
 
   billingEmail = environment.billingEmail;
   paidForGlitchTip = this.settings.paidForGlitchTip;
