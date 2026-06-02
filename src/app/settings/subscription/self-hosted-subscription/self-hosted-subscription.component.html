@@ -2,6 +2,30 @@
   <ng-container slot="left">
     <h1 class="section-header-text" i18n>Subscription</h1>
   </ng-container>
+  <ng-container slot="right">
+    @if (paidForGlitchTip()) {
+      <button
+        mat-flat-button
+        color="primary"
+        class="manage-billing-button"
+        (click)="manageBilling()"
+        [disabled]="manageBillingLoading()"
+      >
+        <span
+          [style.visibility]="manageBillingLoading() ? 'hidden' : 'visible'"
+          i18n
+          >Manage Billing</span
+        >
+        <mat-icon
+          [style.visibility]="manageBillingLoading() ? 'hidden' : 'visible'"
+          >open_in_new</mat-icon
+        >
+        @if (manageBillingLoading()) {
+          <mat-spinner class="manage-billing-spinner" diameter="18" />
+        }
+      </button>
+    }
+  </ng-container>
 </gt-top-app-bar>
 <section class="l-body">
   <div class="contribute-grid">

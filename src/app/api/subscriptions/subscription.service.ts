@@ -70,8 +70,15 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
     () => this.state().subscriptionRefreshTimeout,
   );
 
-  /** Set to load event count and daily event resources (subscription detail page only) */
-  private detailSlug = signal<string>("");
+  // Gates the detail-page resources below; component owns the on/off lifecycle.
+  private detailActive = signal(false);
+  private detailSlug = computed(() =>
+    this.detailActive() ? this.organizationSlug() : "",
+  );
+
+  setDetailActive(active: boolean) {
+    this.detailActive.set(active);
+  }
 
   eventsCountCurrentPeriodResource = apiResource(
     this.detailSlug,
@@ -171,13 +178,6 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
 
   constructor() {
     super(initialState);
-  }
-
-  /** Load event count and daily event data for the subscription detail page */
-  loadDetailData(orgSlug: string) {
-    if (orgSlug) {
-      this.detailSlug.set(orgSlug);
-    }
   }
 
   /**
@@ -288,14 +288,15 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
 
   clearState() {
     super.clearState();
-    this.detailSlug.set("");
+    this.detailActive.set(false);
     // Intentionally NOT clearing subscriptionResource here: it is keyed on the
     // selected org slug, which is unchanged on client-side re-entry within the
     // same org, so once cleared it would not refetch and the page would render
     // the empty "no subscription" view until a full page reload. It updates
     // reactively on org change and is reloaded by the flows that mutate it
     // (free-tier creation, post-Stripe return). The per-page usage resources
-    // below are safe to clear; they refetch via loadDetailData on re-entry.
+    // below are safe to clear; they refetch reactively once setDetailActive(true)
+    // re-flips detailSlug back to the current org on re-entry.
     this.eventsCountCurrentPeriodResource.set(undefined);
     this.dailyEventsResource.set(undefined);
     this.eventsCountPreviousPeriodResource.set(undefined);

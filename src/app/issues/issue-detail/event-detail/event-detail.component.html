@@ -31,8 +31,18 @@
               event?.id +
               '/json/'
             "
-            >JSON</a
+            >raw JSON</a
           >
+          <span class="action-separator" aria-hidden="true">·</span>
+          <button
+            type="button"
+            class="link-button"
+            [cdkCopyToClipboard]="aiPayload()"
+            (cdkCopyToClipboardCopied)="onCopiedForAI()"
+            i18n
+          >
+            copy for AI
+          </button>
         </p>
       </div>
       <nav class="navigation-buttons">

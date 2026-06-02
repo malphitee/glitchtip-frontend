@@ -10,6 +10,17 @@ mat-card,
   margin-bottom: 0;
 }
 
+.manage-billing-button {
+  position: relative;
+}
+
+.manage-billing-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
 .contribute-grid {
   display: grid;
   grid-template-columns: 1fr;

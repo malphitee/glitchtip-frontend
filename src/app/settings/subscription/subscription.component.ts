@@ -2,10 +2,10 @@ import {
   Component,
   ChangeDetectionStrategy,
   computed,
+  DestroyRef,
   effect,
   inject,
   input,
-  OnInit,
 } from "@angular/core";
 import { DatePipe } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
@@ -52,10 +52,10 @@ import { SubscriptionChartsComponent } from "./subscription-charts/subscription-
     SelfHostedSubscriptionComponent,
   ],
 })
-export class SubscriptionComponent
-  extends StatefulComponent<SubscriptionState, SubscriptionService>
-  implements OnInit
-{
+export class SubscriptionComponent extends StatefulComponent<
+  SubscriptionState,
+  SubscriptionService
+> {
   private orgService = inject(OrganizationsService);
   private settingsService = inject(SettingsService);
   private paymentService = inject(PaymentService);
@@ -140,10 +140,15 @@ export class SubscriptionComponent
 
   constructor() {
     const service = inject(SubscriptionService);
+    const destroyRef = inject(DestroyRef);
 
     super(service);
 
     this.service = service;
+
+    // Gate detail-page resources to this component's lifetime; org-reactive while active.
+    service.setDetailActive(true);
+    destroyRef.onDestroy(() => service.setDetailActive(false));
 
     // Fire hosted-only fetches once settings confirm billing is enabled.
     effect(() => {
@@ -158,14 +163,6 @@ export class SubscriptionComponent
     });
   }
 
-  ngOnInit(): void {
-    // The subscription and active organization are app-wide reactive resources
-    // already populated by the organization frame, so we don't reload them on
-    // entry (that double-fetched on initial load). Per-page usage (event counts)
-    // is loaded/refreshed here and the subscription refreshes via its own flows.
-    this.service.loadDetailData(this.orgSlug());
-  }
-
   manageSubscription() {
     this.service.redirectToBillingPortal();
   }
@@ -178,11 +175,8 @@ export class SubscriptionComponent
     const currentInterval = subscription?.price?.interval;
     const price =
       (product.defaultPrice.interval === currentInterval &&
-        product.defaultPrice.isPublic &&
         product.defaultPrice) ||
-      product.prices.find(
-        (p) => p.interval === currentInterval && p.isPublic,
-      );
+      product.prices.find((p) => p.interval === currentInterval);
     if (!price) return;
     this.paymentService.dispatchSubscriptionCreation(org, price);
   }
