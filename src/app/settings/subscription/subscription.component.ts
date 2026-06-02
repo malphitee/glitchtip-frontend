@@ -6,7 +6,6 @@ import {
   effect,
   inject,
   input,
-  OnInit,
 } from "@angular/core";
 import { DatePipe } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
@@ -53,10 +52,10 @@ import { SubscriptionChartsComponent } from "./subscription-charts/subscription-
     SelfHostedSubscriptionComponent,
   ],
 })
-export class SubscriptionComponent
-  extends StatefulComponent<SubscriptionState, SubscriptionService>
-  implements OnInit
-{
+export class SubscriptionComponent extends StatefulComponent<
+  SubscriptionState,
+  SubscriptionService
+> {
   private orgService = inject(OrganizationsService);
   private settingsService = inject(SettingsService);
   private paymentService = inject(PaymentService);
@@ -162,10 +161,6 @@ export class SubscriptionComponent
         this.orgService.repeatRefreshOrgDetail();
       }
     });
-  }
-
-  ngOnInit(): void {
-    this.orgService.activeOrganizationResource.reload();
   }
 
   manageSubscription() {
