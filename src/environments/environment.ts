@@ -4,4 +4,5 @@
 
 export const environment = {
   billingEmail: "sales@glitchtip.com",
+  stripePortalLoginUrl: "https://billing.stripe.com/p/login/aFa8wQbQngs69vu6SRds401",
 };
