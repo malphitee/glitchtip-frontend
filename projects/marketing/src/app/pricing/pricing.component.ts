@@ -1,4 +1,8 @@
-import { Component, ViewEncapsulation } from "@angular/core";
+import {
+  Component,
+  ViewEncapsulation,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { MatCard } from "@angular/material/card";
 import { PaymentComponent } from "../shared/payment/payment.component";
 
@@ -7,6 +11,7 @@ import { PaymentComponent } from "../shared/payment/payment.component";
   imports: [MatCard, PaymentComponent],
   templateUrl: "./pricing.component.html",
   preserveWhitespaces: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   encapsulation: ViewEncapsulation.Emulated,
 })
 export class PricingComponent {

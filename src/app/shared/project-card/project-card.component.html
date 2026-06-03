@@ -1,6 +1,8 @@
 <mat-card>
   <a
-    [routerLink]="isMember() ? cardLink() : secondaryButton?.link"
+    [routerLink]="
+      isMember() ? cardLink() : $safeNavigationMigration(secondaryButton?.link)
+    "
     [queryParams]="isMember() ? cardLinkQueryParams() || {} : {}"
     [tabIndex]="sampleCard() && -1"
   >

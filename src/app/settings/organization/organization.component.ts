@@ -1,4 +1,10 @@
-import { Component, OnDestroy, OnInit, inject } from "@angular/core";
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  inject,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { tap, take } from "rxjs/operators";
 import { OrganizationDetailService } from "../../api/organizations/organization-detail.service";
@@ -17,6 +23,7 @@ import { TopAppBar } from "src/app/shared/top-app-bar/top-app-bar";
   selector: "gt-organization",
   templateUrl: "./organization.component.html",
   styleUrls: ["./organization.component.scss"],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     MatCardModule,
     MatDividerModule,
@@ -24,7 +31,7 @@ import { TopAppBar } from "src/app/shared/top-app-bar/top-app-bar";
     MatFormFieldModule,
     MatInputModule,
     LoadingButtonComponent,
-    TopAppBar
+    TopAppBar,
   ],
 })
 export class OrganizationComponent implements OnDestroy, OnInit {

@@ -1,4 +1,10 @@
-import { Component, computed, OnInit, inject } from "@angular/core";
+import {
+  Component,
+  computed,
+  OnInit,
+  inject,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { AuthTokensService, AuthTokensState } from "./auth-tokens.service";
 import { LoadingButtonComponent } from "../../shared/loading-button/loading-button.component";
 import { CopyInputComponent } from "../../shared/copy-input/copy-input.component";
@@ -14,6 +20,7 @@ import { ConfirmDialogComponent } from "src/app/shared/confirm-dialog/confirm-di
   selector: "gt-auth-tokens",
   templateUrl: "./auth-tokens.component.html",
   styleUrls: ["./auth-tokens.component.scss"],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     MatCardModule,
     MatButtonModule,

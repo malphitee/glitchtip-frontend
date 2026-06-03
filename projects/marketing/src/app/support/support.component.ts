@@ -1,4 +1,9 @@
-import { Component, PLATFORM_ID, inject } from "@angular/core";
+import {
+  Component,
+  PLATFORM_ID,
+  inject,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
 import {
   FormControl,
@@ -27,6 +32,7 @@ const APP_URL = "https://app.glitchtip.com";
     RouterLink,
   ],
   templateUrl: "./support.component.html",
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ["./support.component.scss"],
 })
 export class SupportComponent {
@@ -40,7 +46,10 @@ export class SupportComponent {
     }),
     licenseKey: new FormControl("", {
       nonNullable: true,
-      validators: [Validators.required, Validators.pattern(LICENSE_KEY_PATTERN)],
+      validators: [
+        Validators.required,
+        Validators.pattern(LICENSE_KEY_PATTERN),
+      ],
     }),
     message: new FormControl("", {
       nonNullable: true,
@@ -56,7 +65,8 @@ export class SupportComponent {
       // Bare #sub_xxx is also accepted for manual/test convenience.
       const hash = window.location.hash.slice(1);
       const params = new URLSearchParams(hash);
-      const sub = params.get("sub") ?? (LICENSE_KEY_PATTERN.test(hash) ? hash : null);
+      const sub =
+        params.get("sub") ?? (LICENSE_KEY_PATTERN.test(hash) ? hash : null);
       const email = params.get("email");
       if (sub && LICENSE_KEY_PATTERN.test(sub)) {
         this.contactForm.controls.licenseKey.setValue(sub);

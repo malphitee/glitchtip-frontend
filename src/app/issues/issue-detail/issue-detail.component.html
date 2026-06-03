@@ -68,9 +68,7 @@
   <section class="l-body l-body--full-width">
     <div class="issue-header-wrapper">
       <div class="status-indicator" [class]="'level--' + issue.level">
-        <mat-icon>{{
-          statusIcon()
-        }}</mat-icon>
+        <mat-icon>{{ statusIcon() }}</mat-icon>
       </div>
 
       <gt-detail-header [title]="issueTitle()!" [subtitle]="issueSubtitle()" />
@@ -177,14 +175,16 @@
                 <dt class="caption-text">First Seen</dt>
                 <dd class="body-text">{{ issue.firstSeen | daysAgo }}</dd>
                 <dd class="caption-text">
-                  {{ issue?.firstSeen | date: "long" }}
+                  {{
+                    $safeNavigationMigration(issue?.firstSeen) | date: "long"
+                  }}
                 </dd>
               </div>
               <div>
                 <dt class="caption-text">Last Seen</dt>
                 <dd class="body-text">{{ issue.lastSeen | daysAgo }}</dd>
                 <dd class="caption-text">
-                  {{ issue?.lastSeen | date: "long" }}
+                  {{ $safeNavigationMigration(issue?.lastSeen) | date: "long" }}
                 </dd>
               </div>
             </dl>

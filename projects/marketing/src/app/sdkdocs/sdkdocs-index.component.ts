@@ -1,8 +1,11 @@
-import { Component, ViewEncapsulation } from "@angular/core";
+import {
+  Component,
+  ViewEncapsulation,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { MatCard, MatCardContent } from "@angular/material/card";
 import { RouterLink } from "@angular/router";
 import { platforms } from "src/app/settings/projects/new-project/platform-picker/platforms";
-
 
 @Component({
   templateUrl: "./sdkdocs-index.component.html",
@@ -16,6 +19,7 @@ import { platforms } from "src/app/settings/projects/new-project/platform-picker
     `,
   ],
   preserveWhitespaces: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   encapsulation: ViewEncapsulation.Emulated,
 })
 export class SDKDocsIndexComponent {

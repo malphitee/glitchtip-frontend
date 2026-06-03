@@ -1,6 +1,6 @@
 <gt-list-app-bar
   listTitle="Issues"
-  [searchHits]="paginator()?.count"
+  [searchHits]="$safeNavigationMigration(paginator()?.count)"
   [queriedProjects]="projects()"
   [queriedTimeRangeStart]="start()"
   [queriedTimeRangeEnd]="end()"

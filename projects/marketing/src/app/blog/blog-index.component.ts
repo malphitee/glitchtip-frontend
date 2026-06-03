@@ -1,6 +1,11 @@
 import { DatePipe } from "@angular/common";
 import { HttpClient } from "@angular/common/http";
-import { Component, OnInit, inject } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  inject,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { MatCard, MatCardContent } from "@angular/material/card";
 import { RouterLink } from "@angular/router";
 
@@ -15,6 +20,7 @@ interface BlogItem {
   selector: "app-blog-index",
   imports: [RouterLink, MatCard, MatCardContent, DatePipe],
   templateUrl: "./blog-index.component.html",
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: "./blog-index.component.scss",
 })
 export class BlogIndexComponent implements OnInit {

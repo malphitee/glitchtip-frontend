@@ -2,7 +2,7 @@
   <ng-container slot="left">
     <gt-list-title
       title="Uptime Monitors"
-      [searchHits]="paginator()?.count"
+      [searchHits]="$safeNavigationMigration(paginator()?.count)"
     ></gt-list-title>
   </ng-container>
 

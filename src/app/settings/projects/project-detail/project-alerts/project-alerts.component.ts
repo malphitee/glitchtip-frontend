@@ -1,6 +1,16 @@
-import { Component, OnInit, ViewChild, inject, input } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  ViewChild,
+  inject,
+  input,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { OrganizationsService } from "src/app/api/organizations.service";
-import { NewAlertRecipient, ProjectAlertsService } from "./project-alerts.service";
+import {
+  NewAlertRecipient,
+  ProjectAlertsService,
+} from "./project-alerts.service";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
 import { AlertFormComponent } from "./alert-form/alert-form.component";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
@@ -40,6 +50,7 @@ export function resolveRecipientIcon(type: RecipientType): string {
     LoadingButtonComponent,
     MatProgressSpinnerModule,
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [ProjectAlertsService],
 })
 export class ProjectAlertsComponent implements OnInit {
