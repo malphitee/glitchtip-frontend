@@ -1,4 +1,11 @@
-import { Component, OnInit, ElementRef, PLATFORM_ID, inject } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  ElementRef,
+  PLATFORM_ID,
+  inject,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { ViewportScroller, isPlatformBrowser } from "@angular/common";
 import { MatCard, MatCardContent } from "@angular/material/card";
 import { ActivatedRoute, RouterLink } from "@angular/router";
@@ -24,6 +31,7 @@ const STRICT_HOSTNAME = /^([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/;
 @Component({
   imports: [MatCard, MatCardContent, RouterLink, MarkdownComponent],
   templateUrl: "./documentation-page.component.html",
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ["./documentation-page.component.scss"],
 })
 export class DocumentationPageComponent implements OnInit {
@@ -92,8 +100,9 @@ export class DocumentationPageComponent implements OnInit {
     if (!origin) {
       return;
     }
-    const root: HTMLElement | null =
-      this.host.nativeElement.querySelector(".markdown-container");
+    const root: HTMLElement | null = this.host.nativeElement.querySelector(
+      ".markdown-container",
+    );
     if (!root) {
       return;
     }
@@ -101,7 +110,9 @@ export class DocumentationPageComponent implements OnInit {
     let node: Node | null;
     while ((node = walker.nextNode())) {
       if (node.nodeValue?.includes(INSTANCE_PLACEHOLDER)) {
-        node.nodeValue = node.nodeValue.split(INSTANCE_PLACEHOLDER).join(origin);
+        node.nodeValue = node.nodeValue
+          .split(INSTANCE_PLACEHOLDER)
+          .join(origin);
       }
     }
   }

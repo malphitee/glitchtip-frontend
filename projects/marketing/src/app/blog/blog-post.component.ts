@@ -1,5 +1,10 @@
 import { HttpClient } from "@angular/common/http";
-import { Component, OnInit, inject } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  inject,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { MatCard, MatCardContent } from "@angular/material/card";
 import { ActivatedRoute } from "@angular/router";
 import { MarkdownComponent } from "ngx-markdown";
@@ -16,6 +21,7 @@ interface BlogFrontMatter {
   selector: "app-blog-post",
   imports: [MarkdownComponent, MatCard, MatCardContent],
   templateUrl: "./blog-post.component.html",
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: "./blog-post.component.scss",
 })
 export class BlogPostComponent implements OnInit {

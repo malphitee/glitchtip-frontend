@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, ChangeDetectionStrategy } from "@angular/core";
 import { MatCard } from "@angular/material/card";
 import { MatButtonModule } from "@angular/material/button";
 import { MatExpansionModule } from "@angular/material/expansion";
@@ -17,6 +17,7 @@ import { SimpleTableComponent } from "../shared/simple-table/simple-table.compon
     SimpleTableComponent,
   ],
   templateUrl: "./hipaa.component.html",
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ["./hipaa.component.scss"],
 })
 export class HipaaComponent {

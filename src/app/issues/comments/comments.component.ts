@@ -1,4 +1,11 @@
-import { Component, OnInit, computed, inject, input } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  computed,
+  inject,
+  input,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { CommentsService } from "./comments.service";
 import { UserService } from "src/app/api/user/user.service";
@@ -23,6 +30,7 @@ import { DatePipe } from "@angular/common";
     MarkdownComponent,
     DatePipe,
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [CommentsService, provideMarkdown()],
 })
 export class CommentsComponent implements OnInit {

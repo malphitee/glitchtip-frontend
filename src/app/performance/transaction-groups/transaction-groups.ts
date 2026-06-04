@@ -5,6 +5,7 @@ import {
   effect,
   input,
   computed,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { I18nPluralPipe } from "@angular/common";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
@@ -40,6 +41,7 @@ import { PaginationButtons } from "src/app/list-elements/pagination-buttons/pagi
     ListAppBar,
     PaginationButtons,
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [PerformanceService],
 })
 export class TransactionGroups implements OnInit {

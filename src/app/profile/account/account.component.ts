@@ -1,4 +1,9 @@
-import { Component, OnDestroy, inject } from "@angular/core";
+import {
+  Component,
+  OnDestroy,
+  inject,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { UserService } from "src/app/api/user/user.service";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatDividerModule } from "@angular/material/divider";
@@ -14,6 +19,7 @@ import { AuthService } from "src/app/auth.service";
   selector: "gt-account",
   templateUrl: "./account.component.html",
   styleUrls: ["./account.component.scss"],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     PreferencesComponent,
     ChangePasswordComponent,

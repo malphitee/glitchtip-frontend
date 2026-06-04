@@ -1,4 +1,10 @@
-import { Component, OnInit, inject, input } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  inject,
+  input,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { MatCardModule } from "@angular/material/card";
 import { MatDividerModule } from "@angular/material/divider";
@@ -14,6 +20,7 @@ import { TopAppBar } from "src/app/shared/top-app-bar/top-app-bar";
 @Component({
   selector: "gt-monitor-update",
   templateUrl: "./monitor-update.component.html",
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     RouterModule,
     MatButtonModule,

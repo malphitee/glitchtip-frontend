@@ -35,7 +35,9 @@
             "style": "kebab-case"
           }
         ],
-        "@angular-eslint/no-input-rename": "off"
+        "@angular-eslint/no-input-rename": "off",
+        "@angular-eslint/prefer-inject": "warn",
+        "@angular-eslint/no-output-on-prefix": "warn"
       }
     },
     {
@@ -47,8 +49,5 @@
       ],
       "rules": {}
     }
-  ],
-  "extends": [
-    "plugin:storybook/recommended"
   ]
 }

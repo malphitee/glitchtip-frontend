@@ -1,4 +1,9 @@
-import { Component, ViewEncapsulation, inject } from "@angular/core";
+import {
+  Component,
+  ViewEncapsulation,
+  inject,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { MatCard, MatCardContent } from "@angular/material/card";
 import { ActivatedRoute } from "@angular/router";
 import { MarkdownComponent } from "ngx-markdown";
@@ -7,6 +12,7 @@ import { MarkdownComponent } from "ngx-markdown";
   imports: [MatCard, MatCardContent, MarkdownComponent],
   templateUrl: "./legal.component.html",
   preserveWhitespaces: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   encapsulation: ViewEncapsulation.Emulated,
 })
 export class LegalComponent {

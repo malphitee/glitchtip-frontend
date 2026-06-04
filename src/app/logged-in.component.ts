@@ -1,10 +1,11 @@
-import { Component } from "@angular/core";
+import { Component, ChangeDetectionStrategy } from "@angular/core";
 import { RouterOutlet } from "@angular/router";
 import { MainNavComponent } from "./main-nav/main-nav/main-nav.component";
 
 @Component({
   selector: "gt-logged-in",
   templateUrl: "./logged-in.component.html",
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [MainNavComponent, RouterOutlet],
 })
 export class LoggedInComponent {

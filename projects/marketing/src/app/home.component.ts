@@ -1,4 +1,4 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject, ChangeDetectionStrategy } from "@angular/core";
 import { LinksService } from "./links.service";
 import { MatCard, MatCardContent } from "@angular/material/card";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -21,6 +21,7 @@ import { FeatureSectionComponent } from "./shared/feature-section/feature-sectio
     FeatureSectionComponent,
   ],
   templateUrl: "./home.component.html",
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ["./home.component.scss"],
 })
 export class HomeComponent {

@@ -1,4 +1,13 @@
-import { Component, ViewChild, AfterViewChecked, OnInit, input, inject, signal } from "@angular/core";
+import {
+  Component,
+  ViewChild,
+  AfterViewChecked,
+  OnInit,
+  input,
+  inject,
+  signal,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { MatTabGroup, MatTabsModule } from "@angular/material/tabs";
 import { LinksService } from "../../links.service";
 import { environment } from "src/environments/environment";
@@ -41,6 +50,7 @@ import { planOptions, selfHostedPlanOptions } from "./payment-plans";
     RouterLink,
     PricingAddonCardComponent,
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: [
     "../../../../../../src/app/settings/subscription/payment/payment.component.scss",
     "./payment.component.scss",

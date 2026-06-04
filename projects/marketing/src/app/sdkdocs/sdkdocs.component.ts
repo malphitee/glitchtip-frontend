@@ -4,6 +4,7 @@ import {
   OnInit,
   ViewEncapsulation,
   inject,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 
 import { HighlightService } from "../shared/highlight.service";
@@ -18,6 +19,7 @@ import { flattenedPlatforms } from "src/app/settings/projects/new-project/platfo
   templateUrl: "./sdkdocs.component.html",
   styleUrls: ["./sdkdocs.component.scss"],
   preserveWhitespaces: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   encapsulation: ViewEncapsulation.Emulated,
 })
 export class SDKDocsComponent implements AfterViewChecked, OnInit {
