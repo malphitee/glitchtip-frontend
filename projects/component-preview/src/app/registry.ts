@@ -4,6 +4,7 @@ import { CopyInputPreview } from "./previews/copy-input.preview";
 import { ToDoItemPreview } from "./previews/to-do-item.preview";
 import { TypographyPreview } from "./previews/typography.preview";
 import { IconsPreview } from "./previews/icons.preview";
+import { SymbolsPreview } from "./previews/symbols.preview";
 
 export interface PreviewEntry {
   id: string;
@@ -45,9 +46,15 @@ export const PREVIEWS: PreviewEntry[] = [
   },
   {
     id: "icons",
-    label: "Icons",
+    label: "Icons (logos)",
     group: "Styles",
     component: IconsPreview,
+  },
+  {
+    id: "symbols",
+    label: "Material symbols",
+    group: "Styles",
+    component: SymbolsPreview,
   },
 ];
 
