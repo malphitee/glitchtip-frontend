@@ -26,9 +26,9 @@ test:
   image: node:24-alpine
   script:
     - npm ci
-    # Disabled: pre-existing lint errors in the marketing project
-    # (component selector prefixes). Re-enable once those are resolved.
-    #- npm run lint
+    - npm run lint
+    # Vitest unit tests run in Node via jsdom (no browser needed).
+    - npm test -- --watch=false
 
 test-e2e:
   stage: test

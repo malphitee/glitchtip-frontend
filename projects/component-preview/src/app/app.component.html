@@ -1,0 +1,48 @@
+<div class="preview-layout">
+  <mat-toolbar class="preview-toolbar" color="primary">
+    <mat-icon>palette</mat-icon>
+    <span style="margin-left: 8px">GlitchTip Component Preview</span>
+    <span style="flex: 1 1 auto"></span>
+    <mat-button-toggle-group
+      [value]="theme()"
+      (change)="setTheme($event.value)"
+      aria-label="Color scheme"
+      hideSingleSelectionIndicator
+    >
+      <mat-button-toggle value="light">
+        <mat-icon>light_mode</mat-icon>
+      </mat-button-toggle>
+      <mat-button-toggle value="system">
+        <mat-icon>brightness_auto</mat-icon>
+      </mat-button-toggle>
+      <mat-button-toggle value="dark">
+        <mat-icon>dark_mode</mat-icon>
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+  </mat-toolbar>
+
+  <nav class="preview-nav">
+    <mat-nav-list>
+      @for (group of groups; track group.group) {
+        <div class="preview-nav__group-label">{{ group.group }}</div>
+        @for (entry of group.entries; track entry.id) {
+          <a
+            mat-list-item
+            [activated]="entry.id === selectedId()"
+            (click)="select(entry.id)"
+          >
+            {{ entry.label }}
+          </a>
+        }
+      }
+    </mat-nav-list>
+  </nav>
+
+  <main class="preview-canvas" [class]="canvasThemeClass()">
+    @if (selected(); as entry) {
+      <ng-container *ngComponentOutlet="entry.component" />
+    } @else {
+      <p>No previews registered.</p>
+    }
+  </main>
+</div>
