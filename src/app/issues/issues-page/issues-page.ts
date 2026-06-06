@@ -40,6 +40,7 @@ import { IssueChart } from "./charts/issue-chart";
 import { PaginationButtons } from "src/app/list-elements/pagination-buttons/pagination-buttons";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { MatMenuModule } from "@angular/material/menu";
+import { SearchHelpConfig } from "../../list-elements/data-filter-bar/data-filter-bar.component";
 
 @Component({
   templateUrl: "./issues-page.html",
@@ -153,6 +154,40 @@ export class IssuesPage implements OnInit, OnDestroy {
     { param: "-priority", display: "Highest Priority" },
     { param: "priority", display: "Lowest Priority" },
   ];
+
+  readonly searchHelp: SearchHelpConfig = {
+    heading: $localize`Search syntax`,
+    sections: [
+      {
+        title: $localize`Status`,
+        examples: ["is:unresolved", "is:resolved", "is:ignored"],
+        mutuallyExclusive: true,
+      },
+      {
+        title: $localize`Level`,
+        examples: [
+          "level:fatal",
+          "level:error",
+          "level:warning",
+          "level:info",
+          "level:debug",
+          "level:sample",
+        ],
+        mutuallyExclusive: true,
+      },
+      {
+        title: $localize`Tags`,
+        samples: ["key:value"],
+        note: $localize`Any tag works, e.g. environment:production or release:v1.2.0. One value per key.`,
+      },
+      {
+        title: $localize`Text (must come last)`,
+        samples: ["word", "prefix*"],
+        note: $localize`Whole words by default. Add * for a prefix match. Anything after the first plain word becomes part of the text search, so put filters first.`,
+      },
+    ],
+    footer: $localize`Tokens combine with a space (AND). There is no OR.`,
+  };
 
   /**
    * Corresponds to project picker/header nav/project IDs in the URL
