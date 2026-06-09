@@ -63,7 +63,7 @@ export class SubscriptionChartsComponent {
       prev.total ??
       prev.eventCount +
         prev.transactionEventCount +
-        prev.uptimeCheckEventCount +
+        (prev.uptimeCheckEventCount ?? 0) * 0.1 +
         (prev.logEventCount ?? 0) * 0.1
     );
   });
