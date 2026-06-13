@@ -249,15 +249,6 @@
             "prettyNestedTags": true,
             "sort": "stableAppendNew"
           }
-        },
-        "lint": {
-          "builder": "@angular-eslint/builder:lint",
-          "options": {
-            "lintFilePatterns": [
-              "projects/marketing/**/*.ts",
-              "projects/marketing/**/*.html"
-            ]
-          }
         }
       }
     },
