@@ -113,7 +113,8 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true,
-              "namedChunks": true
+              "namedChunks": true,
+              "externalDependencies": ["marked-katex-extension"]
             }
           },
           "defaultConfiguration": "production"
