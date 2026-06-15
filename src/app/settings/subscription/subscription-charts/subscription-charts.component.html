@@ -1,19 +1,17 @@
 <div class="summary-cards">
   <gt-summary-card
-    title="This Month"
+    [title]="currentPeriodLabel()"
     [value]="eventsCountCurrentPeriod()?.total ?? null"
     [eventsAllowed]="totalEventsAllowed()"
     [loading]="currentPeriodLoading()"
     [showLimits]="showLimits()"
-    i18n-title
   />
   <gt-summary-card
-    title="Last Month"
+    [title]="previousPeriodLabel()"
     [value]="previousPeriodTotal()"
     [eventsAllowed]="totalEventsAllowed()"
     [loading]="previousPeriodLoading()"
     [showLimits]="showLimits()"
-    i18n-title
   />
   @if (showLimits()) {
     <gt-summary-card
