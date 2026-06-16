@@ -26,7 +26,7 @@ export class HipaaComponent {
     ["DigitalOcean (NYC1)", "Infrastructure & hosting"],
     ["Mailgun", "Transactional email (alerts)"],
     ["Stripe", "Payment processing (billing data only)"],
-    ["Cloudflare", "DNS & network proxy (app.glitchtip.com)"],
+    ["Cloudflare", "DNS only on the US instance (app.glitchtip.com); not in the request path, no access to PHI"],
   ];
 
   faqs = [
