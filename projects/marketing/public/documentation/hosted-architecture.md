@@ -10,7 +10,7 @@ Burke Software functions as a data processor. We do not sell or share user data 
 
 - Hosting (US): DigitalOcean NYC1 (New York, USA) - https://app.glitchtip.com
 - Hosting (EU): DigitalOcean FRA1 (Frankfurt, Germany) - https://eu.glitchtip.com
-- DNS & Network Edge: Cloudflare (DNS for both regions; the EU instance additionally uses Cloudflare as a reverse proxy/WAF - see [DNS & Network Edge](#dns-network-edge-cloudflare) below)
+- DNS & CDN: Cloudflare (DNS for both regions; reverse proxy/WAF on the EU instance only - see EU Hosting & Data Sovereignty below)
 - Transactional Email: Mailgun (Data residency matches the server region: US or EU)
 - Analytics: Plausible (Privacy-focused, GDPR compliant, no cookies) runs solely on this marketing website https://glitchtip.com and not on our GlitchTip hosted servers (ex: https://app.glitchtip.com)
 - Payments: Stripe (PCI-DSS Service Provider Level 1) - a global payment processor. Stripe receives only the billing details needed to process a subscription (e.g. name and billing contact); error events, logs, and PHI are never transmitted to Stripe.
@@ -26,20 +26,9 @@ For organizations with data residency requirements, GlitchTip offers a fully ind
 
 All data on the EU instance — including error events, user accounts, and transactional email — stays within the EU. The two instances are completely separate; there is no data replication between regions.
 
+The EU instance sits behind Cloudflare as a reverse proxy and WAF, filtering malicious traffic and absorbing DDoS attempts before requests reach the origin. The US instance uses Cloudflare for DNS only, keeping it out of the request path entirely (so on the HIPAA-eligible US instance, Cloudflare has no access to request contents or PHI). Because Cloudflare runs a global anycast network, a visitor outside the EU may have their in-transit connection routed through a non-EU Cloudflare edge — for example, a US point of presence — before it reaches Frankfurt; all data at rest and all processing still remain in FRA1.
+
 Both instances offer identical plans and features. To get started with EU hosting, sign up directly at [eu.glitchtip.com](https://eu.glitchtip.com).
-
-## DNS & Network Edge (Cloudflare)
-
-Cloudflare appears in the architecture diagram above. We keep its role deliberately minimal and it differs by region. The distinction matters for compliance reviews, so we spell it out:
-
-| Region | Cloudflare role | What this means |
-| --- | --- | --- |
-| **US** ([app.glitchtip.com](https://app.glitchtip.com)) | **DNS only.** Traffic is not proxied; connections terminate directly at our DigitalOcean NYC1 origin over TLS 1.2+. | Cloudflare is never in the request path and has no access to request or response contents (including any PHI). This is why our HIPAA BAA can cover the US instance without requiring a separate BAA with Cloudflare. |
-| **EU** ([eu.glitchtip.com](https://eu.glitchtip.com)) | **DNS plus a reverse proxy / WAF** in front of DigitalOcean FRA1. | The proxy filters malicious traffic and absorbs DDoS attempts before it reaches the origin. Cloudflare terminates TLS at its edge and re-encrypts to our origin. |
-
-The system of record — every error event, log, user account, and database — is stored and processed entirely within the stated hosting region (US in NYC1, EU in FRA1). There is no cross-region replication.
-
-One transparency note for the EU instance: Cloudflare operates a global anycast network, so a visitor located outside the EU may have their connection routed through a Cloudflare edge location outside the EU (for example, a US point of presence) before it reaches Frankfurt. We do not control which edge serves a given request. Only in-transit traffic transits that edge; all data at rest and all processing remain in FRA1. Organizations with strict requirements that no traffic may transit a non-EU edge should evaluate this before onboarding. The HIPAA BAA is offered on the US instance only.
 
 ## Security by Design
 
