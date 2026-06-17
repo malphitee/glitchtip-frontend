@@ -10,9 +10,10 @@ Burke Software functions as a data processor. We do not sell or share user data 
 
 - Hosting (US): DigitalOcean NYC1 (New York, USA) - https://app.glitchtip.com
 - Hosting (EU): DigitalOcean FRA1 (Frankfurt, Germany) - https://eu.glitchtip.com
+- DNS & CDN: Cloudflare (DNS for both regions; reverse proxy/WAF on the EU instance only - see EU Hosting & Data Sovereignty below)
 - Transactional Email: Mailgun (Data residency matches the server region: US or EU)
 - Analytics: Plausible (Privacy-focused, GDPR compliant, no cookies) runs solely on this marketing website https://glitchtip.com and not on our GlitchTip hosted servers (ex: https://app.glitchtip.com)
-- Payments: Stripe (PCI-DSS Service Provider Level 1)
+- Payments: Stripe (PCI-DSS Service Provider Level 1) - a global payment processor. Stripe receives only the billing details needed to process a subscription (e.g. name and billing contact); error events, logs, and PHI are never transmitted to Stripe.
 
 ![](/assets/glitchtip-saas.png)
 
@@ -24,6 +25,8 @@ For organizations with data residency requirements, GlitchTip offers a fully ind
 - **US Instance**: [app.glitchtip.com](https://app.glitchtip.com)
 
 All data on the EU instance — including error events, user accounts, and transactional email — stays within the EU. The two instances are completely separate; there is no data replication between regions.
+
+The EU instance sits behind Cloudflare as a reverse proxy and WAF, filtering malicious traffic and absorbing DDoS attempts before requests reach the origin. The US instance uses Cloudflare for DNS only, keeping it out of the request path entirely (so on the HIPAA-eligible US instance, Cloudflare has no access to request contents or PHI). Because Cloudflare runs a global anycast network, a visitor outside the EU may have their in-transit connection routed through a non-EU Cloudflare edge — for example, a US point of presence — before it reaches Frankfurt; all data at rest and all processing still remain in FRA1.
 
 Both instances offer identical plans and features. To get started with EU hosting, sign up directly at [eu.glitchtip.com](https://eu.glitchtip.com).
 
