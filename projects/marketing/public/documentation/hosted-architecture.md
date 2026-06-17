@@ -10,10 +10,10 @@ Burke Software functions as a data processor. We do not sell or share user data 
 
 - Hosting (US): DigitalOcean NYC1 (New York, USA) - https://app.glitchtip.com
 - Hosting (EU): DigitalOcean FRA1 (Frankfurt, Germany) - https://eu.glitchtip.com
-- DNS & Network Edge: Cloudflare (DNS for both regions; the EU instance additionally uses Cloudflare as a reverse proxy/WAF — see [DNS & Network Edge](#dns-network-edge-cloudflare) below)
+- DNS & Network Edge: Cloudflare (DNS for both regions; the EU instance additionally uses Cloudflare as a reverse proxy/WAF - see [DNS & Network Edge](#dns-network-edge-cloudflare) below)
 - Transactional Email: Mailgun (Data residency matches the server region: US or EU)
 - Analytics: Plausible (Privacy-focused, GDPR compliant, no cookies) runs solely on this marketing website https://glitchtip.com and not on our GlitchTip hosted servers (ex: https://app.glitchtip.com)
-- Payments: Stripe (PCI-DSS Service Provider Level 1) — a global payment processor. Stripe receives only the billing details needed to process a subscription (e.g. name and billing contact); error events, logs, and PHI are never transmitted to Stripe.
+- Payments: Stripe (PCI-DSS Service Provider Level 1) - a global payment processor. Stripe receives only the billing details needed to process a subscription (e.g. name and billing contact); error events, logs, and PHI are never transmitted to Stripe.
 
 ![](/assets/glitchtip-saas.png)
 
