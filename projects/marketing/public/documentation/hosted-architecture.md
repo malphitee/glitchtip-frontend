@@ -17,6 +17,14 @@ Burke Software functions as a data processor. We do not sell or share user data 
 
 ![](/assets/glitchtip-saas.png)
 
+## Data Processing Agreement (DPA)
+
+For customers who need one, Burke Software offers a standard Data Processing Agreement covering the personal data we process on your behalf under the GDPR, UK GDPR, and CCPA. It documents our role as a processor, the sub-processors listed above, the technical and organizational security measures described on this page, and — for data leaving the EEA or UK — the EU Standard Contractual Clauses (Module 2, Controller-to-Processor) and the UK International Data Transfer Addendum.
+
+- **Read the agreement**: [Data Processing Agreement (PDF)](/legal/data-processing-agreement.pdf)
+
+The published version is our standard template, offered as-is. Paying customers who require a signed, countersigned copy can request one at [sales@glitchtip.com](mailto:sales@glitchtip.com).
+
 ## 🇪🇺 EU Hosting & Data Sovereignty
 
 For organizations with data residency requirements, GlitchTip offers a fully independent EU instance hosted in Frankfurt, Germany (DigitalOcean FRA1).
