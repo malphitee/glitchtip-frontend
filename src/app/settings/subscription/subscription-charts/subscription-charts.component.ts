@@ -41,6 +41,9 @@ export class SubscriptionChartsComponent {
 
   totalEventsAllowed = input.required<number | null>();
   showLimits = input(true);
+  // Summary-card labels; self-hosted overrides these (rolling window, no cycle).
+  currentPeriodLabel = input($localize`This Month`);
+  previousPeriodLabel = input($localize`Last Month`);
 
   eventsCountCurrentPeriod = this.subscriptionService.eventsCountCurrentPeriod;
   previousPeriod = this.subscriptionService.eventsCountPreviousPeriod;

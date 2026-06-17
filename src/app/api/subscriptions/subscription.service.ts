@@ -32,15 +32,17 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
 
   stripePublicKey = this.settingsService.stripePublicKey;
 
-  // Key the subscription fetch on the explicitly-selected org (route / switcher),
-  // not the activeOrganizationSlug fallback which defaults to organizations()[0].
-  // This resource is read app-wide (e.g. the Chatwoot effect in UserService), so
-  // keying on the fallback briefly fetches the first org's subscription before the
-  // route resolves — the "loads both orgs' subscriptions" / wrong-org fetch.
+  // The explicitly-selected org (route / switcher), not the activeOrganizationSlug
+  // fallback which defaults to organizations()[0]. These resources are read
+  // app-wide (e.g. the Chatwoot effect in UserService), so keying on the fallback
+  // briefly fetches the first org's data before the route resolves — the "loads
+  // both orgs' subscriptions" / wrong-org fetch.
+  private selectedSlug = computed(
+    () => this.organizationsService.selectedOrganizationSlug() ?? "",
+  );
+  // Subscription fetch is billing-gated: no Stripe calls on self-hosted.
   organizationSlug = computed(() =>
-    this.settingsService.billingEnabled()
-      ? (this.organizationsService.selectedOrganizationSlug() ?? "")
-      : "",
+    this.settingsService.billingEnabled() ? this.selectedSlug() : "",
   );
   subscriptionResource = apiResource(this.organizationSlug, (orgSlug) => ({
     url: "/api/0/stripe/subscriptions/{organization_slug}/",
@@ -71,9 +73,11 @@ export class SubscriptionService extends StatefulService<SubscriptionState> {
   );
 
   // Gates the detail-page resources below; component owns the on/off lifecycle.
+  // Keyed on selectedSlug, not the billing-gated organizationSlug, so the
+  // self-hosted usage charts load too.
   private detailActive = signal(false);
   private detailSlug = computed(() =>
-    this.detailActive() ? this.organizationSlug() : "",
+    this.detailActive() ? this.selectedSlug() : "",
   );
 
   setDetailActive(active: boolean) {

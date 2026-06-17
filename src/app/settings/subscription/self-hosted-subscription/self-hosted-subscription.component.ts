@@ -37,6 +37,9 @@ export class SelfHostedSubscriptionComponent {
   billingEmail = environment.billingEmail;
   paidForGlitchTip = this.settings.paidForGlitchTip;
   manageBillingLoading = signal(false);
+  // Self-hosted has no billing cycle — usage is a rolling 30-day window.
+  currentPeriodLabel = $localize`Last 30 Days`;
+  previousPeriodLabel = $localize`Previous 30 Days`;
 
   manageBilling() {
     this.manageBillingLoading.set(true);
