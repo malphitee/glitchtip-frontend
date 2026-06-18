@@ -18,6 +18,10 @@ on:
         default: "linux/amd64,linux/arm64"
   push:
     branches: [master]
+    # 纯文档/翻译工具改动不重建镜像（翻译本体在 src/，仍会触发）
+    paths-ignore:
+      - "**.md"
+      - "zh-l10n/**"
 
 jobs:
   build:

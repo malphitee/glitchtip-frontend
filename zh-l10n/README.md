@@ -95,20 +95,7 @@ docker compose pull && docker compose up -d
 
 ## 跟上游同步 / 升级 GlitchTip
 
-```bash
-git fetch upstream                 # 🌐
-git merge upstream/master          # 合并前端官方更新（main.ts 那行若冲突，手动留下含 "zh" 的版本）
-
-# 若新版前端新增了界面文案，补翻（老翻译自动保留）：
-python3 zh-l10n/update-translation.py extract     # 生成 zh-l10n/to-translate-new.json
-#   按 zh-l10n/translation-prompt.md 的提示词交给 AI 翻，结果存成 zh-l10n/translated-new.json
-python3 zh-l10n/update-translation.py merge       # 合并回 messages.zh.json
-
-git add -A && git commit -m "chore: 同步上游 + 补充中文翻译"
-git push origin master             # 🌐  触发 CI 重新构建（或手动 Run workflow）
-```
-
-升级后端版本：把构建时的 `GLITCHTIP_VERSION` 改成新版本号即可（前后端版本号一般保持一致）。
+官方升级后如何同步前端、补翻新文案、重建镜像并部署，见专门文档 **[UPGRADE.md](./UPGRADE.md)**。
 
 ---
 

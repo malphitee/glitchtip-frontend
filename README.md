@@ -1,3 +1,19 @@
+# 🇨🇳 GlitchTip 简体中文 fork
+
+本仓库是 [GlitchTip 前端](https://gitlab.com/glitchtip/glitchtip-frontend)（GitLab 官方）的**简体中文 fork**：在官方基础上增加了中文(`zh`)界面，并能构建出可直接部署的中文镜像 `malphitee/glitchtip-zh`（多架构 amd64+arm64）。
+
+**文档：**
+- 用法 / 构建 / 部署到 1Panel → [`zh-l10n/README.md`](./zh-l10n/README.md)
+- 官方升级后如何同步处理 → [`zh-l10n/UPGRADE.md`](./zh-l10n/UPGRADE.md)
+
+**中文化改动**（相对上游）：`src/main.ts`（`availableLocales` 增加 `zh`）、`src/assets/i18n/messages.zh.json`（中文翻译）、`Dockerfile.zh`、`.github/workflows/build-and-push.yml`、`zh-l10n/`（翻译维护工具与文档）。
+
+上游 = `gitlab.com/glitchtip/glitchtip-frontend`，`git fetch upstream && git merge upstream/master` 可随时同步官方更新。
+
+---
+
+> 以下为上游原始 README（前端开发说明，保留备查）。
+
 [![Gitter](https://badges.gitter.im/GlitchTip/community.svg)](https://gitter.im/GlitchTip/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 <script src="https://liberapay.com/GlitchTip/widgets/button.js"></script>
