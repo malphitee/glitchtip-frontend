@@ -43,7 +43,7 @@ if (window.Cypress) {
 const serverErrorsRegex = new RegExp(`403 Forbidden|404 OK`, "mi");
 
 // First locale is default, add additional after it
-const availableLocales = ["en", "fr", "nb"];
+const availableLocales = ["en", "fr", "nb", "zh"];
 // Direct macrolanguages to specific ones. Example: Norwegian becomes Bokmål
 const localeMappings: { [key: string]: string } = { no: "nb" };
 

@@ -1,0 +1,10 @@
+# 构建中文镜像时，从 build context 里排除不需要的大目录/无关文件
+.git
+node_modules
+dist
+chart
+cypress
+.github
+.vscode
+zh-l10n
+*.log

@@ -1,0 +1,37 @@
+# syntax=docker/dockerfile:1
+#
+# 构建带「简体中文界面」的 GlitchTip 完整镜像。
+#
+#   阶段 1：用本仓库源码（已含 zh locale + 翻译）构建 Angular 前端；
+#   阶段 2：FROM 官方后端镜像，替换前端静态资源并重跑 collectstatic。
+#
+# 这是官方 Dockerfile.prod 的同款思路（前端叠到后端镜像），但做成单条
+# docker build 即可完成，无需本机预装 Node。
+#
+# 与上游同步、升级、翻译维护见 zh-l10n/README.md。
+
+# 官方后端镜像版本（与你 1Panel 里部署的版本保持一致；升级后端就改这里）
+ARG GLITCHTIP_VERSION=latest
+
+# ---------- 阶段 1：构建中文前端 ----------
+FROM node:22-slim AS frontend
+# npm 源：默认国内 npmmirror（国内快）。海外可 --build-arg NPM_REGISTRY=https://registry.npmjs.org
+ARG NPM_REGISTRY=https://registry.npmmirror.com
+WORKDIR /build
+# 先装依赖（可被 Docker 层缓存，改翻译时不必重装）
+COPY package.json package-lock.json ./
+RUN npm ci --registry=${NPM_REGISTRY}
+# 再拷入源码并构建
+COPY . .
+RUN npm run build-prod
+# 产物在 /build/dist/glitchtip-frontend/browser/
+
+# ---------- 阶段 2：官方后端 + 中文前端 ----------
+FROM glitchtip/glitchtip:${GLITCHTIP_VERSION}
+USER root
+# 用中文前端替换镜像自带前端，并重新收集静态文件（WhiteNoise 带哈希清单，必须重跑）
+RUN rm -rf /code/dist
+COPY --from=frontend /build/dist/glitchtip-frontend/browser/ /code/dist/
+RUN SECRET_KEY=ci ./manage.py collectstatic --noinput --clear \
+ && chown -R app:app /code/static /code/dist
+USER app:app
