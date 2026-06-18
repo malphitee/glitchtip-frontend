@@ -13,9 +13,9 @@ on:
         required: true
         default: "latest"
       platforms:
-        description: "目标架构（amd64 服务器填 linux/amd64，arm 填 linux/arm64）"
+        description: "目标架构（多架构 linux/amd64,linux/arm64；也可只填一个）"
         required: true
-        default: "linux/amd64"
+        default: "linux/amd64,linux/arm64"
   push:
     branches: [master]
 
@@ -38,9 +38,9 @@ jobs:
         id: vars
         run: |
           if [ "${{ github.event_name }}" = "push" ]; then
-            echo "glitchtip_version=latest"   >> "$GITHUB_OUTPUT"
-            echo "image_tag=latest"           >> "$GITHUB_OUTPUT"
-            echo "platforms=linux/amd64"      >> "$GITHUB_OUTPUT"
+            echo "glitchtip_version=latest"            >> "$GITHUB_OUTPUT"
+            echo "image_tag=latest"                    >> "$GITHUB_OUTPUT"
+            echo "platforms=linux/amd64,linux/arm64"   >> "$GITHUB_OUTPUT"
           else
             echo "glitchtip_version=${{ inputs.glitchtip_version }}" >> "$GITHUB_OUTPUT"
             echo "image_tag=${{ inputs.image_tag }}"                 >> "$GITHUB_OUTPUT"

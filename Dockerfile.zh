@@ -14,7 +14,9 @@
 ARG GLITCHTIP_VERSION=latest
 
 # ---------- 阶段 1：构建中文前端 ----------
-FROM node:22-slim AS frontend
+# --platform=$BUILDPLATFORM：前端产物与 CPU 架构无关，固定用构建机原生架构构建一次，
+# 避免多架构构建时在 arm64 模拟器里重复跑（慢得多的）npm/ng build。
+FROM --platform=$BUILDPLATFORM node:22-slim AS frontend
 # npm 源：默认国内 npmmirror（国内快）。海外可 --build-arg NPM_REGISTRY=https://registry.npmjs.org
 ARG NPM_REGISTRY=https://registry.npmmirror.com
 WORKDIR /build
