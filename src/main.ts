@@ -47,8 +47,11 @@ const availableLocales = ["en", "fr", "nb", "zh"];
 // Direct macrolanguages to specific ones. Example: Norwegian becomes Bokmål
 const localeMappings: { [key: string]: string } = { no: "nb" };
 
+// zh fork: 优先使用用户在语言切换器里选择的语言（存于 localStorage），其次浏览器语言
+const savedLocale = localStorage.getItem("locale");
 let locale =
-  availableLocales.find((l) => navigator.language.startsWith(l)) ??
+  (savedLocale && availableLocales.includes(savedLocale) && savedLocale) ||
+  availableLocales.find((l) => navigator.language.startsWith(l)) ||
   availableLocales[0];
 window.document.documentElement.lang = locale;
 
@@ -134,4 +137,45 @@ if (locale === availableLocales[0]) {
 
       bootstrap();
     });
+}
+
+// zh fork: 注入一个独立的语言切换器（不依赖任何 Angular 组件，跟随上游升级几乎无冲突）。
+// 选中后写入 localStorage 并刷新页面；刷新后上面的逻辑会按所选语言加载翻译。
+function mountLanguageSwitcher(current: string) {
+  const labels: { [code: string]: string } = {
+    en: "English",
+    fr: "Français",
+    nb: "Norsk",
+    zh: "中文",
+  };
+  const select = document.createElement("select");
+  select.setAttribute("aria-label", "Language");
+  select.style.cssText =
+    "position:fixed;right:12px;bottom:12px;z-index:9999;" +
+    "font:13px system-ui,sans-serif;color:inherit;cursor:pointer;opacity:.55;" +
+    "padding:4px 8px;border:1px solid rgba(127,127,127,.5);border-radius:6px;" +
+    "background:rgba(127,127,127,.12);transition:opacity .2s;";
+  select.onmouseenter = () => (select.style.opacity = "1");
+  select.onmouseleave = () => (select.style.opacity = ".55");
+  for (const code of availableLocales) {
+    const opt = document.createElement("option");
+    opt.value = code;
+    opt.textContent = "🌐 " + (labels[code] ?? code);
+    opt.selected = code === current;
+    select.appendChild(opt);
+  }
+  select.addEventListener("change", () => {
+    localStorage.setItem("locale", select.value);
+    location.reload();
+  });
+  const mount = () => document.body.appendChild(select);
+  if (document.body) {
+    mount();
+  } else {
+    addEventListener("DOMContentLoaded", mount);
+  }
+}
+
+if (!window.Cypress) {
+  mountLanguageSwitcher(locale);
 }
