@@ -7,7 +7,7 @@
 - 官方升级后如何同步处理 → [`zh-l10n/UPGRADE.md`](./zh-l10n/UPGRADE.md)
 - 本次中文化实施记录 → [`docs/zh-localization.md`](./docs/zh-localization.md)
 
-**中文化改动**（相对上游）：`src/main.ts`（`availableLocales` 增加 `zh`）、`src/assets/i18n/messages.zh.json`（中文翻译）、`Dockerfile.zh`、`.github/workflows/build-and-push.yml`、`zh-l10n/`（翻译维护工具与文档）。
+**中文化改动**（相对上游）：`src/main.ts`（增加 `zh` locale + 浮动语言切换器）、`src/assets/i18n/messages.zh.json`（中文翻译）、`Dockerfile.zh`、`.github/workflows/build-and-push.yml`、`zh-l10n/`（翻译维护工具与文档）。
 
 上游 = `gitlab.com/glitchtip/glitchtip-frontend`，`git fetch upstream && git merge upstream/master` 可随时同步官方更新。
 

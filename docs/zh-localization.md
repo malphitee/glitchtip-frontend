@@ -79,3 +79,12 @@ docs/zh-localization.md            # 本文件：实施记录
 官方升级后的处理流程见 **[`../zh-l10n/UPGRADE.md`](../zh-l10n/UPGRADE.md)**。核心：
 `git fetch upstream && git merge upstream/master` → `update-translation.py extract/merge` 补翻 →
 push 触发构建 → `docker compose pull && up -d`。
+
+## 9. 后续增强：语言切换器
+
+最初仅靠浏览器语言自动判断。之后增加了**手动切换**：界面右下角一个浮动的 🌐 `<select>`，
+选中后写入 `localStorage('locale')` 并刷新页面，`main.ts` 据此加载对应语言（下次沿用）。
+
+- 纯前端、零后端改动。运行时翻译（`loadTranslations`）无法不刷新就热切换，故采用「存偏好 + 刷新页面」。
+- 完全实现在 `src/main.ts`（`mountLanguageSwitcher` + 语言检测优先读 localStorage），**不碰任何官方组件** → 升级合并无冲突。
+- 调整位置/样式改 `mountLanguageSwitcher` 的内联样式即可。

@@ -14,11 +14,20 @@
 
 | 文件 | 改动 |
 |------|------|
-| `src/main.ts` | `availableLocales` 加了 `"zh"` |
+| `src/main.ts` | `availableLocales` 加 `"zh"`；语言检测优先读 `localStorage`；内置浮动语言切换器 |
 | `src/assets/i18n/messages.zh.json` | 中文翻译（**唯一长期维护**的文件）|
 | `Dockerfile.zh` | 构建中文镜像（前端→叠到官方后端镜像→collectstatic）|
 | `.dockerignore` / `.github/workflows/build-and-push.yml` | 构建上下文裁剪 / CI 自动构建推送 |
 | `zh-l10n/` | 翻译维护脚本、提示词、本文档 |
+
+## 语言切换器
+
+界面**右下角**有一个浮动的 🌐 语言下拉（平时半透明，鼠标移上去变清晰），所有页面（含登录页）都有。
+
+- 选择某语言 → 写入浏览器 `localStorage('locale')` → 自动刷新 → 以该语言加载界面，下次打开沿用。
+- 未手动选择时按浏览器语言自动判断（中文环境即显示中文）。
+- **实现**：完全在 `src/main.ts` 内（语言检测 + 注入一个原生 `<select>`），**不依赖任何 Angular 组件**，跟随上游升级几乎不会冲突。
+- 想换位置 / 样式（左下角、深色适配等）：改 `src/main.ts` 里 `mountLanguageSwitcher` 的内联样式后重新构建。
 
 ---
 
